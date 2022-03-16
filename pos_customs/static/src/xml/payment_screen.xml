@@ -12,7 +12,7 @@
                 </div>
                 <span class="label">Uso del cfdi</span>
                 <div class="piselect">
-                    <select class="needsclick" t-on-change="captureChange" size="5">
+                    <select class="needsclick" t-on-change="captureChange">
                         <option value="G01">Adquisición de mercancías</option>
                         <option value="G02">Devoluciones, descuentos o bonificaciones</option>
                         <option value="G03">Gastos en general</option>
