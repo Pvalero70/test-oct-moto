@@ -4,7 +4,7 @@
         <xpath expr="//div[hasclass('payment-buttons')]" position="inside">
             <div class="invoicing-info">
                 <span class="label">Política de pago</span>
-                <div class="select">
+                <div class="piselect">
                     <select class="needsclick" t-on-change="captureChange">
                         <option value="pue">PUE</option>
                         <option value="ppd">PPD</option>
