@@ -12,7 +12,7 @@
         'web.assets_qweb': [
         ],
         'web._assets_primary_variables': [
-        ],s
+        ],
         'web._assets_backend_helpers': [
         ],
         'web.assets_backend': [
