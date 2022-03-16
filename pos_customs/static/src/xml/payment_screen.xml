@@ -5,10 +5,10 @@
             <div class="invoicing-info">
                 <span class="label">Política de pago</span>
                 <div class="piselect">
-                    <select class="needsclick dfd" t-on-change="captureChange">
+                    <!--<select class="needsclick dfd" t-on-change="captureChange">
                         <option value="pue">PUE</option>
                         <option value="ppd">PPD</option>
-                    </select>
+                    </select>-->
                     <select class="needsclick dffd" t-on-change="captureChange">
                         <option value="G01">Adquisición de mercancías</option>
                         <option value="G02">Devoluciones, descuentos o bonificaciones</option>
