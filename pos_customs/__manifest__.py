@@ -9,13 +9,11 @@
         'views/pos_conf_views.xml'
     ],
     'assets': {
+        'point_of_sale.assets': [
+            'pos_customs/static/src/js/payment_screen.js',
+        ],
         'web.assets_qweb': [
-        ],
-        'web._assets_primary_variables': [
-        ],
-        'web._assets_backend_helpers': [
-        ],
-        'web.assets_backend': [
+            'pos_customs/static/src/xml/payment_screen.xml',
         ],
     },
     'application': True,
