@@ -1,12 +1,12 @@
-.custom-select {
+/*.custom-select {
   display: inline-block;
   position: relative;
   top: 50%;
   -webkit-transform: translateY(-50%);
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
-  /* Styling the select background */
-  background-color: #66d2f3;
+  *//* Styling the select background *//*
+  background-color: #e2e2e2;
 }
 .custom-select select {
   width: auto;
@@ -17,9 +17,9 @@
   border: none;
   border-radius: 0;
   background-color: transparent;
-  /* Styling the select text color */
+  *//* Styling the select text color *//*
   color: rgba(255, 255, 255, 0.6);
-  /* removes the fucking native down arrow */
+  *//* removes the fucking native down arrow *//*
   -webkit-appearance: none;
   -moz-appearance: none;
   text-indent: 0.01px;
@@ -32,7 +32,7 @@
   position: absolute;
   top: 1.25em;
   right: 1em;
-  /* Styling the down arrow */
+  *//* Styling the down arrow *//*
   width: 0;
   height: 0;
   padding: 0;
@@ -52,11 +52,10 @@
   .custom-select select {
     padding-right: 2em;
   }
-}
+}*/
 
 /*************** SEGUNDA OPCION ********************/
 
-/*
 select {
    -webkit-appearance:none;
    -moz-appearance:none;
@@ -101,4 +100,3 @@ select::-ms-expand {
 .select:hover::after {
    color: #23b499;
 }
-*/
