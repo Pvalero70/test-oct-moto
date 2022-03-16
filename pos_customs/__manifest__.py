@@ -10,6 +10,7 @@
     ],
     'assets': {
         'point_of_sale.assets': [
+            'pos_customs/static/src/css/payment_screen.css',
             'pos_customs/static/src/js/payment_screen.js',
         ],
         'web.assets_qweb': [

@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
     <t t-name="PaymentScreen" t-inherit="point_of_sale.PaymentScreen" t-inherit-mode="extension" owl="1">
-        <xpath expr="//div[hasclass('payment-buttons')]" position="after">
+        <xpath expr="//div[hasclass('payment-buttons')]" position="inside">
             <div class="invoicing-info">
-                        <span class="label">Política de pago</span>
-                        <select t-on-change="captureChange">
-                            <option value="pue">PUE</option>
-                            <option value="ppd">PPD</option>
+                <span class="label">Política de pago</span>
+                <div class="custom-select">
+                    <select class="needsclick" t-on-change="captureChange">
+                        <option value="pue">PUE</option>
+                        <option value="ppd">PPD</option>
+                    </select>
+                </div>
 
-                            <!--<t t-foreach="env.pos.states" t-as="state" t-key="state.id">
-                                <option t-if="props.partner.country_id[0] == state.country_id[0]"
-                                        t-att-value="state.id"
-                                        t-att-selected="props.partner.state_id ? ((state.id === props.partner.state_id[0]) ? true : undefined) : undefined">
-                                    <t t-esc="state.name" />
-                                </option>
-                            </t>-->
-                        </select>
             </div>
         </xpath>
     </t>

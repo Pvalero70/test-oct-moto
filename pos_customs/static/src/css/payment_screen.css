@@ -1,0 +1,104 @@
+.custom-select {
+  display: inline-block;
+  position: relative;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  /* Styling the select background */
+  background-color: #66d2f3;
+}
+.custom-select select {
+  width: auto;
+  margin: 0;
+  padding: 0.75em 1.5em;
+  outline: none;
+  cursor: pointer;
+  border: none;
+  border-radius: 0;
+  background-color: transparent;
+  /* Styling the select text color */
+  color: rgba(255, 255, 255, 0.6);
+  /* removes the fucking native down arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  text-indent: 0.01px;
+  text-overflow: "";
+}
+.custom-select select::-ms-expand {
+  display: none;
+}
+.custom-select:after {
+  position: absolute;
+  top: 1.25em;
+  right: 1em;
+  /* Styling the down arrow */
+  width: 0;
+  height: 0;
+  padding: 0;
+  content: "";
+  border-left: 0.25em solid transparent;
+  border-right: 0.25em solid transparent;
+  border-top: 0.375em solid #1FBDED;
+  pointer-events: none;
+}
+
+@-moz-document url-prefix() {
+  .custom-select select {
+    padding-right: 1.75em;
+  }
+}
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .custom-select select {
+    padding-right: 2em;
+  }
+}
+
+/*************** SEGUNDA OPCION ********************/
+
+/*
+select {
+   -webkit-appearance:none;
+   -moz-appearance:none;
+   -ms-appearance:none;
+   appearance:none;
+   outline:0;
+   box-shadow:none;
+   border:0!important;
+   background: #5c6664;
+   background-image: none;
+   flex: 1;
+   padding: 0 .5em;
+   color:#fff;
+   cursor:pointer;
+   font-size: 1em;
+   font-family: 'Open Sans', sans-serif;
+}
+select::-ms-expand {
+   display: none;
+}
+.select {
+   position: relative;
+   display: flex;
+   width: 20em;
+   height: 3em;
+   line-height: 3;
+   background: #5c6664;
+   overflow: hidden;
+   border-radius: .25em;
+}
+.select::after {
+   content: '\25BC';
+   position: absolute;
+   top: 0;
+   right: 0;
+   padding: 0 1em;
+   background: #2b2e2e;
+   cursor:pointer;
+   pointer-events:none;
+   transition:.25s all ease;
+}
+.select:hover::after {
+   color: #23b499;
+}
+*/
