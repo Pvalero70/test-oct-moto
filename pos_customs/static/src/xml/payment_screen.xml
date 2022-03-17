@@ -2,14 +2,22 @@
 <templates id="template" xml:space="preserve">
     <t t-name="PaymentScreen" t-inherit="point_of_sale.PaymentScreen" t-inherit-mode="extension" owl="1">
         <xpath expr="//div[hasclass('payment-buttons')]" position="inside">
-            <div class="invoicing-info">
+            <div class="button js_invoice"
+                t-att-class="{ highlight: currentOrder.is_to_invoice() }">
+                <i class="fa fa-file-text-o" /> Método de pago
+            </div>
+            <div class="button js_invoice"
+                t-att-class="{ highlight: currentOrder.is_to_invoice() }">
+                <i class="fa fa-file-text-o" /> Uso CFDI
+            </div>
+            <!--<div class="invoicing-info">
                 <span class="label">Política de pago</span>
                 <div class="piselect">
                     <select class="needsclick dfd" t-on-change="captureChange">
                         <option value="pue">PUE</option>
                         <option value="ppd">PPD</option>
                     </select>
-                    <!--<select class="needsclick dffd" t-on-change="captureChange">
+                    <select class="needsclick dffd" t-on-change="captureChange">
                         <option value="G01">Adquisición de mercancías</option>
                         <option value="G02">Devoluciones, descuentos o bonificaciones</option>
                         <option value="G03">Gastos en general</option>
@@ -32,17 +40,11 @@
                         <option value="D09">Depósitos en cuentas para el ahorro, primas que tengan como base planes de pensiones.</option>
                         <option value="D10">Pagos por servicios educativos (colegiaturas)</option>
                         <option value="P01">Por definir</option>
-                    </select>-->
-                </div>
-                <!--Prueba-->
-                <div class="piselect">
-                    <select class="needsclick dfd" t-on-change="captureChange">
-                        <option value="pue">PUE</option>
-                        <option value="ppd">PPD</option>
                     </select>
                 </div>
 
-            </div>
+
+            </div>-->
         </xpath>
     </t>
 </templates>
