@@ -12,7 +12,7 @@ var rpc = require('web.rpc');
             constructor() {
                 super(...arguments);
             }
-            async setPaymentMethod(){
+            async setInvoiceInfo(){
                 console.log("____Lanzando popup de Metodo de pago");
                 await this.showPopup('SetInvoiceInfoPopupWidget');
             }
