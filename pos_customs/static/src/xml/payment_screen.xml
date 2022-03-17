@@ -2,7 +2,7 @@
 <templates id="template" xml:space="preserve">
     <t t-name="PaymentScreenC" t-inherit="point_of_sale.PaymentScreen" t-inherit-mode="extension" owl="1">
         <xpath expr="//div[hasclass('payment-controls')]" position="inside">
-            <div class="button" t-on-click="setPaymentMethod">
+            <div class="button" t-on-click="setInvoiceInfo">
                 <i class="fa fa-qrcode"/> Método de pago / Uso CFDI
             </div>
             <!--<div class="button" t-on-click="setCfdiUsage">

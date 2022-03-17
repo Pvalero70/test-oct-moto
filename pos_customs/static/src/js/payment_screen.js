@@ -12,12 +12,11 @@ var rpc = require('web.rpc');
             constructor() {
                 super(...arguments);
             }
-            setPaymentMethod(){
+            async setPaymentMethod(){
                 console.log("____Lanzando popup de Metodo de pago");
+                await this.showPopup('SetInvoiceInfoPopupWidget');
             }
-            setCfdiUsage(){
-                console.log("____Lanzando popup de uso de CFDI");
-            }
+
 
         };
 

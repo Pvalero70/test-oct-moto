@@ -12,9 +12,11 @@
         'point_of_sale.assets': [
             'pos_customs/static/src/css/payment_screen.css',
             'pos_customs/static/src/js/payment_screen.js',
+            'pos_customs/static/src/js/CfdiInfoPopup.js',
         ],
         'web.assets_qweb': [
             'pos_customs/static/src/xml/payment_screen.xml',
+            'pos_customs/static/src/xml/CfdiInfoPopup.xml',
         ],
     },
     'application': True,
