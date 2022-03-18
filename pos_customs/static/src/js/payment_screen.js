@@ -33,8 +33,8 @@ var rpc = require('web.rpc');
                 if (this.currentOrder.is_to_invoice()) {
                     console.log(" Current order :: ");
                     console.log(this.currentOrder);
-//                    this.currentOrder.to_invoice = $("#cfdi_usage_sel").val();
-                    this.currentOrder.cfdi_usage = $("#cfdi_usage_sel").val();
+                   this.currentOrder.to_invoice = [$("#cfdi_usage_sel").val()];
+                    // this.currentOrder.cfdi_usage = $("#cfdi_usage_sel").val();
 
                     syncedOrderBackendIds = await this.env.pos.push_and_invoice_order(
                         this.currentOrder
