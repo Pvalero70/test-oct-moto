@@ -55,7 +55,7 @@ class PosOrder(models.Model):
 
     def _prepare_invoice_vals(self):
         vals = super(PosOrder, self)._prepare_invoice_vals()
-        # vals['l10n_mx_edi_payment_method_id'] = self.payment_method_id.l10n_mx_edi_payment_method_id.id
+        vals['l10n_mx_edi_payment_method_id'] = self.payment_method_id.payment_method_c.id
         vals['l10n_mx_edi_usage'] = self.l10n_mx_edi_usage
         # vals['pricelist_id'] = self.pricelist_id
         _log.info("===================== VALORES PARA LA FACTURA... %s" % vals)
