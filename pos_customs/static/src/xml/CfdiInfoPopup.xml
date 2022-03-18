@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
 
-    <t t-name="SetInvoiceInfoPopupWidget" owl="1">
+   <!-- <t t-name="SetInvoiceInfoPopupWidget" owl="1">
         <div role="dialog" class="modal-dialog">
             <Draggable>
                 <div class="popup">
@@ -9,8 +9,8 @@
                         <t t-esc="props.title" />
                     </header>
                     <div>
-                       <!--<p style="margin: 7px;margin-left: 37px;font-size: 17px;font-style: italic;float: left;">Enter your note.</p>
-                        <textarea class="wv_note" rows="4" cols="40" placeholder="Enter your note........" t-model="state.inputValue" t-ref="input" name="note"></textarea>-->
+                       &lt;!&ndash;<p style="margin: 7px;margin-left: 37px;font-size: 17px;font-style: italic;float: left;">Enter your note.</p>
+                        <textarea class="wv_note" rows="4" cols="40" placeholder="Enter your note........" t-model="state.inputValue" t-ref="input" name="note"></textarea>&ndash;&gt;
                         Selection fields
                     </div>
                     <footer class="footer centered">
@@ -26,6 +26,6 @@
             </Draggable>
 
         </div>
-    </t>
+    </t>-->
 
 </templates>
