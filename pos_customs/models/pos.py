@@ -25,6 +25,8 @@ class PosOrder(models.Model):
         # vals['to_invoice'] = True if ui_order.get('to_invoice') else False
         return vals
     
+    payment_method_id = fields.Many2one('pos.payment.method', "Metodo de Pago", compute="get_payment_method",
+                                        store=True)
     l10n_mx_edi_usage = fields.Selection(
         selection=[
             ('G01', 'Adquisición de mercancías'),
@@ -52,6 +54,16 @@ class PosOrder(models.Model):
         ],
         string="Uso",
         default='P01')
+    # l10n_mx_edi_payment_term = fields
+
+    @api.depends('payment_ids')
+    def get_payment_method(self):
+        for rec in self:
+            formas = {}
+            for pay in rec.payment_ids:
+                formas[pay.payment_method_id.id] = formas.get(pay.payment_method_id.id, 0) + pay.amount
+            met = sorted(formas.items(), key=lambda x: x[1])
+            rec.payment_method_id = met[0] if met else False
 
     def _prepare_invoice_vals(self):
         vals = super(PosOrder, self)._prepare_invoice_vals()
