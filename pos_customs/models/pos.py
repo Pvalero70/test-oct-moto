@@ -16,12 +16,11 @@ class PosOrder(models.Model):
 
     @api.model
     def _order_fields(self, ui_order):
-        _log.info(" UI ORDER ==========>>> %s" % ui_order)
         vals = super()._order_fields(ui_order)
-        _log.info("1 ========= VALS pos order .. ::: %s " % vals)
-        vals['l10n_mx_edi_usage'] = ui_order.get('to_invoice')[0]
+        vals_pos = ui_order.get('to_invoice')
+        if isinstance(vals_pos, list):
+            vals['l10n_mx_edi_usage'] = vals_pos[0]
         vals['to_invoice'] = True if ui_order.get('to_invoice') else False
-        _log.info("2 ========= VALS pos order .. ::: %s " % vals)
         # vals['to_invoice'] = True if ui_order.get('to_invoice') else False
         return vals
     
