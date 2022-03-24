@@ -11,14 +11,14 @@ var rpc = require('web.rpc');
         class extends PaymentScreen{
             constructor() {
                 super(...arguments);
-                this.variable_prueba = ["uno", "dos", "tres"];
+                this.variable_prueba = [];
             }
-            /*
+
             async setInvoiceInfo(){
                 console.log("____Lanzando popup de Metodo de pago");
-                await this.showPopup('SetInvoiceInfoPopupWidget');
+                return [1,2,3,4,56]
             }
-            */
+
 
             async _finalizeValidation() {
             if ((this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) && this.env.pos.config.iface_cashdrawer) {
