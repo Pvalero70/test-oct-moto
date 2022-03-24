@@ -17,7 +17,12 @@
             <h3>La cosa: </h3><br/>
             <t t-esc="env"/>
             <h3>La cosa2: </h3><br/>
-            <t t-esc="variable_prueba"/>
+<!--            <t t-esc="variable_prueba"/>-->
+             <t t-foreach="variable_prueba" t-as="va">
+                 <br/>
+                <t t-esc="va"/>
+            </t>
+
             <!--
             <select id="formview_default_fields" class="o_input" t-model="state.fieldToSet">
                         <option value=""/>
