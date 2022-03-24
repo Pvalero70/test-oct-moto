@@ -100,13 +100,13 @@ class PosOrder(models.Model):
             moves += new_move
             # Check if need a payment.
             _log.info(" PAYMENT TERM ID :: %s  y sus lineas:: %s " % (order.cfdi_payment_term_id, order.cfdi_payment_term_id.line_ids))
-            payment_term_line = order.cfdi_payment_term_id.line_ids[-1:]
+            # payment_term_line = order.cfdi_payment_term_id.line_ids[-1:]
+            # termino.filtered(lambda x: x.line_ids.filtered(lambda y: y.value_amount == 0 and y.days ==0))
+            payment_term_line = order.cfdi_payment_term_id.line_ids.filtered(lambda y: y.value_amount == 0 and y.days == 0)
             _log.info(" LINEA DE TERMINO DE PAGO <.. :: %s " % payment_term_line)
             if payment_term_line:
-                if payment_term_line.days == 0:
-                    _log.info("___PAGAR YA !______")
-                    order._apply_invoice_payments()
-
+                _log.info("___PAGAR YA !______")
+                order._apply_invoice_payments()
         if not moves:
             return {}
 
