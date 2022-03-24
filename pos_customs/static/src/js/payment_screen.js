@@ -24,6 +24,7 @@ var rpc = require('web.rpc');
                 console.log("VALORES:: ");
                 console.log(vals);
                 this.payment_termss = vals;
+                this.render();
             }
 
 
