@@ -89,7 +89,8 @@ class PosOrder(models.Model):
                 raise UserError(_('Please provide a partner for the sale.'))
             move_vals = order._prepare_invoice_vals()
             new_move = order._create_invoice(move_vals)
-
+            # Check if need to be ppd or pue.
+            new_move._compute_l10n_mx_edi_payment_policy()
             order.write({'account_move': new_move.id, 'state': 'invoiced'})
             new_move.sudo().with_company(order.company_id)._post()
             moves += new_move
