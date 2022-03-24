@@ -15,20 +15,18 @@
                 </div>
             </t>
 
-             <t t-foreach="variable_prueba" t-as="va">
+          <!--   <t t-foreach="payment_termss" t-as="va">
                  <br/>
                 <t t-esc="va"/>
-            </t>
+            </t>-->
 
-            <!--
-            <select id="formview_default_fields" class="o_input" t-model="state.fieldToSet">
-                        <option value=""/>
-                        <option t-foreach="defaultFields" t-as="field"
-                                t-att-value="field.name">
-                            <t t-esc="field.string"/> = <t t-esc="field.displayed"/>
-                        </option>
-                    </select>
-            -->
+            <select id="payment_termss_selection" class="o_input">
+<!--                <option value=""/>-->
+                <option t-foreach="payment_termss" t-as="pt"
+                        t-att-value="pt[0]">
+                    <t t-esc="pt[1]"/>
+                </option>
+            </select>
 
             <!--<div class="button" t-on-click="setInvoiceInfo">
                 <i class="fa fa-qrcode"/> Método de pago / Uso CFDI

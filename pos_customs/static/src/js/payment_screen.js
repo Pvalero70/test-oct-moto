@@ -11,27 +11,19 @@ var rpc = require('web.rpc');
         class extends PaymentScreen{
             constructor() {
                 super(...arguments);
-                this.variable_prueba;
+                this.payment_termss;
                 this.setInvoiceInfo();
             }
 
             async setInvoiceInfo(){
-                console.log("____Lanzando popup de Metodo de pago");
-                this.variable_prueba = [1,2,3,4,56];
                 let vals = await this.rpc({
                             model: 'account.payment.term',
                             method: 'get_all_terms',
                             args: [],
-                        });2
+                        });
                 console.log("VALORES:: ");
                 console.log(vals);
-                /*if(vals){
-                    return JSON.parse(vals);
-                }
-                else{
-                    return false
-                }*/
-                this.render();
+                this.payment_termss = vals;
             }
 
 
