@@ -21,8 +21,6 @@ var rpc = require('web.rpc');
                             method: 'get_all_terms',
                             args: [],
                         });
-                console.log("VALORES:: ");
-                console.log(vals);
                 this.payment_termss = vals;
                 this.render();
             }
@@ -40,9 +38,7 @@ var rpc = require('web.rpc');
 
             try {
                 if (this.currentOrder.is_to_invoice()) {
-                    console.log(" Current order :: ");
-                    console.log(this.currentOrder);
-                   this.currentOrder.to_invoice = [$("#cfdi_usage_sel").val()];
+                   this.currentOrder.to_invoice = [$("#cfdi_usage_sel").val(),$("#payment_termss_selection").val()];
                     // this.currentOrder.cfdi_usage = $("#cfdi_usage_sel").val();
 
                     syncedOrderBackendIds = await this.env.pos.push_and_invoice_order(

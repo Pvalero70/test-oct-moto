@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
+from odoo.exceptions import ValidationError, UserError
 import logging
 _log = logging.getLogger("___name: %s" % __name__)
 
@@ -20,10 +21,12 @@ class PosOrder(models.Model):
         vals_pos = ui_order.get('to_invoice')
         if isinstance(vals_pos, list):
             vals['l10n_mx_edi_usage'] = vals_pos[0]
+            vals['cfdi_payment_term_id'] = vals_pos[1]
         vals['to_invoice'] = True if ui_order.get('to_invoice') else False
         # vals['to_invoice'] = True if ui_order.get('to_invoice') else False
         return vals
-    
+
+    cfdi_payment_term_id = fields.Many2one('account.payment.term', 'Terminos de pago')
     payment_method_id = fields.Many2one('pos.payment.method', "Metodo de Pago", compute="get_payment_method",
                                         store=True)
     l10n_mx_edi_usage = fields.Selection(
@@ -68,9 +71,49 @@ class PosOrder(models.Model):
         vals = super(PosOrder, self)._prepare_invoice_vals()
         vals['l10n_mx_edi_payment_method_id'] = self.payment_method_id.payment_method_c.id
         vals['l10n_mx_edi_usage'] = self.l10n_mx_edi_usage
+        vals['invoice_parment_term_id'] = self.cfdi_payment_term_id.id
         # vals['pricelist_id'] = self.pricelist_id
         _log.info("===================== VALORES PARA LA FACTURA... %s" % vals)
         return vals
+
+    def _generate_pos_order_invoice(self):
+        moves = self.env['account.move']
+
+        for order in self:
+            # Force company for all SUPERUSER_ID action
+            if order.account_move:
+                moves += order.account_move
+                continue
+
+            if not order.partner_id:
+                raise UserError(_('Please provide a partner for the sale.'))
+            move_vals = order._prepare_invoice_vals()
+            new_move = order._create_invoice(move_vals)
+
+            order.write({'account_move': new_move.id, 'state': 'invoiced'})
+            new_move.sudo().with_company(order.company_id)._post()
+            moves += new_move
+            # Check if need a payment.
+            payment_term_line = order.cfdi_payment_term_id.line_ids.filtered(lambda x: x.value == "balance")[-1:]
+            if payment_term_line:
+                if payment_term_line.days == 0:
+                    order._apply_invoice_payments()
+
+        if not moves:
+            return {}
+
+        return {
+            'name': _('Customer Invoice'),
+            'view_mode': 'form',
+            'view_id': self.env.ref('account.view_move_form').id,
+            'res_model': 'account.move',
+            'context': "{'move_type':'out_invoice'}",
+            'type': 'ir.actions.act_window',
+            'nodestroy': True,
+            'target': 'current',
+            'res_id': moves and moves.ids[0] or False,
+        }
+
 """
     def action_pos_order_invoice(self):
         moves = self.env['account.move']
