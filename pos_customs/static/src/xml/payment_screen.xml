@@ -18,7 +18,7 @@
             <t t-esc="env"/>
             <h3>La cosa2: </h3><br/>
 <!--            <t t-esc="variable_prueba"/>-->
-             <t t-foreach="setInvoiceInfo" t-as="va">
+             <t t-foreach="variable_prueba" t-as="va">
                  <br/>
                 <t t-esc="va"/>
             </t>

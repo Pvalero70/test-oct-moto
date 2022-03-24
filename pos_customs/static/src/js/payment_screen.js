@@ -11,7 +11,7 @@ var rpc = require('web.rpc');
         class extends PaymentScreen{
             constructor() {
                 super(...arguments);
-                this.variable_prueba = [];
+                this.variable_prueba = this.setInvoiceInfo();
             }
 
             async setInvoiceInfo(){
