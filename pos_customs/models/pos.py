@@ -71,6 +71,10 @@ class PosOrder(models.Model):
         vals = super(PosOrder, self)._prepare_invoice_vals()
         vals['l10n_mx_edi_payment_method_id'] = self.payment_method_id.payment_method_c.id
         vals['l10n_mx_edi_usage'] = self.l10n_mx_edi_usage
+
+        # Es necesario recalcular la fecha de vencimiento en la factura en base a los días de pago establecidos en el termino de pago
+        # Ya que por default pone como fecha de vencimiento la misma fecha de la factura.
+
         vals['invoice_payment_term_id'] = self.cfdi_payment_term_id.id
         # vals['pricelist_id'] = self.pricelist_id
         _log.info("===================== VALORES PARA LA FACTURA... %s" % vals)
