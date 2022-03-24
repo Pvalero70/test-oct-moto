@@ -13,24 +13,15 @@
                         <option value="P01">Por definir</option>
                     </select>
                 </div>
+                 <div class="text-center" style="margin-top:10px;">
+                    <select id="payment_termss_selection" style="width:270px;height:50px">
+                        <option t-foreach="payment_termss" t-as="pt" t-att-value="pt[0]">
+                            <t t-esc="pt[1]"/>
+                        </option>
+                    </select>
+                 </div>
             </t>
 
-          <!--   <t t-foreach="payment_termss" t-as="va">
-                 <br/>
-                <t t-esc="va"/>
-            </t>-->
-
-            <select id="payment_termss_selection" class="o_input">
-<!--                <option value=""/>-->
-                <option t-foreach="payment_termss" t-as="pt"
-                        t-att-value="pt[0]">
-                    <t t-esc="pt[1]"/>
-                </option>
-            </select>
-
-            <!--<div class="button" t-on-click="setInvoiceInfo">
-                <i class="fa fa-qrcode"/> Método de pago / Uso CFDI
-            </div>-->
 
             <!--
             <div class="invoicing-info">
