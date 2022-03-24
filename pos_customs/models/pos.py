@@ -95,7 +95,7 @@ class PosOrder(models.Model):
             new_move.sudo().with_company(order.company_id)._post()
             moves += new_move
             # Check if need a payment.
-            _log.info(" PAYMENT TERM ID :: %s " % order.cfdi_payment_term_id)
+            _log.info(" PAYMENT TERM ID :: %s  y sus lineas:: %s " % (order.cfdi_payment_term_id, order.cfdi_payment_term_id.line_ids))
             payment_term_line = order.cfdi_payment_term_id.line_ids[-1:]
             _log.info(" LINEA DE TERMINO DE PAGO <.. :: %s " % payment_term_line)
             if payment_term_line:
