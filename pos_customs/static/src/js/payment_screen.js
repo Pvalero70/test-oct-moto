@@ -18,6 +18,19 @@ var rpc = require('web.rpc');
             async setInvoiceInfo(){
                 console.log("____Lanzando popup de Metodo de pago");
                 this.variable_prueba = [1,2,3,4,56];
+                let vals = await this.rpc({
+                            model: 'account.payment.term',
+                            method: 'get_all_terms',
+                            args: [],
+                        });2
+                console.log("VALORES:: ");
+                console.log(vals);
+                /*if(vals){
+                    return JSON.parse(vals);
+                }
+                else{
+                    return false
+                }*/
                 this.render();
             }
 
