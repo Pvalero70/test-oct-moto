@@ -71,7 +71,7 @@ class PosOrder(models.Model):
         vals = super(PosOrder, self)._prepare_invoice_vals()
         vals['l10n_mx_edi_payment_method_id'] = self.payment_method_id.payment_method_c.id
         vals['l10n_mx_edi_usage'] = self.l10n_mx_edi_usage
-        vals['invoice_parment_term_id'] = self.cfdi_payment_term_id.id
+        vals['invoice_payment_term_id'] = self.cfdi_payment_term_id.id
         # vals['pricelist_id'] = self.pricelist_id
         _log.info("===================== VALORES PARA LA FACTURA... %s" % vals)
         return vals
