@@ -14,6 +14,19 @@
                     </select>
                 </div>
             </t>
+            <h3>La cosa: </h3><br/>
+            <t t-esc="env"/>
+            <h3>La cosa2: </h3><br/>
+            <t t-esc="variable_prueba"/>
+            <!--
+            <select id="formview_default_fields" class="o_input" t-model="state.fieldToSet">
+                        <option value=""/>
+                        <option t-foreach="defaultFields" t-as="field"
+                                t-att-value="field.name">
+                            <t t-esc="field.string"/> = <t t-esc="field.displayed"/>
+                        </option>
+                    </select>
+            -->
 
             <!--<div class="button" t-on-click="setInvoiceInfo">
                 <i class="fa fa-qrcode"/> Método de pago / Uso CFDI
