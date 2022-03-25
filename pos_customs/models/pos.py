@@ -108,7 +108,9 @@ class PosOrder(models.Model):
             moves += new_move
             # Check if need a payment.
             _log.info("ORDER PAYMENT TERM ID :: %s  y sus lineas:: %s " % (order.cfdi_payment_term_id, order.cfdi_payment_term_id.line_ids))
-            _log.info("INVOICE PAYMENT TERM ID :: %s  y sus lineas:: %s " % (new_move.payment_term_id, new_move.payment_term_id.line_ids))
+            _log.info("INVOICE PAYMENT TERM ID :: %s  y sus lineas:: %s " % (new_move.invoice_payment_term_id, new_move.invoice_payment_term_id.line_ids))
+            _log.info(" FECHA DE  DE FAC:: %s " % new_move.invoice_date)
+            _log.info(" FECHA DE VENCIMIENTO DE FAC:: %s " % new_move.invoice_date_due)
             # payment_term_line = order.cfdi_payment_term_id.line_ids[-1:]
             # termino.filtered(lambda x: x.line_ids.filtered(lambda y: y.value_amount == 0 and y.days ==0))
             # payment_term_line = order.cfdi_payment_term_id.line_ids.filtered(lambda y: y.value_amount == 0 and y.days == 0 and y.option == "day_after_invoice_date")
