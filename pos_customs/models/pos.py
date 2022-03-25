@@ -112,12 +112,19 @@ class PosOrder(models.Model):
             _log.info(" FECHA DE  DE FAC:: %s " % new_move.invoice_date)
             _log.info(" FECHA DE VENCIMIENTO DE FAC:: %s " % new_move.invoice_date_due)
             # payment_term_line = order.cfdi_payment_term_id.line_ids[-1:]
-            # termino.filtered(lambda x: x.line_ids.filtered(lambda y: y.value_amount == 0 and y.days ==0))
+            line_zerodays = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.value_amount == 0 and x.days == 0 and x.option == "day_after_invoice_date")
             # payment_term_line = order.cfdi_payment_term_id.line_ids.filtered(lambda y: y.value_amount == 0 and y.days == 0 and y.option == "day_after_invoice_date")
             # _log.info(" LINEA DE TERMINO DE PAGO <.. :: %s " % payment_term_line)
-            # if payment_term_line:
-            #     _log.info("___PAGAR YA !______")
-            #     order._apply_invoice_payments()
+            if line_zerodays:
+                _log.info("___PAGAR YA !______")
+                order._apply_invoice_payments()
+            else:
+                # Si el payment term es dif de cero días..
+                delta_days = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.days > 0 and x.option == "day_after_invoice_date")[:1].days
+                new_move.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
+                _log.info("NUEVA FECHA DE VENCIMIENTO::: %s " % new_move.invoice_date_due)
+                new_move._compute_l10n_mx_edi_payment_policy()
+
         if not moves:
             return {}
 
