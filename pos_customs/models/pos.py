@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
+from dateutil.relativedelta import relativedelta
 import logging
 _log = logging.getLogger("___name: %s" % __name__)
 
@@ -71,12 +72,18 @@ class PosOrder(models.Model):
         vals = super(PosOrder, self)._prepare_invoice_vals()
         vals['l10n_mx_edi_payment_method_id'] = self.payment_method_id.payment_method_c.id
         vals['l10n_mx_edi_usage'] = self.l10n_mx_edi_usage
+        vals['invoice_payment_term_id'] = self.cfdi_payment_term_id.id
+
+        # Compute invoice due date, if needed
+        payment_term_lines = self.cfdi_payment_term_id.line_ids
+        _log.info("\n\n Lineas del termino de pago:: %s " % payment_term_lines)
+        ptline = payment_term_lines.filtered(lambda y: y.option == "day_after_invoice_date")
+        delta_days = ptline.days
+        vals['invoice_date_due'] = fields.Date.today() + relativedelta(days=delta_days)
 
         # Es necesario recalcular la fecha de vencimiento en la factura en base a los días de pago establecidos en el termino de pago
         # Ya que por default pone como fecha de vencimiento la misma fecha de la factura.
 
-        vals['invoice_payment_term_id'] = self.cfdi_payment_term_id.id
-        # vals['pricelist_id'] = self.pricelist_id
         _log.info("===================== VALORES PARA LA FACTURA... %s" % vals)
         return vals
 
@@ -94,15 +101,16 @@ class PosOrder(models.Model):
             move_vals = order._prepare_invoice_vals()
             new_move = order._create_invoice(move_vals)
             # Check if need to be ppd or pue.
-            new_move._compute_l10n_mx_edi_payment_policy()
+            # new_move._compute_l10n_mx_edi_payment_policy()
             order.write({'account_move': new_move.id, 'state': 'invoiced'})
             new_move.sudo().with_company(order.company_id)._post()
             moves += new_move
             # Check if need a payment.
-            _log.info(" PAYMENT TERM ID :: %s  y sus lineas:: %s " % (order.cfdi_payment_term_id, order.cfdi_payment_term_id.line_ids))
+            _log.info("ORDER PAYMENT TERM ID :: %s  y sus lineas:: %s " % (order.cfdi_payment_term_id, order.cfdi_payment_term_id.line_ids))
+            _log.info("INVOICE PAYMENT TERM ID :: %s  y sus lineas:: %s " % (new_move.payment_term_id, new_move.payment_term_id.line_ids))
             # payment_term_line = order.cfdi_payment_term_id.line_ids[-1:]
             # termino.filtered(lambda x: x.line_ids.filtered(lambda y: y.value_amount == 0 and y.days ==0))
-            payment_term_line = order.cfdi_payment_term_id.line_ids.filtered(lambda y: y.value_amount == 0 and y.days == 0)
+            payment_term_line = order.cfdi_payment_term_id.line_ids.filtered(lambda y: y.value_amount == 0 and y.days == 0 and y.option == "day_after_invoice_date")
             _log.info(" LINEA DE TERMINO DE PAGO <.. :: %s " % payment_term_line)
             if payment_term_line:
                 _log.info("___PAGAR YA !______")
@@ -121,41 +129,3 @@ class PosOrder(models.Model):
             'target': 'current',
             'res_id': moves and moves.ids[0] or False,
         }
-
-"""
-    def action_pos_order_invoice(self):
-        moves = self.env['account.move']
-
-        for order in self:
-            # Force company for all SUPERUSER_ID action
-            if order.account_move:
-                moves += order.account_move
-                continue
-
-            if not order.partner_id:
-                raise UserError(_('Please provide a partner for the sale.'))
-
-            move_vals = order._prepare_invoice_vals()
-            new_move = order._create_invoice(move_vals)
-            order.write({'account_move': new_move.id, 'state': 'invoiced'})
-            new_move.sudo().with_company(order.company_id)._post()
-            moves += new_move
-            # Avoid auto payments 
-            # order._apply_invoice_payments()  
-        # moves.action_process_edi_web_services()
-        if not moves:
-            return {}
-
-        return {
-            'name': _('Customer Invoice'),
-            'view_mode': 'form',
-            'view_id': self.env.ref('account.view_move_form').id,
-            'res_model': 'account.move',
-            'context': "{'move_type':'out_invoice'}",
-            'type': 'ir.actions.act_window',
-            'nodestroy': True,
-            'target': 'current',
-            'res_id': moves and moves.ids[0] or False,
-        }
-
-    """
