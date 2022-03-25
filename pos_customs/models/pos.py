@@ -75,12 +75,12 @@ class PosOrder(models.Model):
         vals['invoice_payment_term_id'] = self.cfdi_payment_term_id.id
 
         # Compute invoice due date, if needed
-        payment_term_lines = self.cfdi_payment_term_id.line_ids
-        _log.info("\n\n Lineas del termino de pago:: %s " % payment_term_lines)
-        ptline = payment_term_lines.filtered(lambda y: y.option == "day_after_invoice_date" and y.days > 0)
-        if ptline:
-            delta_days = ptline.days
-            vals['invoice_date_due'] = fields.Date.today() + relativedelta(days=delta_days)
+        # payment_term_lines = self.cfdi_payment_term_id.line_ids
+        # _log.info("\n\n Lineas del termino de pago:: %s " % payment_term_lines)
+        # ptline = payment_term_lines.filtered(lambda y: y.option == "day_after_invoice_date" and y.days > 0)
+        # if ptline:
+        #     delta_days = ptline.days
+        #     vals['invoice_date_due'] = fields.Date.today() + relativedelta(days=delta_days)
 
         # Es necesario recalcular la fecha de vencimiento en la factura en base a los días de pago establecidos en el termino de pago
         # Ya que por default pone como fecha de vencimiento la misma fecha de la factura.
@@ -107,15 +107,15 @@ class PosOrder(models.Model):
             new_move.sudo().with_company(order.company_id)._post()
             moves += new_move
             # Check if need a payment.
-            _log.info("ORDER PAYMENT TERM ID :: %s  y sus lineas:: %s " % (order.cfdi_payment_term_id, order.cfdi_payment_term_id.line_ids))
-            _log.info("INVOICE PAYMENT TERM ID :: %s  y sus lineas:: %s " % (new_move.payment_term_id, new_move.payment_term_id.line_ids))
+            # _log.info("ORDER PAYMENT TERM ID :: %s  y sus lineas:: %s " % (order.cfdi_payment_term_id, order.cfdi_payment_term_id.line_ids))
+            # _log.info("INVOICE PAYMENT TERM ID :: %s  y sus lineas:: %s " % (new_move.payment_term_id, new_move.payment_term_id.line_ids))
             # payment_term_line = order.cfdi_payment_term_id.line_ids[-1:]
             # termino.filtered(lambda x: x.line_ids.filtered(lambda y: y.value_amount == 0 and y.days ==0))
-            payment_term_line = order.cfdi_payment_term_id.line_ids.filtered(lambda y: y.value_amount == 0 and y.days == 0 and y.option == "day_after_invoice_date")
-            _log.info(" LINEA DE TERMINO DE PAGO <.. :: %s " % payment_term_line)
-            if payment_term_line:
-                _log.info("___PAGAR YA !______")
-                order._apply_invoice_payments()
+            # payment_term_line = order.cfdi_payment_term_id.line_ids.filtered(lambda y: y.value_amount == 0 and y.days == 0 and y.option == "day_after_invoice_date")
+            # _log.info(" LINEA DE TERMINO DE PAGO <.. :: %s " % payment_term_line)
+            # if payment_term_line:
+            #     _log.info("___PAGAR YA !______")
+            #     order._apply_invoice_payments()
         if not moves:
             return {}
 
