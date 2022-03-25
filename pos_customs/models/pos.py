@@ -24,7 +24,6 @@ class PosOrder(models.Model):
             vals['l10n_mx_edi_usage'] = vals_pos[0]
             vals['cfdi_payment_term_id'] = vals_pos[1]
         vals['to_invoice'] = True if ui_order.get('to_invoice') else False
-        # vals['to_invoice'] = True if ui_order.get('to_invoice') else False
         return vals
 
     cfdi_payment_term_id = fields.Many2one('account.payment.term', 'Terminos de pago')
@@ -57,7 +56,6 @@ class PosOrder(models.Model):
         ],
         string="Uso",
         default='P01')
-    # l10n_mx_edi_payment_term = fields
 
     @api.depends('payment_ids')
     def get_payment_method(self):
@@ -74,18 +72,6 @@ class PosOrder(models.Model):
         vals['l10n_mx_edi_usage'] = self.l10n_mx_edi_usage
         vals['invoice_payment_term_id'] = self.cfdi_payment_term_id.id
 
-        # Compute invoice due date, if needed
-        # payment_term_lines = self.cfdi_payment_term_id.line_ids
-        # _log.info("\n\n Lineas del termino de pago:: %s " % payment_term_lines)
-        # ptline = payment_term_lines.filtered(lambda y: y.option == "day_after_invoice_date" and y.days > 0)
-        # if ptline:
-        #     delta_days = ptline.days
-        #     vals['invoice_date_due'] = fields.Date.today() + relativedelta(days=delta_days)
-
-        # Es necesario recalcular la fecha de vencimiento en la factura en base a los días de pago establecidos en el termino de pago
-        # Ya que por default pone como fecha de vencimiento la misma fecha de la factura.
-
-        _log.info("===================== VALORES PARA LA FACTURA... %s" % vals)
         return vals
 
     def _generate_pos_order_invoice(self):
@@ -101,28 +87,15 @@ class PosOrder(models.Model):
                 raise UserError(_('Please provide a partner for the sale.'))
             move_vals = order._prepare_invoice_vals()
             new_move = order._create_invoice(move_vals)
-            # Check if need to be ppd or pue.
-            # new_move._compute_l10n_mx_edi_payment_policy()
             order.write({'account_move': new_move.id, 'state': 'invoiced'})
             new_move.sudo().with_company(order.company_id)._post()
             moves += new_move
-            # Check if need a payment.
-            _log.info("ORDER PAYMENT TERM ID :: %s  y sus lineas:: %s " % (order.cfdi_payment_term_id, order.cfdi_payment_term_id.line_ids))
-            _log.info("INVOICE PAYMENT TERM ID :: %s  y sus lineas:: %s " % (new_move.invoice_payment_term_id, new_move.invoice_payment_term_id.line_ids))
-            _log.info(" FECHA DE  DE FAC:: %s " % new_move.invoice_date)
-            _log.info(" FECHA DE VENCIMIENTO DE FAC:: %s " % new_move.invoice_date_due)
-            # payment_term_line = order.cfdi_payment_term_id.line_ids[-1:]
             line_zerodays = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.value_amount == 0 and x.days == 0 and x.option == "day_after_invoice_date")
-            # payment_term_line = order.cfdi_payment_term_id.line_ids.filtered(lambda y: y.value_amount == 0 and y.days == 0 and y.option == "day_after_invoice_date")
-            # _log.info(" LINEA DE TERMINO DE PAGO <.. :: %s " % payment_term_line)
             if line_zerodays:
-                _log.info("___PAGAR YA !______")
                 order._apply_invoice_payments()
             else:
-                # Si el payment term es dif de cero días..
                 delta_days = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.days > 0 and x.option == "day_after_invoice_date")[:1].days
                 new_move.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
-                _log.info("NUEVA FECHA DE VENCIMIENTO::: %s " % new_move.invoice_date_due)
                 new_move._compute_l10n_mx_edi_payment_policy()
 
         if not moves:

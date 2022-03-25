@@ -10,7 +10,6 @@ class PaymentTermUi(models.Model):
 
     @api.model
     def get_all_terms(self):
-        _log.info("Obteniedo la lista de terminos de pago:: ")
         result = self.env['account.payment.term'].sudo().search([])
         if result:
             fres = []
