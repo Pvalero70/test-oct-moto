@@ -77,9 +77,10 @@ class PosOrder(models.Model):
         # Compute invoice due date, if needed
         payment_term_lines = self.cfdi_payment_term_id.line_ids
         _log.info("\n\n Lineas del termino de pago:: %s " % payment_term_lines)
-        ptline = payment_term_lines.filtered(lambda y: y.option == "day_after_invoice_date")
-        delta_days = ptline.days
-        vals['invoice_date_due'] = fields.Date.today() + relativedelta(days=delta_days)
+        ptline = payment_term_lines.filtered(lambda y: y.option == "day_after_invoice_date" and y.days > 0)
+        if ptline:
+            delta_days = ptline.days
+            vals['invoice_date_due'] = fields.Date.today() + relativedelta(days=delta_days)
 
         # Es necesario recalcular la fecha de vencimiento en la factura en base a los días de pago establecidos en el termino de pago
         # Ya que por default pone como fecha de vencimiento la misma fecha de la factura.
