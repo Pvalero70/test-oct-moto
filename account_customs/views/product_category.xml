@@ -7,12 +7,9 @@
         <field name="arch" type="xml">
             <group name="logistics" position="after">
                 <group string="Account custom">
-                    <field name="target_journal_id"/>
+                    <field name="target_journal_id" options="{'no_create': True}"/>
                 </group>
             </group>
-          <!--  <xpath expr="//field[@name='property_valuation']" position="after">
-                <field name="target_journal_id"/>
-            </xpath>-->
         </field>
     </record>
 </odoo>
