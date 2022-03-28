@@ -5,9 +5,9 @@
         <field name="model">product.category</field>
         <field name="inherit_id" ref="stock.product_category_form_view_inherit"/>
         <field name="arch" type="xml">
-            <group name="logistics" position="after">
-                    <field name="target_journal_id" options="{'no_create': True}"/>
-            </group>
+            <field name="packaging_reserve_method" position="after">
+                <field name="target_journal_id" options="{'no_create': True}"/>
+            </field>
         </field>
     </record>
 </odoo>
