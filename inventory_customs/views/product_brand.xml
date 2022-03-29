@@ -27,7 +27,7 @@
                     <sheet>
                         <field name="brand_image"  widget="image" class="oe_avatar"/>
                         <div class="oe_title">
-                            <label for="name" class="oe_edit_only" string="Brand Name"/>
+                            <label for="name" class="oe_edit_only" string="Nombre de marca"/>
                             <h1>
                                 <field name="name"/>
                             </h1>
@@ -36,7 +36,7 @@
 
 
                         <notebook>
-                            <page string="Products">
+                            <page string="Productos">
                                 <field name="member_ids" widget="many2many" options="{'not_delete': True}">
                                     <kanban quick_create="false" create="true" delete="true">
                                         <field name="id"/>
@@ -68,13 +68,13 @@
             <field name="inherit_id" ref="product.product_template_search_view"/>
             <field name="arch" type="xml">
                 <xpath expr="//search" position="inside">
-                      <filter string="Brand" name="Brand" context="{'group_by':'brand_id'}"/>
+                      <filter string="Marca" name="Brand" context="{'group_by':'brand_id'}"/>
                 </xpath>
             </field>
         </record>
 
          <menuitem id="brand_product_sale"
-                   name="Product Brands"
+                   name="Marcas de productos"
                    parent="sale.product_menu_catalog"
                    sequence="3"
                    action="product_brand_action"/>

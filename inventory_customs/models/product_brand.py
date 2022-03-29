@@ -5,6 +5,6 @@ from odoo import models, fields, api
 class BrandProduct(models.Model):
     _name = 'product.brand'
 
-    name = fields.Char(String="Name")
+    name = fields.Char()
     brand_image = fields.Binary()
     member_ids = fields.One2many('product.template', 'brand_id')
