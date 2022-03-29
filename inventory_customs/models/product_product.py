@@ -14,3 +14,8 @@ class ProductTemplateCus(models.Model):
         ('accesorio', 'Accesorio'),
         ('servicio', 'Servicio')
     ])
+
+    # Marca, Número de motor, Modelo, Color, Cilindros y Desplazamiento. Cuando un producto sea refacción, accesorio u otro, deberá de llevar el campo de Marca
+
+    brand_id = fields.Many2one('product.brand', string='Marca')
+

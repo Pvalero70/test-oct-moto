@@ -6,7 +6,6 @@
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
             <field name="detailed_type" position="after">
-                <h3>Hola</h3>
                 <field name="product_inv_categ" string="Categoria INV"/>
             </field>
         </field>
