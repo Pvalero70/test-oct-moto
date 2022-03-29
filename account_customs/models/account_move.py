@@ -16,6 +16,8 @@ class AccountMoveCustoms(models.Model):
             # Identificar si es una factura de venta...
             if inv.move_type not in ['out_invoice']:
                 continue
+            if inv.name and inv.name != '/':
+                continue
             # Buscamos la primer categoría encontrada que tenga asignada un diario.
             product_id = inv.invoice_line_ids.mapped('product_id').filtered(
                 lambda p: p.categ_id.target_journal_id is not False)
