@@ -6,7 +6,7 @@
     'website': 'https://isaaccv.ml',
     "depends": ["base"],
     "data": [
-        'views/product_product.xml'
+        # 'views/product_product.xml'
     ],
     'assets': {
     },
