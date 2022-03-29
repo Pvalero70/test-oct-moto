@@ -13,4 +13,4 @@ class ProductTemplateCus(models.Model):
         ('refaccion', 'Refacción'),
         ('accesorio', 'Accesorio'),
         ('servicio', 'Servicio')
-    ], string="Categoria de producto")
+    ])
