@@ -18,4 +18,8 @@ class ProductTemplateCus(models.Model):
     # Marca, Número de motor, Modelo, Color, Cilindros y Desplazamiento. Cuando un producto sea refacción, accesorio u otro, deberá de llevar el campo de Marca
 
     brand_id = fields.Many2one('product.brand', string='Marca')
+    moto_model = fields.Char(string="Modelo")
+    moto_color = fields.Char(string="Color")
+    moto_cilindros = fields.Integer(string="Cilindros")
+    moto_despl = fields.Float(string="Desplazamiento")
 
