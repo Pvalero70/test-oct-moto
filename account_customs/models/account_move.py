@@ -32,7 +32,7 @@ class AccountMoveCustoms(models.Model):
             if inv_journal_id is not None:
                 vals['journal_id'] = inv_journal_id
 
-        _log.info("\n DEBUG [BEFORE] :: %s " % vals_list)
+        _log.info("\n DEBUG [AFTER] :: %s " % vals_list)
         invoices =super(AccountMoveCustoms, self).create(vals_list)
         # for inv in invoices:
         #     # Identificar si es una factura de venta...
