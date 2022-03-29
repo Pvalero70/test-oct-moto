@@ -10,6 +10,7 @@ class AccountMoveCustoms(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        _log.info("\n DEBUG [create invoice before vals] :: %s " % vals_list)
         invoices =super(AccountMoveCustoms, self).create(vals_list)
         for inv in invoices:
             # Identificar si es una factura de venta...
@@ -20,5 +21,8 @@ class AccountMoveCustoms(models.Model):
                 lambda p: p.categ_id.target_journal_id is not False)
             if product_id:
                 journal_id = product_id[:1].categ_id.target_journal_id
+                _log.info("\n Nombre factura::: %s \n Diario:: %s  \n Nombre a mostrar diario:: %s " %
+                          (inv.name, inv.journal_id, inv.journal_id.name))
                 inv.journal_id = journal_id.id
+                _log.info("\n\n Diario asignado:: %s - %s  " % (inv.journal_id.name, inv.journal_id))
         return invoices
