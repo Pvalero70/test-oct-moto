@@ -14,7 +14,7 @@ class StockMoveLineC(models.Model):
     def _compute_is_moto(self):
         if self.move_id.product_id and self.move_id.product_id.product_inv_categ and self.move_id.product_id.product_inv_categ == "moto":
             self.is_moto = True
-            self = self.with_context(is_moto=True)
+            self = self.with_context(not_is_moto=False)
         else:
             self.is_moto = False
-            self = self.with_context(is_moto=False)
+            self = self.with_context(not_is_moto=True)
