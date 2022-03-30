@@ -8,7 +8,7 @@
             <field name="lot_id" position="after">
                 <field name="is_moto" invisible="0"/>
                 <field name="motor_number"
-                       attrs="{'invisible':[('is_moto', '!=', True)],  'required': [('is_moto', '=', True)]}"/>
+                       attrs="{'invisible':[('parent.product_id.product_inv_categ', 'not in', ['moto'])],  'required': [('is_moto', '=', True)]}"/>
             </field>
         </field>
     </record>
