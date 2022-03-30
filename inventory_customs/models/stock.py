@@ -13,8 +13,6 @@ class StockMoveLineC(models.Model):
 
     def _compute_is_moto(self):
         if self.move_id.product_id and self.move_id.product_id.product_inv_categ and self.move_id.product_id.product_inv_categ == "moto":
-            _log.info("------ES UNA MOTO-")
             self.is_moto = True
         else:
-            _log.info("------- NOOO ES MOTO ")
             self.is_moto = False
