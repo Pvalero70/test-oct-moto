@@ -11,9 +11,10 @@ class StockMoveLineC(models.Model):
     is_moto = fields.Boolean(string="Es motocicleta", compute="_compute_is_moto", store=False)
     motor_number = fields.Char(string="Número de motor")
 
-    @api.depends('move_id')
     def _compute_is_moto(self):
         if self.move_id.product_id and self.move_id.product_id.product_inv_categ and self.move_id.product_id.product_inv_categ == "moto":
+            _log.info("------ES UNA MOTO-")
             self.is_moto = True
         else:
+            _log.info("------- NOOO ES MOTO ")
             self.is_moto = False
