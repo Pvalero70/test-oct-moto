@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <field name="lot_id" position="after">
                 <field name="motor_number"
-                       attrs="{'invisible':[('parent.product_id.product_inv_categ', 'in', ['moto'])]}"/>
+                       attrs="{'invisible':[('move_id.product_id.product_inv_categ', 'in', ['moto'])]}"/>
             </field>
         </field>
     </record>
