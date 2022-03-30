@@ -4,7 +4,7 @@
     'version': '0.01b',
     'author': 'Ing. Isaac Chávez Arroyo',
     'website': 'https://isaaccv.ml',
-    "depends": ["base", "product"],
+    "depends": ["base", "product", "stock"],
     "data": [
         'security/ir.model.access.csv',
         'views/product_product.xml',
