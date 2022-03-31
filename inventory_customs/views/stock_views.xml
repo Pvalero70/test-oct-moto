@@ -8,7 +8,9 @@
             <field name="lot_id" position="after">
                 <field name="is_moto" invisible="1"/>
                 <!--invisible="context.get('not_is_moto', True)"-->
-                <field name="motor_number"/>
+                <!--attrs="{'column_invisible': [('parent.move_type', 'not in', ('out_invoice', 'out_refund'))]}"-->
+                <field name="motor_number"
+                       attrs="{'column_invisible': [('is_moto', '=', True)]}"/>
             </field>
         </field>
     </record>
