@@ -15,6 +15,7 @@
         ],
         'web.assets_qweb': [
             'pos_customs/static/src/xml/payment_screen.xml',
+            'pos_customs/static/src/xml/pos_receipt.xml',
         ],
     },
     'application': True,

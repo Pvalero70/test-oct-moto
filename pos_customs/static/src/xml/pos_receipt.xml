@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension" owl="1">
+        <xpath expr="//t[@t-if='receipt.cashier']" position="after">
+            <h3>Gracias por su compra.</h3>
+    <!--        <div class="cashier" t-if="cliente">
+                <div>Para <t t-esc="cliente.name"/></div>
+            </div>-->
+        </xpath>
+    </t>
+</templates>
