@@ -12,6 +12,7 @@
         'point_of_sale.assets': [
             'pos_customs/static/src/css/payment_screen.css',
             'pos_customs/static/src/js/payment_screen.js',
+            'pos_customs/static/src/js/orderReceipt.js',
         ],
         'web.assets_qweb': [
             'pos_customs/static/src/xml/payment_screen.xml',
