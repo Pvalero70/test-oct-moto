@@ -26,6 +26,7 @@ class PosOrder(models.Model):
         vals['to_invoice'] = True if ui_order.get('to_invoice') else False
         return vals
 
+    salesman_id = fields.Many2one('res.users', string="Vendedor", compute="_compute_salesman", store=True)
     cfdi_payment_term_id = fields.Many2one('account.payment.term', 'Terminos de pago')
     payment_method_id = fields.Many2one('pos.payment.method', "Metodo de Pago", compute="get_payment_method",
                                         store=True)
@@ -112,3 +113,14 @@ class PosOrder(models.Model):
             'target': 'current',
             'res_id': moves and moves.ids[0] or False,
         }
+
+    def _compute_salesman(self):
+        if self.lines:
+            # Search salesman...
+            sale_order = self.lines.mapped('sale_order_origin_id')[:1]
+            if sale_order:
+                self.salesman_id = sale_order.user_id.id
+            else:
+                self.salesman_id = False
+        else:
+            self.salesman_id = False
