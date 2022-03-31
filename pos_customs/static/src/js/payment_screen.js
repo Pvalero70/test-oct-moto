@@ -1,6 +1,5 @@
 odoo.define('pos_customs.PaymentScreenC', function (require) {
 "use strict";
-console.log("Carga el chow");
 
 var models = require('point_of_sale.models');
 const PaymentScreen = require('point_of_sale.PaymentScreen');
