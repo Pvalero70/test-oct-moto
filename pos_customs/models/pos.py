@@ -116,16 +116,8 @@ class PosOrder(models.Model):
 
     def _compute_salesman(self):
         for posord in self:
-            _log.info("____ Calculando el vendedor.. ")
-            # self.salesman_id = 2
             if posord.lines:
-                # Search salesman...
                 sale_order = posord.lines.filtered(lambda l: l.sale_order_origin_id is not False).mapped('sale_order_origin_id')[:1]
-                # for line in self.lines:
-                #     if line.sale_order_origin_id:
-                #         _log.info("______ LINE SOOID:::: %s " % line.sale_order_origin_id)
-                #         self.salesman_id = line.sale_order_origin_id.user_id.id
-                #         return
                 if sale_order:
                     posord.salesman_id = sale_order.user_id.id
                 else:
