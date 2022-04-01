@@ -26,7 +26,7 @@ class PosOrder(models.Model):
         vals['to_invoice'] = True if ui_order.get('to_invoice') else False
         return vals
 
-    salesman_id = fields.Many2one('res.users', string="Vendedor", compute="_compute_salesman", store=True)
+    salesman_id = fields.Many2one('res.users', string="Ejecutivo", compute="_compute_salesman", store=True)
     cfdi_payment_term_id = fields.Many2one('account.payment.term', 'Terminos de pago')
     payment_method_id = fields.Many2one('pos.payment.method', "Metodo de Pago", compute="get_payment_method",
                                         store=True)
