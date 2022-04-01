@@ -124,3 +124,9 @@ class PosOrder(models.Model):
                     posord.salesman_id = False
             else:
                 posord.salesman_id = False
+
+
+class ReportPosOrderCu(models.Model):
+    _inherit = "report.pos.oder"
+
+    salesman_id = fields.Many2one('res.users', 'Ejecutivo', related="order_id.salesman_id", store=True, readonly=True)

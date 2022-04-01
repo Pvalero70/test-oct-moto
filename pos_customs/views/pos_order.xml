@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- POS ORDER -->
     <record id="view_pos_order_salesman_form" model="ir.ui.view">
         <field name="name">view_pos_order_salesman_form</field>
         <field name="model">pos.order</field>
@@ -35,6 +36,36 @@
             </xpath>
             <xpath expr="//filter[@name='user_id']" position="after">
                 <filter string="Ejecutivo" name="gp_salesman" domain="[]" context="{'group_by': 'salesman_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- REPORT POS ORDER -->
+
+    <record id="view_report_pos_order_salesman_form" model="ir.ui.view">
+        <field name="name">view_report_pos_order_salesman_form</field>
+        <field name="model">report.pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.report_pos_order_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_id']" position="after">
+                <field name="salesman_id" force_save="1" readonly="1" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="report_pos_order_list_select_salesman_inherit" model="ir.ui.view">
+        <field name="name">report_pos.order.list.select.salesman.inherit</field>
+        <field name="model">report.pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_report_pos_order_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="before">
+                <field name="salesman_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='User']" position="before">
+                <filter string="Con ejecutivo" name="salesman" domain="[('salesman_id', '!=', False)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='pos']" position="after">
+                <filter string="Ejecutivo" name="gp_salesman" context="{'group_by': 'salesman_id'}"/>
             </xpath>
         </field>
     </record>
