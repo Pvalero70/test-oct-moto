@@ -127,6 +127,6 @@ class PosOrder(models.Model):
 
 
 class ReportPosOrderCu(models.Model):
-    _inherit = "report.pos.oder"
+    _inherit = "report.pos.order"
 
     salesman_id = fields.Many2one('res.users', 'Ejecutivo', related="order_id.salesman_id", store=True, readonly=True)
