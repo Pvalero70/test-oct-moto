@@ -115,7 +115,7 @@ class PosOrder(models.Model):
         }
 
     def _compute_salesman(self):
-        pass
+        self.salesman_id = 2
         # if self.lines:
             # Search salesman...
             # sale_order = self.lines.filtered(lambda l: l.sale_order_origin_id is not False).mapped('sale_order_origin_id')[:1]

@@ -6,7 +6,8 @@
         <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
         <field name="arch" type="xml">
             <field name="user_id" position="after">
-                <field name="salesman_id" force_save="True" widget="many2one_avatar_user"/>
+                <!-- widget="many2one_avatar_user"-->
+                <field name="salesman_id" force_save="True"/>
             </field>
         </field>
     </record>
