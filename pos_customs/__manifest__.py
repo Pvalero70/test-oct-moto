@@ -7,7 +7,7 @@
     "depends": ["base", "point_of_sale", "l10n_mx_edi"],
     "data": [
         'views/pos_conf_views.xml',
-        'views/pos_order.xml'
+        # 'views/pos_order.xml'
     ],
     'assets': {
         'point_of_sale.assets': [

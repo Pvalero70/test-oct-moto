@@ -26,7 +26,7 @@ class PosOrder(models.Model):
         vals['to_invoice'] = True if ui_order.get('to_invoice') else False
         return vals
 
-    salesman_id = fields.Many2one('res.users', string="Vendedor", compute="_compute_salesman", store=True)
+    # salesman_id = fields.Many2one('res.users', string="Vendedor", compute="_compute_salesman", store=True)
     cfdi_payment_term_id = fields.Many2one('account.payment.term', 'Terminos de pago')
     payment_method_id = fields.Many2one('pos.payment.method', "Metodo de Pago", compute="get_payment_method",
                                         store=True)
@@ -114,19 +114,19 @@ class PosOrder(models.Model):
             'res_id': moves and moves.ids[0] or False,
         }
 
-    def _compute_salesman(self):
-        self.salesman_id = 2
-        # if self.lines:
-            # Search salesman...
-            # sale_order = self.lines.filtered(lambda l: l.sale_order_origin_id is not False).mapped('sale_order_origin_id')[:1]
-            # for line in self.lines:
-            #     if line.sale_order_origin_id:
-            #         _log.info("______ LINE SOOID:::: %s " % line.sale_order_origin_id)
-            #         self.salesman_id = line.sale_order_origin_id.user_id.id
-            #         return
-            # if sale_order:
-            #     self.salesman_id = sale_order.user_id.id
-            # else:
-            #     self.salesman_id = False
-        # else:
-        #     self.salesman_id = False
+    # def _compute_salesman(self):
+    #     self.salesman_id = 2
+    #     # if self.lines:
+    #         # Search salesman...
+    #         # sale_order = self.lines.filtered(lambda l: l.sale_order_origin_id is not False).mapped('sale_order_origin_id')[:1]
+    #         # for line in self.lines:
+    #         #     if line.sale_order_origin_id:
+    #         #         _log.info("______ LINE SOOID:::: %s " % line.sale_order_origin_id)
+    #         #         self.salesman_id = line.sale_order_origin_id.user_id.id
+    #         #         return
+    #         # if sale_order:
+    #         #     self.salesman_id = sale_order.user_id.id
+    #         # else:
+    #         #     self.salesman_id = False
+    #     # else:
+    #     #     self.salesman_id = False
