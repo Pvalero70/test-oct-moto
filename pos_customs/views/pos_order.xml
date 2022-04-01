@@ -5,9 +5,6 @@
         <field name="model">pos.order</field>
         <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
         <field name="arch" type="xml">
-<!--            <field name="user_id" position="after">-->
-<!--                &lt;!&ndash; widget="many2one_avatar_user"&ndash;&gt;-->
-<!--            </field>-->
             <xpath expr="//field[@name='amount_total']" position="before">
                 <field name="salesman_id" force_save="True" widget="many2one_avatar_user"/>
             </xpath>

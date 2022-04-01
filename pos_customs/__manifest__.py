@@ -4,10 +4,15 @@
     'version': '0.01b',
     'author': 'Ing. Isaac Chávez Arroyo',
     'website': 'https://isaaccv.ml',
-    "depends": ["base", "point_of_sale", "l10n_mx_edi"],
+    "depends": [
+        "base",
+        "point_of_sale",
+        "l10n_mx_edi",
+        "pos_sale",
+    ],
     "data": [
         'views/pos_conf_views.xml',
-        # 'views/pos_order.xml'
+        'views/pos_order.xml'
     ],
     'assets': {
         'point_of_sale.assets': [
