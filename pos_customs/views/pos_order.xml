@@ -42,7 +42,7 @@
 
     <!-- REPORT POS ORDER -->
 
-    <record id="view_report_pos_order_salesman_form" model="ir.ui.view">
+  <!--  <record id="view_report_pos_order_salesman_form" model="ir.ui.view">
         <field name="name">view_report_pos_order_salesman_form</field>
         <field name="model">report.pos.order</field>
         <field name="inherit_id" ref="point_of_sale.report_pos_order_view_tree"/>
@@ -51,8 +51,8 @@
                 <field name="salesman_id" force_save="1" readonly="1" optional="show"/>
             </xpath>
         </field>
-    </record>
-
+    </record>-->
+<!--
     <record id="report_pos_order_list_select_salesman_inherit" model="ir.ui.view">
         <field name="name">report_pos.order.list.select.salesman.inherit</field>
         <field name="model">report.pos.order</field>
@@ -68,6 +68,44 @@
                 <filter string="Ejecutivo" name="gp_salesman" context="{'group_by': 'salesman_id'}"/>
             </xpath>
         </field>
-    </record>
+    </record>-->
+
+<!--    <record id="report_pos_order_salesman_graph_inherit" model="ir.ui.view">
+        <field name="name">report_pos.order.select.salesman.graph.inherit</field>
+        <field name="model">report.pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_report_pos_order_graph"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='pos']" position="after">
+                <filter string="Ejecutivo" name="gp_salesman" context="{'group_by': 'salesman_id'}"/>
+            </xpath>
+        </field>
+    </record>-->
+
+    <!-- Vistas originales del report.pos.order:
+    <record id="view_report_pos_order_pivot" model="ir.ui.view">
+            <field name="name">report.pos.order.pivot</field>
+            <field name="model">report.pos.order</field>
+            <field name="arch" type="xml">
+                <pivot string="Point of Sale Analysis" sample="1">
+                    <field name="product_categ_id" type="row"/>
+                    <field name="date" interval="month" type="col"/>
+                    <field name="order_id" type="measure"/>
+                    <field name="product_qty" type="measure"/>
+                    <field name="price_total" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="view_report_pos_order_graph" model="ir.ui.view">
+            <field name="name">report.pos.order.graph</field>
+            <field name="model">report.pos.order</field>
+            <field name="arch" type="xml">
+                <graph string="Point of Sale Analysis" sample="1">
+                    <field name="product_categ_id"/>
+                    <field name="price_total" type="measure"/>
+                </graph>
+            </field>
+        </record>
+    -->
 
 </odoo>
