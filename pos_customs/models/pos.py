@@ -116,9 +116,7 @@ class PosOrder(models.Model):
 
     @api.depends('lines.sale_order_origin_id')
     def _compute_salesman(self):
-        _log.info(" COMPUTANDO EL EJECUTIVO .... . ")
         for posord in self:
-            _log.info("_______________ computando salesman :::: ")
             if posord.lines:
                 sale_order = posord.lines.filtered(lambda l: l.sale_order_origin_id is not False).mapped('sale_order_origin_id')[:1]
                 if sale_order:
