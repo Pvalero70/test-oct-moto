@@ -114,6 +114,7 @@ class PosOrder(models.Model):
             'res_id': moves and moves.ids[0] or False,
         }
 
+    @api.depends('lines.sale_order_origin_id')
     def _compute_salesman(self):
         _log.info(" COMPUTANDO EL EJECUTIVO .... . ")
         for posord in self:
