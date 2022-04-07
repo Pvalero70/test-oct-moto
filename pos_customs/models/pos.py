@@ -116,6 +116,7 @@ class PosOrder(models.Model):
 
     def _compute_salesman(self):
         for posord in self:
+            _log.info("_______________ computando salesman :::: ")
             if posord.lines:
                 sale_order = posord.lines.filtered(lambda l: l.sale_order_origin_id is not False).mapped('sale_order_origin_id')[:1]
                 if sale_order:
