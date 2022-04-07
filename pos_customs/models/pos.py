@@ -115,6 +115,7 @@ class PosOrder(models.Model):
         }
 
     def _compute_salesman(self):
+        _log.info(" COMPUTANDO EL EJECUTIVO .... . ")
         for posord in self:
             _log.info("_______________ computando salesman :::: ")
             if posord.lines:
@@ -126,8 +127,3 @@ class PosOrder(models.Model):
             else:
                 posord.salesman_id = False
 
-
-# class ReportPosOrderCu(models.Model):
-#     _inherit = "report.pos.order"
-#
-#     salesman_id = fields.Many2one('res.users', 'Ejecutivo', related="order_id.salesman_id", store=True, readonly=True)
