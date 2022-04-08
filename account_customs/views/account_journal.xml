@@ -22,7 +22,7 @@
                 </page>
             </page>-->
             <group name="group_alias_edit" position="after">
-                <group class="oe_edit_only" name="group_journal_id_edit" string="Secuencias automáticas" attrs="{'invisible': [('type', 'not in',  ('sale'))]}">
+                <group name="group_journal_id_edit" string="Secuencias automáticas (TPV)" attrs="{'invisible': [('type', 'not in',  ('sale'))]}">
                     <label string="Categoria de productos" for="c_product_category_id"/>
                     <div class="oe_inline" name="c_product_category" style="display: inline;">
                         <field name="c_product_category_id" options="{'no_create': True}"/>
