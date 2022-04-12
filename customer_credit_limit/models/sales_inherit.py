@@ -9,7 +9,7 @@ import werkzeug.urls
 class sale_order(models.Model):
     _inherit = "sale.order"
     
-    @api.onchange('partner_id', 'amount_total')
+    @api.onchange('partner_id')
     def _compute_total_customer_limit_total(self):
         # Buscar el adeudo en facturas ya timbradas.
         inv_domain = [
@@ -28,14 +28,23 @@ class sale_order(models.Model):
         # Total disponible es su limite menos lo que ya debe.
         total_available = self.partner_id.credit_limit - amount_due
         self.update({'sale_credit_limit_customer_total': total_available})
-        # Si el total disponible es menor que el total del pedido de venta, necesita aprobación.
-        if total_available < self.amount_total:
-            self.update({'approve_needed': True})
-        else:
-            # Evaluar al usuario logeado para ver si él necesita aprobación.
+        # # Si el total disponible es menor que el total del pedido de venta, necesita aprobación.
+        # if total_available < self.amount_total:
+        #     self.update({'approve_needed': True})
+        # else:
+        #     # Evaluar al usuario logeado para ver si él necesita aprobación.
+        #     self.update({'approve_needed': False})
+
+    @api.onchange('partner_id', 'order_line')
+    def _compute_approve_needed(self):
+        """Method that define if de current user could confirm sale order"""
+        # Saber si el usuario actual pertenece al grupo de personas que pueden validar
+        if self.env.user.has_group('customer_credit_limit.group_credit_limit_accountant'):
             self.update({'approve_needed': False})
-    
-    sale_credit_limit_customer_total = fields.Monetary(string="Credito",compute="_compute_total_customer_limit_total")
+        # Si no pertenece a ese grupo entonces, necesita validación? en base al crédito disponible y el total de la venta.
+
+
+    sale_credit_limit_customer_total = fields.Monetary(string="Credito",compute="_compute_total_customer_limit_total", store=True)
     approve_needed = fields.Boolean(string="Necesita aprovación", copy=False, default=False)
     is_approved = fields.Boolean(string="aprobado.")
     company_currency_id = fields.Many2one('res.currency', string="Company Currency", related="company_id.currency_id")
