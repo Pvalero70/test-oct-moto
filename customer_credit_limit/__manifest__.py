@@ -9,16 +9,12 @@
     "license": 'LGPL-3',
     "depends": ['base',
                 'sale_management',
-                'account',
-                'stock',
-                'sale_stock'],
+                'account'],
     "data": [
         'security/groups.xml',
-        'views/config_views.xml',
         'views/sale_view_inherit.xml',
         'views/res_partner_inherit.xml',
-        'views/picking_inherit_view.xml',
-        
+
     ],
     "auto_install": False,
     "installable": True,

@@ -4,36 +4,32 @@
 		<record id="view_sale_order_inherit" model="ir.ui.view">
 			<field name="name">sale.order.form.inherit</field>
 			<field name="model">sale.order</field>
-			<field name="inherit_id" ref="sale.view_order_form"></field>
+			<field name="inherit_id" ref="sale.view_order_form"/>
 			<field name="arch" type="xml">
 				<field name="payment_term_id" position="after">
 					<field name="company_currency_id" invisible="1"/>
-					<field name="sale_credit_limit_customer" widget="monetary"
+					<field name="approve_needed" invisible="0"/>
+					<field name="sale_credit_limit_customer_total" widget="monetary"
                                     options="{'currency_field': 'company_currency_id', 'field_digits': True}"/>
 					
 				</field>
 
 
-				<button name="action_view_delivery" position="replace">
-					<button type="object" name="action_view_delivery" class="oe_stat_button" icon="fa-truck" attrs="{'invisible': [('delivery_count', '=', 0)]}" groups="base.group_user">
-                        <field name="delivery_count" widget="statinfo" string="Delivery"/>
-                    </button>
-				</button>
 				
 				<header>
-					<button name="action_approve_order" 
-					string="Approve"
-                    type="object" 
-                    class="btn-primary" 
-                    groups="customer_credit_limit.group_credit_limit_accountant"
-                    attrs="{'invisible': [('state', 'not in', ['to_be_approved'])]}"
+					<button
+							name="action_request_approve"
+							string="Solicitar aprobación"
+							type="object"
+							class="btn-primary"
+							attrs="{'invisible': ['|', ('state', 'not in', ['draft']),('approve_needed', '=', False)]}"
                     />
 				</header>
 			</field>
 		</record>
 
 		<record id="action_to_be_approved_sale_orders" model="ir.actions.act_window">
-            <field name="name">Waiting For Approve Sale Orders</field>
+            <field name="name">Ventas esperando aprobación</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sale.order</field>
             <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity</field>
@@ -43,7 +39,7 @@
         </record>
         
         <menuitem id="menu_to_be_approved_order_sale"
-            name="Waiting For Approve Sale Orders"
+            name="Ventas esperando aprobación"
             action="action_to_be_approved_sale_orders"
             parent="sale.sale_order_menu"
             sequence="1" />
