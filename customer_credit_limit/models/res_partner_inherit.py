@@ -16,6 +16,6 @@ class ResPartnerCreditLimit(models.Model):
     @api.constrains('credit_limit')
     def _check_credit_amount(self):
         for credit in self:
-            if credit.credit_limit > 0 and credit.active_credit_limit:
+            if credit.credit_limit < 0 and credit.active_credit_limit:
                 raise ValidationError(_('Advertencia!, el limite de crédito debe ser mayor a cero.'))
 
