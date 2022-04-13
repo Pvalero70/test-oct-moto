@@ -7,27 +7,29 @@
 			<field name="inherit_id" ref="sale.view_order_form"/>
 			<field name="arch" type="xml">
 				<field name="payment_term_id" position="after">
-					<field name="company_currency_id" invisible="1"/>
+					<field name="company_currency_id" invisible="0"/>
 					<field name="approve_needed" invisible="0"/>
-					<field name="sale_credit_limit_customer_total" widget="monetary"
-                                    options="{'currency_field': 'company_currency_id', 'field_digits': True}"/>
-					
+					<field name="sale_credit_limit_customer_total"
+						   widget="monetary"
+						   options="{'currency_field': 'company_currency_id', 'field_digits': True}"/>
 				</field>
 
 
 				
 				<header>
+					<!--attrs="{'invisible': ['&amp;', ('state', 'not in', ['draft']),('approve_needed', '=', False)]}"-->
 					<button
 							name="action_request_approve"
 							string="Solicitar aprobación"
 							type="object"
 							class="btn-primary"
-							attrs="{'invisible': ['|', ('state', 'not in', ['draft']),('approve_needed', '=', False)]}"
+
                     />
 				</header>
 			</field>
 		</record>
 
+<!--
 		<record id="action_to_be_approved_sale_orders" model="ir.actions.act_window">
             <field name="name">Ventas esperando aprobación</field>
             <field name="type">ir.actions.act_window</field>
@@ -37,17 +39,18 @@
             <field name="context">{}</field>
             <field name="domain">[('state', '=', 'to_be_approved')]</field>
         </record>
-        
+
         <menuitem id="menu_to_be_approved_order_sale"
             name="Ventas esperando aprobación"
             action="action_to_be_approved_sale_orders"
             parent="sale.sale_order_menu"
             sequence="1" />
 
-        <!--Override Existing Sale Order Action -->
+        &lt;!&ndash;Override Existing Sale Order Action &ndash;&gt;
         <record id="sale.action_quotations_with_onboarding" model="ir.actions.act_window">
         	<field name="domain">[('state','in',('draft','sent','cancel'))]</field>
     	</record>
+-->
 
 	</data>
 </odoo>

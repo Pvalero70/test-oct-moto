@@ -14,6 +14,7 @@
         'security/groups.xml',
         'views/sale_view_inherit.xml',
         'views/res_partner_inherit.xml',
+        'data/mail_template.xml'
 
     ],
     "auto_install": False,
