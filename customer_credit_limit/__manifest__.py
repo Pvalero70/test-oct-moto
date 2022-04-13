@@ -17,6 +17,14 @@
         'data/mail_template.xml'
 
     ],
+    'assets': {
+        'point_of_sale.assets': [
+
+        ],
+        'web.assets_qweb': [
+            'pos_sale/static/src/xml/**/*',
+        ],
+    },
     "auto_install": False,
     "installable": True,
     "category": "Sales",
