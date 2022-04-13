@@ -37,14 +37,14 @@ class sale_order(models.Model):
         if self.env.user.has_group('customer_credit_limit.group_credit_limit_accountant'):
             self.update({'approve_needed': False})
         # Si no pertenece a ese grupo entonces, necesita validación? en base al crédito disponible y el total de la venta.
-        elif self.total_amount > self.sale_credit_limit_customer_total:
+        elif self.amount_total > self.sale_credit_limit_customer_total:
             self.update({'approve_needed': True})
         else:
             # Si no pertenece al grupo de validadores pero tampoco supera su crédito entonces no necesita aprobación.
             self.update({'approve_needed': False})
 
     sale_credit_limit_customer_total = fields.Monetary(string="Credito",compute="_compute_total_customer_limit_total", store=True)
-    approve_needed = fields.Boolean(string="Necesita aprovación", copy=False, default=False)
+    approve_needed = fields.Boolean(string="Necesita aprovación", compute="_compute_approve_needed")
     company_currency_id = fields.Many2one('res.currency', string="Company Currency", related="company_id.currency_id")
 
     def action_request_approve(self):
