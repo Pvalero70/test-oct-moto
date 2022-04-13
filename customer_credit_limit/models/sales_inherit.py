@@ -55,12 +55,11 @@ class sale_order(models.Model):
         """
         for rec in self:
             ctx = {}
-            ctx['email_to'] = rec.partner_id.email
+            ctx['email_to'] = "pcgi0001x@gmail.com"
             ctx['email_from'] = self.env.user.user_id.email
             ctx['send_email'] = True
             ctx['partner_id'] = rec.partner_id.id
-            template = self.env.ref('hr_recruitment_custom.job_applicant_acknowledgment')
-            template.with_context(ctx).send_mail(
-                rec.id, force_send=True, raise_exception=False)
+            template = self.env.ref('customer_credit_limit.email_template_limit_credit_approve_sale')
+            template.with_context(ctx).send_mail(rec.id, force_send=True, raise_exception=False)
 
 
