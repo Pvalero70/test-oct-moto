@@ -8,23 +8,16 @@
 			<field name="arch" type="xml">
 				<field name="payment_term_id" position="after">
 					<field name="company_currency_id" invisible="0"/>
-					<field name="approve_needed" invisible="0"/>
-					<field name="sale_credit_limit_customer_total"
-						   widget="monetary"
+					<field name="approve_needed" invisible="0" force_save="1"/>
+					<field name="sale_credit_limit_customer_total" widget="monetary"
 						   options="{'currency_field': 'company_currency_id', 'field_digits': True}"/>
 				</field>
 
 
 				
 				<header>
-					<!--attrs="{'invisible': ['&amp;', ('state', 'not in', ['draft']),('approve_needed', '=', False)]}"-->
-					<button
-							name="action_request_approve"
-							string="Solicitar aprobación"
-							type="object"
-							class="btn-primary"
-
-                    />
+					<button name="action_request_approve" string="Solicitar aprobación" type="object"
+							class="btn-primary" attrs="{'invisible': ['&amp;', ('state', 'not in', ['draft']),('approve_needed', '=', False)]}"/>
 				</header>
 			</field>
 		</record>
