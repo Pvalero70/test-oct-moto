@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
-from odoo import http
-from odoo.http import request
-from odoo.exceptions import UserError
-import werkzeug.urls
+import logging
+_log = logging.getLogger("SALESSSSS ::  ")
 
 
 class sale_order(models.Model):
@@ -56,6 +54,9 @@ class sale_order(models.Model):
         :return:
         """
         for rec in self:
+            approval_group = self.env.ref('customer_credit_limit.group_credit_limit_accountant')
+            emails = approval_group.users.mapped('partner_id').mapped('email')
+            _log.info("\nCORRESO  ::: %s \n" % emails)
             ctx = {}
             ctx['email_to'] = "pcgi0001x@gmail.com"
             ctx['email_from'] = self.env.user.user_id.email
