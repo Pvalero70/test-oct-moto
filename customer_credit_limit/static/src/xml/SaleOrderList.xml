@@ -8,7 +8,7 @@
                     console.log("props.orders");
                 </script>
                 <t t-foreach="props.orders" t-as="order" t-key="order.id">
-                    <t t-if="sale.state === 'sale'">
+                    <t t-if="order.state === 'sale'">
                         <t t-esc="order.state"/>
                         <SaleOrderRow order="order" highlightedOrder="highlightedOrder" />
                     </t>
