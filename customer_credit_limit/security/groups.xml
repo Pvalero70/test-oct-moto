@@ -7,10 +7,10 @@
     </record>
 	<record id="group_credit_limit_accountant" model="res.groups">
 		<field name="category_id" ref="customer_credit_limit.category_customer_credit_limit"/>
-		<field name="name">Confirmar ventas sobre limite de credito</field>
+		<field name="name">Confirmar ventas sobre limite de crédito</field>
 	</record>
 	<record id="group_change_customer_credit_limit" model="res.groups">
 		<field name="category_id" ref="customer_credit_limit.category_customer_credit_limit"/>
-		<field name="name">Editar limite de crédigo de cliente</field>
+		<field name="name">Editar limite de crédito de cliente</field>
 	</record>
 </odoo>
