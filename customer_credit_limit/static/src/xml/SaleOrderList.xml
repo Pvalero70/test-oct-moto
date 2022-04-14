@@ -4,9 +4,6 @@
         <xpath expr="//div[hasclass('order-list')]" position="replace">
             <div class="order-list">
                 <!--Filter by state here. SaleOrderRow.js-->
-                <script>
-                    console.log("props.orders");
-                </script>
                 <t t-foreach="props.orders" t-as="order" t-key="order.id">
                     <t t-if="order.state === 'sale'">
                         <t t-esc="order.state"/>
