@@ -13,6 +13,8 @@ class sale_order(models.Model):
     def _compute_total_customer_limit_total(self):
         # Buscar el adeudo en facturas ya timbradas.
         for sale in self:
+            if not sale.partner_id.active_credit_limit:
+                continue
             inv_domain = [
                 ('move_type', '=', 'out_invoice'),
                 ('partner_id', '=', sale.partner_id.id),
@@ -34,7 +36,7 @@ class sale_order(models.Model):
     def _compute_approve_needed(self):
         """Method that define if de current user could confirm sale order"""
         # Saber si el usuario actual pertenece al grupo de personas que pueden validar
-        if self.env.user.has_group('customer_credit_limit.group_credit_limit_accountant'):
+        if self.env.user.has_group('customer_credit_limit.group_credit_limit_accountant') or not self.partner_id.active_credit_limit:
             self.update({'approve_needed': False})
         # Si no pertenece a ese grupo entonces, necesita validación? en base al crédito disponible y el total de la venta.
         elif self.amount_total > self.sale_credit_limit_customer_total:
