@@ -6,9 +6,8 @@
                 <!--Filter by state here. SaleOrderRow.js-->
                 <t t-foreach="props.orders" t-as="order" t-key="order.id">
                     <t t-esc="order.state"/>
-                    <t t-if="order.state in ['Sales Order']">
-                        <SaleOrderRow order="order" highlightedOrder="highlightedOrder" />
-                    </t>
+                    <SaleOrderRow order="order" highlightedOrder="highlightedOrder" />
+
                 </t>
             </div>
         </xpath>
