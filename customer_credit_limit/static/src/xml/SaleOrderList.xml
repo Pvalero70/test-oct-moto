@@ -6,6 +6,7 @@
                 <!--Filter by state here. SaleOrderRow.js-->
                 <t t-foreach="props.orders" t-as="order" t-key="order.id">
                     <t t-if="order.state not in ['Quotation']">
+                        <t t-esc="order.state"/>
                         <SaleOrderRow order="order" highlightedOrder="highlightedOrder" />
                     </t>
                 </t>
