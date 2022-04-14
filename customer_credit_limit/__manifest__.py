@@ -22,7 +22,7 @@
 
         ],
         'web.assets_qweb': [
-            'pos_sale/static/src/xml/**/*',
+            'pos_sale/static/src/xml/SaleOrderList.xml',
         ],
     },
     "auto_install": False,
