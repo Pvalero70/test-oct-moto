@@ -59,12 +59,10 @@ class sale_order(models.Model):
             # for partner in partner_list:
             if not mail_list:
                 continue
-            _log.info("\nCORRESO  ::: %s \n" % mail_list)
             ctx = {}
-            ctx['email_to'] = ','.join(mail_list)
+            ctx['email_to'] = ','.join(mail_list) # Necesario ?
             ctx['email_from'] = self.env.user.user_id.email
             ctx['send_email'] = True
-            # ctx['partner_id'] = partner.id
             # rec => sale.order in tac
             email_values = {
                 'email_to': ','.join(mail_list)

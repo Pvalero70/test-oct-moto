@@ -10,10 +10,9 @@
             <field name="body_html" type="html">
 <div style="margin: 0px; padding: 0px;">
     <p style="margin: 0px; padding: 0px; font-size: 13px;">
-        Hola,
+        <h3>Hola,</h3>
         <br/><br/>
-        Mondo
-
+        <H4>Tiene la cotización <strong>${object.name}</strong> pendiente por aprobar.</H4>
     </p>
 </div>
             </field>
