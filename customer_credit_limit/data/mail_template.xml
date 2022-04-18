@@ -15,7 +15,7 @@
         <H4>Tiene la cotización <strong>${object.name}</strong> pendiente por aprobar.</H4>
         <span t-esc="rec"/>1<br/>
 <!--        <span t-esc="${object}"/>2<br/>-->
-        <span t-esc="rec.name"/>3<br/>
+<!--        <span t-esc="rec.name"/>3<br/>-->
 <!--        <span t-esc="${object.name}"/>4<br/>-->
     </p>
 </div>
