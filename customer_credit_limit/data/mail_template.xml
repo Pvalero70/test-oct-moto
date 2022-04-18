@@ -12,11 +12,7 @@
     <p style="margin: 0px; padding: 0px; font-size: 13px;">
         <h3>Hola,</h3>
         <br/><br/>
-        <H4>Tiene la cotización <strong>${object.name}</strong> pendiente por aprobar.</H4>
-        <span t-esc="rec"/>1<br/>
-<!--        <span t-esc="${object}"/>2<br/>-->
-<!--        <span t-esc="rec.name"/>3<br/>-->
-<!--        <span t-esc="${object.name}"/>4<br/>-->
+        <H4>Tiene la cotización <strong>{{object.name}}</strong> pendiente por aprobar.</H4>
     </p>
 </div>
             </field>
