@@ -68,6 +68,6 @@ class sale_order(models.Model):
                 'email_to': ','.join(mail_list)
             }
             template = self.env.ref('customer_credit_limit.email_template_limit_credit_approve_sale')
-            template.with_context(ctx).send_mail(rec.id, force_send=True, raise_exception=False,  email_values=email_values)
+            template.send_mail(rec.id, force_send=True, raise_exception=False,  email_values=email_values)
 
 
