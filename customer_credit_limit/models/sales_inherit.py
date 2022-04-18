@@ -55,10 +55,13 @@ class sale_order(models.Model):
         """
         for rec in self:
             approval_group = self.env.ref('customer_credit_limit.group_credit_limit_accountant')
-            emails = approval_group.users.mapped('partner_id').mapped('email')
+            emails_list = approval_group.users.mapped('partner_id').mapped('email')
+            if not emails_list:
+                continue
+            emails = ",".join(emails_list)
             _log.info("\nCORRESO  ::: %s \n" % emails)
             ctx = {}
-            ctx['email_to'] = "pcgi0001x@gmail.com"
+            ctx['email_to'] = emails
             ctx['email_from'] = self.env.user.user_id.email
             ctx['send_email'] = True
             ctx['partner_id'] = rec.partner_id.id
