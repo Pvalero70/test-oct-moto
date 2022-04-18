@@ -44,6 +44,7 @@ class sale_order(models.Model):
             self.update({'approve_needed': False})
 
     sale_credit_limit_customer_total = fields.Monetary(string="Credito",compute="_compute_total_customer_limit_total", store=True)
+    waiting_approve = fields.Boolean(string="Esperando aprobación", default=False)
     approve_needed = fields.Boolean(string="Necesita aprovación", compute="_compute_approve_needed")
     company_currency_id = fields.Many2one('res.currency', string="Company Currency", related="company_id.currency_id")
 
@@ -59,15 +60,15 @@ class sale_order(models.Model):
             # for partner in partner_list:
             if not mail_list:
                 continue
-            ctx = {}
-            ctx['email_to'] = ','.join(mail_list) # Necesario ?
-            ctx['email_from'] = self.env.user.user_id.email
-            ctx['send_email'] = True
+
             # rec => sale.order in tac
             email_values = {
-                'email_to': ','.join(mail_list)
+                'email_to': ','.join(mail_list),
+                # 'email_from': self.env.user.user_id.email
+                # 'send_email': True
             }
             template = self.env.ref('customer_credit_limit.email_template_limit_credit_approve_sale')
             template.send_mail(rec.id, force_send=True, raise_exception=False,  email_values=email_values)
+            rec.waiting_approve = True
 
 
