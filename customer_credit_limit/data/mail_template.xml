@@ -13,7 +13,7 @@
         <h3>Hola,</h3>
         <br/><br/>
         ${object.name}
-        <H4>Tiene la cotización <strong>{{object.name}}</strong> pendiente por aprobar.</H4>
+        <H4>Tiene la cotización <strong><span t-out="object.name"/></strong> pendiente por aprobar.</H4>
     </p>
 </div>
             </field>
