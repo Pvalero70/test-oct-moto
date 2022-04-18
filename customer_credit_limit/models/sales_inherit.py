@@ -55,17 +55,17 @@ class sale_order(models.Model):
         """
         for rec in self:
             approval_group = self.env.ref('customer_credit_limit.group_credit_limit_accountant')
-            emails_list = approval_group.users.mapped('partner_id').mapped('email')
-            if not emails_list:
-                continue
-            emails = ",".join(emails_list)
-            _log.info("\nCORRESO  ::: %s \n" % emails)
-            ctx = {}
-            ctx['email_to'] = emails
-            ctx['email_from'] = self.env.user.user_id.email
-            ctx['send_email'] = True
-            ctx['partner_id'] = rec.partner_id.id
-            template = self.env.ref('customer_credit_limit.email_template_limit_credit_approve_sale')
-            template.with_context(ctx).send_mail(rec.id, force_send=True, raise_exception=False)
+            partner_list = approval_group.users.mapped('partner_id')
+            for partner in partner_list:
+                if not partner.email:
+                    continue
+                _log.info("\nCORRESO  ::: %s \n" % partner.email)
+                ctx = {}
+                ctx['email_to'] = partner.email
+                ctx['email_from'] = self.env.user.user_id.email
+                ctx['send_email'] = True
+                ctx['partner_id'] = rec.partner.id
+                template = self.env.ref('customer_credit_limit.email_template_limit_credit_approve_sale')
+                template.with_context(ctx).send_mail(rec.id, force_send=True, raise_exception=False)
 
 
