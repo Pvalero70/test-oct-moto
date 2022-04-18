@@ -64,7 +64,8 @@ class sale_order(models.Model):
                 ctx['email_to'] = partner.email
                 ctx['email_from'] = self.env.user.user_id.email
                 ctx['send_email'] = True
-                ctx['partner_id'] = rec.partner.id
+                ctx['partner_id'] = partner.id
+                # rec => sale.order in tac
                 template = self.env.ref('customer_credit_limit.email_template_limit_credit_approve_sale')
                 template.with_context(ctx).send_mail(rec.id, force_send=True, raise_exception=False)
 
