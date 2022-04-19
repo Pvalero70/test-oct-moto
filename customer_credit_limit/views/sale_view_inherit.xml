@@ -16,6 +16,13 @@
 					<button name="action_request_approve" string="Solicitar aprobación" type="object"
 							class="btn-primary" attrs="{'invisible': ['&amp;', ('state', 'not in', ['draft']),('approve_needed', '=', False)]}"/>
 				</header>
+				<!-- Hide confirm button. -->
+				<xpath expr="//header/button[7]" position="replace">
+					<button name="action_confirm" id="action_confirm" data-hotkey="v" string="Confirm7" class="btn-primary" type="object" attrs="{'invisible': [('state', 'not in', ['sent'])]}"/>
+				</xpath>
+				<xpath expr="//header/button[8]" position="replace">
+					<button name="action_confirm" data-hotkey="v" string="Confirm8" type="object" attrs="{'invisible': [('state', 'not in', ['draft'])]}"/>
+				</xpath>
 			</field>
 		</record>
 
