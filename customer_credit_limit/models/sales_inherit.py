@@ -49,7 +49,7 @@ class sale_order(models.Model):
 
     sale_credit_limit_customer_total = fields.Monetary(string="Credito disponible", compute="_compute_total_customer_limit_total", store=True)
     waiting_approve = fields.Boolean(string="Esperando aprobación", default=False)
-    approve_needed = fields.Boolean(string="Necesita aprovación", compute="_compute_approve_needed")
+    approve_needed = fields.Boolean(string="Necesita aprovación", compute="_compute_approve_needed", store=False)
     company_currency_id = fields.Many2one('res.currency', string="Company Currency", related="company_id.currency_id")
 
     def action_request_approve(self):
