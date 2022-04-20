@@ -9,12 +9,13 @@
 				<field name="payment_term_id" position="after">
 					<field name="company_currency_id" invisible="1"/>
 					<field name="approve_needed" invisible="0"/>
+					<field name="waiting_approve" invisible="0"/>
 					<field name="sale_credit_limit_customer_total" widget="monetary"
 						   options="{'currency_field': 'company_currency_id', 'field_digits': True}"/>
 				</field>
 				<header>
 					<button name="action_request_approve" string="Solicitar aprobación" type="object"
-							class="btn-primary" attrs="{'invisible': [('approve_needed', '=', False)]}"/>
+							class="btn-primary" attrs="{'invisible': ['|', ('approve_needed', '=', False), ('waiting_approve', '=', True)]}"/>
 				</header>
 				<!-- Hide confirm button. -->
 				<xpath expr="//header/button[7]" position="replace">
@@ -25,6 +26,11 @@
 				<xpath expr="//header/button[8]" position="replace">
 					<button name="action_confirm" data-hotkey="v" string="Confirmar"
 							type="object" attrs="{'invisible': ['|', ('state', 'not in', ['draft']), ('approve_needed', '=', True)]}"/>
+				</xpath>
+				<xpath expr="//group[@name='partner_details']" position="before">
+					<div attrs="{'invisible': [('waiting_approve', '=', False)]}">
+						<h3>Esperando aprobación</h3>
+					</div>
 				</xpath>
 			</field>
 		</record>
