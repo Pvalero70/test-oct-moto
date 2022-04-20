@@ -10,7 +10,7 @@
 					<field name="company_currency_id" invisible="1"/>
 					<field name="approve_needed" invisible="0"/>
 					<field name="waiting_approve" invisible="0"/>
-					<field name="sale_credit_limit_customer_total" widget="monetary"
+					<field name="sale_credit_limit_customer_total" widget="monetary" force_save="1"
 						   options="{'currency_field': 'company_currency_id', 'field_digits': True}"/>
 				</field>
 				<header>
