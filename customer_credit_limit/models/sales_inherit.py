@@ -43,7 +43,7 @@ class sale_order(models.Model):
             # Si no pertenece al grupo de validadores pero tampoco supera su crédito entonces no necesita aprobación.
             self.update({'approve_needed': False})
 
-    sale_credit_limit_customer_total = fields.Monetary(string="Credito",compute="_compute_total_customer_limit_total", store=True)
+    sale_credit_limit_customer_total = fields.Monetary(string="Credito disponible", compute="_compute_total_customer_limit_total", store=True)
     waiting_approve = fields.Boolean(string="Esperando aprobación", default=False)
     approve_needed = fields.Boolean(string="Necesita aprovación", compute="_compute_approve_needed")
     company_currency_id = fields.Many2one('res.currency', string="Company Currency", related="company_id.currency_id")
