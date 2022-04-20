@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api, _
+from odoo.exceptions import UserError
 import logging
 _log = logging.getLogger("SALESSSSS ::  ")
 
@@ -74,4 +75,9 @@ class sale_order(models.Model):
             template.send_mail(rec.id, force_send=True, raise_exception=False,  email_values=email_values)
             rec.waiting_approve = True
 
-
+    def action_quotation_send(self):
+        if not self.env.user.has_group('customer_credit_limit.group_credit_limit_accountant') and self.partner_id.active_credit_limit:
+            if self.amount_total > self.sale_credit_limit_customer_total:
+                raise UserError("La cotización necesita ser aprobada antes de ser enviada.")
+        res = super(sale_order, self).action_quotation_send()
+        return res
