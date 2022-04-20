@@ -78,6 +78,6 @@ class sale_order(models.Model):
     def action_quotation_send(self):
         if not self.env.user.has_group('customer_credit_limit.group_credit_limit_accountant') and self.partner_id.active_credit_limit:
             if self.amount_total > self.sale_credit_limit_customer_total:
-                raise UserError("La cotización necesita ser aprobada antes de ser enviada.")
+                raise UserError("La cotización no se puede enviar porque rebaso el limite de crédito.")
         res = super(sale_order, self).action_quotation_send()
         return res
