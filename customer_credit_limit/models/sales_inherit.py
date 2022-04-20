@@ -33,7 +33,6 @@ class sale_order(models.Model):
     @api.onchange('partner_id', 'order_line')
     def _compute_approve_needed(self):
         """Method that define if de current user could confirm sale order"""
-        _log.info(" \n =====  COMPUTANDO EL NECESITA APROBACIÓN \n")
         # Saber si el usuario actual pertenece al grupo de personas que pueden validar
         if self.env.user.has_group('customer_credit_limit.group_credit_limit_accountant') or not self.partner_id.active_credit_limit:
             self.update({'approve_needed': False})
