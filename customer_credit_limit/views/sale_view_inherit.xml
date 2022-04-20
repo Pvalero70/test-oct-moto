@@ -27,7 +27,7 @@
 					<button name="action_confirm" data-hotkey="v" string="Confirmar"
 							type="object" attrs="{'invisible': ['|', ('state', 'not in', ['draft']), ('approve_needed', '=', True)]}"/>
 				</xpath>
-				<xpath expr="//group[@name='partner_details']" position="before">
+				<xpath expr="//div[hasclass('oe_title')]" position="before">
 					<div attrs="{'invisible': ['|', ('waiting_approve', '=', False), ('state', 'not in', ['draft', 'sent'])]}">
 						<h3>Esperando aprobación</h3>
 					</div>
