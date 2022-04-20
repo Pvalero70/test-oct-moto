@@ -44,7 +44,7 @@
 					<field name="waiting_approve"/>
 				</xpath>
 				<xpath expr="//filter[@name='my_quotation']" position="after">
-					<filter string="Por aprobar" name="to_approve" domain="[('waiting_approve', '!=', False)]"/>
+					<filter string="Por aprobar" name="to_approve" domain="['&amp;', ('waiting_approve', '!=', False), ('state', 'in', ['draft', 'sent'])]"/>
 				</xpath>
 			</field>
 		</record>
