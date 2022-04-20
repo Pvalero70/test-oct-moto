@@ -14,17 +14,17 @@
 				</field>
 				<header>
 					<button name="action_request_approve" string="Solicitar aprobación" type="object"
-							class="btn-primary" attrs="{'invisible': ['&amp;', ('state', 'not in', ['draft']),('approve_needed', '=', False)]}"/>
+							class="btn-primary" attrs="{'invisible': [('approve_needed', '=', False)]}"/>
 				</header>
 				<!-- Hide confirm button. -->
 				<xpath expr="//header/button[7]" position="replace">
 					<button name="action_confirm" id="action_confirm"
 							data-hotkey="v" string="Confirmar" class="btn-primary"
-							type="object" attrs="{'invisible': [('state', 'not in', ['sent'])]}"/>
+							type="object" attrs="{'invisible': ['|', ('state', 'not in', ['sent']), ('approve_needed', '=', True)]}"/>
 				</xpath>
 				<xpath expr="//header/button[8]" position="replace">
 					<button name="action_confirm" data-hotkey="v" string="Confirmar"
-							type="object" attrs="{'invisible': [('state', 'not in', ['draft'])]}"/>
+							type="object" attrs="{'invisible': ['|', ('state', 'not in', ['draft']), ('approve_needed', '=', True)]}"/>
 				</xpath>
 			</field>
 		</record>

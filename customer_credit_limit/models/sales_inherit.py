@@ -38,7 +38,10 @@ class sale_order(models.Model):
             self.update({'approve_needed': False})
         # Si no pertenece a ese grupo entonces, necesita validación? en base al crédito disponible y el total de la venta.
         elif self.amount_total > self.sale_credit_limit_customer_total:
-            self.update({'approve_needed': True})
+            if self.state in ["draft", "sent"]:
+                self.update({'approve_needed': True})
+            else:
+                self.update({'approve_needed': False})
         else:
             # Si no pertenece al grupo de validadores pero tampoco supera su crédito entonces no necesita aprobación.
             self.update({'approve_needed': False})
