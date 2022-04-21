@@ -7,10 +7,7 @@
         <field name="arch" type="xml">
             <group name="group_alias_edit" position="after">
                 <group name="group_journal_id_edit" string="Secuencias automáticas (TPV)" attrs="{'invisible': [('type', 'not in',  ('sale'))]}">
-                    <label string="Categoria de productos" for="c_product_category_id"/>
-                    <div class="oe_inline" name="c_product_category" style="display: inline;">
-                        <field name="c_product_category_id" options="{'no_create': True}"/>
-                    </div>
+
                     <label string="Categorias de productos" for="c_product_category_ids"/>
                     <div class="oe_inline" name="c_product_categories" style="display: inline;">
                         <field name="c_product_category_ids" options="{'no_create': True}" widget="many2many_tags"/>
