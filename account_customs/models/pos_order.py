@@ -28,10 +28,10 @@ class PosOrderC(models.Model):
         journal_id = journal_ids.filtered(lambda jo: first_product_category.id in jo.c_product_category_ids.ids)
         # If the journal was found, set it.
         if journal_id:
-            vals['journal_id'] = journal_id.id
+            vals['journal_id'] = journal_id[:1].id
         elif first_product_category.parent_id:
             journal_id = journal_ids.filtered(lambda jo: first_product_category.parent_id.id in jo.c_product_category_ids.ids)
             if journal_id:
-                vals['journal_id'] = journal_id.id
+                vals['journal_id'] = journal_id[:1].id
 
         return vals
