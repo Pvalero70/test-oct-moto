@@ -60,7 +60,7 @@ class sale_order(models.Model):
         """
         for rec in self:
             approval_group = self.env.ref('customer_credit_limit.group_credit_limit_accountant')
-            mail_list = approval_group.users.mapped('partner_id').mapped('email')
+            mail_list = approval_group.users.filtered(lambda us: self.env.company.id in us.company_ids.ids).mapped('partner_id').mapped('email')
             # for partner in partner_list:
             if not mail_list:
                 continue
