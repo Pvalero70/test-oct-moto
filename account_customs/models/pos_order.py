@@ -16,11 +16,17 @@ class PosOrderC(models.Model):
         pc_loc_src_id = self.config_id.picking_type_id.default_location_src_id
 
         # Search journal by product category, location source and company.
+        # UPDATE: the category field in journal has been changed to m2m field.
         domain = [('company_id', '=', self.company_id.id),
-                  ('c_product_category_id', '=', first_product_category.id),
+                  # ('c_product_category_id', '=', first_product_category.id),
                   ('c_location_id', '=', pc_loc_src_id.id)
                   ]
-        journal_id = self.env['account.journal'].search(domain, limit=1)
+        journal_ids = self.env['account.journal'].search(domain, limit=1)
+        if not journal_ids:
+            return vals
+
+        # Filter the journals by product category in first_product_category.
+        journal_id = journal_ids.filtered(lambda jo: first_product_category.id in jo.c_product_category_ids.ids)
 
         # If the journal was found, set it.
         if journal_id:
