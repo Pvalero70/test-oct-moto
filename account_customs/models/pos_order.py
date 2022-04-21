@@ -43,7 +43,8 @@ class PosOrderC(models.Model):
             #           ('c_location_id', '=', pc_loc_src_id.id)
             #           ]
             # journal_id = self.env['account.journal'].search(domain, limit=1)
-            journal_id = journal_ids.filtered(lambda jo: first_product_category.id in jo.c_product_category_ids.mapped('parent_id').ids)
+            journal_id = journal_ids.filtered(lambda jo: first_product_category.parent_id.id in jo.c_product_category_ids.ids)
+
             if journal_id:
                 vals['journal_id'] = journal_id.id
 
