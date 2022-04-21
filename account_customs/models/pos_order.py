@@ -38,11 +38,12 @@ class PosOrderC(models.Model):
             vals['journal_id'] = journal_id.id
         elif first_product_category.parent_id:
             # If the journal wasn't found, search using the parent category, if exists.
-            domain = [('company_id', '=', self.company_id.id),
-                      ('c_product_category_id', '=', first_product_category.parent_id.id),
-                      ('c_location_id', '=', pc_loc_src_id.id)
-                      ]
-            journal_id = self.env['account.journal'].search(domain, limit=1)
+            # domain = [('company_id', '=', self.company_id.id),
+            #           ('c_product_category_id', '=', first_product_category.parent_id.id),
+            #           ('c_location_id', '=', pc_loc_src_id.id)
+            #           ]
+            # journal_id = self.env['account.journal'].search(domain, limit=1)
+            journal_id = journal_ids.filtered(lambda jo: first_product_category.id in jo.c_product_category_ids.mapped('parent_id').ids)
             if journal_id:
                 vals['journal_id'] = journal_id.id
 
