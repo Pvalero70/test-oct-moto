@@ -14,7 +14,7 @@ class PosOrderC(models.Model):
             return vals
         first_product_category = self.lines[:1].product_id.categ_id
         pc_loc_src_id = self.config_id.picking_type_id.default_location_src_id
-        _log.info("\n ============ CATEGORIA A BUSCAR:: %s " % pc_loc_src_id)
+        _log.info("\n ============ CATEGORIA A BUSCAR:: %s " % first_product_category)
 
         # Search journal by product category, location source and company.
         # UPDATE: the category field in journal has been changed to m2m field.
