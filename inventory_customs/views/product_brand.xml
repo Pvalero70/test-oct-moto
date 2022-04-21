@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
         <record id="product_brand_action" model="ir.actions.act_window">
             <field name="name">Product Brand</field>
             <field name="res_model">product.brand</field>
