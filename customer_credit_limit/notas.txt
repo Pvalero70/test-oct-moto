@@ -1,0 +1,4 @@
+1.- Crear un grupo para editar o no el limite de crédito del partner
+2.- Advertencia de negativo en el limite de crédito por cliente.
+3.- Modificación al calculo del crédito usado.
+4.- Si necesita aprobación, el botón de solicitar aprobación deberá estar visible y el de confirmación no; las únicas personas que pueden ver el botón de confirmar son
