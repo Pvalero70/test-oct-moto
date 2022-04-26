@@ -16,19 +16,14 @@
         </field>
     </record>
 
-<!--    <record id="view_stock_move_tt_form" model="ir.ui.view">-->
-<!--        <field name="name">view.stock.move.tt.form</field>-->
-<!--        <field name="model">stock.move</field>-->
-<!--        <field name="inherit_id" ref="stock.view_stock_move_nosuggest_operations"/>-->
-<!--        <field name="arch" type="xml">-->
-<!--            <field name="lot_id" position="after">-->
-<!--                &lt;!&ndash;invisible="context.get('not_is_moto', True)"&ndash;&gt;-->
-<!--                &lt;!&ndash;-->
-<!--                attrs="{'column_invisible': [('parent.product_id.product_inv_categ', 'not in', ['moto'])]}"-->
-<!--                attrs="{'column_invisible': [('parent.move_type', 'not in', ('out_invoice', 'out_refund'))]}"-->
-<!--                &ndash;&gt;-->
-<!--                <field name="tt_motor_number"/>-->
-<!--            </field>-->
-<!--        </field>-->
-<!--    </record>-->
+    <record id="view_stock_move_tt_form" model="ir.ui.view">
+        <field name="name">view.stock.move.tt.form</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_stock_move_operations"/>
+        <field name="arch" type="xml">
+            <field name="product_uom_category_id" position="after">
+                <field name="tt_with_moto"/>
+            </field>
+        </field>
+    </record>
 </odoo>
