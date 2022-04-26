@@ -16,8 +16,10 @@ class StockMoveTt(models.Model):
                     reg.product_id.product_inv_categ.name in ["moto", "Moto"]) or \
                     (reg.product_id.product_inv_categ.parent_id and
                      reg.product_id.product_inv_categ.parent_id.name in ["moto", "Moto"]):
+                _log.info("\nEs una moto")
                 reg.tt_with_moto = True
             else:
+                _log.info("\nNOOO Es una moto")
                 reg.tt_with_moto = False
 
 
