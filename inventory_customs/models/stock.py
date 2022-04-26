@@ -12,9 +12,10 @@ class StockMoveTt(models.Model):
 
     def _compute_with_moto(self):
         for reg in self:
-            if reg.product_id and \
-                    reg.product_id.product_inv_categ and \
-                    reg.product_id.product_inv_categ == "moto":
+            if (reg.product_id and reg.product_id.product_inv_categ and
+                    reg.product_id.product_inv_categ.name in ["moto", "Moto"]) or \
+                    (reg.product_id.product_inv_categ.parent_id and
+                     reg.product_id.product_inv_categ.parent_id.name in ["moto", "Moto"]):
                 reg.tt_with_moto = True
             else:
                 reg.tt_with_moto = False
