@@ -11,10 +11,12 @@ class StockMoveTt(models.Model):
     tt_with_moto = fields.Boolean(string="Traslado de motos", compute="_compute_with_moto", store=True)
 
     def _compute_with_moto(self):
-        if self.move_id.product_id and self.move_id.product_id.product_inv_categ and self.move_id.product_id.product_inv_categ == "moto":
-            self.is_moto = True
+        if self.product_id and \
+                self.product_id.product_inv_categ and \
+                self.product_id.product_inv_categ == "moto":
+            self.tt_with_moto = True
         else:
-            self.is_moto = False
+            self.tt_with_moto = False
 
 
 class StockMoveLineC(models.Model):
@@ -23,8 +25,6 @@ class StockMoveLineC(models.Model):
     tt_motor_number = fields.Char(string="Número de motor")
     tt_color = fields.Char(string="Color")
     tt_inventory_number = fields.Char(string="Número de inventario")
-
-
 
 
 class StockProductionLotTt(models.Model):
