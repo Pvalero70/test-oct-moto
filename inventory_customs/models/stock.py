@@ -12,15 +12,9 @@ class StockMoveTt(models.Model):
 
     def _compute_with_moto(self):
         for reg in self:
-            _log.info("Calculando categoría.")
-            # Buscamos en la categoría de inventario
             if reg.product_id.product_inv_categ and reg.product_id.product_inv_categ in ["moto", "Moto"]:
-                _log.info("\nEs una moto")
                 reg.tt_with_moto = True
-
-            # Marcamos como no encontrada.
             else:
-                _log.info("\nNOOO Es una moto o no tiene categoría el producto.")
                 reg.tt_with_moto = False
 
 
