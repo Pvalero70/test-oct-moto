@@ -26,8 +26,8 @@ class StockMoveTt(models.Model):
         for move in self:
             if move.move_line_nosuggest_ids:
                 for ml in move.move_line_nosuggest_ids:
-                    if ml.lot_id and ml.tt_number_motor and ml.tt_color and ml.tt_inventory_number:
-                        ml.lot_id.tt_number_motor = ml.tt_number_motor
+                    if ml.lot_id and ml.tt_motor_number and ml.tt_color and ml.tt_inventory_number:
+                        ml.lot_id.tt_number_motor = ml.tt_motor_number
                         ml.lot_id.tt_color = ml.tt_color
                         ml.lot_id.tt_inventory_number = ml.tt_inventory_number
         return res
