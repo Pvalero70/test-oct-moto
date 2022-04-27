@@ -19,10 +19,7 @@ class StockMoveTt(models.Model):
 
     @api.depends('move_line_ids', 'move_line_ids.lot_id', 'move_line_ids.qty_done')
     def _compute_lot_ids(self):
-        _log.info(" compute lots ids antes")
         res = super(StockMoveTt,self)._compute_lot_ids()
-        _log.info(" compute lots ids despues")
-        # Movemos la información de stock.move.line a stock.production.lot
         for move in self:
             if move.move_line_nosuggest_ids:
                 for ml in move.move_line_nosuggest_ids:
