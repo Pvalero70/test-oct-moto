@@ -26,8 +26,9 @@ class StockMoveTt(models.Model):
 
     def _set_lot_ids(self):
         _log.info(" SETTING !! compute lots ids despues")
-        super(StockMoveTt, self)._set_lot_ids()
+        res = super(StockMoveTt, self)._set_lot_ids()
         _log.info(" after setting !! compute lots ids despues")
+        return res
         # for move in self:
         #     if move.product_id.tracking != 'serial':
         #         continue
