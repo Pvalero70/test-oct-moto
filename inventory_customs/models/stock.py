@@ -22,38 +22,16 @@ class StockMoveTt(models.Model):
         _log.info(" compute lots ids antes")
         res = super(StockMoveTt,self)._compute_lot_ids()
         _log.info(" compute lots ids despues")
+        # Movemos la información de stock.move.line a stock.production.lot
+        for move in self:
+            if move.move_line_nosuggest_ids:
+                for ml in move.move_line_nosuggest_ids:
+                    if ml.lot_id and ml.tt_number_motor and ml.tt_color and ml.tt_inventory_number:
+                        ml.lot_id.tt_number_motor = ml.tt_number_motor
+                        ml.lot_id.tt_color = ml.tt_color
+                        ml.lot_id.tt_inventory_number = ml.tt_inventory_number
         return res
 
-    def _set_lot_ids(self):
-        _log.info(" SETTING !! compute lots ids despues")
-        res = super(StockMoveTt, self)._set_lot_ids()
-        _log.info(" after setting !! compute lots ids despues")
-        return res
-        # for move in self:
-        #     if move.product_id.tracking != 'serial':
-        #         continue
-        #     move_lines_commands = []
-        #     if move.picking_type_id.show_reserved is False:
-        #         mls = move.move_line_nosuggest_ids
-        #     else:
-        #         mls = move.move_line_ids
-        #     mls = mls.filtered(lambda ml: ml.lot_id)
-        #     for ml in mls:
-        #         if ml.qty_done and ml.lot_id not in move.lot_ids:
-        #             move_lines_commands.append((2, ml.id))
-        #     ls = move.move_line_ids.lot_id
-        #     for lot in move.lot_ids:
-        #         if lot not in ls:
-        #             move_line_vals = self._prepare_move_line_vals(quantity=0)
-        #             move_line_vals['lot_id'] = lot.id
-        #             move_line_vals['lot_name'] = lot.name
-        #             move_line_vals['product_uom_id'] = move.product_id.uom_id.id
-        #             move_line_vals['qty_done'] = 1
-        #             move_lines_commands.append((0, 0, move_line_vals))
-        #         else:
-        #             move_line = move.move_line_ids.filtered(lambda line: line.lot_id.id == lot.id)
-        #             move_line.qty_done = 1
-        #     move.write({'move_line_ids': move_lines_commands})
 
 class StockMoveLineC(models.Model):
     _inherit = "stock.move.line"
