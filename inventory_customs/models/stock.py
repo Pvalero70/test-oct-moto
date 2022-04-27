@@ -8,7 +8,7 @@ _log = logging.getLogger("___name: %s" % __name__)
 class StockMoveTt(models.Model):
     _inherit = "stock.move"
 
-    tt_with_moto = fields.Boolean(string="Traslado de motos", compute="_compute_with_moto", store=True)
+    tt_with_moto = fields.Boolean(string="Traslado de motos", compute="_compute_with_moto", store=False)
 
     def _compute_with_moto(self):
         for reg in self:
