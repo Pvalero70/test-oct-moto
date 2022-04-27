@@ -11,7 +11,7 @@
                 attrs="{'column_invisible': [('parent.product_id.product_inv_categ', 'not in', ['moto'])]}"
                 attrs="{'column_invisible': [('parent.move_type', 'not in', ('out_invoice', 'out_refund'))]}"
                 -->
-                <field name="tt_motor_number"/>
+                <field name="tt_motor_number" attrs="{'column_invisible': [('parent.tt_with_moto', '!=', False)]}"/>
             </field>
         </field>
     </record>
