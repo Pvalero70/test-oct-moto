@@ -12,15 +12,22 @@ odoo.define('pos_customs.OrderReceipt', function(require) {
             console.log(this.orderlines[0]);
             sale_order = this.orderlines[0].sale_order_origin_id;
             console.log(sale_order);
-            so_user = sale_order.sale_order_origin_id.user_id;
-            if(so_user == undefined){
+            if(sale_order["user_id"] !== undefined){
+                console.log("indefinido");
+            }
+            else{
+                console.log("definido");
+            }
+            return "Holsss";
+//            so_user = sale_order.sale_order_origin_id.user_id;
+            /*if(so_user == undefined){
                 return "-";
             }
             else{
                 var seller_name = this.orderlines[0].sale_order_origin_id.user_id[1];
                 console.log(seller_name);
                 return seller_name;
-            }
+            }*/
         }
     }
 
