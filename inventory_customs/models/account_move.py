@@ -17,7 +17,7 @@ class AccountMoveItt(models.Model):
         sale_lines = self.invoice_line_ids.sale_line_ids
         # sale_orders = sale_lines.order_id
         # Filter lines for specific product
-        stock_move_lines = sale_lines.move_ids.filtered(lambda r: r.state == 'done').move_line_ids.filtered(lambda r: r.product_id == product_id.id)
+        stock_move_lines = sale_lines.move_ids.filtered(lambda r: r.state == 'done').move_line_ids.filtered(lambda r: r.product_id.id == product_id.id)
         _log.info("\nLineas a iterar::: %s " % stock_move_lines)
         data = []
         for line in stock_move_lines:
