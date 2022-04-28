@@ -5,6 +5,12 @@ import logging
 _log = logging.getLogger("___name: %s" % __name__)
 
 
+class StockPickingTt(models.Model):
+    _inherit = "stock.picking"
+
+    tt_num_pedimento = fields.Char(string="Numero de pedimento")
+
+
 class StockMoveTt(models.Model):
     _inherit = "stock.move"
 

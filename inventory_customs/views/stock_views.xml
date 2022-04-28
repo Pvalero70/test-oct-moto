@@ -36,4 +36,16 @@
             </field>
         </field>
     </record>
+
+    <record id="view_stock_picking_tt_form" model="ir.ui.view">
+        <field name="name">view.stock.picking.tt.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <field name="origin" position="after">
+                <field name="tt_num_pedimento"/>
+            </field>
+        </field>
+    </record>
+
 </odoo>
