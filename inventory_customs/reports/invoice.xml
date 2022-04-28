@@ -3,7 +3,23 @@
     <template id="report_invoice_document_inherit_product_info_tt" inherit_id="account.report_invoice_document">
         <xpath expr="//t[@name='account_invoice_line_accountable']/td[@name='account_invoice_line_name']" position="replace">
             <td name="account_invoice_line_name">
-                 REEMPLAZADO<span t-field="line.name" t-options="{'widget': 'text'}"/>
+
+                <t t-set="trasa_values" t-value="o._get_invoiced_lot_values_tt(line.product_id)"/>
+                <t t-if="trasa_values">
+                    <br/>
+                    <ul>
+                        <t t-foreach="trasa_values" t-as="tvalue">
+                            <li><b><span t-field="line.name" t-options="{'widget': 'text'}"/></b></li>
+                            <li><b>Num serie: </b> <t t-esc="tvalue['serial']"/></li>
+                            <li><b>Num motor: </b> <t t-esc="tvalue['motor_num']"/></li>
+                            <li><b>Color: </b> <t t-esc="tvalue['color']"/></li>
+                            <li><b>Num inv: </b> <t t-esc="tvalue['inv_num']"/></li>
+                        </t>
+                    </ul>
+                </t>
+                <t t-else="">
+                    <span t-field="line.name" t-options="{'widget': 'text'}"/>
+                </t>
             </td>
         </xpath>
     </template>
