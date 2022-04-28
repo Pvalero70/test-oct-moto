@@ -10,6 +10,7 @@
         'views/product_product.xml',
         'views/product_brand.xml',
         'views/stock_views.xml',
+        'reports/invoice.xml',
     ],
     'assets': {
     },

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_invoice_document_inherit_product_info_tt" inherit_id="account.report_invoice_document">
+        <xpath expr="//t[@name='account_invoice_line_accountable']/td[@name='account_invoice_line_name']" position="replace">
+            <td name="account_invoice_line_name">
+                 REEMPLAZADO<span t-field="line.name" t-options="{'widget': 'text'}"/>
+            </td>
+        </xpath>
+    </template>
+</odoo>
