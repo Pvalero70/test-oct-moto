@@ -25,6 +25,10 @@ class AccountMoveItt(models.Model):
                 'motor_num': line.lot_id.tt_number_motor,
                 'color': line.lot_id.tt_color,
                 'inv_num': line.lot_id.tt_inventory_number,
+                'brand': line.product_id.brand_id.name,
+                'model': line.product_id.moto_model,
+                'moto_cil': line.product_id.moto_cilindros,
+                'moto_desp': line.product_id.moto_despl
             })
 
         if len(data) <= 0:
