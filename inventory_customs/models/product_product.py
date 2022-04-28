@@ -19,7 +19,6 @@ class ProductTemplateCus(models.Model):
 
     brand_id = fields.Many2one('product.brand', string='Marca')
     moto_model = fields.Char(string="Modelo")
-    moto_color = fields.Char(string="Color")
     moto_cilindros = fields.Integer(string="Cilindros")
     moto_despl = fields.Float(string="Desplazamiento")
 
