@@ -34,3 +34,11 @@ class AccountMoveItt(models.Model):
         if len(data) <= 0:
             return False
         return data
+
+    def _set_num_pedimento(self):
+        if self.move_type != "out_invoice" or self.state == 'draft':
+            return False
+        sale_lines = self.invoice_line_ids.sale_line_ids
+        # Filter lines for specific product
+        stock_move = sale_lines.move_ids.filtered(lambda r: r.state == 'done').move_line_ids.filtered(lambda r: r.product_id.id == product_id.id)
+        data = []
