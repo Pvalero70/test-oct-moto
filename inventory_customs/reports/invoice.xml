@@ -6,16 +6,16 @@
 
                 <t t-set="trasa_values" t-value="o._get_invoiced_lot_values_tt(line.product_id)"/>
                 <t t-if="trasa_values">
+                    <span t-field="line.name" t-options="{'widget': 'text'}"/>
                     <br/>
-                    <ul>
-                        <t t-foreach="trasa_values" t-as="tvalue">
-                            <li><b><span t-field="line.name" t-options="{'widget': 'text'}"/></b></li>
+                    <t t-foreach="trasa_values" t-as="tvalue">
+                        <ul>
                             <li><b>Num serie: </b> <t t-esc="tvalue['serial']"/></li>
                             <li><b>Num motor: </b> <t t-esc="tvalue['motor_num']"/></li>
                             <li><b>Color: </b> <t t-esc="tvalue['color']"/></li>
                             <li><b>Num inv: </b> <t t-esc="tvalue['inv_num']"/></li>
-                        </t>
-                    </ul>
+                        </ul>
+                    </t>
                 </t>
                 <t t-else="">
                     <span t-field="line.name" t-options="{'widget': 'text'}"/>
