@@ -10,8 +10,9 @@ odoo.define('pos_customs.OrderReceipt', function(require) {
         get sale_seller() {
 //            Get the first line to get user of sale.order object.
             console.log(this);
-            var seller_name = this.orderlines[0].sale_order_origin_id.user_id[1];
-            return seller_name;
+//            var seller_name = this.orderlines[0].sale_order_origin_id.user_id[1];
+//            return seller_name;
+            return "Holas";
         }
     }
 
