@@ -28,7 +28,7 @@ class AccountMoveItt(models.Model):
             # Put: color; inv num,
             data.append({
                 'serial': line.lot_id.name,
-                'motor_num': line.lot_id.tt_motor_number,
+                'motor_num': line.lot_id.tt_number_motor,
                 'color': line.lot_id.tt_color,
                 'inv_num': line.lot_id.tt_inventory_number,
             })
