@@ -9,18 +9,16 @@ odoo.define('pos_customs.OrderReceipt', function(require) {
         class extends OrderReceipt {
         get sale_seller() {
 //            Get the first line to get user of sale.order object.
-            console.log(this);
             console.log(this.orderlines[0]);
-
             sale_order = this.orderlines[0].sale_order_origin_id;
             console.log(sale_order);
-            so_user = this.orderlines[0].sale_order_origin_id.user_id;
+            so_user = sale_order.sale_order_origin_id.user_id;
             if(so_user == undefined){
                 return "-";
             }
             else{
-                console.log(so_user.[1]);
                 var seller_name = this.orderlines[0].sale_order_origin_id.user_id[1];
+                console.log(seller_name);
                 return seller_name;
             }
         }
