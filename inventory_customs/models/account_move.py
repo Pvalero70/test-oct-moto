@@ -38,15 +38,23 @@ class AccountMoveItt(models.Model):
             return False
         pols = self.pos_order_ids.mapped('lines').mapped('pack_lot_ids').filtered(lambda x: x.product_id.id == product_id.id)
         for pol in pols:
+            lot_domain = [
+                ('name', '=like', pol.lot_name),
+                ('product_id', '=', pol.product_id.id),
+                ('company_id', '=', pol.company_id.id)
+            ]
+            ori_lot = self.env['stock.production.lot'].search(lot_domain)
+            if not ori_lot:
+                continue
             data.append({
-                'serial': pol.lot_name,
-                'motor_num': pol.tt_number_motor,
-                'color': pol.tt_color,
-                'inv_num': pol.tt_inventory_number,
-                'brand': pol.product_id.brand_id.name,
-                'model': pol.product_id.moto_model,
-                'moto_cil': pol.product_id.moto_cilindros,
-                'moto_desp': pol.product_id.moto_despl
+                'serial': ori_lot.name,
+                'motor_num': ori_lot.tt_number_motor,
+                'color': ori_lot.tt_color,
+                'inv_num': ori_lot.tt_inventory_number,
+                'brand': ori_lot.product_id.brand_id.name,
+                'model': ori_lot.product_id.moto_model,
+                'moto_cil': ori_lot.product_id.moto_cilindros,
+                'moto_desp': ori_lot.product_id.moto_despl
             })
 
         if len(data) > 0:
