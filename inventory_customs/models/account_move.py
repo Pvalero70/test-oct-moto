@@ -39,7 +39,7 @@ class AccountMoveItt(models.Model):
         pols = self.pos_order_ids.mapped('lines').mapped('pack_lot_ids').filtered(lambda x: x.product_id.id == product_id.id)
         for pol in pols:
             data.append({
-                'serial': pol.name,
+                'serial': pol.lot_name,
                 'motor_num': pol.tt_number_motor,
                 'color': pol.tt_color,
                 'inv_num': pol.tt_inventory_number,
