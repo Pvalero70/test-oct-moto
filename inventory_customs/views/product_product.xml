@@ -9,7 +9,9 @@
                 <field name="product_inv_categ" string="Categoria INV"/>
             </field>
             <field name="categ_id" position="after">
-                <field name="brand_id" string="Marca" attrs="{'invisible':[('product_inv_categ', 'not in', ['moto', 'refaccion','accesorio'])]}"/>
+                <field name="brand_id" string="Marca"
+                       options="{'no_open': False, 'no_create': True}"
+                       attrs="{'invisible':[('product_inv_categ', 'not in', ['moto', 'refaccion','accesorio'])]}"/>
             </field>
             <page name="inventory" position="after">
                 <page string="Moto Specs" name="Motorcycle" attrs="{'invisible':[('product_inv_categ', 'not in', ['moto'])]}">
