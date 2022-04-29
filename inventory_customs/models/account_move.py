@@ -41,7 +41,7 @@ class AccountMoveItt(models.Model):
             lot_domain = [
                 ('name', '=like', pol.lot_name),
                 ('product_id', '=', pol.product_id.id),
-                ('company_id', '=', pol.company_id.id)
+                # ('company_id', '=', pol.company_id.id)
             ]
             ori_lot = self.env['stock.production.lot'].search(lot_domain)
             if not ori_lot:
