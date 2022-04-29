@@ -1,14 +1,36 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api,_
 import logging
+from odoo.exceptions import ValidationError
+import re
 _log = logging.getLogger("___name: %s" % __name__)
+CUSTOM_NUMBERS_PATTERN = re.compile(r'[0-9]{2}  [0-9]{2}  [0-9]{4}  [0-9]{7}')
 
 
 class StockPickingTt(models.Model):
     _inherit = "stock.picking"
 
-    tt_num_pedimento = fields.Char(string="Numero de pedimento")
+    tt_num_pedimento = fields.Char(
+        help="Campo opcional para ingresar la información aduanera en el caso de ventas de bienes importados de primera mano o en el caso de operaciones de comercio exterior con bienes o servicios.\n"
+            "El formato debe ser:\n"
+            " - 2 dígitos del año de validación seguido por dos espacios.\n"
+            " - 2 dígitos del despacho de aduana seguido de dos espacios.\n"
+            " - 4 dígitos del numero de serial seguido por dos espacios.\n"
+            " - 1 dígito correspondiente al ultimo dígito del año actual, excepto en el caso de una aduana consolidada iniciada en el año anterior a la solicitud original de rectificación.\n"
+            " - 6 dígitos de la numeración progresiva de la aduana.",
+        string='Número de pedimento',
+        copy=False)
+
+    # -------------------------------------------------------------------------
+    # CONSTRAINT METHODS
+    # -------------------------------------------------------------------------
+
+    @api.constrains('tt_num_pedimento')
+    def _check_l10n_mx_edi_customs_number(self):
+        for reg in self:
+            if not CUSTOM_NUMBERS_PATTERN.match(reg.tt_num_pedimento):
+                raise ValidationError(_("El número de pedimento es invalido, debe tener un patrón semejante a: 15  48  3009  0001234 "))
 
 
 class StockMoveTt(models.Model):
