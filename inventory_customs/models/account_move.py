@@ -31,9 +31,27 @@ class AccountMoveItt(models.Model):
                 'moto_desp': line.product_id.moto_despl
             })
 
-        if len(data) <= 0:
+        if len(data) > 0:
+            return data
+        # Si no se origina en sale.order, entonces pos.order:..
+        if not self.pos_order_ids:
             return False
-        return data
+        pols = self.pos_order_ids.mapped('lines').mapped('pack_lot_ids').filtered(lambda x: x.product_id.id == product_id.id)
+        for pol in pols:
+            data.append({
+                'serial': pol.name,
+                'motor_num': pol.tt_number_motor,
+                'color': pol.tt_color,
+                'inv_num': pol.tt_inventory_number,
+                'brand': pol.product_id.brand_id.name,
+                'model': pol.product_id.moto_model,
+                'moto_cil': pol.product_id.moto_cilindros,
+                'moto_desp': pol.product_id.moto_despl
+            })
+
+        if len(data) > 0:
+            return data
+        return False
 
     def _set_num_pedimento(self):
         if self.move_type != "out_invoice" or self.state == 'draft':
