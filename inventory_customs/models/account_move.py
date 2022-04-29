@@ -62,9 +62,24 @@ class AccountMoveItt(models.Model):
         return False
 
     def _set_num_pedimento(self):
+        # Filter by current company HERE.
+
         if self.move_type != "out_invoice" or self.state == 'draft':
             return False
-        sale_lines = self.invoice_line_ids.sale_line_ids
-        # Filter lines for specific product
-        stock_move = sale_lines.move_ids.filtered(lambda r: r.state == 'done').move_line_ids.filtered(lambda r: r.product_id.id == product_id.id)
-        data = []
+        # From sale order
+        if self.invoice_line_ids:
+            sale_lines = self.invoice_line_ids.sale_line_ids
+            lot_ids = sale_lines.move_ids.filtered(lambda r: r.state == 'done').move_line_ids.mapped('lot_id')
+
+        # From pos order.
+        elif self.pos_order_ids:
+            lots = self.pos_order_ids.mapped('lines').mapped('pack_lot_ids')
+
+            lot_domain = [
+                ('name', 'in', lots.mapped('lot_name')),
+                ('product_id', 'in', lots.mapped('product_id').ids),
+            ]
+            lot_ids = self.env['stock.production.lot'].search(lot_domain)
+
+        for line in self.invoice_line_ids:
+            lot = lot_ids.filtered(lambda x: x.product_id.id == line.product_id.id)[:1]
