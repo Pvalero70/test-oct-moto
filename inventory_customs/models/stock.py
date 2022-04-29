@@ -29,6 +29,8 @@ class StockPickingTt(models.Model):
     @api.constrains('tt_num_pedimento')
     def _check_l10n_mx_edi_customs_number(self):
         for reg in self:
+            if not reg.tt_num_pedimento:
+                continue
             if not CUSTOM_NUMBERS_PATTERN.match(reg.tt_num_pedimento):
                 raise ValidationError(_("El número de pedimento es invalido, debe tener un patrón semejante a: 15  48  3009  0001234 "))
 
