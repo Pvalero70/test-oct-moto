@@ -6,20 +6,20 @@ odoo.define('pos_customs_sale_order.SaleOrderFetcher', function (require) {
     // const patch = require('web/.core.utils.patch')
     const { patch } = require('web.utils');
 
-    console.log(patch)
-    console.log("OVERRIDE")
+    // console.log(patch)
+    // console.log("OVERRIDE")
     // const Registries = require('point_of_sale.Registries');
     const SaleOrderFetcher = require('pos_sale.SaleOrderFetcher');
     
 
     patch(SaleOrderFetcher, "static patch", {
         async _getOrderIdsForCurrentPage(limit, offset) {
-            console.log("SSSSS")
-            console.log("LOADEDDDD")
-            console.log(this)
-            console.log(this.searchDomain)
-            console.log(this.comp.env.pos.config)
-            console.log(this.comp.env.pos.config.crm_team_id)
+            // console.log("SSSSS")
+            // console.log("LOADEDDDD")
+            // console.log(this)
+            // console.log(this.searchDomain)
+            // console.log(this.comp.env.pos.config)
+            // console.log(this.comp.env.pos.config.crm_team_id)
 
             if (this.searchDomain == undefined){
 
@@ -48,8 +48,8 @@ odoo.define('pos_customs_sale_order.SaleOrderFetcher', function (require) {
                 }               
             }
 
-            console.log("Default domain..")
-            console.log(this.searchDomain)      
+            // console.log("Default domain..")
+            // console.log(this.searchDomain)      
 
             return await this.rpc({
                 model: 'sale.order',
