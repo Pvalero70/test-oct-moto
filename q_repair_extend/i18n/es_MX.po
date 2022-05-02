@@ -1,0 +1,87 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* q_repair_extend
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0+e-20220317\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-04-30 18:30+0000\n"
+"PO-Revision-Date: 2022-04-30 13:32-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+"X-Generator: Poedit 3.0.1\n"
+
+#. module: q_repair_extend
+#: model_terms:ir.ui.view,arch_db:q_repair_extend.view_repair_order_form_inherit
+msgid "Confirm Repair"
+msgstr "Confirmar Reparación"
+
+#. module: q_repair_extend
+#: model:ir.model.fields,field_description:q_repair_extend.field_repair_order__incoming_picking_count
+msgid "Incoming Shipment count"
+msgstr "Recuento de envíos entrantes"
+
+#. module: q_repair_extend
+#: model_terms:ir.ui.view,arch_db:q_repair_extend.view_repair_order_form_inherit
+msgid "Incoming Shipments"
+msgstr "Envíos entrantes"
+
+#. module: q_repair_extend
+#: code:addons/q_repair_extend/models/repair_order.py:0
+#, python-format
+msgid "It is necessary to fill the field 'location_id' "
+msgstr "Es necesario rellenar el campo 'Ubicación' "
+
+#. module: q_repair_extend
+#: code:addons/q_repair_extend/models/repair_order.py:0
+#, python-format
+msgid "It is necessary to fill the field 'operation_id' "
+msgstr "Es necesario rellenar el campo 'Tipo de operación' "
+
+#. module: q_repair_extend
+#: code:addons/q_repair_extend/models/repair_order.py:0
+#, python-format
+msgid "It is necessary to fill the field 'operations' "
+msgstr "Es necesario rellenar el campo 'Operaciones' "
+
+#. module: q_repair_extend
+#: code:addons/q_repair_extend/models/repair_order.py:0
+#, python-format
+msgid "It is necessary to fill the field 'partner_id' "
+msgstr "Es necesario rellenar el campo 'Cliente' "
+
+#. module: q_repair_extend
+#: model:ir.model.fields,field_description:q_repair_extend.field_repair_order__operation_id
+msgid "Operation Type"
+msgstr "Tipo de operacion"
+
+#. module: q_repair_extend
+#: model_terms:ir.ui.view,arch_db:q_repair_extend.view_repair_order_form_inherit
+msgid "Receipt"
+msgstr "Recepción"
+
+#. module: q_repair_extend
+#: model_terms:ir.ui.view,arch_db:q_repair_extend.view_repair_order_form_inherit
+msgid "Receive product"
+msgstr "Recibir productos"
+
+#. module: q_repair_extend
+#: model:ir.model.fields,field_description:q_repair_extend.field_repair_order__picking_ids
+msgid "Receptions"
+msgstr "Recepciones"
+
+#. module: q_repair_extend
+#: model:ir.model,name:q_repair_extend.model_repair_order
+msgid "Repair Order"
+msgstr "Orden de reparación"
+
+#. module: q_repair_extend
+#: model:ir.model.fields,field_description:q_repair_extend.field_repair_order__repair_confirm
+msgid "Repair confirm"
+msgstr "Reparación confirmada"
