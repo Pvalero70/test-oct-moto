@@ -33,7 +33,7 @@ class RepairOrderInherit(models.Model):
     @api.onchange('location_id')
     def _dominios(self):
         for record in self:
-            b ={'domain': {'operation_id': ['|',('default_location_dest_id', '=', record.location_id.id),('default_location_src_id', '=', record.location_id.id),('code', '=', 'incoming')]}}
+            b ={'domain': {'operation_id': [('default_location_dest_id', '=', record.location_id.id),('code', '=', 'incoming')]}}
             return b
     
     def _compute_picking_ids(self):

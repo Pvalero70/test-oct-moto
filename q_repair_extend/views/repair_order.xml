@@ -13,7 +13,7 @@
                     <button name="action_incoming" type="object" string="Receive product" class="oe_highlight" attrs="{'invisible':[('incoming_picking_count','!=', 0)]}"/>
                 </xpath>
                 <xpath expr="//field[@name='location_id']" position="after">
-                    <field name="operation_id"/>
+                    <field name="operation_id" attrs="{'readonly':[('state', '=', 'done')]}"/>
                     <field name="repair_confirm" invisible="True"/>
                     <field name="picking_confirm" invisible="True"/>
                     <field name="invisible_button" invisible="True"/>
