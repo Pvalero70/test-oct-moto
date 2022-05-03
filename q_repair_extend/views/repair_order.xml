@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="repair.view_repair_order_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//button[@name='action_validate']" position="replace">
-                    <button name="action_validate" type="object" string="Confirm Repair" class="oe_highlight" data-hotkey="v" attrs="{'invisible':['|',('incoming_picking_count','=', 0), ('repair_confirm', '=', True)]}"/>
+                    <button name="action_validate" type="object" string="Confirm Repair" class="oe_highlight" data-hotkey="v" attrs="{'invisible':[('invisible_button', '=', False)]}"/>
                 </xpath>
                 <xpath expr="//button[@name='action_validate']" position="after">
                     <button name="action_incoming" type="object" string="Receive product" class="oe_highlight" attrs="{'invisible':[('incoming_picking_count','!=', 0)]}"/>
@@ -15,6 +15,8 @@
                 <xpath expr="//field[@name='location_id']" position="after">
                     <field name="operation_id"/>
                     <field name="repair_confirm" invisible="True"/>
+                    <field name="picking_confirm" invisible="True"/>
+                    <field name="invisible_button" invisible="True"/>
                 </xpath>
                  <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
                     <button type="object" name="action_view_picking" class="oe_stat_button" icon="fa-truck" attrs="{'invisible':[('incoming_picking_count','=', 0)]}">
