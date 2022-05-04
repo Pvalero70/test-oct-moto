@@ -10,7 +10,7 @@ class RepairOrderInherit(models.Model):
 
     incoming_picking_count = fields.Integer("Incoming Shipment count", compute='_compute_incoming_picking_count')
     picking_ids = fields.Many2many('stock.picking', compute='_compute_picking_ids', string='Receptions', copy=False)
-    operation_id = fields.Many2one('stock.picking.type', 'Operation Type', required=True)
+    operation_id = fields.Many2one('stock.picking.type', 'Operation Type', required=True, domain="[('default_location_dest_id', '=',location_id),('code', '=', 'incoming')]")
     repair_confirm = fields.Boolean('Repair confirm', default=False, copy=False)
     picking_confirm = fields.Boolean('Picking confirm', default=False, copy=False)
     invisible_button = fields.Boolean('Invisible button', copy=False, compute="_invisible_button")
@@ -29,12 +29,6 @@ class RepairOrderInherit(models.Model):
         res = super(RepairOrderInherit, self).action_validate()
         self.repair_confirm = True
         return res
-    
-    @api.onchange('location_id')
-    def _dominios(self):
-        for record in self:
-            b ={'domain': {'operation_id': [('default_location_dest_id', '=', record.location_id.id),('code', '=', 'incoming')]}}
-            return b
     
     def _compute_picking_ids(self):
         for order in self:
@@ -65,6 +59,7 @@ class RepairOrderInherit(models.Model):
             obj_picking = self.env['stock.picking']
             record_stock = obj_picking.create(
                 {
+                    'partner_id': record.partner_id.id,
                     'picking_type_id': record.operation_id.id,
                     'location_id': self.env.ref('stock.stock_location_suppliers').id or False ,
                     'location_dest_id': location.lot_stock_id.id,

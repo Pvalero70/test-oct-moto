@@ -59,7 +59,7 @@ msgstr "Es necesario rellenar el campo 'Cliente' "
 #. module: q_repair_extend
 #: model:ir.model.fields,field_description:q_repair_extend.field_repair_order__operation_id
 msgid "Operation Type"
-msgstr "Tipo de operacion"
+msgstr "Operación de recepción"
 
 #. module: q_repair_extend
 #: model_terms:ir.ui.view,arch_db:q_repair_extend.view_repair_order_form_inherit
