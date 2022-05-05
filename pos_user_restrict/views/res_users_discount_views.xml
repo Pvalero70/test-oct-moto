@@ -21,7 +21,7 @@
 
                         <notebook>
                             <page string="Categorias de productos">
-                                <field name="category_ids" widget="one2many" />
+                                <field name="category_ids" widget="many2many" />
                             </page>
                         </notebook>
 
@@ -29,7 +29,7 @@
                 </form>
             </field>
         </record>
-    
+
     <!-- Menu "Descuento Vendedores" !-->
     <menuitem
             name="Descuentos Vendedores"
