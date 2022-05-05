@@ -11,6 +11,8 @@ CUSTOM_NUMBERS_PATTERN = re.compile(r'[0-9]{2}  [0-9]{2}  [0-9]{4}  [0-9]{7}')
 class StockPickingTt(models.Model):
     _inherit = "stock.picking"
 
+    tt_aduana = fields.Char(string="Aduana")
+    tt_aduana_date_in = fields.Date(string="Fecha ingreso")
     tt_num_pedimento = fields.Char(
         help="Campo opcional para ingresar la información aduanera en el caso de ventas de bienes importados de primera mano o en el caso de operaciones de comercio exterior con bienes o servicios.\n"
             "El formato debe ser:\n"

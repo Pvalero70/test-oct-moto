@@ -43,7 +43,9 @@ class AccountMoveItt(models.Model):
                 'brand': line.product_id.brand_id.name,
                 'model': line.product_id.moto_model,
                 'moto_cil': line.product_id.moto_cilindros,
-                'moto_desp': line.product_id.moto_despl
+                'moto_motor': line.product_id.moto_motor,
+                'moto_desp': line.product_id.moto_despl,
+                'moto_line': line.product_id.categ_id.name,
             })
 
         if len(data) > 0:
@@ -70,7 +72,9 @@ class AccountMoveItt(models.Model):
                 'brand': ori_lot.product_id.brand_id.name,
                 'model': ori_lot.product_id.moto_model,
                 'moto_cil': ori_lot.product_id.moto_cilindros,
-                'moto_desp': ori_lot.product_id.moto_despl
+                'moto_motor': ori_lot.product_id.moto_motor,
+                'moto_desp': ori_lot.product_id.moto_despl,
+                'moto_line': ori_lot.product_id.categ_id.name,
             })
 
         if len(data) > 0:

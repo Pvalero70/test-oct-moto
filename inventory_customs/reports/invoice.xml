@@ -37,11 +37,13 @@
                             <th class="text-right"><span># Serie</span></th>
                             <th class="text-right"><span># Motor</span></th>
                             <th class="text-right"><span>Color</span></th>
-                            <th class="text-right"><span># Inventario</span></th>
+                            <th class="text-right"><span># Inv</span></th>
                             <th class="text-right"><span>Marca</span></th>
                             <th class="text-right"><span>Modelo</span></th>
-                            <th class="text-right"><span>Cilindrada</span></th>
-                            <th class="text-right"><span>Desplazamiento</span></th>
+                            <th class="text-right"><span>Cilindros</span></th>
+                            <th class="text-right"><span>Motor</span></th>
+                            <th class="text-right"><span>Despla zamiento</span></th>
+                            <th class="text-right"><span>Linea</span></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -57,7 +59,9 @@
                                     <td class="text-right"><t t-esc="snln_line['brand']"/></td>
                                     <td class="text-right"><t t-esc="snln_line['model']"/></td>
                                     <td class="text-right"><t t-esc="snln_line['moto_cil']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['moto_motor']"/></td>
                                     <td class="text-right"><t t-esc="snln_line['moto_desp']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['moto_line']"/></td>
                                 </tr>
                             </t>
                         </t>

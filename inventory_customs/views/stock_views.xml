@@ -44,6 +44,8 @@
         <field name="arch" type="xml">
             <field name="origin" position="after">
                 <field name="tt_num_pedimento"/>
+                <field name="tt_aduana"/>
+                <field name="tt_aduana_date_in"/>
             </field>
         </field>
     </record>

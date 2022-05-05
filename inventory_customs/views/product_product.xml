@@ -20,6 +20,7 @@
                             <field name="moto_model"/>
                             <field name="moto_cilindros"/>
                             <field name="moto_despl"/>
+                            <field name="moto_motor"/>
                         </group>
                     </group>
                 </page>
