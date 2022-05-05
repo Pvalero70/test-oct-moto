@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="user_discount_action" model="ir.actions.act_windows">
+       <field name="name">Descuentos Vendedor </field>
+       <field name="res_model">res.users.discount</field>
+       <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem
+            name="Descuentos Vendedores"
+            id="user_discount_menu"
+            parent="sale.sale_order_menu"
+            sequence="1"
+            action="user_discount_action"
+    />
+
+
+
+
+</odoo>

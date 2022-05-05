@@ -18,7 +18,10 @@
     ],
     'data': [
         'security/pos_user_restrict_security.xml',
+        'security/ir.model.access.csv',
+        'security/user_discount_security.xml',
         'views/res_users_views.xml',
+        'views/res_users_discount_views.xml',
     ],
     'demo': [
         'demo/point_of_sale_demo.xml',
