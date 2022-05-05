@@ -29,8 +29,7 @@
                 </form>
             </field>
         </record>
-
-    <record
+    
     <!-- Menu "Descuento Vendedores" !-->
     <menuitem
             name="Descuentos Vendedores"
