@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-    <record id="user_discount_action" model="ir.actions.act_windows">
+    <record id="user_discount_action" model="ir.actions.act_window">
        <field name="name">Descuentos Vendedor </field>
        <field name="res_model">res.users.discount</field>
        <field name="view_mode">tree,form</field>
