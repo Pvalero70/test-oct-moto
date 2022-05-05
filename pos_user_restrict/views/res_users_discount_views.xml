@@ -1,12 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-
+    <!-- Accion Descuentos Vendedores !-->
     <record id="user_discount_action" model="ir.actions.act_window">
        <field name="name">Descuentos Vendedor </field>
        <field name="res_model">res.users.discount</field>
        <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="user_discount_form_view" model="ir.ui.view">
+            <field name="name">Lista de descuentos de vendedores</field>
+            <field name="model">res.users.discount</field>
+            <field name="arch" type="xml">
+                <form string="Descuentos">
+                    <sheet>
+                        <group>
+                            <field name="seller_id"/>
+                            <field name="discount_permitted"/>
+
+                        </group>
+
+                        <notebook>
+                            <page string="Categorias de productos">
+                                <field name="category_ids" widget="one2many" />
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    <record
+    <!-- Menu "Descuento Vendedores" !-->
     <menuitem
             name="Descuentos Vendedores"
             id="user_discount_menu"

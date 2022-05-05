@@ -15,5 +15,4 @@ class ResUsersDiscount(models.Model):
 
     seller_id = fields.Many2one('res.users' , 'Vendedor')
     discount_permitted = fields.Integer('Descuento permitido')
-    category_ids = fields.Many2many('product.category' , 'Categorias')
-
+    category_ids = fields.Many2many(comodel_name='product.category' , string='Categorias')
