@@ -1,13 +1,18 @@
 <?xml version="1.0" ?>
 <odoo>
 
-    <record id="category_user_discount" model="'ir.module.category">
-        <field name="name">Descuentos Vendedores</field>
+
+
+    <record  id="category_user_discount" model="ir.module.category">
+		<field name="name">Descuentos sobre vendedores</field>
+        <field name="description">Configuracion acerca de los limites de descuento para vendedores.</field>
+        <field name="sequence">8</field>
     </record>
 
-    <record id="user_discount_group" model="res.groups">
-        <field name="name">Agregar</field>
-        <field name="category_id" ref="category_user_discount"/>
-        <field name="implied_ids" eval="[(4,ref('base.group_user'))]"/>
-    </record>
+	<record id="user_discount_group" model="res.groups">
+		<field name="category_id" ref="category_user_discount"/>
+		<field name="name">Modificar Descuentos</field>
+	</record>
+
+
 </odoo>
