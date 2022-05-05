@@ -11,7 +11,7 @@ class ResPartnerCreditLimit(models.Model):
     ]
 
     credit_limit = fields.Monetary(string="Limite de crédito", default=0.00)
-    active_credit_limit = fields.Boolean(string="Limite de crédito")
+    active_credit_limit = fields.Boolean(string="¿Limite de crédito?")
 
     @api.constrains('credit_limit')
     def _check_credit_amount(self):
