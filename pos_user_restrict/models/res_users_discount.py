@@ -14,6 +14,6 @@ class ResUsersDiscount(models.Model):
     _description = "Model that saves discounts on product categories"
 
     seller_id = fields.Many2one('res.users' , 'Vendedor')
-    discount_permitted = fields.integer('Descuento permitido')
+    discount_permitted = fields.Integer('Descuento permitido')
     category_ids = fields.Many2many('product.category' , 'Categorias')
 
