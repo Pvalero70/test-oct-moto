@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <template id="report_invoice_document_inherit_product_info_tt" inherit_id="account.report_invoice_document">
-        <xpath expr="//t[@name='account_invoice_line_accountable']/td[@name='account_invoice_line_name']" position="replace">
+        <!--<xpath expr="//t[@name='account_invoice_line_accountable']/td[@name='account_invoice_line_name']" position="replace">
             <td name="account_invoice_line_name">
 
                 <t t-set="trasa_values" t-value="o._get_invoiced_lot_values_tt(line.product_id)"/>
@@ -25,6 +25,69 @@
                     <span t-field="line.name" t-options="{'widget': 'text'}"/>
                 </t>
             </td>
+        </xpath>-->
+    </template>
+    <template id="stock_account_report_invoice_document_lotn_tt" inherit_id="stock_account.stock_account_report_invoice_document">
+        <xpath expr="//table[@name='invoice_snln_table']" position="replace">
+            <t t-if="o._print_moto_details()">
+                <table groups="stock_account.group_lot_on_invoice" class="table table-sm" style="width: 50%;" name="invoice_moto_snln_table">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th class="text-right"><span># Serie</span></th>
+                            <th class="text-right"><span># Motor</span></th>
+                            <th class="text-right"><span>Color</span></th>
+                            <th class="text-right"><span># Inventario</span></th>
+                            <th class="text-right"><span>Marca</span></th>
+                            <th class="text-right"><span>Modelo</span></th>
+                            <th class="text-right"><span>Cilindrada</span></th>
+                            <th class="text-right"><span>Desplazamiento</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-set="lot_moto_details" t-value="o._get_invoiced_lot_values_tt()"/>
+                        <t t-if="snln_line">
+                            <t t-foreach="lot_moto_details" t-as="snln_line">
+                                <tr>
+                                    <td><t t-esc="snln_line['product_name']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['serial']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['motor_num']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['color']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['inv_num']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['brand']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['model']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['moto_cil']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['moto_desp']"/></td>
+                                </tr>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+            </t>
+            <t t-else="">
+                <table groups="stock_account.group_lot_on_invoice" class="table table-sm" style="width: 50%;" name="invoice_snln_table">
+                    <thead>
+                        <tr>
+                            <th><span>Product</span></th>
+                            <th class="text-right"><span>Quantity</span></th>
+                            <th class="text-right"><span>SN/LN</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="lot_values" t-as="snln_line">
+                            <tr>
+                                <td><t t-esc="snln_line['product_name']"/></td>
+                                <td class="text-right">
+                                    <t t-esc="snln_line['quantity']"/>
+                                    <t t-esc="snln_line['uom_name']" groups="uom.group_uom"/>
+                                </td>
+                                <td class="text-right"><t t-esc="snln_line['lot_name']"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </t>
         </xpath>
     </template>
+
 </odoo>

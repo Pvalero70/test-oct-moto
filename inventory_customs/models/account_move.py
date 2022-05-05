@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 import logging
 _log = logging.getLogger("___name: %s" % __name__)
 
@@ -8,19 +8,34 @@ _log = logging.getLogger("___name: %s" % __name__)
 class AccountMoveItt(models.Model):
     _inherit = "account.move"
 
-    def _get_invoiced_lot_values_tt(self, product_id=None):
+    def _print_moto_details(self):
+        """
+        Check if this invoice is for moto product, and some rules (like only one product)
+        only one product for this kind of product.
+        :return: True if is an invoice for moto, False else.
+        """
+        # Only one line.
+        # if self.invoice_line_ids and len(self.invoice_line_ids.ids) > 1:
+        #     return False
+        moto_lines = self.invoice_line_ids.filtered(lambda p: p.product_id.product_inv_categ in ["moto", "Moto"])
+        if moto_lines and len(moto_lines.ids) == len(self.invoice_line_ids.ids):
+            return True
+        return False
+
+    def _get_invoiced_lot_values_tt(self):
         # Poner aquí la restricción de la compañia.
         if self.move_type != "out_invoice" or self.state == 'draft':
             return False
         sale_lines = self.invoice_line_ids.sale_line_ids
         # Filter lines for specific product
-        stock_move_lines = sale_lines.move_ids.filtered(lambda r: r.state == 'done').move_line_ids.filtered(lambda r: r.product_id.id == product_id.id)
+        stock_move_lines = sale_lines.move_ids.filtered(lambda r: r.state == 'done').move_line_ids
         data = []
         for line in stock_move_lines:
             if not line.product_id.product_inv_categ or not line.product_id.product_inv_categ in ["moto", "Moto"]:
                 continue
             # Put: color; inv num,
             data.append({
+                'product_name': line.lot_id.product_id.name,
                 'serial': line.lot_id.name,
                 'motor_num': line.lot_id.tt_number_motor,
                 'color': line.lot_id.tt_color,
@@ -36,7 +51,7 @@ class AccountMoveItt(models.Model):
         # Si no se origina en sale.order, entonces pos.order:..
         if not self.pos_order_ids:
             return False
-        pols = self.pos_order_ids.mapped('lines').mapped('pack_lot_ids').filtered(lambda x: x.product_id.id == product_id.id)
+        pols = self.pos_order_ids.mapped('lines').mapped('pack_lot_ids')
         for pol in pols:
             lot_domain = [
                 ('name', '=like', pol.lot_name),
@@ -47,6 +62,7 @@ class AccountMoveItt(models.Model):
             if not ori_lot:
                 continue
             data.append({
+                'product_name': ori_lot.product_id.name,
                 'serial': ori_lot.name,
                 'motor_num': ori_lot.tt_number_motor,
                 'color': ori_lot.tt_color,
