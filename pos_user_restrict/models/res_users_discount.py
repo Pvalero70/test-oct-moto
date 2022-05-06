@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import api as api
+
 
 from odoo import api, fields, models, _
 import logging
