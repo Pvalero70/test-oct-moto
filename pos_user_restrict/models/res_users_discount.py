@@ -32,7 +32,7 @@ class ResUsersDiscount(models.Model):
 
     @api.model_create_multi
     def create(self, vals):
-        _logger.debug('Create a %s with vals %s', self._name, values)
+        _logger.debug('Create a %s with vals %s', self._name, vals)
         res = self.env.user.has_group('base.user_discount_agente_group')
         grupos = self.env.user.groups
         _logger.debug('resultado de grupo : %s : y grupos : %s', res, grupos)
