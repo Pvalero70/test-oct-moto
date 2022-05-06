@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
 from odoo import fields, models
+import logging
+
+
+_logger = logging.getLogger(__name__)
 
 class ResUserInheritDiscount(models.Model):
     _inherit = 'res.users'
@@ -16,3 +20,17 @@ class ResUsersDiscount(models.Model):
     seller_id = fields.Many2one('res.users' , 'Vendedor',)
     discount_permitted = fields.Integer('Descuento permitido')
     category_ids = fields.Many2many(comodel_name='product.category' , string='Categorias')
+
+    def write(self, values):
+        _logger.debug('Create a %s with vals %s', self._name, values)
+        res = self.env.user.has_group('base.user_discount_agente_group')
+        grupos = self.env.user.groups
+        _logger.debug('resultado de grupo : %s : y grupos : %s', res, grupos)
+        return super(ResUsersDiscount, self).write(values)
+
+    def create(self, cr, uid, values, context=None):
+        _logger.debug('Create a %s with vals %s', self._name, values)
+        res = self.env.user.has_group('base.user_discount_agente_group')
+        grupos = self.env.user.groups
+        _logger.debug('resultado de grupo : %s : y grupos : %s', res, grupos)
+        return super(ResUsersDiscount, self).create(cr, uid, values, context=context)
