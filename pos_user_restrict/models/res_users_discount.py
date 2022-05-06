@@ -25,7 +25,7 @@ class ResUsersDiscount(models.Model):
 
     def write(self, values):
         _logger.debug('Create a %s with vals %s', self._name, values)
-        res = self.env.user.has_group('base.user_discount_agente_group')
+        res = self.env.user.has_group('pos_user_restrict.user_discount_agente_group')
         grupos = self.env.user.groups_id
         _logger.info('resultado de grupo : %s : y grupos : %s', res, grupos)
         return super(ResUsersDiscount, self).write(values)
@@ -33,8 +33,8 @@ class ResUsersDiscount(models.Model):
     @api.model_create_multi
     def create(self, vals):
         _logger.debug('Create a %s with vals %s', self._name, vals)
-        res = self.env.user.has_group('user_discount_agente_group')
+        res = self.env.user.has_group('pos_user_restrict.user_discount_agente_group')
         grupos = self.env.user.groups_id
-        
+
         _logger.info('resultado de grupo : %s : y grupos : %s', res, grupos)
         return super(ResUsersDiscount, self).create(vals)
