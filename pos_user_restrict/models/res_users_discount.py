@@ -40,7 +40,7 @@ class ResUsersDiscount(models.Model):
 
             seller = self.env['res.users'].search([('id', '=', vals[i]['seller_id'])], limit=1)
             descuento_20 = seller.has_group('pos_user_restrict.user_discount_agente_group')
-            _logger.info('resultado de grupo : %s : y grupos : %s : y vendedor %s', descuento_20, grupos,seller,)
+            _logger.info('resultado pertenece a  grupo : %s : y vendedor %s', descuento_20,seller,)
 
             if vals[i]['discount_permitted']>5 and descuento_20 == False:
                 raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
