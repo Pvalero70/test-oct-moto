@@ -30,9 +30,10 @@
         <field name="inherit_id" ref="stock.view_production_lot_form"/>
         <field name="arch" type="xml">
             <field name="company_id" position="after">
-                <field name="tt_number_motor"/>
-                <field name="tt_color"/>
-                <field name="tt_inventory_number"/>
+                <field name="hide_snf_fields" invisible="1"/>
+                <field name="tt_number_motor" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
+                <field name="tt_color" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
+                <field name="tt_inventory_number" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
             </field>
         </field>
     </record>

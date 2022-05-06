@@ -88,3 +88,7 @@ class StockProductionLotTt(models.Model):
     tt_number_motor = fields.Char(string="Número de motor")
     tt_color = fields.Char(string="Color")
     tt_inventory_number = fields.Char(string="Número de inventario")
+
+    def _hide_snf(self):
+        self.hide_snf_fields = self.env.company.restrict_inv_sn_flow
+    hide_snf_fields = fields.Boolean('Ocultar campos tt', compute="_hide_snf", store=False)
