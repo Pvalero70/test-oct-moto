@@ -4,17 +4,19 @@
         <xpath expr="//t[@name='account_invoice_line_accountable']/td[@name='account_invoice_line_name']" position="replace">
             <td name="account_invoice_line_name">
                 <span t-field="line.name" t-options="{'widget': 'text'}"/>
-                <br/>
-                <ul>
-                    <li><b>Número de pedimento: </b> <t t-esc="line.l10n_mx_edi_customs_number"/></li>
-                    <li><b>Marca: </b> <t t-esc="line.product_id.brand_id.name"/></li>
-                    <li><b>Linea: </b> <t t-esc="line.product_id.categ_id.name"/></li>
-                    <li><b>Clave: </b> <t t-esc="line.product_id.default_code"/></li>
-                    <li><b>Modelo: </b> <t t-esc="line.product_id.moto_model"/></li>
-                    <li><b>Cilindros: </b> <t t-esc="line.product_id.moto_cilindros"/></li>
-                    <li><b>Desplazamiento: </b> <t t-esc="line.product_id.moto_despl"/></li>
-                    <li><b>Motor: </b> <t t-esc="line.product_id.moto_motor"/></li>
-                </ul>
+                <t t-if="o._print_moto_details()">
+                    <br/>
+                    <ul>
+                        <li><b>Número de pedimento: </b> <t t-esc="line.l10n_mx_edi_customs_number"/></li>
+                        <li><b>Marca: </b> <t t-esc="line.product_id.brand_id.name"/></li>
+                        <li><b>Linea: </b> <t t-esc="line.product_id.categ_id.name"/></li>
+                        <li><b>Clave: </b> <t t-esc="line.product_id.default_code"/></li>
+                        <li><b>Modelo: </b> <t t-esc="line.product_id.moto_model"/></li>
+                        <li><b>Cilindros: </b> <t t-esc="line.product_id.moto_cilindros"/></li>
+                        <li><b>Desplazamiento: </b> <t t-esc="line.product_id.moto_despl"/></li>
+                        <li><b>Motor: </b> <t t-esc="line.product_id.moto_motor"/></li>
+                    </ul>
+                </t>
             </td>
         </xpath>
     </template>
@@ -56,8 +58,8 @@
                     <thead>
                         <tr>
                             <th><span>Product</span></th>
-                            <th class="text-right"><span>Quantity</span></th>
-                            <th class="text-right"><span>SN/LN</span></th>
+                            <th class="text-right"><span>Cantidad</span></th>
+                            <th class="text-right"><span>No. Serie</span></th>
                         </tr>
                     </thead>
                     <tbody>

@@ -30,6 +30,8 @@ class StockPickingTt(models.Model):
 
     @api.constrains('tt_num_pedimento')
     def _check_l10n_mx_edi_customs_number(self):
+        if self.env.company.restrict_inv_sn_flow:
+            return False
         for reg in self:
             if not reg.tt_num_pedimento:
                 continue
@@ -52,6 +54,8 @@ class StockMoveTt(models.Model):
     @api.depends('move_line_ids', 'move_line_ids.lot_id', 'move_line_ids.qty_done')
     def _compute_lot_ids(self):
         res = super(StockMoveTt,self)._compute_lot_ids()
+        if self.env.company.restrict_inv_sn_flow:
+            return res
         for move in self:
             if move.move_line_nosuggest_ids:
                 for ml in move.move_line_nosuggest_ids:

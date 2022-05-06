@@ -12,6 +12,8 @@ class PosOrderTt(models.Model):
 
     def _prepare_invoice_line(self, order_line):
         res = super(PosOrderTt, self)._prepare_invoice_line(order_line)
+        if self.env.company.restrict_inv_sn_flow:
+            return res
         if 'pos_order_line_id' not in res:
             res['pos_order_line_id'] = order_line.id
         _log.info("\nPREPARANDO LINEA:: %s " % res)

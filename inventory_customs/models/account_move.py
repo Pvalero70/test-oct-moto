@@ -17,6 +17,8 @@ class AccountMoveItt(models.Model):
         # Only one line.
         # if self.invoice_line_ids and len(self.invoice_line_ids.ids) > 1:
         #     return False
+        if self.env.company.restrict_inv_sn_flow:
+            return False
         moto_lines = self.invoice_line_ids.filtered(lambda p: p.product_id.product_inv_categ in ["moto", "Moto"])
         if moto_lines and len(moto_lines.ids) == len(self.invoice_line_ids.ids):
             return True
@@ -24,20 +26,22 @@ class AccountMoveItt(models.Model):
 
     def _get_invoiced_lot_values_tt(self):
         # Poner aquí la restricción de la compañia.
+        if self.env.company.restrict_inv_sn_flow:
+            return False
         if self.move_type != "out_invoice" or self.state == 'draft':
             return False
         data = []
         if not self.pos_order_ids:
             return False
         pols = self.pos_order_ids.mapped('lines').mapped('pack_lot_ids')
-        _log.info("\n POS ORDER LINE FOUND:: %s" % pols)
+        # _log.info("\n POS ORDER LINE FOUND:: %s" % pols)
         # Get all stock production lot  records in the same query.
         lot_domains = [
             ('name', 'in', pols.mapped('lot_name')),
             ('product_id', 'in', pols.mapped('product_id').ids),
         ]
         ori_lots = self.env['stock.production.lot'].search(lot_domains)
-        _log.info("\nORI LOTS FOUND:::  %s " % ori_lots)
+        # _log.info("\nORI LOTS FOUND:::  %s " % ori_lots)
         if not ori_lots:
             return False
         sml_ids = self.env['stock.move.line'].search([
@@ -46,12 +50,12 @@ class AccountMoveItt(models.Model):
             ('tt_color', '!=', False),
             ('tt_inventory_number', '!=', False),
         ])
-        _log.info("\nORI STOCK MOVE LINES  FOUND:::  %s " % sml_ids)
+        # _log.info("\nORI STOCK MOVE LINES  FOUND:::  %s " % sml_ids)
         for pol in pols:
             ori_lot = ori_lots.filtered(lambda x: x.name == pol.lot_name and x.product_id.id == pol.product_id.id)
-            _log.info("\nLOT FOUND:: %s " % ori_lot)
+            # _log.info("\nLOT FOUND:: %s " % ori_lot)
             sml_id = sml_ids.filtered(lambda r: r.lot_id.id == ori_lot.id)
-            _log.info("\nSTOCK MOVE LINE ONE FOUND:: %s " % sml_id)
+            # _log.info("\nSTOCK MOVE LINE ONE FOUND:: %s " % sml_id)
             # BUscar un stock.move.line que tenga como lot_id el que se acaba de encontrar.
             # el stock.move.line ya tiene un picking asociado.
             if not ori_lot:
@@ -71,14 +75,15 @@ class AccountMoveItt(models.Model):
 
     def _set_num_pedimento(self):
         # Filter by current company HERE.
-
+        if self.env.company.restrict_inv_sn_flow:
+            return False
         if self.move_type != "out_invoice" or self.state == 'draft':
             return False
         # From sale order
         # if self.invoice_line_ids:
         #     sale_lines = self.invoice_line_ids.sale_line_ids
             # lot_ids = sale_lines.move_ids.filtered(lambda r: r.state == 'done').move_line_ids.mapped('lot_id')
-        _log.info("\n Estableciendo número de pedimiento !!")
+        # _log.info("\n Estableciendo número de pedimiento !!")
         # From pos order.
         if self.pos_order_ids:
             for line in self.invoice_line_ids:
@@ -104,7 +109,7 @@ class AccountMoveItt(models.Model):
                 ], limit=1)
                 if not sml_ids:
                     continue
-                _log.info("\n Estableciendo número de pedimiento === %s" % sml_ids.picking_id.tt_num_pedimento)
+                # _log.info("\n Estableciendo número de pedimiento === %s" % sml_ids.picking_id.tt_num_pedimento)
                 line.l10n_mx_edi_customs_number = sml_ids.picking_id.tt_num_pedimento
 
 
