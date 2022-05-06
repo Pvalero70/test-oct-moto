@@ -78,12 +78,6 @@ class AccountMoveItt(models.Model):
         ])
         _log.info("\nORI STOCK MOVE LINES  FOUND:::  %s " % sml_ids)
         for pol in pols:
-            # lot_domain = [
-            #     ('name', '=like', pol.lot_name),
-            #     ('product_id', '=', pol.product_id.id),
-            #     # ('company_id', '=', pol.company_id.id)
-            # ]
-            # ori_lot = self.env['stock.production.lot'].search(lot_domain)
             ori_lot = ori_lots.filtered(lambda x: x.name == pol.lot_name and x.product_id.id == pol.product_id.id)
             _log.info("\nLOT FOUND:: %s " % ori_lot)
             sml_id = sml_ids.filtered(lambda r: r.lot_id.id == ori_lot.id)
@@ -108,7 +102,6 @@ class AccountMoveItt(models.Model):
                 'aduana': sml_id.picking_id.tt_aduana,
                 "aduana_date": sml_id.picking_id.tt_aduana_date_in,
             })
-
         if len(data) > 0:
             return data
         return False
@@ -119,19 +112,48 @@ class AccountMoveItt(models.Model):
         if self.move_type != "out_invoice" or self.state == 'draft':
             return False
         # From sale order
-        if self.invoice_line_ids:
-            sale_lines = self.invoice_line_ids.sale_line_ids
-            lot_ids = sale_lines.move_ids.filtered(lambda r: r.state == 'done').move_line_ids.mapped('lot_id')
-
+        # if self.invoice_line_ids:
+        #     sale_lines = self.invoice_line_ids.sale_line_ids
+            # lot_ids = sale_lines.move_ids.filtered(lambda r: r.state == 'done').move_line_ids.mapped('lot_id')
+        _log.info("\n Estableciendo número de pedimiento !!")
         # From pos order.
-        elif self.pos_order_ids:
-            lots = self.pos_order_ids.mapped('lines').mapped('pack_lot_ids')
+        if self.pos_order_ids:
+            for line in self.invoice_line_ids:
+                # Cada linea ya tiene una relacion con su linea origen en el punto de venta (pos_order_line_id)
+                # cada linea del pos order ya tiene su propio campo de número de serie.
+                # Hay que buscar un lot_id original que tenga el mismo nombre
+                # Una vez localizado el lot_id, será necesario buscar un aml que use ese serie y que tenga establecido
+                # los campos tt. Ese será el picking de la entrada original.
 
-            lot_domain = [
-                ('name', 'in', lots.mapped('lot_name')),
-                ('product_id', 'in', lots.mapped('product_id').ids),
-            ]
-            lot_ids = self.env['stock.production.lot'].search(lot_domain)
+                if not line.pos_order_line_id:
+                    continue
+                lot_ori_id = self.env['stock.production.lot'].search([
+                    ('name', 'in', line.pos_order_line_id.pack_lot_ids.mapped('name'))
+                ], limit=1)
+                if not lot_ori_id:
+                    continue
+                sml_ids = self.env['stock.move.line'].search([
+                    ('lot_id', '=', lot_ori_id.id),
+                    ('state', '=', "done"),
+                    ('tt_motor_number', '!=', False),
+                    ('tt_color', '!=', False),
+                    ('tt_inventory_number', '!=', False),
+                ], limit=1)
+                if not sml_ids:
+                    continue
+                _log.info("\n Estableciendo número de pedimiento === %s" % sml_ids.picking_id.tt_num_pedimento)
+                line.l10n_mx_edi_customs_number = sml_ids.picking_id.tt_num_pedimento
 
-        for line in self.invoice_line_ids:
-            lot = lot_ids.filtered(lambda x: x.product_id.id == line.product_id.id)[:1]
+    def action_post(self):
+        _log.info("\nOVERRIDE ACTION POST FROM INVOICE 1")
+        self._set_num_pedimento()
+        _log.info("\nOVERRIDE ACTION POST FROM INVOICE 2")
+        res = super(AccountMoveItt, self).action_post()
+        _log.info("\nOVERRIDE ACTION POST FROM INVOICE 3")
+        return res
+
+
+class AccountMoveLineItt(models.Model):
+    _inherit = "account.move.line"
+
+    pos_order_line_id = fields.Many2one('pos.order.line')
