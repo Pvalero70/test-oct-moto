@@ -21,5 +21,5 @@ class ProductTemplateCus(models.Model):
     moto_model = fields.Char(string="Modelo")
     moto_cilindros = fields.Integer(string="Cilindros")
     moto_despl = fields.Char(string="Desplazamiento")
-    moto_motor = fields.Float(string="Motor")
+    moto_motor = fields.Char(string="Motor")
 
