@@ -128,7 +128,7 @@ class AccountMoveItt(models.Model):
                 if not line.pos_order_line_id:
                     continue
                 lot_ori_id = self.env['stock.production.lot'].search([
-                    ('name', 'in', line.pos_order_line_id.pack_lot_ids.mapped('name'))
+                    ('name', 'in', line.pos_order_line_id.pack_lot_ids.mapped('lot_name'))
                 ], limit=1)
                 if not lot_ori_id:
                     continue
