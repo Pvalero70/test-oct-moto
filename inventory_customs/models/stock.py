@@ -39,14 +39,10 @@ class StockPickingTt(models.Model):
                 raise ValidationError(_("El número de pedimento es invalido, debe tener un patrón semejante a: 15  48  3009  0001234 "))
 
     def _hide_snf(self):
-        if self.env.company.restrict_inv_sn_flow:
-            self.hide_snf_fields = True
-            return True
-        else:
-            self.hide_snf_fields = False
-            return False
+        self.hide_snf_fields = not self.env.company.restrict_inv_sn_flow
 
     hide_snf_fields = fields.Boolean('Ocultar campos tt', compute="_hide_snf", store=False)
+
 
 class StockMoveTt(models.Model):
     _inherit = "stock.move"
