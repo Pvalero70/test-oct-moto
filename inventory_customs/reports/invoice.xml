@@ -69,7 +69,7 @@
                                     <td class="text-right"><t t-esc="snln_line['clave']"/></td>
                                     <td class="text-right"><t t-esc="snln_line['aduana']"/></td>
                                     <td class="text-right"><t t-esc="snln_line['aduana_date']"/></td>
-                                    <td class="text-right"><t t-esc="snln_line['l10n_mx_edi_customs_number']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['customs_number']"/></td>
                                 </tr>
                             </t>
                         </t>
