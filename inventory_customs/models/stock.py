@@ -83,14 +83,22 @@ class StockMoveTt(models.Model):
             return False
         for reg in self:
             for line in reg.move_line_nosuggest_ids:
-                if not line.tt_inventory_number:
-                    continue
-                other_lines = self.env['stock.move.line'].search([
-                  ('tt_inventory_number', '=', line.tt_inventory_number),
-                  ('company_id', '=', line.company_id.id)
-                ])
-                if other_lines:
-                    raise ValidationError("No puede duplicarse el número de inventario para la misma compañia (%s)" % line.tt_inventory_number)
+                if line.tt_inventory_number:
+                    other_lines = self.env['stock.move.line'].search([
+                      ('tt_inventory_number', '=', line.tt_inventory_number),
+                      ('company_id', '=', line.company_id.id)
+                    ])
+                    if other_lines:
+                        raise ValidationError("No puede duplicarse el número de inventario para la misma compañia (%s)" % line.tt_inventory_number)
+                if line.tt_motor_number:
+                    other_lines_motor = self.env['stock.move.line'].search([
+                        ('tt_motor_number', '=', line.tt_motor_number),
+                        ('company_id', '=', line.company_id.id)
+                    ])
+                    if other_lines_motor:
+                        raise ValidationError(
+                            "No puede duplicarse el número de motor para la misma compañia (%s)" % line.tt_motor_number)
+
 
 
 class StockMoveLineC(models.Model):
