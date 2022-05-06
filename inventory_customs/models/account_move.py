@@ -29,7 +29,10 @@ class AccountMoveItt(models.Model):
         sale_lines = self.invoice_line_ids.sale_line_ids
         # Filter lines for specific product
         stock_move_lines = sale_lines.move_ids.filtered(lambda r: r.state == 'done').move_line_ids
+        # Buscamos un stock.move.line que tenga el lot_id que buscamos. el stock.move.line tiene picking_id y
+        # éste a su vez tiene el resto de campos que deben ser mostrados.
         data = []
+        _log.info(" STOCK MOVE LINES from ACCOUNT MOVE ::: %s " % stock_move_lines)
         for line in stock_move_lines:
             if not line.product_id.product_inv_categ or not line.product_id.product_inv_categ in ["moto", "Moto"]:
                 continue
@@ -46,6 +49,9 @@ class AccountMoveItt(models.Model):
                 'moto_motor': line.product_id.moto_motor,
                 'moto_desp': line.product_id.moto_despl,
                 'moto_line': line.product_id.categ_id.name,
+                'clave': line.product_id.default_code,
+                'aduana': line.picking_id.tt_aduana,
+                'aduana_date': line.picking_id.tt_aduana_date_in
             })
 
         if len(data) > 0:
@@ -54,13 +60,30 @@ class AccountMoveItt(models.Model):
         if not self.pos_order_ids:
             return False
         pols = self.pos_order_ids.mapped('lines').mapped('pack_lot_ids')
+        # Get all stock production lot  records in the same query.
+        lot_domains = [
+            ('name', 'in', pols.mapped('lot_name')),
+            ('product_id', 'in', pols.mapped('product_id').ids),
+        ]
+        ori_lots = self.env['stock.production.lot'].search(lot_domains)
+        _log.info("\nORI LOTS FOUND:::  %s " % ori_lots)
+        if not ori_lots:
+            return False
+        sml_ids = self.env['stock.move.line'].search([('lot_id', 'in', ori_lots.ids)])
+        _log.info("\nORI STOCK MOVE LINES  FOUND:::  %s " % sml_ids)
         for pol in pols:
-            lot_domain = [
-                ('name', '=like', pol.lot_name),
-                ('product_id', '=', pol.product_id.id),
-                # ('company_id', '=', pol.company_id.id)
-            ]
-            ori_lot = self.env['stock.production.lot'].search(lot_domain)
+            # lot_domain = [
+            #     ('name', '=like', pol.lot_name),
+            #     ('product_id', '=', pol.product_id.id),
+            #     # ('company_id', '=', pol.company_id.id)
+            # ]
+            # ori_lot = self.env['stock.production.lot'].search(lot_domain)
+            ori_lot = ori_lots.filtered(lambda x: x.name == pol.lot_name and x.product_id.id == pol.product_id.id)
+            _log.info("\nLOT FOUND:: %s " % ori_lot)
+            sml_id = sml_ids.filtered(lambda r: r.lot_id.id == ori_lot.id)
+            _log.info("\nSTOCK MOVE LINE ONE FOUND:: %s " % sml_id)
+            # BUscar un stock.move.line que tenga como lot_id el que se acaba de encontrar.
+            # el stock.move.line ya tiene un picking asociado.
             if not ori_lot:
                 continue
             data.append({
@@ -75,6 +98,9 @@ class AccountMoveItt(models.Model):
                 'moto_motor': ori_lot.product_id.moto_motor,
                 'moto_desp': ori_lot.product_id.moto_despl,
                 'moto_line': ori_lot.product_id.categ_id.name,
+                'clave': ori_lot.product_id.default_code,
+                'aduana': sml_id.picking_id.tt_aduana,
+                "aduana_date": sml_id.picking_id.tt_aduana_date_in,
             })
 
         if len(data) > 0:

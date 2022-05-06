@@ -44,6 +44,9 @@
                             <th class="text-right"><span>Motor</span></th>
                             <th class="text-right"><span>Despla zamiento</span></th>
                             <th class="text-right"><span>Linea</span></th>
+                            <th class="text-right"><span>Clave</span></th>
+                            <th class="text-right"><span>Aduana</span></th>
+                            <th class="text-right"><span>Fecha de ingreso</span></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -62,6 +65,9 @@
                                     <td class="text-right"><t t-esc="snln_line['moto_motor']"/></td>
                                     <td class="text-right"><t t-esc="snln_line['moto_desp']"/></td>
                                     <td class="text-right"><t t-esc="snln_line['moto_line']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['clave']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['aduana']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['aduana_date']"/></td>
                                 </tr>
                             </t>
                         </t>
