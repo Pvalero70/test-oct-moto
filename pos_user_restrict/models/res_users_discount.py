@@ -35,4 +35,4 @@ class ResUsersDiscount(models.Model):
         res = self.env.user.has_group('base.user_discount_agente_group')
         grupos = self.env.user.groups
         _logger.debug('resultado de grupo : %s : y grupos : %s', res, grupos)
-        return super(ResUsersDiscount, self).create(values=values)
+        return 0
