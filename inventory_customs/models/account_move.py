@@ -51,7 +51,8 @@ class AccountMoveItt(models.Model):
                 'moto_line': line.product_id.categ_id.name,
                 'clave': line.product_id.default_code,
                 'aduana': line.picking_id.tt_aduana,
-                'aduana_date': line.picking_id.tt_aduana_date_in
+                'aduana_date': line.picking_id.tt_aduana_date_in,
+                'l10n_mx_edi_customs_number': line.l10n_mx_edi_customs_number
             })
 
         if len(data) > 0:
@@ -144,13 +145,13 @@ class AccountMoveItt(models.Model):
                 _log.info("\n Estableciendo número de pedimiento === %s" % sml_ids.picking_id.tt_num_pedimento)
                 line.l10n_mx_edi_customs_number = sml_ids.picking_id.tt_num_pedimento
 
-    def action_post(self):
-        _log.info("\nOVERRIDE ACTION POST FROM INVOICE 1")
-        self._set_num_pedimento()
-        _log.info("\nOVERRIDE ACTION POST FROM INVOICE 2")
-        res = super(AccountMoveItt, self).action_post()
-        _log.info("\nOVERRIDE ACTION POST FROM INVOICE 3")
-        return res
+    # def action_post(self):
+    #     _log.info("\nOVERRIDE ACTION POST FROM INVOICE 1")
+    #     self._set_num_pedimento()
+    #     _log.info("\nOVERRIDE ACTION POST FROM INVOICE 2")
+    #     res = super(AccountMoveItt, self).action_post()
+    #     _log.info("\nOVERRIDE ACTION POST FROM INVOICE 3")
+    #     return res
 
 
 class AccountMoveLineItt(models.Model):

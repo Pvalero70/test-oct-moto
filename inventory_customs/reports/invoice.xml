@@ -47,6 +47,7 @@
                             <th class="text-right"><span>Clave</span></th>
                             <th class="text-right"><span>Aduana</span></th>
                             <th class="text-right"><span>Fecha de ingreso</span></th>
+                            <th class="text-right"><span>Número de pedimento</span></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,6 +69,7 @@
                                     <td class="text-right"><t t-esc="snln_line['clave']"/></td>
                                     <td class="text-right"><t t-esc="snln_line['aduana']"/></td>
                                     <td class="text-right"><t t-esc="snln_line['aduana_date']"/></td>
+                                    <td class="text-right"><t t-esc="snln_line['l10n_mx_edi_customs_number']"/></td>
                                 </tr>
                             </t>
                         </t>
