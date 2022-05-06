@@ -50,8 +50,11 @@ class ResUsersDiscount(models.Model):
 
             categorias_ids =  vals[i]['category_ids'][0][2]
             _logger.info('Categorys id = %s', categorias_ids)
-            for j in range(len(categorias_ids)):
-                _logger.info('Categoriass id = %s', categorias_ids[j])
+            #descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', vals[i]['seller_id'])])
+            #for j in range(len(categorias_ids)):
+            #    for k in range(len(descuentos_lines)):
+            #        if descuentos_lines[k].category_ids
+            #    _logger.info('Categoriass id = %s', categorias_ids[j])
 
 
         return super(ResUsersDiscount, self).create(vals)
