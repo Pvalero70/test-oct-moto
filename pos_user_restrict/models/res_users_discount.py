@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-
+import logging
 
 from odoo import api, fields, models, _
-import logging
+from odoo.exceptions import ValidationError, UserError
 
 
 _logger = logging.getLogger(__name__)
@@ -33,8 +33,20 @@ class ResUsersDiscount(models.Model):
     @api.model_create_multi
     def create(self, vals):
         _logger.debug('Create a %s with vals %s', self._name, vals)
-        res = self.env.user.has_group('pos_user_restrict.user_discount_agente_group')
-        grupos = self.env.user.groups_id
+        descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_agente_group')
 
-        _logger.info('resultado de grupo : %s : y grupos : %s', res, grupos)
+        grupos = self.env.user.groups_id
+        seller = vals['seller_id'].has_group('pos_user_restrict.user_discount_agente_group')
+        _logger.info('resultado de grupo : %s : y grupos : %s : y vendedor %s', descuento_20, grupos,seller)
+
+        if vals['discount_permitted']>5 and descuento_20 == False:
+            raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
+
+        if vals['discount_permitted']>20 and descuento_20 == True:
+            raise ValidationError(_('Advertencia!, El descuento maximo permitido es 20%.'))
+
         return super(ResUsersDiscount, self).create(vals)
+
+
+
+
