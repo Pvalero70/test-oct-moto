@@ -26,38 +26,7 @@ class AccountMoveItt(models.Model):
         # Poner aquí la restricción de la compañia.
         if self.move_type != "out_invoice" or self.state == 'draft':
             return False
-        # sale_lines = self.invoice_line_ids.sale_line_ids
-        # # Filter lines for specific product
-        # stock_move_lines = sale_lines.move_ids.filtered(lambda r: r.state == 'done').move_line_ids
-        # # Buscamos un stock.move.line que tenga el lot_id que buscamos. el stock.move.line tiene picking_id y
-        # # éste a su vez tiene el resto de campos que deben ser mostrados.
         data = []
-        # _log.info(" STOCK MOVE LINES from ACCOUNT MOVE ::: %s " % stock_move_lines)
-        # for line in stock_move_lines:
-        #     if not line.product_id.product_inv_categ or not line.product_id.product_inv_categ in ["moto", "Moto"]:
-        #         continue
-        #     # Put: color; inv num,
-        #     data.append({
-        #         'product_name': line.lot_id.product_id.name,
-        #         'serial': line.lot_id.name,
-        #         'motor_num': line.lot_id.tt_number_motor,
-        #         'color': line.lot_id.tt_color,
-        #         'inv_num': line.lot_id.tt_inventory_number,
-        #         'brand': line.product_id.brand_id.name,
-        #         'model': line.product_id.moto_model,
-        #         'moto_cil': line.product_id.moto_cilindros,
-        #         'moto_motor': line.product_id.moto_motor,
-        #         'moto_desp': line.product_id.moto_despl,
-        #         'moto_line': line.product_id.categ_id.name,
-        #         'clave': line.product_id.default_code,
-        #         'aduana': line.picking_id.tt_aduana,
-        #         'aduana_date': line.picking_id.tt_aduana_date_in,
-        #
-        #     })
-        #
-        # if len(data) > 0:
-        #     return data
-        # Si no se origina en sale.order, entonces pos.order:..
         if not self.pos_order_ids:
             return False
         pols = self.pos_order_ids.mapped('lines').mapped('pack_lot_ids')
@@ -87,23 +56,14 @@ class AccountMoveItt(models.Model):
             # el stock.move.line ya tiene un picking asociado.
             if not ori_lot:
                 continue
-            inv_line = self.invoice_line_ids.filtered(lambda x: x.pos_order_line_id.id == pol.id)
             data.append({
                 'product_name': ori_lot.product_id.name,
                 'serial': ori_lot.name,
                 'motor_num': ori_lot.tt_number_motor,
                 'color': ori_lot.tt_color,
                 'inv_num': ori_lot.tt_inventory_number,
-                # 'brand': ori_lot.product_id.brand_id.name,
-                # 'model': ori_lot.product_id.moto_model,
-                # 'moto_cil': ori_lot.product_id.moto_cilindros,
-                # 'moto_motor': ori_lot.product_id.moto_motor,
-                # 'moto_desp': ori_lot.product_id.moto_despl,
-                # 'moto_line': ori_lot.product_id.categ_id.name,
-                # 'clave': ori_lot.product_id.default_code,
                 'aduana': sml_id.picking_id.tt_aduana,
                 "aduana_date": sml_id.picking_id.tt_aduana_date_in,
-                # 'customs_number': inv_line.l10n_mx_edi_customs_number
             })
         if len(data) > 0:
             return data
@@ -146,14 +106,6 @@ class AccountMoveItt(models.Model):
                     continue
                 _log.info("\n Estableciendo número de pedimiento === %s" % sml_ids.picking_id.tt_num_pedimento)
                 line.l10n_mx_edi_customs_number = sml_ids.picking_id.tt_num_pedimento
-
-    # def action_post(self):
-    #     _log.info("\nOVERRIDE ACTION POST FROM INVOICE 1")
-    #     self._set_num_pedimento()
-    #     _log.info("\nOVERRIDE ACTION POST FROM INVOICE 2")
-    #     res = super(AccountMoveItt, self).action_post()
-    #     _log.info("\nOVERRIDE ACTION POST FROM INVOICE 3")
-    #     return res
 
 
 class AccountMoveLineItt(models.Model):

@@ -21,7 +21,7 @@
     <template id="stock_account_report_invoice_document_lotn_tt" inherit_id="stock_account.stock_account_report_invoice_document">
         <xpath expr="//table[@name='invoice_snln_table']" position="replace">
             <t t-if="o._print_moto_details()">
-                <table groups="stock_account.group_lot_on_invoice" class="table table-sm" style="width: 50%;" name="invoice_moto_snln_table">
+                <table groups="stock_account.group_lot_on_invoice" class="table table-sm" style="width: 100%;" name="invoice_moto_snln_table">
                     <thead>
                         <tr>
                             <th>Producto</th>
@@ -29,16 +29,8 @@
                             <th class="text-right"><span># Motor</span></th>
                             <th class="text-right"><span>Color</span></th>
                             <th class="text-right"><span># Inv</span></th>
-<!--                            <th class="text-right"><span>Marca</span></th>-->
-<!--                            <th class="text-right"><span>Modelo</span></th>-->
-<!--                            <th class="text-right"><span>Cilindros</span></th>-->
-<!--                            <th class="text-right"><span>Motor</span></th>-->
-<!--                            <th class="text-right"><span>Despla zamiento</span></th>-->
-<!--                            <th class="text-right"><span>Linea</span></th>-->
-<!--                            <th class="text-right"><span>Clave</span></th>-->
                             <th class="text-right"><span>Aduana</span></th>
                             <th class="text-right"><span>Fecha de ingreso</span></th>
-<!--                            <th class="text-right"><span>Número de pedimento</span></th>-->
                         </tr>
                     </thead>
                     <tbody>
@@ -51,16 +43,8 @@
                                     <td class="text-right"><t t-esc="snln_line['motor_num']"/></td>
                                     <td class="text-right"><t t-esc="snln_line['color']"/></td>
                                     <td class="text-right"><t t-esc="snln_line['inv_num']"/></td>
-<!--                                    <td class="text-right"><t t-esc="snln_line['brand']"/></td>-->
-<!--                                    <td class="text-right"><t t-esc="snln_line['model']"/></td>-->
-<!--                                    <td class="text-right"><t t-esc="snln_line['moto_cil']"/></td>-->
-<!--                                    <td class="text-right"><t t-esc="snln_line['moto_motor']"/></td>-->
-<!--                                    <td class="text-right"><t t-esc="snln_line['moto_desp']"/></td>-->
-<!--                                    <td class="text-right"><t t-esc="snln_line['moto_line']"/></td>-->
-<!--                                    <td class="text-right"><t t-esc="snln_line['clave']"/></td>-->
                                     <td class="text-right"><t t-esc="snln_line['aduana']"/></td>
                                     <td class="text-right"><t t-esc="snln_line['aduana_date']"/></td>
-<!--                                    <td class="text-right"><t t-esc="snln_line['customs_number']"/></td>-->
                                 </tr>
                             </t>
                         </t>
