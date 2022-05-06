@@ -94,16 +94,16 @@ class AccountMoveItt(models.Model):
                 'motor_num': ori_lot.tt_number_motor,
                 'color': ori_lot.tt_color,
                 'inv_num': ori_lot.tt_inventory_number,
-                'brand': ori_lot.product_id.brand_id.name,
-                'model': ori_lot.product_id.moto_model,
-                'moto_cil': ori_lot.product_id.moto_cilindros,
-                'moto_motor': ori_lot.product_id.moto_motor,
-                'moto_desp': ori_lot.product_id.moto_despl,
-                'moto_line': ori_lot.product_id.categ_id.name,
-                'clave': ori_lot.product_id.default_code,
+                # 'brand': ori_lot.product_id.brand_id.name,
+                # 'model': ori_lot.product_id.moto_model,
+                # 'moto_cil': ori_lot.product_id.moto_cilindros,
+                # 'moto_motor': ori_lot.product_id.moto_motor,
+                # 'moto_desp': ori_lot.product_id.moto_despl,
+                # 'moto_line': ori_lot.product_id.categ_id.name,
+                # 'clave': ori_lot.product_id.default_code,
                 'aduana': sml_id.picking_id.tt_aduana,
                 "aduana_date": sml_id.picking_id.tt_aduana_date_in,
-                'customs_number': inv_line.l10n_mx_edi_customs_number
+                # 'customs_number': inv_line.l10n_mx_edi_customs_number
             })
         if len(data) > 0:
             return data
