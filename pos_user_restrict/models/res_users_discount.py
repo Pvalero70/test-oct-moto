@@ -49,7 +49,7 @@ class ResUsersDiscount(models.Model):
                 raise ValidationError(_('Advertencia!, El descuento maximo permitido es 20%.'))
 
             categorias_ids =  vals[i]['category_ids'][0][2]
-            _logger.info('Categorys id = %s', categorias_ids)
+            #_logger.info('Categorys id = %s', categorias_ids)
             #descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', vals[i]['seller_id'])])
             #for j in range(len(categorias_ids)):
             #    for k in range(len(descuentos_lines)):
