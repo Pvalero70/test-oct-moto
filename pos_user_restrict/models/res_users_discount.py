@@ -48,7 +48,7 @@ class ResUsersDiscount(models.Model):
             if vals[i]['discount_permitted']>20 and descuento_20 == True:
                 raise ValidationError(_('Advertencia!, El descuento maximo permitido es 20%.'))
 
-            categorias_ids =  vals[i]['category_ids'][2]
+            categorias_ids =  vals[i]['category_ids'][0]
             _logger.info('Categorys id = %s', categorias_ids)
             for j in range(len(categorias_ids)):
                 _logger.info('Categoriass id = %s', categorias_ids[j])
