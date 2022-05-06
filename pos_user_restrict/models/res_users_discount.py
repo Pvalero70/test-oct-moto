@@ -32,21 +32,27 @@ class ResUsersDiscount(models.Model):
 
     @api.model_create_multi
     def create(self, vals):
-        _logger.info('Create a %s with vals %s', self._name, vals)
-        descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_agente_group')
-        grupos = self.env.user.groups_id
+        #_logger.info('Create a %s with vals %s', self._name, vals)
+        #descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_agente_group')
+        #grupos = self.env.user.groups_id
         for i in range(len(vals)):
 
 
             seller = self.env['res.users'].search([('id', '=', vals[i]['seller_id'])], limit=1)
-            gruposeller = seller.has_group('pos_user_restrict.user_discount_agente_group')
-            _logger.info('resultado de grupo : %s : y grupos : %s : y vendedor %s con grupo %s', descuento_20, grupos,seller,gruposeller)
+            descuento_20 = seller.has_group('pos_user_restrict.user_discount_agente_group')
+            _logger.info('resultado de grupo : %s : y grupos : %s : y vendedor %s', descuento_20, grupos,seller,)
 
             if vals[i]['discount_permitted']>5 and descuento_20 == False:
                 raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
 
             if vals[i]['discount_permitted']>20 and descuento_20 == True:
                 raise ValidationError(_('Advertencia!, El descuento maximo permitido es 20%.'))
+
+            categorias_ids =  vals[i]['category_ids'][2]
+            _logger.info('Categorys id = %s', categorias_ids)
+            for j in range(len(categorias_ids)):
+                _logger.info('Categoriass id = %s', categorias_ids[j])
+
 
         return super(ResUsersDiscount, self).create(vals)
 
