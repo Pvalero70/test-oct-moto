@@ -37,8 +37,8 @@ class ResUsersDiscount(models.Model):
         grupos = self.env.user.groups_id
         for i in range(len(vals)):
 
-          
-            seller = self.env['res.user'].search([('id', '=', vals[i]['seller_id'])], limit=1)
+
+            seller = self.env['res.users'].search([('id', '=', vals[i]['seller_id'])], limit=1)
             gruposeller = seller.has_group('pos_user_restrict.user_discount_agente_group')
             _logger.info('resultado de grupo : %s : y grupos : %s : y vendedor %s con grupo %s', descuento_20, grupos,seller,gruposeller)
 
