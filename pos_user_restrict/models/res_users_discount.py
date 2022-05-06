@@ -21,7 +21,7 @@ class ResUsersDiscount(models.Model):
     discount_permitted = fields.Integer('Descuento permitido')
     category_ids = fields.Many2many(comodel_name='product.category' , string='Categorias')
 
-    @api.model
+    
     def write(self, values):
         _logger.debug('Create a %s with vals %s', self._name, values)
         res = self.env.user.has_group('base.user_discount_agente_group')
@@ -29,7 +29,7 @@ class ResUsersDiscount(models.Model):
         _logger.debug('resultado de grupo : %s : y grupos : %s', res, grupos)
         return super(ResUsersDiscount, self).write(values)
 
-    @api.model
+
     def create(self, cr, uid, values, context=None):
         _logger.debug('Create a %s with vals %s', self._name, values)
         res = self.env.user.has_group('base.user_discount_agente_group')
