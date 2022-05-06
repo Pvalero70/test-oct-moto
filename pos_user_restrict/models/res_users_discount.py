@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+import api as api
 
-from odoo import fields, models
+from odoo import api, fields, models
 import logging
 
 
@@ -29,10 +30,10 @@ class ResUsersDiscount(models.Model):
         _logger.debug('resultado de grupo : %s : y grupos : %s', res, grupos)
         return super(ResUsersDiscount, self).write(values)
 
-
-    def create(self, values):
+    @api.model
+    def create(self, vals):
         _logger.debug('Create a %s with vals %s', self._name, values)
         res = self.env.user.has_group('base.user_discount_agente_group')
         grupos = self.env.user.groups
         _logger.debug('resultado de grupo : %s : y grupos : %s', res, grupos)
-        return 0
+        return super(ResUsersDiscount, self).create(vals)
