@@ -73,6 +73,23 @@ class StockMoveTt(models.Model):
                         ml.lot_id.tt_inventory_number = ml.tt_inventory_number
         return res
 
+    # -------------------------------------------------------------------------
+    # CONSTRAINT METHODS
+    # -------------------------------------------------------------------------
+
+    @api.constrains('move_line_nosuggest_ids')
+    def _check_inventory_number_uniq(self):
+        if self.env.company.restrict_inv_sn_flow:
+            return False
+        for reg in self:
+            for line in reg.move_line_nosuggest_ids:
+                other_lines = self.env['stock.move.line'].search([
+                  ('tt_inventory_number', '=', line.tt_inventory_number),
+                  ('company_id', '=', line.company_id.id)
+                ])
+                if other_lines:
+                    raise ValidationError("No puede duplicarse el número de inventario para la misma compañia (%s)" % line.tt_inventory_number)
+
 
 class StockMoveLineC(models.Model):
     _inherit = "stock.move.line"
@@ -84,11 +101,6 @@ class StockMoveLineC(models.Model):
 
 class StockProductionLotTt(models.Model):
     _inherit = "stock.production.lot"
-    _sql_constraints = [
-        ('inventory_number_uniq',
-         'unique (tt_inventory_number,company_id)',
-         'El número de inventario debe ser único para la compañia actual.')
-    ]
 
     tt_number_motor = fields.Char(string="Número de motor")
     tt_color = fields.Char(string="Color")
