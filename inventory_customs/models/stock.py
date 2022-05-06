@@ -92,3 +92,14 @@ class StockProductionLotTt(models.Model):
     def _hide_snf(self):
         self.hide_snf_fields = self.env.company.restrict_inv_sn_flow
     hide_snf_fields = fields.Boolean('Ocultar campos tt', compute="_hide_snf", store=False)
+
+
+class StockQuantTti(models.Model):
+    _inherit = "stock.quant"
+
+    inv_number = fields.Char(string="Número de inventario.", related="lot_id.tt_inventory_number")
+
+    def _hide_snf(self):
+        self.hide_snf_fields = self.env.company.restrict_inv_sn_flow
+
+    hide_snf_fields = fields.Boolean('Ocultar campos tt', compute="_hide_snf", store=False)

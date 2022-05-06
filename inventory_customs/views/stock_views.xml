@@ -52,4 +52,19 @@
         </field>
     </record>
 
+    <!--
+    INVENTORY REPORT
+    -->
+    <record id="view_stock_quant_inv_number_tree" model="ir.ui.view">
+        <field name="name">view.stock.quant.inv.number.tree</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.view_stock_quant_tree_editable"/>
+        <field name="arch" type="xml">
+            <field name="lot_id" position="after">
+                <field name="hide_snf_fields" invisible="1"/>
+                <field name="inv_number" groups="stock.group_production_lot" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
+            </field>
+        </field>
+    </record>
+
 </odoo>
