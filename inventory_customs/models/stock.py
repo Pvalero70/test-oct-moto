@@ -51,6 +51,9 @@ class StockMoveTt(models.Model):
 
     def _compute_with_moto(self):
         for reg in self:
+            if self.env.company.restrict_inv_sn_flow:
+                reg.tt_with_moto = False
+                continue
             if reg.product_id.product_inv_categ and reg.product_id.product_inv_categ in ["moto", "Moto"]:
                 reg.tt_with_moto = True
             else:

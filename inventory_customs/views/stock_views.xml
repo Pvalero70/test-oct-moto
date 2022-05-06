@@ -43,7 +43,7 @@
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
             <field name="origin" position="after">
-                <field name="hide_snf_fields" invisitble="1"/>
+                <field name="hide_snf_fields" invisible="1"/>
                 <field name="tt_num_pedimento" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
                 <field name="tt_aduana" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
                 <field name="tt_aduana_date_in" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
