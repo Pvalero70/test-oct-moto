@@ -7,13 +7,13 @@
                 <br/>
                 <ul>
                     <li><b>Número de pedimento: </b> <t t-field="line.l10n_mx_edi_customs_number"/></li>
-                    <li><b>Marca: </b> <t t-field="line.product_id.brand_id.name"/></li>
-                    <li><b>Linea: </b> <t t-field="line.product_id.categ_id.name"/></li>
-                    <li><b>Clave: </b> <t t-field="line.product_id.default_code"/></li>
-                    <li><b>Modelo: </b> <t t-field="line.product_id.moto_model"/></li>
-                    <li><b>Cilindros: </b> <t t-field="line.product_id.moto_cilindros"/></li>
-                    <li><b>Desplazamiento: </b> <t t-field="line.product_id.moto_despl"/></li>
-                    <li><b>Motor: </b> <t t-field="line.product_id.moto_motor"/></li>
+                    <li><b>Marca: </b> <t t-esc="line.product_id.brand_id.name"/></li>
+                    <li><b>Linea: </b> <t t-esc="line.product_id.categ_id.name"/></li>
+                    <li><b>Clave: </b> <t t-esc="line.product_id.default_code"/></li>
+                    <li><b>Modelo: </b> <t t-esc="line.product_id.moto_model"/></li>
+                    <li><b>Cilindros: </b> <t t-esc="line.product_id.moto_cilindros"/></li>
+                    <li><b>Desplazamiento: </b> <t t-esc="line.product_id.moto_despl"/></li>
+                    <li><b>Motor: </b> <t t-esc="line.product_id.moto_motor"/></li>
                 </ul>
             </td>
         </xpath>
