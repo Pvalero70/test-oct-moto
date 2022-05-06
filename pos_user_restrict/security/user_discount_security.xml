@@ -21,7 +21,7 @@
 
 	<record id="user_discount_agente_group" model="res.groups">
 		<field name="category_id" ref="category_user_discount"/>
-		<field name="name">Permitir 20% descuentos</field>
+		<field name="name">Permitir descuentos del 20%</field>
 	</record>
 
 
