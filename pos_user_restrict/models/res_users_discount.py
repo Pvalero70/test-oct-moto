@@ -34,16 +34,17 @@ class ResUsersDiscount(models.Model):
     def create(self, vals):
         _logger.info('Create a %s with vals %s', self._name, vals)
         descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_agente_group')
-
         grupos = self.env.user.groups_id
-        seller = vals['seller_id'].has_group('pos_user_restrict.user_discount_agente_group')
-        _logger.info('resultado de grupo : %s : y grupos : %s : y vendedor %s', descuento_20, grupos,seller)
+        for i in range(len(vals)):
 
-        if vals['discount_permitted']>5 and descuento_20 == False:
-            raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
+            seller = vals[i]['seller_id'].has_group('pos_user_restrict.user_discount_agente_group')
+            _logger.info('resultado de grupo : %s : y grupos : %s : y vendedor %s', descuento_20, grupos,seller)
 
-        if vals['discount_permitted']>20 and descuento_20 == True:
-            raise ValidationError(_('Advertencia!, El descuento maximo permitido es 20%.'))
+            if vals[i]['discount_permitted']>5 and descuento_20 == False:
+                raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
+
+            if vals[i]['discount_permitted']>20 and descuento_20 == True:
+                raise ValidationError(_('Advertencia!, El descuento maximo permitido es 20%.'))
 
         return super(ResUsersDiscount, self).create(vals)
 
