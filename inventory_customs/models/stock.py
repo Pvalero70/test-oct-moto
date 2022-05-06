@@ -83,6 +83,8 @@ class StockMoveTt(models.Model):
             return False
         for reg in self:
             for line in reg.move_line_nosuggest_ids:
+                if not line.tt_inventory_number:
+                    continue
                 other_lines = self.env['stock.move.line'].search([
                   ('tt_inventory_number', '=', line.tt_inventory_number),
                   ('company_id', '=', line.company_id.id)
