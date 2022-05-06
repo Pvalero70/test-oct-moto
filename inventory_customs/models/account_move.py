@@ -60,6 +60,7 @@ class AccountMoveItt(models.Model):
         if not self.pos_order_ids:
             return False
         pols = self.pos_order_ids.mapped('lines').mapped('pack_lot_ids')
+        _log.info("\n POS ORDER LINE FOUND:: %s" % pols)
         # Get all stock production lot  records in the same query.
         lot_domains = [
             ('name', 'in', pols.mapped('lot_name')),
@@ -69,7 +70,12 @@ class AccountMoveItt(models.Model):
         _log.info("\nORI LOTS FOUND:::  %s " % ori_lots)
         if not ori_lots:
             return False
-        sml_ids = self.env['stock.move.line'].search([('lot_id', 'in', ori_lots.ids)])
+        sml_ids = self.env['stock.move.line'].search([
+            ('lot_id', 'in', ori_lots.ids),
+            ('tt_motor_number', '!=', False),
+            ('tt_color', '!=', False),
+            ('tt_inventory_number', '!=', False),
+        ])
         _log.info("\nORI STOCK MOVE LINES  FOUND:::  %s " % sml_ids)
         for pol in pols:
             # lot_domain = [
