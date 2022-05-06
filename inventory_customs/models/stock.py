@@ -76,6 +76,11 @@ class StockMoveTt(models.Model):
 
 class StockMoveLineC(models.Model):
     _inherit = "stock.move.line"
+    _sql_constraints = [
+        ('inventory_number_uniq',
+         'unique (tt_inventory_number,company_id)',
+         'El número de inventario debe ser único para la compañia actual.')
+    ]
 
     tt_motor_number = fields.Char(string="Número de motor")
     tt_color = fields.Char(string="Color")
