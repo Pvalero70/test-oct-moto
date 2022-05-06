@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <xpath expr="//notebook" position="inside">
                 <page string="Restricciones">
-                    <field name="restrict_inv_sn_flow"/>
+                    <field name="restrict_inv_sn_flow" string="Restringir flujo SN"/>
                 </page>
             </xpath>
         </field>
