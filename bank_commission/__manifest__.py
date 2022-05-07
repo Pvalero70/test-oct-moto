@@ -8,7 +8,7 @@
         "base",
     ],
     "data": [
-        'data/product_commission.xml',
+        # 'data/product_commission.xml',
         'views/pos.xml',
     ],
     'assets': {
