@@ -105,8 +105,27 @@ class SaleOrderInherit(models.Model):
                                   order.product_template_id.name, categ.name, discount_line.discount_permitted))
         _logger.info("SALE ORDER::Valores recibidos %s", self.order_line)
 
+    def restrictions_discount(self):
+        discount_lines = self.env['res.users.discount'].search([('seller_id', '=', self.env.user.id)], limit=1)
+        for order in self.order_line:
+            if order.product_template_id and order.product_template_id.categ_id:
+                _logger.info("SALE ORDER:: Linea con valores %s, y categoria %s, descuento %s", order.product_template_id.name,
+                             order.product_template_id.categ_id.name,order.discount)
+
+                for discount_line in discount_lines:
+                    _logger.info("SALE ORDER:: Linea Descuento con valores %s, y categoria %s, descuento %s",
+                                 discount_line.discount_permitted,[cat.name for cat in discount_line.category_ids])
+                    for categ in discount_line.category_ids:
+
+                        if categ.id == order.product_template_id.categ_id.id and order.discount > discount_line.discount_permitted:
+                            raise ValidationError(
+                                _('Advertencia!, El descuento permitido en %s para categoria %s es %s\%',
+                                  order.product_template_id.name, categ.name, discount_line.discount_permitted))
     def action_confirm(self):
         _logger.info("SALE ORDER::Confirmar accion")
+        self.restrictions_discount()
+
+        return False
         if self._get_forbidden_state_confirm() & set(self.mapped('state')):
             raise UserError(_(
                 'It is not allowed to confirm an order in the following states: %s'
