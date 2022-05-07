@@ -22,13 +22,38 @@ class ResUsersDiscount(models.Model):
     discount_permitted = fields.Integer('Descuento permitido')
     category_ids = fields.Many2many(comodel_name='product.category' , string='Categorias')
 
+    def _restrictions_discounts(self,seller,discount_permitted):
+        descuento_20 = seller.has_group('pos_user_restrict.user_discount_agente_group')
+        _logger.info('resultado pertenece a  grupo : %s : y vendedor %s', descuento_20, seller, )
 
-    def write(self, values):
-        _logger.info('Create a %s with vals %s', self._name, values)
-        res = self.env.user.has_group('pos_user_restrict.user_discount_agente_group')
-        grupos = self.env.user.groups_id
-        _logger.info('resultado de grupo : %s : y grupos : %s', res, grupos)
-        return super(ResUsersDiscount, self).write(values)
+        if discount_permitted > 5 and descuento_20 == False:
+            raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
+
+        if discount_permitted > 20 and descuento_20 == True:
+            raise ValidationError(_('Advertencia!, El descuento maximo permitido es 20%.'))
+
+        if discount_permitted > 20 and descuento_20 == False:
+            raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
+
+    @api.model
+    def write(self, vals):
+        _logger.info('Write Method a %s with vals %s', self._name, vals)
+        descuento_20 = self.seller_id.has_group('pos_user_restrict.user_discount_agente_group')
+
+        _logger.info('permiso 20% ', descuento_20)
+        seller = self.seller_id
+        discount_permitted = self.discount_permitted
+        if 'discount_permitted' in vals:
+            discount_permitted = vals['discount_permitted']
+
+        if 'seller_id' in vals:
+            seller = self.env['res.users'].search([('id', '=', vals['seller_id'])], limit=1)
+
+        self._restrictions_discounts(seller,discount_permitted)
+
+
+
+        return super(ResUsersDiscount, self).write(vals)
 
     @api.model_create_multi
     def create(self, vals):
@@ -36,19 +61,12 @@ class ResUsersDiscount(models.Model):
         #descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_agente_group')
         #grupos = self.env.user.groups_id
         for i in range(len(vals)):
-
-
             seller = self.env['res.users'].search([('id', '=', vals[i]['seller_id'])], limit=1)
-            descuento_20 = seller.has_group('pos_user_restrict.user_discount_agente_group')
-            _logger.info('resultado pertenece a  grupo : %s : y vendedor %s', descuento_20,seller,)
+            permitted_discount = vals[i]['discount_permitted']
 
-            if vals[i]['discount_permitted']>5 and descuento_20 == False:
-                raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
+            self._restrictions_discounts(seller,permitted_discount)
 
-            if vals[i]['discount_permitted']>20 and descuento_20 == True:
-                raise ValidationError(_('Advertencia!, El descuento maximo permitido es 20%.'))
-            if vals[i]['discount_permitted'] > 20 and descuento_20 == False:
-                raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
+
 
             categorias_ids =  vals[i]['category_ids'][0][2]
             _logger.info('Categorys id = %s', categorias_ids)
