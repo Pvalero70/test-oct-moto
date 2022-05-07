@@ -107,6 +107,7 @@ class SaleOrderInherit(models.Model):
 
     def restrictions_discount(self):
         discount_lines = self.env['res.users.discount'].search([('seller_id', '=', self.env.user.id)], limit=1)
+        _logger.info("SALE ORDER:: cantidad de registros %s,valores %s",len(discount_lines),discount_lines)
         for order in self.order_line:
             if order.product_template_id and order.product_template_id.categ_id:
                 _logger.info("SALE ORDER:: Linea con valores %s, y categoria %s, descuento %s", order.product_template_id.name,
