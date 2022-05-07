@@ -96,6 +96,6 @@ class ResUsersDiscount(models.Model):
 class SaleOrderInherit(models.Model):
     _inherit = 'sale.order'
 
-    @api.onchange('order_line.discount')
+    @api.onchange('order_line')
     def _onchange_order(self):
         _logger.info("SALE ORDER::Valores recibidos %s",self.order_line)
