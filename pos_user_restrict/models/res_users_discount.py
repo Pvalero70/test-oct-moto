@@ -88,38 +88,32 @@ class SaleOrderInherit(models.Model):
 
 
 
-    @api.onchange('order_line')
-    def _onchange_order(self):
-        _logger.info("SALE ORDER::Cantidad de lineas ", len(self.order_line))
-        discount_lines = self.env['res.users.discount'].search([('seller_id', '=', self.env.user.id)], limit=1)
-        for order in self.order_line:
-            if order.product_template_id and order.product_template_id.categ_id:
-                _logger.info("Linea con valores %s, y categoria %s", order.product_template_id.name,
-                             order.product_template_id.categ_id.name)
 
-                for discount_line in discount_lines:
-                    for categ in discount_line.category_ids:
-                        if categ.id == order.product_template_id.categ_id.id and order.discount > discount_line.discount_permitted:
-                            raise ValidationError(
-                                _('Advertencia!, El descuento permitido en %s para categoria %s es %s\%',
-                                  order.product_template_id.name, categ.name, discount_line.discount_permitted))
-        _logger.info("SALE ORDER::Valores recibidos %s", self.order_line)
 
     def restrictions_discount(self):
         discount_lines = self.env['res.users.discount'].search([('seller_id', '=', self.env.user.id)], limit=1)
         _logger.info("SALE ORDER:: cantidad de registros %s,valores %s",len(discount_lines),discount_lines)
+
         for order in self.order_line:
+            descuento_encontrado=0
             if order.product_template_id and order.product_template_id.categ_id:
                 _logger.info("SALE ORDER:: Linea con valores %s, y categoria %s, descuento %s", order.product_template_id.name,
                              order.product_template_id.categ_id.name,order.discount)
+                if len(discount_lines)>0:
+                    for discount_line in discount_lines:
+                        _logger.info("SALE ORDER:: Linea Descuento con valores %s, y categoria %s",
+                                     discount_line.discount_permitted,[cat.name for cat in discount_line.category_ids])
+                        for categ in discount_line.category_ids:
 
-                for discount_line in discount_lines:
-                    _logger.info("SALE ORDER:: Linea Descuento con valores %s, y categoria %s",
-                                 discount_line.discount_permitted,[cat.name for cat in discount_line.category_ids])
-                    for categ in discount_line.category_ids:
-
-                        if categ.id == order.product_template_id.categ_id.id and order.discount > discount_line.discount_permitted:
-                            raise ValidationError(_('Advertencia!, El descuento permitido en %s para categoria %s es %s.',order.product_template_id.name,categ.name, discount_line.discount_permitted))
+                            if categ.id == order.product_template_id.categ_id.id:
+                                descuento_encontrado=1
+                                if order.discount > discount_line.discount_permitted:
+                                    raise ValidationError(_('Advertencia!, El descuento permitido en %s para categoria %s es %s.',order.product_template_id.name,categ.name, discount_line.discount_permitted))
+                    if descuento_encontrado == 0:
+                        raise ValidationError(_('Advertencia!, No tienes permitido hacer descuentos en %s',order.product_template_id.categ_id.name))
+                else:
+                    if order.discount>0:
+                        raise ValidationError(_('Advertencia!, No tienes permitido hacer descuentos'))
 
         return True
     def action_confirm(self):
