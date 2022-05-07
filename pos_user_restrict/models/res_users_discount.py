@@ -32,7 +32,7 @@ class ResUsersDiscount(models.Model):
 
     @api.model_create_multi
     def create(self, vals):
-        #_logger.info('Create a %s with vals %s', self._name, vals)
+        _logger.info('Create a %s with vals %s', self._name, vals)
         #descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_agente_group')
         #grupos = self.env.user.groups_id
         for i in range(len(vals)):
@@ -47,14 +47,20 @@ class ResUsersDiscount(models.Model):
 
             if vals[i]['discount_permitted']>20 and descuento_20 == True:
                 raise ValidationError(_('Advertencia!, El descuento maximo permitido es 20%.'))
+            if vals[i]['discount_permitted'] > 20 and descuento_20 == False:
+                raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
 
             categorias_ids =  vals[i]['category_ids'][0][2]
-            #_logger.info('Categorys id = %s', categorias_ids)
-            #descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', vals[i]['seller_id'])])
-            #for j in range(len(categorias_ids)):
-            #    for k in range(len(descuentos_lines)):
-            #        if descuentos_lines[k].category_ids
-            #    _logger.info('Categoriass id = %s', categorias_ids[j])
+            _logger.info('Categorys id = %s', categorias_ids)
+            descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', vals[i]['seller_id'])])
+            for j in range(len(categorias_ids)):
+                for k in range(len(descuentos_lines)):
+                    _logger.info('Categoriass id = %s', categorias_ids[j])
+                    _logger.info('Antes del for %s', descuentos_lines[k].category_ids)
+                    if categorias_ids[j] in [cat.id for cat in descuentos_lines[k].category_ids]:
+                        categoria_rep = self.env['product.category'].search([('id', '=', categorias_ids[j] )], limit=1)
+                        raise ValidationError(_('Advertencia!, La categoria %s ya esta en otro registro',categoria_rep.name))
+
 
 
         return super(ResUsersDiscount, self).create(vals)
