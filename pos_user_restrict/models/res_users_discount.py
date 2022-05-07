@@ -86,6 +86,8 @@ class ResUsersDiscount(models.Model):
 class SaleOrderInherit(models.Model):
     _inherit = 'sale.order'
 
+
+
     @api.onchange('order_line')
     def _onchange_order(self):
         _logger.info("SALE ORDER::Cantidad de lineas ", len(self.order_line))
@@ -96,9 +98,30 @@ class SaleOrderInherit(models.Model):
                              order.product_template_id.categ_id.name)
 
                 for discount_line in discount_lines:
-                    for categ in discount_line:
+                    for categ in discount_line.category_ids:
                         if categ.id == order.product_template_id.categ_id.id and order.discount > discount_line.discount_permitted:
                             raise ValidationError(
                                 _('Advertencia!, El descuento permitido en %s para categoria %s es %s\%',
                                   order.product_template_id.name, categ.name, discount_line.discount_permitted))
         _logger.info("SALE ORDER::Valores recibidos %s", self.order_line)
+
+    def action_confirm(self):
+        _logger.info("SALE ORDER::Confirmar accion")
+        if self._get_forbidden_state_confirm() & set(self.mapped('state')):
+            raise UserError(_(
+                'It is not allowed to confirm an order in the following states: %s'
+            ) % (', '.join(self._get_forbidden_state_confirm())))
+
+        for order in self.filtered(lambda order: order.partner_id not in order.message_partner_ids):
+            order.message_subscribe([order.partner_id.id])
+        self.write(self._prepare_confirmation_values())
+
+        # Context key 'default_name' is sometimes propagated up to here.
+        # We don't need it and it creates issues in the creation of linked records.
+        context = self._context.copy()
+        context.pop('default_name', None)
+
+        self.with_context(context)._action_confirm()
+        if self.env.user.has_group('sale.group_auto_done_setting'):
+            self.action_done()
+        return True
