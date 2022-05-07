@@ -21,6 +21,7 @@ class ResUsersDiscount(models.Model):
     seller_id = fields.Many2one('res.users' , 'Vendedor',)
     discount_permitted = fields.Integer('Descuento permitido')
     category_ids = fields.Many2many(comodel_name='product.category' , string='Categorias')
+    location_ids = fields.Many2many(comodel_name = 'stock.location', string="Ubicacion")
 
     def _restrictions_discounts(self,seller,discount_permitted):
         descuento_20 = seller.has_group('pos_user_restrict.user_discount_agente_group')
@@ -35,7 +36,7 @@ class ResUsersDiscount(models.Model):
         if discount_permitted > 20 and descuento_20 == False:
             raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
 
-    
+
     def write(self, vals):
         _logger.info('Write Method a %s with vals %s', self._name, vals)
         descuento_20 = self.seller_id.has_group('pos_user_restrict.user_discount_agente_group')
@@ -49,7 +50,14 @@ class ResUsersDiscount(models.Model):
         if 'seller_id' in vals:
             seller = self.env['res.users'].search([('id', '=', vals['seller_id'])], limit=1)
 
+
         self._restrictions_discounts(seller,discount_permitted)
+
+        if 'category_ids' in vals:
+            lis_category_ids = vals['category_ids'][0][2]
+            descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', seller.id)])
+
+
 
 
 

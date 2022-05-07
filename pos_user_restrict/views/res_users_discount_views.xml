@@ -23,6 +23,9 @@
                             <page string="Categorias permitidas">
                                 <field name="category_ids" widget="many2many" required="1" />
                             </page>
+                            <page string="Ubicaciones Permitidas">
+                                <field name="location_ids" widget="many2many" required="1" />
+                            </page>
                         </notebook>
                     </sheet>
                 </form>
@@ -36,9 +39,10 @@
                 <tree string="Lista de Descuentos">
                     <field name="seller_id"/>
                     <field name="discount_permitted" string="Descuento Maximo Permitido"/>
-                    <field name="category_ids"  widget="many2many_tags" />
-
+                    <field name="category_ids"  widget="many2many_tags"/>
+                    <field name="location_ids"  widget="many2many_tags"/>
                 </tree>
+
             </field>
         </record>
 
