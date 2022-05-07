@@ -35,7 +35,7 @@ class ResUsersDiscount(models.Model):
         if discount_permitted > 20 and descuento_20 == False:
             raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
 
-    @api.model
+    
     def write(self, vals):
         _logger.info('Write Method a %s with vals %s', self._name, vals)
         descuento_20 = self.seller_id.has_group('pos_user_restrict.user_discount_agente_group')
