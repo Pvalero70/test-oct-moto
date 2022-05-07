@@ -109,6 +109,7 @@ class SaleOrderInherit(models.Model):
                                 descuento_encontrado=1
                                 if order.discount > discount_line.discount_permitted:
                                     raise ValidationError(_('Advertencia!, El descuento permitido en %s para categoria %s es %s.',order.product_template_id.name,categ.name, discount_line.discount_permitted))
+                    _logger.info('SALE ORDER:: descuento encontrado: %s',descuento_encontrado)
                     if descuento_encontrado == 0:
                         raise ValidationError(_('Advertencia!, No tienes permitido hacer descuentos en %s',order.product_template_id.categ_id.name))
                 else:
