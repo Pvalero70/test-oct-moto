@@ -114,7 +114,7 @@ class SaleOrderInherit(models.Model):
                              order.product_template_id.categ_id.name,order.discount)
 
                 for discount_line in discount_lines:
-                    _logger.info("SALE ORDER:: Linea Descuento con valores %s, y categoria %s, descuento %s",
+                    _logger.info("SALE ORDER:: Linea Descuento con valores %s, y categoria %s",
                                  discount_line.discount_permitted,[cat.name for cat in discount_line.category_ids])
                     for categ in discount_line.category_ids:
 
