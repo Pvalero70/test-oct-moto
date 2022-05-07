@@ -120,7 +120,7 @@ class SaleOrderInherit(models.Model):
 
                         if categ.id == order.product_template_id.categ_id.id and order.discount > discount_line.discount_permitted:
                             raise ValidationError(
-                                _('Advertencia!, El descuento permitido en %s para categoria %s es %s\%',
+                                _('Advertencia!, El descuento permitido en %s para categoria %s es %s %',
                                   order.product_template_id.name, categ.name, discount_line.discount_permitted))
     def action_confirm(self):
         _logger.info("SALE ORDER::Confirmar accion")
