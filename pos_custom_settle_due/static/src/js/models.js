@@ -32,7 +32,11 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
                 console.log(paylaterPaymentMethod)
                 console.log(existingPayLaterPayment)
 
-                return super.validateOrder(...arguments);
+                res = super.validateOrder(...arguments);
+
+                console.log("Despues de la validacion")
+
+                return res
                 
             };
             async _finalizeValidation() {
