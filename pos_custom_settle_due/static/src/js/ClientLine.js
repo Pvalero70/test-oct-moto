@@ -20,7 +20,8 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                 const partnerInvoices = await this.rpc({
                     model: 'account.move',
                     method: 'search_read',
-                    args: [[['partner_id', '=', this.props.partner.id], ['payment_state', '=', 'not_paid'], ['state', '=', 'posted']], ['name', 'amount_total', 'amount_residual_signed', 'state']],
+                    args: [[['partner_id', '=', this.props.partner.id]], ['name', 'amount_total', 'amount_residual_signed', 'state']],
+                    // args: [[['partner_id', '=', this.props.partner.id], ['payment_state', '=', 'not_paid'], ['state', '=', 'posted']], ['name', 'amount_total', 'amount_residual_signed', 'state']],
                 });
                 
                 console.log(partnerInvoices)
