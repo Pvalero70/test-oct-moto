@@ -20,7 +20,7 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                 const partnerInvoices = await this.rpc({
                     model: 'account.move',
                     method: 'search_read',
-                    args: [[['partner_id', '=', this.env.pos.db.partner_sorted]], ['name', 'amount_total', 'state']],
+                    args: [[['partner_id', '=', this.props.partner.id], ['payment_state', '=', 'not_paid'], ['state', '=', 'posted']], ['name', 'amount_total', 'amount_residual_signed', 'state']],
                 });
                 
                 console.log(partnerInvoices)
@@ -29,16 +29,19 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                 // const paymentMethods = this.env.pos.payment_methods.filter(
                 //     (method) => this.env.pos.config.payment_method_ids.includes(method.id) && method.type != 'pay_later'
                 // );
-                // const selectionList = paymentMethods.map((paymentMethod) => ({
-                //     id: paymentMethod.id,
-                //     label: paymentMethod.name,
-                //     item: paymentMethod,
-                // }));
-                // const { confirmed, payload: selectedPaymentMethod } = await this.showPopup('SelectionPopup', {
-                //     title: this.env._t('Select the payment method to settle the due'),
-                //     list: selectionList,
-                // });
-                // if (!confirmed) return;
+                const selectionList = partnerInvoices.map((invoice) => ({
+                    id: invoice.id,
+                    label: invoice.name + ' $' + invoice.amount_residual_signed,
+                    item: invoice,
+                }));
+
+
+                const { confirmed, payload: selectedPaymentMethod } = await this.showPopup('SelectionPopup', {
+                    title: this.env._t('Selecciona la factura a pagar'),
+                    list: selectionList,
+                });
+
+                if (!confirmed) return;
                 // this.trigger('discard'); // make sure the ClientListScreen resolves and properly closed.
                 // const newOrder = this.env.pos.add_new_order();
                 // const payment = newOrder.add_paymentline(selectedPaymentMethod);
