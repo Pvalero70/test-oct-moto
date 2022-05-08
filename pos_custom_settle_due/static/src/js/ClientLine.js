@@ -46,11 +46,11 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                 console.log(selectedInvoice)
                 if (!confirmed) return;
                 this.trigger('discard'); // make sure the ClientListScreen resolves and properly closed.
-                // const newOrder = this.env.pos.add_new_order();
-                // const payment = newOrder.add_paymentline(selectedInvoice);
-                // payment.set_amount(totalDue);
-                // newOrder.set_client(this.props.partner);
-                // this.showScreen('PaymentScreen');
+                const newOrder = this.env.pos.add_new_order();
+                const payment = newOrder.add_paymentline(selectedInvoice);
+                payment.set_amount(selectedInvoice.amount_residual_signed);
+                newOrder.set_client(this.props.partner);
+                this.showScreen('PaymentScreen');
             }
         };
 
