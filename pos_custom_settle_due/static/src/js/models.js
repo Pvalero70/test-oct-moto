@@ -6,14 +6,14 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
     const { float_is_zero } = require('web.utils');
     const { patch } = require('web.utils');
 
-    patch(PaymentScreen, "static patch", { 
+    const PosSettleDuePaymentScreenCustom = (PaymentScreen) =>
+        class extends PaymentScreen {
+            async validateOrder() {
+                console.log('###Sobre escribe###')
+            };
+        };
 
-        async validateOrder() {
+    Registries.Component.extend(PaymentScreen, PosSettleDuePaymentScreenCustom);
 
-            console.log("### VALIDA ###")
-            return
-        }
-
-    });
-
+    return PaymentScreen;
 });
