@@ -37,14 +37,14 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                 }));
 
 
-                const { confirmed, payload: selectedInvoice } = await this.showPopup('SelectionPopup', {
+                const { confirmedInvoice, payload: selectedInvoice } = await this.showPopup('SelectionPopup', {
                     title: this.env._t('Selecciona la factura a pagar'),
                     list: selectionInvoiceList,
                 });
 
                 console.log("Factura seleccionada")
                 console.log(selectedInvoice)
-                if (!confirmed) return;
+                if (!confirmedInvoice) return;
 
                 const paymentMethods = this.env.pos.payment_methods.filter(
                     (method) => this.env.pos.config.payment_method_ids.includes(method.id) && method.type != 'pay_later'
