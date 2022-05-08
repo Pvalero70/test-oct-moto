@@ -63,7 +63,7 @@
 
          <menuitem id="brand_product_sale"
                    name="Marcas de productos"
-                   parent="sale.product_menu_catalog"
+                   parent="stock.menu_stock_inventory_control"
                    sequence="3"
                    action="product_brand_action"/>
     </data>
