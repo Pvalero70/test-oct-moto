@@ -49,17 +49,25 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                 const paymentMethods = this.env.pos.payment_methods.filter(
                     (method) => this.env.pos.config.payment_method_ids.includes(method.id) && method.type != 'pay_later'
                 );
+                console.log(paymentMethods)
+
                 const selectionList = paymentMethods.map((paymentMethod) => ({
                     id: paymentMethod.id,
                     label: paymentMethod.name,
                     item: paymentMethod,
                 }));
                 
+                console.log(selectionList)
+
                 const { confirmed, payload: selectedPaymentMethod } = await this.showPopup('SelectionPopup', {
                     title: this.env._t('Selecciona el metodo de pago para la factura'),
                     list: selectionList,
                 });
+                console.log(confirmed)
+
                 if (!confirmed) return;
+
+                console.log("Pasa")
 
                 this.trigger('discard'); // make sure the ClientListScreen resolves and properly closed.
                 const newOrder = this.env.pos.add_new_order();
