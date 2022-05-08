@@ -33,6 +33,10 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
                 console.log(existingPayLaterPayment)
                 
             };
+            async _finalizeValidation() {
+                console.log("FINALIZE VALIDATION")
+                return super.validateOrder(...arguments);
+            };
         };
 
     Registries.Component.extend(PaymentScreen, PosSettleDuePaymentScreenCustom);
