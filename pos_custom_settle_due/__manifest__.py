@@ -18,7 +18,7 @@
     'assets': {
         'point_of_sale.assets': [
             # 'pos_settle_due/static/src/css/pos.css',
-            # 'pos_custom_settle_due/static/src/js/**/*.js',
+            'pos_custom_settle_due/static/src/js/**/*.js',
         ],
         'web.assets_qweb': [
             'pos_custom_settle_due/static/src/xml/**/*.xml',
