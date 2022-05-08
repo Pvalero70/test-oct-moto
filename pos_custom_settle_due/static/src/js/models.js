@@ -14,6 +14,8 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
 
     const PosSettleDuePaymentScreenCustom = (PaymentScreen) =>
         class extends PaymentScreen {
+            
+
             async validateOrder() {
                 console.log('###Sobre escribe###')
 
@@ -32,14 +34,16 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
                 console.log(paylaterPaymentMethod)
                 console.log(existingPayLaterPayment)
 
-                const res = super.validateOrder(...arguments);
+                return
 
-                console.log("Despues de la validacion")
+                // const res = super.validateOrder(...arguments);
 
-                const paylaterPayment = order.add_paymentline(paylaterPaymentMethod);
-                paylaterPayment.set_amount(change);
+                // console.log("Despues de la validacion")
 
-                return res
+                // const paylaterPayment = order.add_paymentline(paylaterPaymentMethod);
+                // paylaterPayment.set_amount(change);
+
+                // return res
                 
             };
             async _finalizeValidation() {

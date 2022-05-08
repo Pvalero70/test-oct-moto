@@ -76,6 +76,8 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                 const payment = newOrder.add_paymentline(selectedPaymentMethod);
                 payment.set_amount(selectedInvoice.amount_residual_signed);
                 newOrder.set_client(this.props.partner);
+                newOrder.is_payment_invoice = true;
+                newOrder.selected_invoice = selectedInvoice;
                 this.showScreen('PaymentScreen');
             }
         };
