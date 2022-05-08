@@ -14,6 +14,17 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                     event.stopPropagation();
                 }
                 console.log("Da clic")
+                console.log(this.props.partner.id)
+                console.log(this.env.pos.db.partner_sorted)
+
+                const partnerInvoices = await this.rpc({
+                    model: 'account.move',
+                    method: 'search_read',
+                    args: [[['partner_id', '=', this.env.pos.db.partner_sorted]], ['name', 'amount_total', 'state']],
+                });
+                
+                console.log(partnerInvoices)
+
                 // const totalDue = this.props.partner.total_due;
                 // const paymentMethods = this.env.pos.payment_methods.filter(
                 //     (method) => this.env.pos.config.payment_method_ids.includes(method.id) && method.type != 'pay_later'
@@ -33,7 +44,7 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                 // const payment = newOrder.add_paymentline(selectedPaymentMethod);
                 // payment.set_amount(totalDue);
                 // newOrder.set_client(this.props.partner);
-                this.showScreen('PaymentScreen');
+                // this.showScreen('PaymentScreen');
             }
         };
 
