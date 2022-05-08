@@ -1,10 +1,10 @@
-odoo.define('pos_settle_due.ClientLine', function (require) {
+odoo.define('pos_custom_settle_due.ClientLine', function (require) {
     'use strict';
 
     const ClientLine = require('point_of_sale.ClientLine');
     const Registries = require('point_of_sale.Registries');
 
-    const POSSettleDueClientLine = (ClientLine) =>
+    const POSSettleDueClientLineCustom = (ClientLine) =>
         class extends ClientLine {
             getPartnerLink() {
                 return `/web#model=res.partner&id=${this.props.partner.id}`;
@@ -37,7 +37,7 @@ odoo.define('pos_settle_due.ClientLine', function (require) {
             }
         };
 
-    Registries.Component.extend(ClientLine, POSSettleDueClientLine);
+    Registries.Component.extend(ClientLine, POSSettleDueClientLineCustom);
 
     return ClientLine;
 });
