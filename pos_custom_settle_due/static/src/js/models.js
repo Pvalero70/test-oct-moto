@@ -36,6 +36,9 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
 
                 console.log("Despues de la validacion")
 
+                const paylaterPayment = order.add_paymentline(paylaterPaymentMethod);
+                paylaterPayment.set_amount(change);
+
                 return res
                 
             };
