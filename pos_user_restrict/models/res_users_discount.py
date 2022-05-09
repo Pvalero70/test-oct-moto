@@ -161,5 +161,7 @@ class SaleOrderInherit(models.Model):
             self.action_done()
         return True
 
+    @api.one
     def send_mail_discount(self):
         _logger.info("SALE ORDER: Boton solicitar descuento")
+        return True
