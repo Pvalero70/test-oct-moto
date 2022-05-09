@@ -4,8 +4,12 @@
         <xpath expr="//div[hasclass('payment-buttons')]" position="inside">
             <t t-if="currentOrder.is_payment_invoice">
                 <div class="complemento-button">
-                    <div class="button" t-att-class="highlight">
-                        <i class="fa fa-file-text-o" /> Complemento de Pago                        
+                    <div class="button" t-att-class="button highlight">
+                        <i class="fa fa-file-text-o" />
+                        <span>
+                            <t t-esc="currentOrder.selected_invoice.name"></t> - 
+                            $<t t-esc="currentOrder.selected_invoice.amount_residual_signed"></t>
+                        </span>                      
                     </div>
                 </div>
             </t>
