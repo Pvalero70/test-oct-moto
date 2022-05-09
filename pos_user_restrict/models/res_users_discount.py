@@ -23,12 +23,13 @@ class ResUsersDiscount(models.Model):
     category_ids = fields.Many2many(comodel_name='product.category', string='Categorias')
     almacen_id = fields.Many2one(comodel_name='stock.warehouse', string="Almacen")
 
-    def _restrictions_discounts(self, seller, discount_permitted):
+    def _restrictions_discounts(self, seller, discount_permitted,almacen_id):
         descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_gerente_group')
 
         _logger.info('resultado pertenece a  grupo : %s : y vendedor %s', descuento_20, seller, )
-        if descuento_20 == True and self.env.user.property_warehouse_id.id != self.almacen_id.id and discount_permitted<=20:
-            raise ValidationError(_('Advertencia!, No tienes permiso de gerente para el almacen %s.',self.almacen_id.name))
+        if descuento_20 == True and self.env.user.property_warehouse_id.id != almacen_id and discount_permitted<=20:
+            almacen = self.env['stock.warehouse'].search([('id', '=', almacen_id)], limit=1)
+            raise ValidationError(_('Advertencia!, No tienes permiso de gerente para el almacen %s.',almacen.name))
 
         if discount_permitted > 5 and descuento_20 == False:
             raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
@@ -55,13 +56,16 @@ class ResUsersDiscount(models.Model):
 
         seller = self.seller_id
         discount_permitted = self.discount_permitted
+        almacen_id = self.almacen_id.id
         if 'discount_permitted' in vals:
             discount_permitted = vals['discount_permitted']
 
         if 'seller_id' in vals:
             seller = self.env['res.users'].search([('id', '=', vals['seller_id'])], limit=1)
+        if 'almacen_id' in vals:
+            almacen_id = vals['almacen_id']
 
-        self._restrictions_discounts(seller, discount_permitted)
+        self._restrictions_discounts(seller, discount_permitted,almacen_id)
 
         if 'category_ids' in vals:
             lis_category_ids = vals['category_ids'][0][2]
@@ -78,8 +82,9 @@ class ResUsersDiscount(models.Model):
         for i in range(len(vals)):
             seller = self.env['res.users'].search([('id', '=', vals[i]['seller_id'])], limit=1)
             permitted_discount = vals[i]['discount_permitted']
+            almacen_id = vals[i]['almacen_id']
 
-            self._restrictions_discounts(seller, permitted_discount)
+            self._restrictions_discounts(seller, permitted_discount,almacen_id)
 
             categorias_ids = vals[i]['category_ids'][0][2]
             _logger.info('Categorys id = %s', categorias_ids)
