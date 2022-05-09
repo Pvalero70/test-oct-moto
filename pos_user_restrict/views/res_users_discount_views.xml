@@ -37,8 +37,8 @@
                 <tree string="Lista de Descuentos">
                     <field name="seller_id"/>
                     <field name="discount_permitted" string="Descuento Maximo Permitido"/>
+                    <field name="almacen_id"/>
                     <field name="category_ids"  widget="many2many_tags"/>
-                    <field name="sucursal_ids"  widget="many2many_tags"/>
                 </tree>
 
             </field>
