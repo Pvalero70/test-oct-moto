@@ -36,6 +36,8 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
 
                 this.currentOrder.finalized = true;
 
+                order.destroy({ reason: 'abandon' });
+
                 this.showScreen(this.nextScreen);
 
                 return
