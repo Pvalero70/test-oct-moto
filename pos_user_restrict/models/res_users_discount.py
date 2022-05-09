@@ -27,7 +27,7 @@ class ResUsersDiscount(models.Model):
         descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_gerente_group')
 
         _logger.info('resultado pertenece a  grupo : %s : y vendedor %s', descuento_20, seller, )
-        if descuento_20 == True and self.env.user.property_warehouse_id.id != almacen_id and discount_permitted<=20:
+        if descuento_20 == True and self.env.user.property_warehouse_id.id != almacen_id and discount_permitted<=20 and discount_permitted>5:
             almacen = self.env['stock.warehouse'].search([('id', '=', almacen_id)], limit=1)
             raise ValidationError(_('Advertencia!, No tienes permiso de gerente para el almacen %s.',almacen.name))
 
@@ -117,7 +117,7 @@ class SaleOrderInherit(models.Model):
                                      discount_line.discount_permitted,[cat.name for cat in discount_line.category_ids])
                         for categ in discount_line.category_ids:
 
-                            if categ.id == order.product_template_id.categ_id.id:
+                            if categ.id == order.product_template_id.categ_id.id :
                                 descuento_encontrado=1
                                 if order.discount > discount_line.discount_permitted:
                                     raise ValidationError(_('Advertencia!, El descuento permitido en %s para categoria %s es %s.',order.product_template_id.name,categ.name, discount_line.discount_permitted))
