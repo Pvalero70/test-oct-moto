@@ -17,14 +17,12 @@
                             <group>
                                <field name="seller_id" required="1"/>
                                 <field name="discount_permitted" string="Descuento Maximo Permitido %" required="1"/>
+                                <field name="almacen_id" required="1" />
                             </group>
                         </group>
                         <notebook>
                             <page string="Categorias permitidas">
                                 <field name="category_ids" widget="many2many" required="1" />
-                            </page>
-                            <page string="Sucursales Permitidas">
-                                <field name="sucursal_ids" widget="many2many" required="1" />
                             </page>
                         </notebook>
                     </sheet>

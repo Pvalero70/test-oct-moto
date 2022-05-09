@@ -21,7 +21,7 @@ class ResUsersDiscount(models.Model):
     seller_id = fields.Many2one('res.users', 'Vendedor', )
     discount_permitted = fields.Integer('Descuento permitido')
     category_ids = fields.Many2many(comodel_name='product.category', string='Categorias')
-    sucursal_ids = fields.Many2many(comodel_name='pos.config', string="Sucursal")
+    almacen_id = fields.Many2one(comodel_name='stock.warehouse', string="Almacen")
 
     def _restrictions_discounts(self, seller, discount_permitted):
         descuento_20 = seller.has_group('pos_user_restrict.user_discount_agente_group')
@@ -75,10 +75,10 @@ class ResUsersDiscount(models.Model):
                 for k in range(len(descuentos_lines)):
                     _logger.info('Categoriass id = %s', categorias_ids[j])
                     _logger.info('Antes del for %s', descuentos_lines[k].category_ids)
-                    if categorias_ids[j] in [cat.id for cat in descuentos_lines[k].category_ids]:
+                    if categorias_ids[j] in [cat.id for cat in descuentos_lines[k].category_ids] and vals['almacen_id'] == descuentos_lines[k].almacen_id.id:
                         categoria_rep = self.env['product.category'].search([('id', '=', categorias_ids[j])], limit=1)
                         raise ValidationError(
-                            _('Advertencia!, La categoria %s ya esta en otro registro', categoria_rep.name))
+                            _('Advertencia!, La categoria %s ya esta en otro registro con el', categoria_rep.name))
 
         return super(ResUsersDiscount, self).create(vals)
 
@@ -91,7 +91,7 @@ class SaleOrderInherit(models.Model):
 
 
     def restrictions_discount(self):
-        discount_lines = self.env['res.users.discount'].search([('seller_id', '=', self.env.user.id)], limit=1)
+        discount_lines = self.env['res.users.discount'].search([('seller_id', '=', self.env.user.id),('almacen_id','=',self.warehouse_id.id)], limit=1)
         _logger.info("SALE ORDER:: cantidad de registros %s,valores %s",len(discount_lines),discount_lines)
 
         for order in self.order_line:
