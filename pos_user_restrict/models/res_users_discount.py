@@ -75,7 +75,7 @@ class ResUsersDiscount(models.Model):
                 for k in range(len(descuentos_lines)):
                     _logger.info('Categoriass id = %s', categorias_ids[j])
                     _logger.info('Antes del for %s', descuentos_lines[k].category_ids)
-                    if categorias_ids[j] in [cat.id for cat in descuentos_lines[k].category_ids] and vals['almacen_id'] == descuentos_lines[k].almacen_id.id:
+                    if categorias_ids[j] in [cat.id for cat in descuentos_lines[k].category_ids] and vals[i]['almacen_id'] == descuentos_lines[k].almacen_id.id:
                         categoria_rep = self.env['product.category'].search([('id', '=', categorias_ids[j])], limit=1)
                         raise ValidationError(
                             _('Advertencia!, La categoria %s ya esta en otro registro con el', categoria_rep.name))
