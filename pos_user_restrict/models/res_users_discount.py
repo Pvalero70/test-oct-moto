@@ -100,7 +100,9 @@ class SaleOrderInherit(models.Model):
 
     need_discount_aprove = fields.Boolean("Nesesita descuento mayor?",default=False)
 
-
+    def send_mail_discount(self):
+        _logger.info("SALE ORDER: Boton solicitar descuento")
+        return True
 
 
     def restrictions_discount(self):
@@ -162,6 +164,3 @@ class SaleOrderInherit(models.Model):
         return True
 
 
-    def send_mail_discount(self):
-        _logger.info("SALE ORDER: Boton solicitar descuento")
-        return True
