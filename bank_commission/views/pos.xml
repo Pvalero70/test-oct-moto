@@ -7,7 +7,17 @@
         <field name="arch" type="xml">
             <field name="company_id" position="after">
                 <field name="bank_commission_method"/>
-                <field name="bank_commission_amount"/>
+                <div>
+                    <b>Ayuda: </b> El monto fijo representa una constante cada uso de tarjeta.
+                </div>
+                <field name="bank_commission_amount"
+                    attrs="{
+                    'invisible': [('bank_commission_method', '==', False)],
+                    'required':[('bank_commission_method', '!=', False)]}"/>
+                <field name="bank_commission_product_id"
+                    attrs="{
+                    'invisible': [('bank_commission_method', '==', False)],
+                    'required':[('bank_commission_method', '!=', False)]}"/>
             </field>
         </field>
     </record>

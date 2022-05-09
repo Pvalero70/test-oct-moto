@@ -15,3 +15,20 @@ class PosPaymentMethodBc(models.Model):
         ("fixed", "Monto fijo")
     ], string="Método de calculo comisión")
     bank_commission_amount = fields.Float(string="Monto de comisión")
+    bank_commission_product_id = fields.Many2one('product.product', string="Concepto comisión")
+
+
+class PosOrderBc(models.Model):
+    _inherit = "pos.order"
+
+    def _create_invoice(self,vals):
+        res = super(PosOrderBc, self)
+        # Creating new invoice for commission bank
+        _log.info("\n Creando factura para.. ")
+        for payment in self.payment_ids.filtered(lambda x: x.payment_method_id.bank_commission_method is not False):
+            self._create_bc_invoice(payment)
+        return res
+
+    @api.model
+    def _create_bc_invoice(self, payment):
+        _log.info("\n Creando factura para el pago:: %s" % payment)
