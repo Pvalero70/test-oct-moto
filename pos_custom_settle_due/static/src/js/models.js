@@ -34,6 +34,10 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
                 console.log(paylaterPaymentMethod)
                 console.log(existingPayLaterPayment)
 
+                this.currentOrder.finalized = true;
+
+                this.showScreen(this.nextScreen);
+
                 return
 
                 // const res = super.validateOrder(...arguments);
