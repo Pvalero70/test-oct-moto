@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Point of sale Customs",
+    "name": "Filtros Ordenes POS",
     'version': '0.01b',
     'author': '@glopzvega',
     'website': 'https://github.com/glopzvega',
