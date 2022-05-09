@@ -2,7 +2,7 @@
 <templates id="template" xml:space="preserve">
     <t t-name="PaymentScreenCustom" t-inherit="point_of_sale.PaymentScreen" t-inherit-mode="extension" owl="1">
         <xpath expr="//div[hasclass('payment-buttons')]" position="inside">
-            <t t-if="currentOrder.is_payment_invoice">
+            <!-- <t t-if="currentOrder.is_payment_invoice"> -->
                 <div class="complemento-button">
                     <div class="button" t-att-class="button highlight">
                         <i class="fa fa-file-text-o" />
@@ -11,7 +11,7 @@
                         </span>                      
                     </div>
                 </div>
-            </t>
+            <!-- </t> -->
            
         </xpath>
     </t>
