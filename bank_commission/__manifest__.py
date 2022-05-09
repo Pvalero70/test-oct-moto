@@ -5,7 +5,7 @@
     'author': 'Ing. Isaac Chávez Arroyo',
     'website': 'https://isaaccv.ml',
     "depends": [
-        "base",
+        "base", "point_of_sale"
     ],
     "data": [
         # 'data/product_commission.xml',

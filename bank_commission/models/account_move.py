@@ -15,6 +15,6 @@ class AccountMoveBc(models.Model):
         # OVERRIDE
         invoices = super(AccountMoveBc, self).create(vals_list)
         for inv in invoices:
-            _log.info("\n ")
+            _log.info("\n Factura a revisar::: (%s) $s " % (inv.name, inv))
         return invoices
 
