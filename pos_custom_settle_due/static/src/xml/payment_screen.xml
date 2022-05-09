@@ -7,8 +7,7 @@
                     <div class="button" t-att-class="button highlight">
                         <i class="fa fa-file-text-o" />
                         <span>
-                            <t t-esc="currentOrder.selected_invoice.name"></t> - 
-                            $<t t-esc="currentOrder.selected_invoice.amount_residual_signed"></t>
+                            <t t-esc="currentOrder.selected_invoice.name"></t>
                         </span>                      
                     </div>
                 </div>
