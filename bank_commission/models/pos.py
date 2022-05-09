@@ -27,7 +27,9 @@ class PosOrderBc(models.Model):
         # Creating new invoice for commission bank
         _log.info("\n Creando factura para.. ")
         for payment in self.payment_ids.filtered(lambda x: x.payment_method_id.bank_commission_method is not False):
-            if not self._create_bc_invoice(payment):
+            invo = self._create_bc_invoice(payment)
+            _log.info("\n FACTURA POR COMISIÓN CREADA::  %s " % invo)
+            if not invo:
                 continue
         return res
 
