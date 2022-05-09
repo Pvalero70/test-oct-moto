@@ -78,7 +78,7 @@ class ResUsersDiscount(models.Model):
                     if categorias_ids[j] in [cat.id for cat in descuentos_lines[k].category_ids] and vals[i]['almacen_id'] == descuentos_lines[k].almacen_id.id:
                         categoria_rep = self.env['product.category'].search([('id', '=', categorias_ids[j])], limit=1)
                         raise ValidationError(
-                            _('Advertencia!, La categoria %s ya esta en otro registro con el', categoria_rep.name))
+                            _('Advertencia!, Ya existe otro descuento con la categoria %s y almacen %s ', categoria_rep.name, descuentos_lines[k].almacen_id.name))
 
         return super(ResUsersDiscount, self).create(vals)
 
