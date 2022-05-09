@@ -11,12 +11,22 @@
 
 	<record id="user_discount_group" model="res.groups">
 		<field name="category_id" ref="category_user_discount"/>
-		<field name="name">Agregar descuentos</field>
+		<field name="name">Desarrollar descuentos</field>
+	</record>
+
+	<record id="user_discount_admin_group" model="res.groups">
+		<field name="category_id" ref="category_user_discount"/>
+		<field name="name">Administrar descuentos</field>
 	</record>
 
 	<record id="user_discount_view_group" model="res.groups">
 		<field name="category_id" ref="category_user_discount"/>
-		<field name="name">Ver descuentos</field>
+		<field name="name">Ver tabla descuentos</field>
+	</record>
+
+	<record id="user_discount_gerente_group" model="res.groups">
+		<field name="category_id" ref="category_user_discount"/>
+		<field name="name">Gerente de sucursal</field>
 	</record>
 
 	<record id="user_discount_agente_group" model="res.groups">

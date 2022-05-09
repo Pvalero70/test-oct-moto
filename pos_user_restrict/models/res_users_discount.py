@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 class ResUserInheritDiscount(models.Model):
     _inherit = 'res.users'
 
-    discount_ids = fields.One2many('res.users.discount', 'seller_id', String="Lista de Descuentos")
+    discount_ids = fields.One2many('res.users.discount', 'seller_id')
 
 
 class ResUsersDiscount(models.Model):
@@ -21,7 +21,7 @@ class ResUsersDiscount(models.Model):
     seller_id = fields.Many2one('res.users', 'Vendedor', )
     discount_permitted = fields.Integer('Descuento permitido')
     category_ids = fields.Many2many(comodel_name='product.category', string='Categorias')
-    location_ids = fields.Many2many(comodel_name='stock.location', string="Ubicacion")
+    sucursal_ids = fields.Many2many(comodel_name='pos.config', string="Sucursal")
 
     def _restrictions_discounts(self, seller, discount_permitted):
         descuento_20 = seller.has_group('pos_user_restrict.user_discount_agente_group')
@@ -110,7 +110,7 @@ class SaleOrderInherit(models.Model):
                                 if order.discount > discount_line.discount_permitted:
                                     raise ValidationError(_('Advertencia!, El descuento permitido en %s para categoria %s es %s.',order.product_template_id.name,categ.name, discount_line.discount_permitted))
                     _logger.info('SALE ORDER:: descuento encontrado: %s',descuento_encontrado)
-                    if descuento_encontrado == 0:
+                    if descuento_encontrado == 0 and order.discount>0:
                         raise ValidationError(_('Advertencia!, No tienes permitido hacer descuentos en %s',order.product_template_id.categ_id.name))
                 else:
                     if order.discount>0:

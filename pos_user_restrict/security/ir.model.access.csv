@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_user_discount,Acceso a crear Descuentos,model_res_users_discount,user_discount_group,1,1,1,1
+access_user_discount,Desarrollar descuentos,model_res_users_discount,user_discount_group,1,1,1,1
+access_user_admin_discount,Administrar Descuentos,model_res_users_discount,user_discount_admin_group,1,0,0,0
 access_user_view_discount,Acceso a ver Descuentos,model_res_users_discount,user_discount_view_group,1,0,0,0
+access_user_gerente_discount,Gerente de Descuentos,model_res_users_discount,user_discount_gerente_group,1,1,0,0
