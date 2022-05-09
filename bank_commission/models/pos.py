@@ -21,8 +21,8 @@ class PosPaymentMethodBc(models.Model):
 class PosOrderBc(models.Model):
     _inherit = "pos.order"
 
-    def _create_invoice(self,vals):
-        res = super(PosOrderBc, self)
+    def _create_invoice(self, vals):
+        res = super(PosOrderBc, self)._create_invoice(vals)
         # Creating new invoice for commission bank
         _log.info("\n Creando factura para.. ")
         for payment in self.payment_ids.filtered(lambda x: x.payment_method_id.bank_commission_method is not False):

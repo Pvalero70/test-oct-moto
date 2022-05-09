@@ -14,6 +14,7 @@ class AccountMoveBc(models.Model):
     def create(self, vals_list):
         # OVERRIDE
         invoices = super(AccountMoveBc, self).create(vals_list)
+        _log.info("\n TODAS LAS FACTURAS ::: %s" % invoices)
         for inv in invoices:
             _log.info("\n Factura a revisar::: (%s) $s " % inv.name, inv)
             if not inv.pos_order_ids:
