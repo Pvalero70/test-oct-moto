@@ -11,7 +11,7 @@ class PosPaymentMethodBc(models.Model):
     _inherit = "pos.payment.method"
 
     bank_commission_method = fields.Selection([
-        (False, ""),
+        # (False, ""),
         ("percentage", "Porcentaje"),
         ("fixed", "Monto fijo")
     ], string="Método de calculo comisión")
