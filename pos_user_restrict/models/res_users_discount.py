@@ -98,6 +98,7 @@ class ResUsersDiscount(models.Model):
 class SaleOrderInherit(models.Model):
     _inherit = 'sale.order'
 
+    need_discount_aprove = fields.Boolean("Nesesita descuento mayor?",default=False)
 
 
 
@@ -120,21 +121,26 @@ class SaleOrderInherit(models.Model):
                             if categ.id == order.product_template_id.categ_id.id :
                                 descuento_encontrado=1
                                 if order.discount > discount_line.discount_permitted:
+                                    self.need_discount_aprove=True
                                     raise ValidationError(_('Advertencia!, El descuento permitido en %s para categoria %s es %s.',order.product_template_id.name,categ.name, discount_line.discount_permitted))
                     _logger.info('SALE ORDER:: descuento encontrado: %s',descuento_encontrado)
 
                 else:
                     if order.discount>0:
+                        self.need_discount_aprove = False
                         raise ValidationError(_('Advertencia!, No tienes permitido hacer descuentos'))
 
             if descuento_encontrado == 0 and order.discount > 0:
+                self.need_discount_aprove = False
                 raise ValidationError(_('Advertencia!, No tienes permitido hacer descuentos en %s',
                                         order.product_template_id.categ_id.name))
         return True
+
     def action_confirm(self):
         _logger.info("SALE ORDER::Confirmar accion")
         self.restrictions_discount()
 
+        self.need_discount_aprove = False
         return False
         if self._get_forbidden_state_confirm() & set(self.mapped('state')):
             raise UserError(_(
@@ -154,3 +160,6 @@ class SaleOrderInherit(models.Model):
         if self.env.user.has_group('sale.group_auto_done_setting'):
             self.action_done()
         return True
+
+    def send_mail_discount(self):
+        _logger.info("SALE ORDER: Boton solicitar descuento")
