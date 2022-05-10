@@ -99,7 +99,17 @@ class ResUsersDiscount(models.Model):
 class SaleOrderInherit(models.Model):
     _inherit = 'sale.order'
 
-    need_discount_aprove = fields.Boolean("Nesesita descuento mayor?",default=False)
+    need_discount_aprove = fields.Boolean("Nesesita descuento mayor?",compute='_get_value')
+
+
+    @api.depends('self.order_line')
+    def _get_value(self):
+        list = self._get_category_needs_discount()
+        if len(list):
+            self.need_discount_aprove = True
+        else:
+            self.need_discount_aprove = False
+
 
     def send_mail_discount(self):
         _logger.info("SALE ORDER: Boton solicitar descuento")
