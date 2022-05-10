@@ -29,7 +29,7 @@
                     </group>
                     <notebook>
                         <page string="Categorias permitidas">
-                            <field name="category_ids" widget="many2many" required="1" options="{'no_create': True, 'no_create_edit':True}"/>
+                            <field name="category_ids" widget="many2many" required="1" options="{'no_create': True, 'no_quick_create': True, 'no_create_edit':True}"/>
                         </page>
                     </notebook>
                 </sheet>
