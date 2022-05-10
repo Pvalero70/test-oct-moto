@@ -146,9 +146,13 @@ class SaleOrderInherit(models.Model):
             raise ValidationError(_('Advertencia!, No tienes almacen predeterminado seleccionado'))
         almacen = self.env.user.property_warehouse_id
         list_usuarios = self.env['res.users'].search([('property_warehouse_id', '=', almacen.id)])
+        if len(list_usuarios)==0:
+            raise ValidationError(_("No hay un gerente asignado para el almacen %s",almacen.name))
+        gerente_encontrado = 0
         for usuario in list_usuarios:
             if usuario.has_group('pos_user_restrict.user_discount_gerente_group'):
                 descuentos_requeridos = self._get_category_needs_discount()
+                gerente_encontrado = 1
 
                 _logger.info("SALE ORDER: Boton email , descuentos solicitados= %s",descuentos_requeridos)
                 if len(descuentos_requeridos)>0:
@@ -167,7 +171,8 @@ class SaleOrderInherit(models.Model):
                     template_id = template_obj.create(template_data)
                     template_id.send()
                     _logger.info("SALE ORDER: Enviado")
-
+        if gerente_encontrado ==0:
+            raise ValidationError(_("No hay un gerente asignado para el almacen %s", almacen.name))
         return True
 
 
