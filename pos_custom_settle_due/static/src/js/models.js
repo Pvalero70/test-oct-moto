@@ -61,8 +61,12 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
                 
             };
             async _finalizeValidation() {
+                
                 console.log("FINALIZE VALIDATION")
+                this.currentOrder.prueba = 123
+                this.currentOrder.to_invoice = [1, 2]
                 console.log(this.currentOrder)
+
                 return super._finalizeValidation(...arguments);
             };
         };
@@ -71,3 +75,4 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
 
     return PaymentScreen;
 });
+
