@@ -1,7 +1,7 @@
 odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
     'use strict';
 
-    const PaymentScreen = require('point_of_sale.PaymentScreen');
+    const PaymentScreen = require('pos_customs.PaymentScreenC');
     const Registries = require('point_of_sale.Registries');
     // const { float_is_zero } = require('web.utils');
     // const { patch } = require('web.utils');
