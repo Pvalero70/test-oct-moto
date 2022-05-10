@@ -11,6 +11,8 @@ CUSTOM_NUMBERS_PATTERN = re.compile(r'[0-9]{2}  [0-9]{2}  [0-9]{4}  [0-9]{7}')
 class StockPickingTt(models.Model):
     _inherit = "stock.picking"
 
+    tt_aduana = fields.Char(string="Aduana")
+    tt_aduana_date_in = fields.Date(string="Fecha ingreso")
     tt_num_pedimento = fields.Char(
         help="Campo opcional para ingresar la información aduanera en el caso de ventas de bienes importados de primera mano o en el caso de operaciones de comercio exterior con bienes o servicios.\n"
             "El formato debe ser:\n"
@@ -28,11 +30,18 @@ class StockPickingTt(models.Model):
 
     @api.constrains('tt_num_pedimento')
     def _check_l10n_mx_edi_customs_number(self):
+        if self.env.company.restrict_inv_sn_flow:
+            return False
         for reg in self:
             if not reg.tt_num_pedimento:
                 continue
             if not CUSTOM_NUMBERS_PATTERN.match(reg.tt_num_pedimento):
                 raise ValidationError(_("El número de pedimento es invalido, debe tener un patrón semejante a: 15  48  3009  0001234 "))
+
+    def _hide_snf(self):
+        self.hide_snf_fields = self.env.company.restrict_inv_sn_flow
+
+    hide_snf_fields = fields.Boolean('Ocultar campos tt', compute="_hide_snf", store=False)
 
 
 class StockMoveTt(models.Model):
@@ -42,6 +51,9 @@ class StockMoveTt(models.Model):
 
     def _compute_with_moto(self):
         for reg in self:
+            if self.env.company.restrict_inv_sn_flow:
+                reg.tt_with_moto = False
+                continue
             if reg.product_id.product_inv_categ and reg.product_id.product_inv_categ in ["moto", "Moto"]:
                 reg.tt_with_moto = True
             else:
@@ -50,6 +62,8 @@ class StockMoveTt(models.Model):
     @api.depends('move_line_ids', 'move_line_ids.lot_id', 'move_line_ids.qty_done')
     def _compute_lot_ids(self):
         res = super(StockMoveTt,self)._compute_lot_ids()
+        if self.env.company.restrict_inv_sn_flow:
+            return res
         for move in self:
             if move.move_line_nosuggest_ids:
                 for ml in move.move_line_nosuggest_ids:
@@ -58,6 +72,34 @@ class StockMoveTt(models.Model):
                         ml.lot_id.tt_color = ml.tt_color
                         ml.lot_id.tt_inventory_number = ml.tt_inventory_number
         return res
+
+    # -------------------------------------------------------------------------
+    # CONSTRAINT METHODS
+    # -------------------------------------------------------------------------
+
+    @api.constrains('move_line_nosuggest_ids')
+    def _check_inventory_number_uniq(self):
+        if self.env.company.restrict_inv_sn_flow:
+            return False
+        for reg in self:
+            for line in reg.move_line_nosuggest_ids:
+                if line.tt_inventory_number:
+                    other_lines = self.env['stock.move.line'].search([
+                        ('tt_inventory_number', '=', line.tt_inventory_number),
+                        ('company_id', '=', line.company_id.id),
+                        ('id', '!=', line.id)
+                    ])
+                    if other_lines:
+                        raise ValidationError("No puede duplicarse el número de inventario para la misma compañia (%s)" % line.tt_inventory_number)
+                if line.tt_motor_number:
+                    other_lines_motor = self.env['stock.move.line'].search([
+                        ('tt_motor_number', '=', line.tt_motor_number),
+                        ('company_id', '=', line.company_id.id),
+                        ('id', '!=', line.id)
+                    ])
+                    if other_lines_motor:
+                        raise ValidationError(
+                            "No puede duplicarse el número de motor para la misma compañia (%s)" % line.tt_motor_number)
 
 
 class StockMoveLineC(models.Model):
@@ -74,3 +116,18 @@ class StockProductionLotTt(models.Model):
     tt_number_motor = fields.Char(string="Número de motor")
     tt_color = fields.Char(string="Color")
     tt_inventory_number = fields.Char(string="Número de inventario")
+
+    def _hide_snf(self):
+        self.hide_snf_fields = self.env.company.restrict_inv_sn_flow
+    hide_snf_fields = fields.Boolean('Ocultar campos tt', compute="_hide_snf", store=False)
+
+
+class StockQuantTti(models.Model):
+    _inherit = "stock.quant"
+
+    inv_number = fields.Char(string="Número de inventario.", related="lot_id.tt_inventory_number")
+
+    # def _hide_snf(self):
+    #     self.hide_snf_fields = self.env.company.restrict_inv_sn_flow
+    #
+    # hide_snf_fields = fields.Boolean('Ocultar campos tt', compute="_hide_snf", store=False)
