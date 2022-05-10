@@ -3,7 +3,7 @@
     <!-- Accion Descuentos Vendedores !-->
     <record id="user_discount_action" model="ir.actions.act_window">
         <field name="name">Descuentos Vendedor</field>
-        <field name="domain">[('seller_id', '=',  uid)]</field>
+        <field name="domain">[('seller_id', '=', uid)]</field>
         <field name="res_model">res.users.discount</field>
         <field name="view_mode">tree,form</field>
     </record>
@@ -29,7 +29,9 @@
                     </group>
                     <notebook>
                         <page string="Categorias permitidas">
-                            <field name="category_ids" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True,}"  required="1" >
+                            <field name="category_ids"
+                                   options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True,}"
+                                   required="1">
                                 <tree editable="bottom">
                                     <field name="name"/>
                                 </tree>
@@ -40,7 +42,6 @@
             </form>
         </field>
     </record>
-
 
 
     <record id="user_discount_tree_view" model="ir.ui.view">
@@ -65,13 +66,15 @@
                 <field name="seller_id" string="Nombre Vendedor"/>
                 <field name="discount_permitted" string="Descuento"/>
                 <field name="almacen_id" string="Almacen"/>
-                <field name="category_ids"  string="Categoria"/>
+                <field name="category_ids" string="Categoria"/>
+
+                <group expand="0" string="agrupar por">
+                    <filter name="seller_id" string="Vendedor" context="{'group_by':'seller_id'}"/>
+                    <filter name="almacen_id" string="Almacen" context="{'group_by':'almacen_id'}"/>
+                    <filter name="discount_permitted" string="Descuento" context="{'group_by':'discount_permitted'}"/>
+                </group>
             </search>
-            <!--<group expand="0" string="agrupar por" >
-                <filter name="seller_id" string="Vendedor" context="{'group_by':'seller_id'}"/>
-                <filter name="almacen_id" string="Almacen" context="{'group_by':'almacen_id'}"/>
-                <filter name="discount_permitted" string="Descuento" context="{'group_by':'discount_permitted'}"/>
-            </group>!-->
+            
         </field>
     </record>
 
@@ -102,20 +105,18 @@
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
 
-                <button name="send_mail_discount" string="Solicitar Descuento Mayor" type="object" attrs="{'invisible': ['|',('state', 'not in', ['draft']),('need_discount_aprove','=',False)]}"/>
+                <button name="send_mail_discount" string="Solicitar Descuento Mayor" type="object"
+                        attrs="{'invisible': ['|',('state', 'not in', ['draft']),('need_discount_aprove','=',False)]}"/>
             </xpath>
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="need_discount_aprove" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='discount']" position="attributes">
-                 <attribute name="attrs">{'readonly':[('state','=', 'sale')]}</attribute>
+                <attribute name="attrs">{'readonly':[('state','=', 'sale')]}</attribute>
 
             </xpath>
         </field>
     </record>
-
-
-
 
 
 </odoo>
