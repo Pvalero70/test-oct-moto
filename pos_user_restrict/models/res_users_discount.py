@@ -176,8 +176,9 @@ class SaleOrderInherit(models.Model):
         else:
             self.need_discount_aprove = False
         _logger.info("SALE ORDER: errores %s , len %s",errores_string, len(errores_string))
+
         if len(errores_string)>0:
-            return ValidationError(errores_string)
+            raise ValidationError(errores_string)
 
         return True
 
