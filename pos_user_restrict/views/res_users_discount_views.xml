@@ -22,14 +22,14 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="seller_id" required="1"/>
+                            <field name="seller_id" required="1" options="{'no_quick_create': True}"/>
                             <field name="discount_permitted" string="Descuento Maximo Permitido %" required="1"/>
-                            <field name="almacen_id" required="1"/>
+                            <field name="almacen_id" required="1" options="{'no_quick_create': True}"/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Categorias permitidas">
-                            <field name="category_ids" widget="many2many" required="1"/>
+                            <field name="category_ids" widget="many2many" required="1" options="{'no_quick_create': True}"/>
                         </page>
                     </notebook>
                 </sheet>

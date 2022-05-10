@@ -33,26 +33,6 @@
         <field name="name">Permitir descuentos en motos</field>
     </record>
 
-    <record id="user_discount_vert_group" model="res.groups">
-        <field name="category_id" ref="category_user_discount"/>
-        <field name="name">Ver tabla desc</field>
-    </record>
-
-    <record id="user_discount_none_group" model="res.groups">
-        <field name="name">Sin acceso</field>
-        <field name="category_id" ref="user_discount_vert_group"/>
-    </record>
-    <record id="user_discount_prop_group" model="res.groups">
-        <field name="name">Ver registros propios</field>
-        <field name="implied_ids" eval="[(4, ref('user_discount_prop_group'))]"/>
-        <field name="category_id" ref="user_discount_vert_group"/>
-    </record>
-    <record id="user_discount_all_group" model="res.groups">
-        <field name="name">Ver todos los registros</field>
-        <field name="implied_ids" eval="[(4, ref('user_discount_all_group'))]"/>
-        <field name="category_id" ref="user_discount_vert_group"/>
-    </record>
-
 
 </odoo>
 
