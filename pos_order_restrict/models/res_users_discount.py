@@ -28,6 +28,11 @@ class ResUsersDiscount(models.Model):
     category_ids = fields.Many2many(comodel_name='product.category', string='Categorias')
     almacen_id = fields.Many2one(comodel_name='stock.warehouse', string="Almacen")
 
+    company_id = fields.Many2one('res.company', string='Company', change_default=True, required=True, readonly=True,
+                                 default=lambda self: self.env['res.company'].browse(
+                                     self.env['res.company']._company_default_get('res.users.discount')))
+
+
 
     @api.depends('seller_id')
     def _compute_name(self):
