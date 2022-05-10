@@ -11,7 +11,7 @@
 
 	<record id="user_discount_group" model="res.groups">
 		<field name="category_id" ref="category_user_discount"/>
-		<field name="name">Administrar descuentos</field>
+		<field name="name">Administrador de descuentos</field>
 	</record>
 
 	<record id="user_discount_admin_group" model="res.groups">
