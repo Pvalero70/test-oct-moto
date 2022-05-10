@@ -30,6 +30,20 @@
         </field>
     </record>
 
+     <record id="user_discount_search_view" model="ir.ui.view">
+        <field name="name">users.discount.search.view</field>
+        <field name="model">res.users.discount</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="seller_id" string="Nombre Vendedor"/>
+                <field name="discount_permitted" string="Descuento"/>
+                <field name="almacen_id" string="Almacen"/>
+                <field name="category_ids"  string="Categoria"/>
+            </search>
+
+        </field>
+    </record>
+
     <record id="user_discount_tree_view" model="ir.ui.view">
         <field name="name">users.discount.tree.view</field>
         <field name="model">res.users.discount</field>
