@@ -102,7 +102,7 @@ class SaleOrderInherit(models.Model):
     need_discount_aprove = fields.Boolean("Nesesita descuento mayor?",compute='_get_value')
 
 
-    @api.depends('self.order_line')
+    @api.depends('order_line')
     def _get_value(self):
         list = self._get_category_needs_discount()
         if len(list):
