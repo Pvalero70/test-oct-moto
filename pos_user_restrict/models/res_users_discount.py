@@ -55,7 +55,7 @@ class ResUsersDiscount(models.Model):
     def _restrictions_discounts(self, seller, discount_permitted,almacen_id):
         descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_gerente_group')
 
-        _logger.info('resultado pertenece a  grupo : %s : y vendedor %s', descuento_20, seller, )
+
         if descuento_20 == True and self.env.user.property_warehouse_id.id != almacen_id and discount_permitted<=20 and discount_permitted>5:
             almacen = self.env['stock.warehouse'].search([('id', '=', almacen_id)], limit=1)
             raise ValidationError(_('Advertencia!, No tienes permiso de gerente para el almacen %s.',almacen.name))
@@ -72,8 +72,7 @@ class ResUsersDiscount(models.Model):
     def _verificar_duplicados(self,categorias_ids,descuentos_lines,almacen_id):
         for j in range(len(categorias_ids)):
             for k in range(len(descuentos_lines)):
-                _logger.info('Categoriass id = %s', categorias_ids[j])
-                _logger.info('Antes del for %s', descuentos_lines[k].category_ids)
+
                 if categorias_ids[j] in [cat.id for cat in descuentos_lines[k].category_ids] and almacen_id == descuentos_lines[k].almacen_id.id:
                     categoria_rep = self.env['product.category'].search([('id', '=', categorias_ids[j])], limit=1)
                     raise ValidationError(
@@ -81,7 +80,7 @@ class ResUsersDiscount(models.Model):
                           categoria_rep.name, descuentos_lines[k].almacen_id.name))
 
     def write(self, vals):
-        _logger.info('Write Method a %s with vals %s', self._name, vals)
+
 
         seller = self.seller_id
         discount_permitted = self.discount_permitted
@@ -108,9 +107,7 @@ class ResUsersDiscount(models.Model):
 
     @api.model_create_multi
     def create(self, vals):
-        _logger.info('Create a %s with vals %s', self._name, vals)
-        # descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_agente_group')
-        # grupos = self.env.user.groups_id
+
         for i in range(len(vals)):
             seller = self.env['res.users'].search([('id', '=', vals[i]['seller_id'])], limit=1)
             permitted_discount = vals[i]['discount_permitted']
@@ -119,7 +116,7 @@ class ResUsersDiscount(models.Model):
             self._restrictions_discounts(seller, permitted_discount,almacen_id)
 
             categorias_ids = vals[i]['category_ids'][0][2]
-            _logger.info('Categorys id = %s', categorias_ids)
+
             descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', vals[i]['seller_id'])])
 
             self._verificar_duplicados(categorias_ids,descuentos_lines,vals[i]['almacen_id'])
@@ -144,7 +141,7 @@ class SaleOrderInherit(models.Model):
 
 
     def send_mail_discount(self):
-        _logger.info("SALE ORDER: Boton solicitar descuento")
+
         if not self.env.user.property_warehouse_id:
             raise ValidationError(_('Advertencia!, No tienes almacen predeterminado seleccionado'))
         almacen = self.env.user.property_warehouse_id
@@ -177,18 +174,15 @@ class SaleOrderInherit(models.Model):
     def _get_category_needs_discount(self):
         discount_lines = self.env['res.users.discount'].search(
             [('seller_id', '=', self.env.user.id), ('almacen_id', '=', self.warehouse_id.id)], limit=1)
-        _logger.info("SALE ORDER:: cantidad de registros %s,valores %s", len(discount_lines), discount_lines)
+
         descuentos_sol = []
         for order in self.order_line:
 
             if order.product_template_id and order.product_template_id.categ_id:
-                _logger.info("SALE ORDER:: Linea con valores %s, y categoria %s, descuento %s",
-                             order.product_template_id.name,
-                             order.product_template_id.categ_id.name, order.discount)
+
                 if len(discount_lines) > 0:
                     for discount_line in discount_lines:
-                        _logger.info("SALE ORDER:: Linea Descuento con valores %s, y categoria %s",
-                                     discount_line.discount_permitted, [cat.name for cat in discount_line.category_ids])
+
                         for categ in discount_line.category_ids:
 
                             if categ.id == order.product_template_id.categ_id.id:
@@ -200,18 +194,16 @@ class SaleOrderInherit(models.Model):
 
     def restrictions_discount(self):
         discount_lines = self.env['res.users.discount'].search([('seller_id', '=', self.env.user.id),('almacen_id','=',self.warehouse_id.id)], limit=1)
-        _logger.info("SALE ORDER:: cantidad de registros %s,valores %s",len(discount_lines),discount_lines)
+
         descuentos_mayores = False
         errores_string = ''
         for order in self.order_line:
             descuento_encontrado=0
             if order.product_template_id and order.product_template_id.categ_id:
-                _logger.info("SALE ORDER:: Linea con valores %s, y categoria %s, descuento %s", order.product_template_id.name,
-                             order.product_template_id.categ_id.name,order.discount)
+
                 if len(discount_lines)>0:
                     for discount_line in discount_lines:
-                        _logger.info("SALE ORDER:: Linea Descuento con valores %s, y categoria %s",
-                                     discount_line.discount_permitted,[cat.name for cat in discount_line.category_ids])
+
                         for categ in discount_line.category_ids:
 
                             if categ.id == order.product_template_id.categ_id.id :
@@ -224,7 +216,6 @@ class SaleOrderInherit(models.Model):
                     if descuento_encontrado == 0 and order.discount > 0:
                         errores_string += 'Advertencia!, No tienes permitido hacer descuentos en %s'%(
                                              order.product_template_id.categ_id.name)
-                    _logger.info('SALE ORDER:: descuento encontrado: %s',descuento_encontrado)
 
                 else:
                     if order.discount>0:
@@ -238,8 +229,7 @@ class SaleOrderInherit(models.Model):
         orden = self.env['sale.order'].search([('id', '=', self.id)])
         orden.write({'need_discount_aprove':descuentos_mayores})
 
-        _logger.info("SALE ORDER: errores %s , len %s",errores_string, len(errores_string))
-        _logger.info("SALE ORDER:: Valor need aprove: %s", descuentos_mayores)
+
         return {'errores':errores_string,'need_discount_aprove':descuentos_mayores}
 
 
