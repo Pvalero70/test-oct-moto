@@ -2,7 +2,8 @@
 import logging
 
 from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError, UserError
+from odoo.exceptions import ValidationError, UserError,Warning
+
 
 _logger = logging.getLogger(__name__)
 
@@ -196,7 +197,7 @@ class SaleOrderInherit(models.Model):
         _logger.info("SALE ORDER: errores %s , len %s",errores_string, len(errores_string))
         _logger.info("SALE ORDER:: Valor need aprove: %s", self.need_discount_aprove)
         if len(errores_string)>0:
-            raise ValidationError(errores_string)
+            raise Warning(errores_string)
 
         return True
 
