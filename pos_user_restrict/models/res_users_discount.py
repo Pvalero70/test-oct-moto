@@ -24,17 +24,23 @@ class ResUsersDiscount(models.Model):
     category_ids = fields.Many2many(comodel_name='product.category', string='Categorias')
     almacen_id = fields.Many2one(comodel_name='stock.warehouse', string="Almacen")
 
-    def _descuento_motos(self,descuentos_lines):
+    def _descuento_motos(self,categorias_ids):
+
         if not self.env.user.has_group('pos_user_restrict.user_discount_motos_group'):
-            for line_desc in descuentos_lines:
-                for categoria in line_desc.category_ids:
-                    if categoria.name == 'Motos':
+            for categoria_id in categorias_ids:
+                categoria = self.env['product.category'].search([('id', '=', categoria_id)], limit=1)
+                if categoria.name == 'Motos':
+                    raise UserError(_("No puedes dar descuentos en motos"))
+                categ = categoria
+                while categ.parent_id:
+                    if categ.parent_id.name == 'Motos':
                         raise UserError(_("No puedes dar descuentos en motos"))
-                    categ = categoria
-                    while categ.parent_id:
-                        if categ.parent_id.name =='Motos':
-                            raise UserError(_("No puedes dar descuentos en motos"))
-                        categ = categ.parent_id
+                    categ = categ.parent_id
+
+
+               
+
+
 
     def _restrictions_discounts(self, seller, discount_permitted,almacen_id):
         descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_gerente_group')
@@ -85,7 +91,7 @@ class ResUsersDiscount(models.Model):
         if 'category_ids' in vals:
             lis_category_ids = vals['category_ids'][0][2]
             descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', seller.id),('id','!=',self.id)])
-            self._descuento_motos(descuentos_lines)
+            self._descuento_motos(lis_category_ids)
             self._verificar_duplicados(lis_category_ids,descuentos_lines,almacen_id)
 
         return super(ResUsersDiscount, self).write(vals)
@@ -107,7 +113,7 @@ class ResUsersDiscount(models.Model):
             descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', vals[i]['seller_id'])])
 
             self._verificar_duplicados(categorias_ids,descuentos_lines,vals['almacen_id'])
-            self._descuento_motos(descuentos_lines)
+            self._descuento_motos(categorias_ids)
 
         return super(ResUsersDiscount, self).create(vals)
 
