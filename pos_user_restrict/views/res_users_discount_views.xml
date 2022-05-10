@@ -41,7 +41,7 @@
         </field>
     </record>
 
-     <record id="user_discount_search_view" model="ir.ui.view">
+     <record id="user_discount_searchby_view" model="ir.ui.view">
         <field name="name">users.discount.search.view</field>
         <field name="model">res.users.discount</field>
         <field name="arch" type="xml">
@@ -54,7 +54,7 @@
             <group expand="0" string="agrupar por" colspan="12" col="10">
                 <filter name="vendedor" string="Vendedor" context="{'group_by':'seller_id'}"/>
                 <filter name="almacen" string="Almacen" context="{'group_by':'almacen_id'}"/>
-                <filter name="descuento" string="Descuento" context="{'group_by':'discount_permitted'}"/>
+                <filter name="descuento_group" string="Descuento" context="{'group_by':'discount_permitted'}"/>
             </group>
         </field>
     </record>
