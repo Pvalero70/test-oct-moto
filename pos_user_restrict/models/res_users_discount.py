@@ -38,7 +38,7 @@ class ResUsersDiscount(models.Model):
                     categ = categ.parent_id
 
 
-               
+
 
 
 
@@ -112,7 +112,7 @@ class ResUsersDiscount(models.Model):
             _logger.info('Categorys id = %s', categorias_ids)
             descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', vals[i]['seller_id'])])
 
-            self._verificar_duplicados(categorias_ids,descuentos_lines,vals['almacen_id'])
+            self._verificar_duplicados(categorias_ids,descuentos_lines,vals[i]['almacen_id'])
             self._descuento_motos(categorias_ids)
 
         return super(ResUsersDiscount, self).create(vals)
