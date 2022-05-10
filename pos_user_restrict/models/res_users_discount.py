@@ -155,7 +155,7 @@ class SaleOrderInherit(models.Model):
 
                     body = 'El usuario '+self.env.user.name+' en la cotizacion '+ self.name+' solicita descuentos para las categorias:<br>'
                     for desc_req in descuentos_requeridos:
-                        body += "Categoria : "+str(desc_req['categoria'])+" con un valor de " + str(desc_req['descuento_solicitado'])+"%.<br>"
+                        body += "En el producto "+str(desc_req['producto'])+" con la categoria : "+str(desc_req['categoria'])+" se pide un descuento mayor de " + str(desc_req['descuento_solicitado'])+"%. El usuario cuenta con un descuento maximo de el "+str(desc_req['descuento_permitido'])+"%<br>"
                     template_obj = self.env['mail.mail']
                     template_data = {
                         'subject': 'Solicitud de descuento para' + self.env.user.name,
@@ -188,7 +188,7 @@ class SaleOrderInherit(models.Model):
                             if categ.id == order.product_template_id.categ_id.id:
                                 if order.discount > discount_line.discount_permitted:
 
-                                    descuentos_sol.append({'categoria':categ.name,'descuento_solicitado':order.discount})
+                                    descuentos_sol.append({'producto': order.product_template_id.name,'categoria':categ.name,'descuento_solicitado':order.discount,'descuento_permitido':discount_line.discount_permitted})
 
         return descuentos_sol
 
