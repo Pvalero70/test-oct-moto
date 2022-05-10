@@ -16,50 +16,50 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
         class extends PaymentScreen {
             
 
-            async validateOrder() {
-                console.log('###Sobre escribe###')
+            // async validateOrder() {
+            //     console.log('###Sobre escribe###')
 
-                const order = this.currentOrder;
+            //     const order = this.currentOrder;
                 
-                if (!order.is_payment_invoice){
-                    return super.validateOrder(...arguments);
-                }
-                else{
-                    const change = order.get_change();
-                    const paylaterPaymentMethod = this.env.pos.payment_methods.filter(
-                        (method) =>
-                            this.env.pos.config.payment_method_ids.includes(method.id) && method.type == 'pay_later'
-                    )[0];
-                    const existingPayLaterPayment = order
-                        .get_paymentlines()
-                        .find((payment) => payment.payment_method.type == 'pay_later');
+            //     if (!order.is_payment_invoice){
+            //         return super.validateOrder(...arguments);
+            //     }
+            //     else{
+            //         const change = order.get_change();
+            //         const paylaterPaymentMethod = this.env.pos.payment_methods.filter(
+            //             (method) =>
+            //                 this.env.pos.config.payment_method_ids.includes(method.id) && method.type == 'pay_later'
+            //         )[0];
+            //         const existingPayLaterPayment = order
+            //             .get_paymentlines()
+            //             .find((payment) => payment.payment_method.type == 'pay_later');
                     
-                    console.log(order)
-                    console.log(change)
-                    console.log(paylaterPaymentMethod)
-                    console.log(existingPayLaterPayment)
+            //         console.log(order)
+            //         console.log(change)
+            //         console.log(paylaterPaymentMethod)
+            //         console.log(existingPayLaterPayment)
     
-                    // this.currentOrder.finalized = true;
+            //         // this.currentOrder.finalized = true;
     
-                    // order.destroy({ reason: 'abandon' });
+            //         // order.destroy({ reason: 'abandon' });
     
-                    // this.showScreen(this.nextScreen);
+            //         // this.showScreen(this.nextScreen);
     
-                    // return
-                    console.log(arguments)
+            //         // return
+            //         console.log(arguments)
     
-                    const res = super.validateOrder(...arguments);
+            //         const res = super.validateOrder(...arguments);
     
-                    console.log("Despues de la validacion")
+            //         console.log("Despues de la validacion")
     
-                    // const paylaterPayment = order.add_paymentline(paylaterPaymentMethod);
-                    // paylaterPayment.set_amount(change);
+            //         // const paylaterPayment = order.add_paymentline(paylaterPaymentMethod);
+            //         // paylaterPayment.set_amount(change);
     
-                    return res
-                }
+            //         return res
+            //     }
 
                 
-            };
+            // };
             async _finalizeValidation() {
                 
                 console.log("FINALIZE VALIDATION")
