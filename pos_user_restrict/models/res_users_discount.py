@@ -217,13 +217,10 @@ class SaleOrderInherit(models.Model):
         _logger.info("SALE ORDER::Confirmar accion")
         dict = self.restrictions_discount()
         if len(dict['errores']) > 0:
-            return {
-                'value': {'need_discount_aprove': dict['need_discount_aprove']},
-                'warning': {'title': "Warning", 'message': dict['errores']},
-            }
+
+            raise UserError(dict['errores'])
 
 
-        return False
         if self._get_forbidden_state_confirm() & set(self.mapped('state')):
             raise UserError(_(
                 'It is not allowed to confirm an order in the following states: %s'
