@@ -40,7 +40,11 @@
                 <field name="almacen_id" string="Almacen"/>
                 <field name="category_ids"  string="Categoria"/>
             </search>
-
+            <group expand="0" string="agrupar por" colspan="12" col="10">
+                <filter name="vendedor" string="Vendedor" context="{'group_by':'seller_id'}"/>
+                <filter name="almacen" string="Almacen" context="{'group_by':'almacen_id'}"/>
+                <filter name="almacen" string="Descuento" context="{'group_by':'discount_permitted'}"/>
+            </group>
         </field>
     </record>
 
