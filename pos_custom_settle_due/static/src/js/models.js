@@ -3,7 +3,7 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
 
     const PaymentScreen = require('point_of_sale.PaymentScreen');
     const Registries = require('point_of_sale.Registries');
-    const { float_is_zero } = require('web.utils');
+    // const { float_is_zero } = require('web.utils');
     // const { patch } = require('web.utils');
 
     // patch(PaymentScreen.prototype, "prototype patch", {
