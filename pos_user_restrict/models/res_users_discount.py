@@ -102,13 +102,47 @@ class SaleOrderInherit(models.Model):
 
     def send_mail_discount(self):
         _logger.info("SALE ORDER: Boton solicitar descuento")
+        if not self.env.user.property_warehouse_id:
+            raise ValidationError(_('Advertencia!, No tienes almacen predeterminado seleccionado'))
+        almacen = self.env.user.property_warehouse_id
+        list_usuarios = self.env['res.users'].search([('property_warehouse_id', '=', almacen.id)])
+        for usuario in list_usuarios:
+            if usuario.has_group('pos_user_restrict.user_discount_gerente_group'):
+                descuentos_requeridos = self._get_category_needs_discount()
+                _logger.info("SALE ORDER: Boton email , descuentos solicitados= %s",descuentos_requeridos)
+
         return True
 
+
+    def _get_category_needs_discount(self):
+        discount_lines = self.env['res.users.discount'].search(
+            [('seller_id', '=', self.env.user.id), ('almacen_id', '=', self.warehouse_id.id)], limit=1)
+        _logger.info("SALE ORDER:: cantidad de registros %s,valores %s", len(discount_lines), discount_lines)
+        descuentos_sol = []
+        for order in self.order_line:
+
+            if order.product_template_id and order.product_template_id.categ_id:
+                _logger.info("SALE ORDER:: Linea con valores %s, y categoria %s, descuento %s",
+                             order.product_template_id.name,
+                             order.product_template_id.categ_id.name, order.discount)
+                if len(discount_lines) > 0:
+                    for discount_line in discount_lines:
+                        _logger.info("SALE ORDER:: Linea Descuento con valores %s, y categoria %s",
+                                     discount_line.discount_permitted, [cat.name for cat in discount_line.category_ids])
+                        for categ in discount_line.category_ids:
+
+                            if categ.id == order.product_template_id.categ_id.id:
+                                if order.discount > discount_line.discount_permitted:
+
+                                    descuentos_sol.append({'categoria':categ.name,'descuento_solicitado':order.discount})
+
+        return descuentos_sol
 
     def restrictions_discount(self):
         discount_lines = self.env['res.users.discount'].search([('seller_id', '=', self.env.user.id),('almacen_id','=',self.warehouse_id.id)], limit=1)
         _logger.info("SALE ORDER:: cantidad de registros %s,valores %s",len(discount_lines),discount_lines)
-
+        descuentos_mayores = False
+        errores_string = ''
         for order in self.order_line:
             descuento_encontrado=0
             if order.product_template_id and order.product_template_id.categ_id:
@@ -123,19 +157,28 @@ class SaleOrderInherit(models.Model):
                             if categ.id == order.product_template_id.categ_id.id :
                                 descuento_encontrado=1
                                 if order.discount > discount_line.discount_permitted:
-                                    self.need_discount_aprove=True
-                                    raise ValidationError(_('Advertencia!, El descuento permitido en %s para categoria %s es %s.',order.product_template_id.name,categ.name, discount_line.discount_permitted))
+                                    descuentos_mayores = True
+
+                                    errores_string +=('Advertencia!, El descuento permitido en %s para categoria %s es %s\n.',order.product_template_id.name,categ.name, discount_line.discount_permitted)
+
+                    if descuento_encontrado == 0 and order.discount > 0:
+                        errores_string += ('Advertencia!, No tienes permitido hacer descuentos en %s',
+                                             order.product_template_id.categ_id.name)
                     _logger.info('SALE ORDER:: descuento encontrado: %s',descuento_encontrado)
 
                 else:
                     if order.discount>0:
-                        self.need_discount_aprove = False
-                        raise ValidationError(_('Advertencia!, No tienes permitido hacer descuentos'))
+                        errores_string += ('Advertencia!, No tienes permitido hacer descuentos en categoria %s\n',order.product_template_id.categ_id.name)
 
-            if descuento_encontrado == 0 and order.discount > 0:
-                self.need_discount_aprove = False
-                raise ValidationError(_('Advertencia!, No tienes permitido hacer descuentos en %s',
-                                        order.product_template_id.categ_id.name))
+
+        if descuentos_mayores == True:
+            self.need_discount_aprove = True
+        else:
+            self.need_discount_aprove = False
+
+        if len(errores_string)>0:
+            return ValidationError(_(errores_string))
+
         return True
 
     def action_confirm(self):
