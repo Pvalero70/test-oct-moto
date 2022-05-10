@@ -68,7 +68,7 @@
             </xpath>
             <xpath expr="//field[@name='order_line']/form/group/group/div[@name='discount]/field[@name='discount']" position="attributes">
                  <attribute name="attrs">{'readonly':[('state','=', 'sent')]}</attribute>
-                 <attribute name="style"> background:Red </attribute>
+                 
 
             </xpath>
         </field>
