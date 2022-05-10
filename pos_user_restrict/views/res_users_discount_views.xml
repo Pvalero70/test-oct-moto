@@ -29,7 +29,7 @@
                     </group>
                     <notebook>
                         <page string="Categorias permitidas">
-                            <field name="category_ids" widget="many2many" required="1" options="{'no_create': True, 'no_quick_create': True, 'no_create_edit':True}"/>
+                            <field name="category_ids" widget='selection' required="1" />
                         </page>
                     </notebook>
                 </sheet>
@@ -102,7 +102,7 @@
                 <field name="need_discount_aprove"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='discount']" position="attributes">
-                 <attribute name="attrs">{'readonly':[('state','=', 'sent')]}</attribute>
+                 <attribute name="attrs">{'readonly':[('state','=', 'sale')]}</attribute>
 
             </xpath>
         </field>
