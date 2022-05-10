@@ -17,6 +17,7 @@ class PosPaymentMethodBc(models.Model):
     ], string="Método de calculo comisión")
     bank_commission_amount = fields.Float(string="Monto de comisión")
     bank_commission_product_id = fields.Many2one('product.product', string="Concepto comisión")
+    bc_journal_id = fields.Many2one("account.journal", string="Diario de comisiones")
 
 
 class PosOrderBc(models.Model):
@@ -39,6 +40,7 @@ class PosOrderBc(models.Model):
         bc_method = payment.payment_method_id.bank_commission_method
         bc_amount = payment.payment_method_id.bank_commission_amount
         bc_product_id = payment.payment_method_id.bank_commission_product_id
+        bc_journal_id = payment.payment_method_id.bc_journal_id
         # Calcula el total de la factura.
         inv_total = 0
         if bc_method and bc_method == "percentage":
@@ -50,7 +52,7 @@ class PosOrderBc(models.Model):
         timezone = pytz.timezone(self._context.get('tz') or self.env.user.tz or 'UTC')
         vals = {
             'invoice_origin': self.name,
-            'journal_id': self.session_id.config_id.invoice_journal_id.id, ###
+            'journal_id': bc_journal_id.id, ###
             'move_type': 'out_invoice',
             'ref': self.name,
             'partner_id': self.partner_id.id,

@@ -18,6 +18,10 @@
                     attrs="{
                     'invisible': [('bank_commission_method', '==', False)],
                     'required':[('bank_commission_method', '!=', False)]}"/>
+                <field name="bc_journal_id"
+                    attrs="{
+                    'invisible': [('bank_commission_method', '==', False)],
+                    'required':[('bank_commission_method', '!=', False)]}"/>
             </field>
         </field>
     </record>
