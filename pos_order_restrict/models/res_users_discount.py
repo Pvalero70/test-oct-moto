@@ -101,6 +101,8 @@ class ResUsersDiscount(models.Model):
     @api.model_create_multi
     def create(self, vals):
         for i in range(len(vals)):
+            if not 'category_ids' in vals[i]:
+                raise ValidationError(_("Advertencia, se debe seleccionar almenos una categoria "))
             seller = self.env['res.users'].search([('id', '=', vals[i]['seller_id'])], limit=1)
             permitted_discount = vals[i]['discount_permitted']
             almacen_id = vals[i]['almacen_id']
@@ -115,7 +117,7 @@ class ResUsersDiscount(models.Model):
             self._descuento_motos(categorias_ids)
 
         return super(ResUsersDiscount, self).create(vals)
-    
+
 
 class SaleOrderInherit(models.Model):
     _inherit = 'sale.order'

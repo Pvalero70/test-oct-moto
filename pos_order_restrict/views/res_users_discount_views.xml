@@ -34,7 +34,7 @@
                             <field name="category_ids"
                                    options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True,}"
                                    required="1">
-                                <tree editable="bottom">
+                                <tree editable="bottom" required="1">
                                     <field name="name"/>
                                 </tree>
                             </field>
