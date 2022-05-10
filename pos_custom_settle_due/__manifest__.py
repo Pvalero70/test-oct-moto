@@ -9,7 +9,7 @@
     'sequence': 6,
     'summary': "Settle custumer's invoice due in the POS UI.",
     'description': """""",
-    'depends': ['pos_settle_due'],
+    'depends': ['pos_settle_due', 'pos_customs'],
     'data': [],
     'demo': [],
     'installable': True,
