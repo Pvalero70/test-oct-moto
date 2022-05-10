@@ -40,12 +40,12 @@ class ResUsersDiscount(models.Model):
         if discount_permitted > 20 and descuento_20 == False:
             raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
 
-    def _verificar_duplicados(self,categorias_ids,descuentos_lines,vals):
+    def _verificar_duplicados(self,categorias_ids,descuentos_lines,almacen_id):
         for j in range(len(categorias_ids)):
             for k in range(len(descuentos_lines)):
                 _logger.info('Categoriass id = %s', categorias_ids[j])
                 _logger.info('Antes del for %s', descuentos_lines[k].category_ids)
-                if categorias_ids[j] in [cat.id for cat in descuentos_lines[k].category_ids] and vals['almacen_id'] == descuentos_lines[k].almacen_id.id:
+                if categorias_ids[j] in [cat.id for cat in descuentos_lines[k].category_ids] and almacen_id == descuentos_lines[k].almacen_id.id:
                     categoria_rep = self.env['product.category'].search([('id', '=', categorias_ids[j])], limit=1)
                     raise ValidationError(
                         _('Advertencia!, Ya existe otro descuento con la categoria %s y almacen %s ',
@@ -70,7 +70,7 @@ class ResUsersDiscount(models.Model):
         if 'category_ids' in vals:
             lis_category_ids = vals['category_ids'][0][2]
             descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', seller.id)])
-            self._verificar_duplicados(lis_category_ids,descuentos_lines,vals)
+            self._verificar_duplicados(lis_category_ids,descuentos_lines,almacen_id)
 
         return super(ResUsersDiscount, self).write(vals)
 
@@ -90,7 +90,7 @@ class ResUsersDiscount(models.Model):
             _logger.info('Categorys id = %s', categorias_ids)
             descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', vals[i]['seller_id'])])
 
-            self._verificar_duplicados(categorias_ids,descuentos_lines,vals[i])
+            self._verificar_duplicados(categorias_ids,descuentos_lines,vals['almacen_id'])
 
         return super(ResUsersDiscount, self).create(vals)
 
