@@ -60,7 +60,7 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//header" position="inside">
-                <button name="send_mail_discount" string="Solicitar Descuento Mayor" type="object" class="oe_highlight"/>
+                <button name="send_mail_discount" string="Solicitar Descuento Mayor" type="object" class="oe_highlight"  attrs="{'invisible': [('state', 'not in', ['draft']),('need_discount_aprove','=',False]}"/>
             </xpath>
         </field>
     </record>
