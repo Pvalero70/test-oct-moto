@@ -197,7 +197,7 @@ class SaleOrderInherit(models.Model):
         _logger.info("SALE ORDER: errores %s , len %s",errores_string, len(errores_string))
         _logger.info("SALE ORDER:: Valor need aprove: %s", self.need_discount_aprove)
         if len(errores_string)>0:
-            raise Warning(errores_string)
+            raise UserError(errores_string)
 
         return True
 
