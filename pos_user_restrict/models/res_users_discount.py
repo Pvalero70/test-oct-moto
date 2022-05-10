@@ -115,7 +115,7 @@ class SaleOrderInherit(models.Model):
 
                     body = 'El usuario '+self.env.user.name+' en la cotizacion '+ self.name+' solicita descuentos para las categorias: \n'
                     for desc_req in descuentos_requeridos:
-                        body += "Categoria : "+desc_req['categoria']+" con un valor de " + desc_req['descuento_solicitado']+"%.\n"
+                        body += "Categoria : "+str(desc_req['categoria'])+" con un valor de " + str(desc_req['descuento_solicitado'])+"%.\n"
                     template_obj = self.env['mail.mail']
                     template_data = {
                         'subject': 'Solicitud de descuento para' + self.env.user.name,
