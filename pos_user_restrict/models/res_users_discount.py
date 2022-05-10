@@ -109,7 +109,24 @@ class SaleOrderInherit(models.Model):
         for usuario in list_usuarios:
             if usuario.has_group('pos_user_restrict.user_discount_gerente_group'):
                 descuentos_requeridos = self._get_category_needs_discount()
+
                 _logger.info("SALE ORDER: Boton email , descuentos solicitados= %s",descuentos_requeridos)
+                if len(descuentos_requeridos)>0:
+
+                    body = 'El usuario '+self.env.user.name+' en la cotizacion '+ self.name+' solicita descuentos para las categorias: \n'
+                    for desc_req in descuentos_requeridos:
+                        body += "Categoria : "+desc_req['categoria']+" con un valor de " + desc_req['descuento_solicitado']+"%.\n"
+                    template_obj = self.env['mail.mail']
+                    template_data = {
+                        'subject': 'Solicitud de descuento para' + self.env.user.name,
+                        'body_html': body,
+                        'email_from': self.env.user.company_id.email,
+                        'email_to': usuario.email
+                    }
+                    _logger.info("SALE ORDER: Enviamos email con %s",template_data)
+                    template_id = template_obj.create(template_data)
+                    template_obj.send(template_id)
+                    _logger.info("SALE ORDER: Enviado")
 
         return True
 
