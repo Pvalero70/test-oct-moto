@@ -22,14 +22,14 @@
                 <sheet>
                     <group>
                         <group>
-                            <field name="seller_id" required="1" options="{'no_quick_create': True}"/>
+                            <field name="seller_id" required="1" widget='selection'/>
                             <field name="discount_permitted" string="Descuento Maximo Permitido %" required="1"/>
-                            <field name="almacen_id" required="1" options="{'no_quick_create': True}"/>
+                            <field name="almacen_id" required="1" widget='selection'/>
                         </group>
                     </group>
                     <notebook>
                         <page string="Categorias permitidas">
-                            <field name="category_ids" widget="many2many" required="1" options="{'no_quick_create': True}"/>
+                            <field name="category_ids" widget="many2many" required="1" options="{'no_create': True, 'no_create_edit':True}"/>
                         </page>
                     </notebook>
                 </sheet>
@@ -71,7 +71,7 @@
 
     <!-- Menu "Descuento Vendedores" permiso ver propios!-->
     <menuitem
-            name="Descuentos Vendedores"
+            name="Mis Descuentos Ventas"
             id="user_discount_menu"
             parent="sale.sale_order_menu"
             sequence="5"
