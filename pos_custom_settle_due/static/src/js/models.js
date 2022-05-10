@@ -46,6 +46,7 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
                     // this.showScreen(this.nextScreen);
     
                     // return
+                    console.log(arguments)
     
                     const res = super.validateOrder(...arguments);
     
