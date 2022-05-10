@@ -23,9 +23,8 @@
                     <group>
                         <group>
                             <field name="seller_id" required="1" widget='selection' domain="[('company_id','=',allowed_company_ids[0])]"/>
-                            <field name="company_id" readonly="1"/>
                             <field name="discount_permitted" string="Descuento Maximo Permitido %" required="1"/>
-
+                            <field name="almacen_id" required="1" widget='selection'/>
                         </group>
                     </group>
                     <notebook>
