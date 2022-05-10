@@ -8,7 +8,7 @@ from odoo.exceptions import ValidationError
 class RepairLineInherit(models.Model):
     _inherit = 'repair.line'
 
-    location_id = fields.Many2one('stock.location', 'Source Location', index=True, required=True, check_company=True, default=lambda self: self.env.user.property_warehouse_id.lot_stock_id)
+    location_id = fields.Many2one('stock.location', 'Source Location', index=True, required=True, check_company=True, default=lambda self: self.env.user.property_warehouse_id.lot_stock_id, domain="[('usage', '=', 'internal')]")
 
     @api.onchange('type')
     def onchange_operation_type(self):
@@ -25,7 +25,7 @@ class RepairLineInherit(models.Model):
             self.onchange_product_id()
             args = self.repair_id.company_id and [('company_id', '=', self.repair_id.company_id.id)] or []
             warehouse = self.env['stock.warehouse'].search(args, limit=1)
-            self.location_id = self.env.user.property_warehouse_id.lot_stock_id
+            self.location_id = self.repair_id.location_id.id
             self.location_dest_id = self.env['stock.location'].search([('usage', '=', 'production'), ('company_id', '=', self.repair_id.company_id.id)], limit=1)
         else:
             self.price_unit = 0.0

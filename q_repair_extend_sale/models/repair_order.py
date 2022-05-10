@@ -14,7 +14,7 @@ class RepairOrderInherit(models.Model):
     location_id = fields.Many2one('stock.location', 'Location', index=True, readonly=True, required=True, check_company=True,
                                   help="This is the location where the product to repair is located.",
                                   default=lambda self: self.env.user.property_warehouse_id.lot_stock_id,
-                                  states={'draft': [('readonly', False)], 'confirmed': [('readonly', True)]})
+                                  states={'draft': [('readonly', False)], 'confirmed': [('readonly', True)]}, domain="[('usage', '=', 'internal')]")
     invoice_method = fields.Selection([
         ("none", "No Invoice"),
         ("b4repair", "Before Repair"),
