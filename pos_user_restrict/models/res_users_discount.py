@@ -192,6 +192,7 @@ class SaleOrderInherit(models.Model):
             self.need_discount_aprove = True
         else:
             self.need_discount_aprove = False
+        self.write({'need_discount_aprove':descuentos_mayores})
         _logger.info("SALE ORDER: errores %s , len %s",errores_string, len(errores_string))
         _logger.info("SALE ORDER:: Valor need aprove: %s", self.need_discount_aprove)
         if len(errores_string)>0:
