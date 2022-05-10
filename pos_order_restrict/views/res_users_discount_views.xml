@@ -3,7 +3,7 @@
     <!-- Accion Descuentos Vendedores !-->
     <record id="user_discount_action" model="ir.actions.act_window">
         <field name="name">Descuentos Vendedor</field>
-        <field name="domain">[('seller_id', '=', uid),('seller_id.company_id.id', '=', user.company_id.id)]</field>
+        <field name="domain">[('seller_id', '=', uid),('seller_id.company_id', '=', user.company_id.id)]</field>
         <field name="res_model">res.users.discount</field>
         <field name="view_mode">tree,form</field>
     </record>
