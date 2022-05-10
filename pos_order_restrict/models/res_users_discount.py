@@ -23,7 +23,7 @@ class ResUsersDiscount(models.Model):
 
 
     name_computed = fields.Char(string="Computado",compute='_compute_name')
-    seller_id = fields.Many2one('res.users', 'Vendedor', )
+    seller_id = fields.Many2one('res.users', 'Vendedor', domain="[('company_id.id','=',self.env.user.company_id.id)]")
     discount_permitted = fields.Integer('Descuento permitido')
     category_ids = fields.Many2many(comodel_name='product.category', string='Categorias')
     almacen_id = fields.Many2one(comodel_name='stock.warehouse', string="Almacen")
