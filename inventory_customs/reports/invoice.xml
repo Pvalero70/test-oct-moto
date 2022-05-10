@@ -7,7 +7,7 @@
                 <t t-if="o._print_moto_details()">
                     <br/>
                     <ul>
-                        <li><b>Número de pedimento: </b> <t t-esc="line.l10n_mx_edi_customs_number"/></li>
+                       <!-- <li><b>Número de pedimento: </b> <t t-esc="line.l10n_mx_edi_customs_number"/></li>-->
                         <li><b>Marca: </b> <t t-esc="line.product_id.brand_id.name"/></li>
                         <li><b>Linea: </b> <t t-esc="line.product_id.categ_id.name"/></li>
                         <li><b>Clave: </b> <t t-esc="line.product_id.default_code"/></li>
