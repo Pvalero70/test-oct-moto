@@ -20,7 +20,7 @@ class ResUsersDiscount(models.Model):
     _description = "Model that saves discounts on product categories"
     _rec_name = 'name_computed'
 
-    current_uid = fields.Integer('Structure id', compute='_getStructureIdForCurrentUser')
+
 
     name_computed = fields.Char(string="Computado",compute='_compute_name')
     seller_id = fields.Many2one('res.users', 'Vendedor', )
@@ -28,8 +28,6 @@ class ResUsersDiscount(models.Model):
     category_ids = fields.Many2many(comodel_name='product.category', string='Categorias')
     almacen_id = fields.Many2one(comodel_name='stock.warehouse', string="Almacen")
 
-    def _getStructureIdForCurrentUser(self):
-        self.current_uid = self.env.user.id
 
     @api.depends('seller_id')
     def _compute_name(self):
