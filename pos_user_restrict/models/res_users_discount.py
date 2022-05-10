@@ -69,7 +69,7 @@ class ResUsersDiscount(models.Model):
 
         if 'category_ids' in vals:
             lis_category_ids = vals['category_ids'][0][2]
-            descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', seller.id)])
+            descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', seller.id),('id','!=',self.id)])
             self._verificar_duplicados(lis_category_ids,descuentos_lines,almacen_id)
 
         return super(ResUsersDiscount, self).write(vals)
