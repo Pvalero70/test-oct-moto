@@ -27,95 +27,95 @@ class ResUsersDiscount(models.Model):
 
 
 
-@api.depends('seller_id')
-def _compute_name(self):
-    for test in self:
-        test.name_computed = test.seller_id.name
+    @api.depends('seller_id')
+    def _compute_name(self):
+        for test in self:
+            test.name_computed = test.seller_id.name
 
 
-def _descuento_motos(self, categorias_ids):
-    if not self.env.user.has_group('pos_user_restrict.user_discount_motos_group'):
-        for categoria_id in categorias_ids:
-            categoria = self.env['product.category'].search([('id', '=', categoria_id)], limit=1)
-            if categoria.name == 'Motos':
-                raise UserError(_("No puedes dar descuentos en motos"))
-            categ = categoria
-            while categ.parent_id:
-                if categ.parent_id.name == 'Motos':
+    def _descuento_motos(self, categorias_ids):
+        if not self.env.user.has_group('pos_user_restrict.user_discount_motos_group'):
+            for categoria_id in categorias_ids:
+                categoria = self.env['product.category'].search([('id', '=', categoria_id)], limit=1)
+                if categoria.name == 'Motos':
                     raise UserError(_("No puedes dar descuentos en motos"))
-                categ = categ.parent_id
+                categ = categoria
+                while categ.parent_id:
+                    if categ.parent_id.name == 'Motos':
+                        raise UserError(_("No puedes dar descuentos en motos"))
+                    categ = categ.parent_id
 
 
-def _restrictions_discounts(self, seller, discount_permitted, almacen_id):
-    descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_gerente_group')
+    def _restrictions_discounts(self, seller, discount_permitted, almacen_id):
+        descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_gerente_group')
 
-    if descuento_20 == True and self.env.user.property_warehouse_id.id != almacen_id and discount_permitted <= 20 and discount_permitted > 5:
-        almacen = self.env['stock.warehouse'].search([('id', '=', almacen_id)], limit=1)
-        raise ValidationError(_('Advertencia!, No tienes permiso de gerente para el almacen %s.', almacen.name))
+        if descuento_20 == True and self.env.user.property_warehouse_id.id != almacen_id and discount_permitted <= 20 and discount_permitted > 5:
+            almacen = self.env['stock.warehouse'].search([('id', '=', almacen_id)], limit=1)
+            raise ValidationError(_('Advertencia!, No tienes permiso de gerente para el almacen %s.', almacen.name))
 
-    if discount_permitted > 5 and descuento_20 == False:
-        raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
+        if discount_permitted > 5 and descuento_20 == False:
+            raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
 
-    if discount_permitted > 20 and descuento_20 == True:
-        raise ValidationError(_('Advertencia!, El descuento maximo permitido es 20%.'))
+        if discount_permitted > 20 and descuento_20 == True:
+            raise ValidationError(_('Advertencia!, El descuento maximo permitido es 20%.'))
 
-    if discount_permitted > 20 and descuento_20 == False:
-        raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
-
-
-def _verificar_duplicados(self, categorias_ids, descuentos_lines, almacen_id):
-    for j in range(len(categorias_ids)):
-        for k in range(len(descuentos_lines)):
-
-            if categorias_ids[j] in [cat.id for cat in descuentos_lines[k].category_ids] and almacen_id == \
-                    descuentos_lines[k].almacen_id.id:
-                categoria_rep = self.env['product.category'].search([('id', '=', categorias_ids[j])], limit=1)
-                raise ValidationError(
-                    _('Advertencia!, Ya existe otro descuento con la categoria %s y almacen %s ',
-                      categoria_rep.name, descuentos_lines[k].almacen_id.name))
+        if discount_permitted > 20 and descuento_20 == False:
+            raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
 
 
-def write(self, vals):
-    seller = self.seller_id
-    discount_permitted = self.discount_permitted
-    almacen_id = self.almacen_id.id
-    if 'discount_permitted' in vals:
-        discount_permitted = vals['discount_permitted']
+    def _verificar_duplicados(self, categorias_ids, descuentos_lines, almacen_id):
+        for j in range(len(categorias_ids)):
+            for k in range(len(descuentos_lines)):
 
-    if 'seller_id' in vals:
-        seller = self.env['res.users'].search([('id', '=', vals['seller_id'])], limit=1)
-    if 'almacen_id' in vals:
-        almacen_id = vals['almacen_id']
-
-    self._restrictions_discounts(seller, discount_permitted, almacen_id)
-
-    if 'category_ids' in vals:
-        lis_category_ids = vals['category_ids'][0][2]
-        descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', seller.id), ('id', '!=', self.id)])
-        self._descuento_motos(lis_category_ids)
-        self._verificar_duplicados(lis_category_ids, descuentos_lines, almacen_id)
-
-    return super(ResUsersDiscount, self).write(vals)
+                if categorias_ids[j] in [cat.id for cat in descuentos_lines[k].category_ids] and almacen_id == \
+                        descuentos_lines[k].almacen_id.id:
+                    categoria_rep = self.env['product.category'].search([('id', '=', categorias_ids[j])], limit=1)
+                    raise ValidationError(
+                        _('Advertencia!, Ya existe otro descuento con la categoria %s y almacen %s ',
+                          categoria_rep.name, descuentos_lines[k].almacen_id.name))
 
 
-@api.model_create_multi
-def create(self, vals):
-    for i in range(len(vals)):
-        seller = self.env['res.users'].search([('id', '=', vals[i]['seller_id'])], limit=1)
-        permitted_discount = vals[i]['discount_permitted']
-        almacen_id = vals[i]['almacen_id']
+    def write(self, vals):
+        seller = self.seller_id
+        discount_permitted = self.discount_permitted
+        almacen_id = self.almacen_id.id
+        if 'discount_permitted' in vals:
+            discount_permitted = vals['discount_permitted']
 
-        self._restrictions_discounts(seller, permitted_discount, almacen_id)
+        if 'seller_id' in vals:
+            seller = self.env['res.users'].search([('id', '=', vals['seller_id'])], limit=1)
+        if 'almacen_id' in vals:
+            almacen_id = vals['almacen_id']
 
-        categorias_ids = vals[i]['category_ids'][0][2]
+        self._restrictions_discounts(seller, discount_permitted, almacen_id)
 
-        descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', vals[i]['seller_id'])])
+        if 'category_ids' in vals:
+            lis_category_ids = vals['category_ids'][0][2]
+            descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', seller.id), ('id', '!=', self.id)])
+            self._descuento_motos(lis_category_ids)
+            self._verificar_duplicados(lis_category_ids, descuentos_lines, almacen_id)
 
-        self._verificar_duplicados(categorias_ids, descuentos_lines, vals[i]['almacen_id'])
-        self._descuento_motos(categorias_ids)
+        return super(ResUsersDiscount, self).write(vals)
 
-    return super(ResUsersDiscount, self).create(vals)
 
+    @api.model_create_multi
+    def create(self, vals):
+        for i in range(len(vals)):
+            seller = self.env['res.users'].search([('id', '=', vals[i]['seller_id'])], limit=1)
+            permitted_discount = vals[i]['discount_permitted']
+            almacen_id = vals[i]['almacen_id']
+
+            self._restrictions_discounts(seller, permitted_discount, almacen_id)
+
+            categorias_ids = vals[i]['category_ids'][0][2]
+
+            descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', vals[i]['seller_id'])])
+
+            self._verificar_duplicados(categorias_ids, descuentos_lines, vals[i]['almacen_id'])
+            self._descuento_motos(categorias_ids)
+
+        return super(ResUsersDiscount, self).create(vals)
+    
 
 class SaleOrderInherit(models.Model):
     _inherit = 'sale.order'
