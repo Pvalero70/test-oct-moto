@@ -18,11 +18,18 @@ class ResUsersDiscount(models.Model):
     _name = 'res.users.discount'
 
     _description = "Model that saves discounts on product categories"
+    _rec_name = 'name_computed'
 
+    name_computed = fields.Char(string="Computado",compute='_compute_name')
     seller_id = fields.Many2one('res.users', 'Vendedor', )
     discount_permitted = fields.Integer('Descuento permitido')
     category_ids = fields.Many2many(comodel_name='product.category', string='Categorias')
     almacen_id = fields.Many2one(comodel_name='stock.warehouse', string="Almacen")
+
+    @api.depends('seller_id')
+    def _compute_name(self):
+        for test in self:
+            test.name_computed = test.seller_id.name
 
     def _descuento_motos(self,categorias_ids):
 
