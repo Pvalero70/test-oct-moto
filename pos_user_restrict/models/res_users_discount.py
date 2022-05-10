@@ -113,7 +113,7 @@ class SaleOrderInherit(models.Model):
                 _logger.info("SALE ORDER: Boton email , descuentos solicitados= %s",descuentos_requeridos)
                 if len(descuentos_requeridos)>0:
 
-                    body = 'El usuario '+self.env.user.name+' en la cotizacion '+ self.name+' solicita descuentos para las categorias: \n'
+                    body = 'El usuario '+self.env.user.name+' en la cotizacion '+ self.name+' solicita descuentos para las categorias:\n'
                     for desc_req in descuentos_requeridos:
                         body += "Categoria : "+str(desc_req['categoria'])+" con un valor de " + str(desc_req['descuento_solicitado'])+"%.\n"
                     template_obj = self.env['mail.mail']
@@ -125,7 +125,7 @@ class SaleOrderInherit(models.Model):
                     }
                     _logger.info("SALE ORDER: Enviamos email con %s",template_data)
                     template_id = template_obj.create(template_data)
-                    template_obj.send(template_id)
+                    template_id.send()
                     _logger.info("SALE ORDER: Enviado")
 
         return True
