@@ -8,6 +8,12 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <record id="user_discount_admin_action" model="ir.actions.act_window">
+        <field name="name">Descuentos Vendedor</field>
+        <field name="res_model">res.users.discount</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
     <record id="user_discount_form_view" model="ir.ui.view">
         <field name="name">users.discount.form.view</field>
         <field name="model">res.users.discount</field>
@@ -63,13 +69,23 @@
         </field>
     </record>
 
-    <!-- Menu "Descuento Vendedores" !-->
+    <!-- Menu "Descuento Vendedores" permiso ver propios!-->
     <menuitem
             name="Descuentos Vendedores"
             id="user_discount_menu"
             parent="sale.sale_order_menu"
-            sequence="1"
+            sequence="5"
             action="user_discount_action"
+            groups="pos_user_restrict.user_discount_view_group"/>
+    />
+
+    <menuitem
+            name="Descuentos Vendedores"
+            id="user_discount_admin_menu"
+            parent="sale.sale_order_menu"
+            sequence="5"
+            action="user_discount_admin_action"
+            groups="pos_user_restrict.user_discount_group,pos_user_restrict.user_discount_admin_group,pos_user_restrict.user_discount_gerente_group"/>
     />
 
     <record id="sale_order_inherit_form" model="ir.ui.view">

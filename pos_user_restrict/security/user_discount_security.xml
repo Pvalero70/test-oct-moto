@@ -11,12 +11,12 @@
 
 	<record id="user_discount_group" model="res.groups">
 		<field name="category_id" ref="category_user_discount"/>
-		<field name="name">Desarrollar descuentos</field>
+		<field name="name">Administrar descuentos</field>
 	</record>
 
 	<record id="user_discount_admin_group" model="res.groups">
 		<field name="category_id" ref="category_user_discount"/>
-		<field name="name">Administrar descuentos</field>
+		<field name="name">Actualizar descuentos</field>
 	</record>
 
 	<record id="user_discount_view_group" model="res.groups">
