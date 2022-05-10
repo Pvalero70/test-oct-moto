@@ -193,7 +193,7 @@ class SaleOrderInherit(models.Model):
         else:
             self.need_discount_aprove = False
         _logger.info("SALE ORDER: errores %s , len %s",errores_string, len(errores_string))
-
+        _logger.info("SALE ORDER:: Valor need aprove: %s", self.need_discount_aprove)
         if len(errores_string)>0:
             raise ValidationError(errores_string)
 
@@ -203,7 +203,7 @@ class SaleOrderInherit(models.Model):
         _logger.info("SALE ORDER::Confirmar accion")
         self.restrictions_discount()
 
-        self.need_discount_aprove = False
+
         return False
         if self._get_forbidden_state_confirm() & set(self.mapped('state')):
             raise UserError(_(
