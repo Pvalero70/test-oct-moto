@@ -72,6 +72,6 @@ odoo.define('pos_custom_settle_due.PaymentScreen', function (require) {
 
     Registries.Component.extend(PaymentScreen, PosSettleDuePaymentScreenCustom);
 
-    return PaymentScreen;
+    // return PaymentScreen;
 });
 
