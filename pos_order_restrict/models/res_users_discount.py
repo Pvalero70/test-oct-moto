@@ -123,12 +123,15 @@ class SaleOrderInherit(models.Model):
     _inherit = 'sale.order'
 
     need_discount_aprove = fields.Boolean("Nesesita descuento mayor?", compute='_get_value')
+    correo_enviado = fields.Boolean("Ya se envio el correo?", default=False)
+    gerente_discount_id = fields.Many2one('res.users',"Gerente a cargo de aprobar")
 
     @api.depends('order_line')
     def _get_value(self):
         list = self._get_category_needs_discount()
         if len(list):
             self.need_discount_aprove = True
+            self.correo_enviado=False
         else:
             self.need_discount_aprove = False
 
@@ -145,7 +148,7 @@ class SaleOrderInherit(models.Model):
             if usuario.has_group('pos_user_restrict.user_discount_gerente_group'):
                 descuentos_requeridos = self._get_category_needs_discount()
                 gerente_encontrado = 1
-
+                self.gerente_discount_id=usuario
                 _logger.info("SALE ORDER: Boton email , descuentos solicitados= %s", descuentos_requeridos)
                 if len(descuentos_requeridos) > 0:
 
@@ -165,6 +168,7 @@ class SaleOrderInherit(models.Model):
                     _logger.info("SALE ORDER: Enviamos email con %s", template_data)
                     template_id = template_obj.create(template_data)
                     template_id.send()
+                    self.correo_enviado=True
                     _logger.info("SALE ORDER: Enviado")
         if gerente_encontrado == 0:
             raise ValidationError(_("No hay un gerente asignado para el almacen %s", almacen.name))

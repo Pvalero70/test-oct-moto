@@ -108,7 +108,7 @@
             <xpath expr="//header" position="inside">
 
                 <button name="send_mail_discount" string="Solicitar Descuento Mayor" type="object"
-                        attrs="{'invisible': ['|',('state', 'not in', ['draft']),('need_discount_aprove','=',False)]}"/>
+                        attrs="{'invisible': ['|',('state', 'not in', ['draft']),('need_discount_aprove','=',False),('correo_enviado','=',True)]}"/>
             </xpath>
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="need_discount_aprove" invisible="1"/>
@@ -119,6 +119,21 @@
             </xpath>
         </field>
     </record>
+
+    <record id="sale_order_search_aprobe" model="ir.ui.view">
+        <field name="name">sale.order.inherit.search</field>
+        <field name="model">sale.order</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                <filter name="to_aprobe_discount" string ="Mis pendietes por aprobar descuento" domain="[('gerente_discount_id','=',uid),('state','in',['draft','sent'])]"/>
+            </xpath>
+
+        </field>
+    </record>
+
 
 
 </odoo>
