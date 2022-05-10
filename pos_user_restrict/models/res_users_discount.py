@@ -196,15 +196,32 @@ class SaleOrderInherit(models.Model):
         self.sudo().write({'need_discount_aprove':descuentos_mayores})
         _logger.info("SALE ORDER: errores %s , len %s",errores_string, len(errores_string))
         _logger.info("SALE ORDER:: Valor need aprove: %s", descuentos_mayores)
-        if len(errores_string)>0:
-            raise UserError(errores_string)
+        return errores_string
 
-        return True
+
 
 
     def action_confirm(self):
         _logger.info("SALE ORDER::Confirmar accion")
-        self.restrictions_discount()
+        errores_string= self.restrictions_discount()
+        if len(errores_string) > 0:
+            return {
+
+                'type': 'ir.actions.client',
+
+                'tag': 'display_notification',
+
+                'params': {
+
+                    'title': "Advertencia",
+
+                    'message': errores_string,
+
+                    'sticky': False,
+
+                }
+
+            }
 
 
         return False
