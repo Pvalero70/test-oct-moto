@@ -159,16 +159,16 @@ class SaleOrderInherit(models.Model):
                                 if order.discount > discount_line.discount_permitted:
                                     descuentos_mayores = True
 
-                                    errores_string +=('Advertencia!, El descuento permitido en %s para categoria %s es %s\n.',order.product_template_id.name,categ.name, discount_line.discount_permitted)
+                                    errores_string += 'Advertencia!, El descuento permitido en %s para categoria %s es %s\n.'% (order.product_template_id.name,categ.name, discount_line.discount_permitted)
 
                     if descuento_encontrado == 0 and order.discount > 0:
-                        errores_string += ('Advertencia!, No tienes permitido hacer descuentos en %s',
+                        errores_string += 'Advertencia!, No tienes permitido hacer descuentos en %s'%(
                                              order.product_template_id.categ_id.name)
                     _logger.info('SALE ORDER:: descuento encontrado: %s',descuento_encontrado)
 
                 else:
                     if order.discount>0:
-                        errores_string += ('Advertencia!, No tienes permitido hacer descuentos en categoria %s\n',order.product_template_id.categ_id.name)
+                        errores_string += 'Advertencia!, No tienes permitido hacer descuentos en categoria %s\n' %(order.product_template_id.categ_id.name)
 
 
         if descuentos_mayores == True:
