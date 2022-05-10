@@ -121,7 +121,7 @@ class SaleOrderInherit(models.Model):
                         'subject': 'Solicitud de descuento para' + self.env.user.name,
                         'body_html': body,
                         'email_from': self.env.user.company_id.email,
-                        'email_to': usuario.email
+                        'email_to': usuario.partner_id.email
                     }
                     _logger.info("SALE ORDER: Enviamos email con %s",template_data)
                     template_id = template_obj.create(template_data)
