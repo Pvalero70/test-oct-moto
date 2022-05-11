@@ -47,7 +47,7 @@ class ResUsersDiscount(models.Model):
 
 
     def _restrictions_discounts(self, seller, discount_permitted, almacen_id):
-        descuento_20 = self.env.user.has_group('pos_user_restrict.user_discount_gerente_group')
+        descuento_20 = self.env.user.has_group('pos_order_restrict.user_discount_gerente_group')
 
         if descuento_20 == True and self.env.user.property_warehouse_id.id != almacen_id and discount_permitted <= 20 and discount_permitted > 5:
             almacen = self.env['stock.warehouse'].search([('id', '=', almacen_id)], limit=1)
@@ -145,8 +145,8 @@ class SaleOrderInherit(models.Model):
 
         gerente_encontrado = 0
         for usuario in list_usuarios:
-            _logger.info("SALE ORDER:: usuario %s , tiene grupo %s",usuario.name,usuario.has_group('pos_user_restrict.user_discount_gerente_group'))
-            if usuario.has_group('pos_user_restrict.user_discount_gerente_group'):
+            _logger.info("SALE ORDER:: usuario %s , tiene grupo %s",usuario.name,usuario.has_group('pos_order_restrict.user_discount_gerente_group'))
+            if usuario.has_group('pos_order_restrict.user_discount_gerente_group'):
                 descuentos_requeridos = self._get_category_needs_discount()
                 gerente_encontrado = 1
                 self.gerente_discount_id=usuario
