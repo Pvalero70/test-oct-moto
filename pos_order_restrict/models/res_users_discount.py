@@ -31,11 +31,10 @@ class ResUsersDiscount(models.Model):
             test.name_computed = test.seller_id.name
 
     def _descuento_motos(self, categorias_ids):
-        _logger.info("Descuento en motos para loggeado = %s", self.env.user.has_group('pos_user_restrict.user_discount_motos_group'))
-        if not self.env.user.has_group('pos_user_restrict.user_discount_motos_group'):
+        if not self.env.user.has_group('pos_order_restrict.user_discount_motos_group'):
             for categoria_id in categorias_ids:
                 categoria = self.env['product.category'].search([('id', '=', categoria_id)], limit=1)
-                _logger.info("Nombre categoria %s")
+
                 if categoria.name == 'Motos':
                     raise UserError(_("No puedes dar descuentos en motos"))
                 categ = categoria
@@ -58,7 +57,7 @@ class ResUsersDiscount(models.Model):
         return False
     def _restrictions_discounts(self, seller, discount_permitted, almacen_id,categorias_ids):
         descuento_gerente = self.env.user.has_group('pos_order_restrict.user_discount_gerente_modif_group')
-        acceso_motos = self.env.user.has_group('pos_user_restrict.user_discount_motos_group')
+        acceso_motos = self.env.user.has_group('pos_order_restrict.user_discount_motos_group')
         descuento_user_base = seller.company_id.user_base_discount
         descuento_user_gerente = seller.company_id.user_gerente_discount
         descuento_motos = seller.company_id.motos_discount
