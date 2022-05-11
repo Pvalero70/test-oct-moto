@@ -5,7 +5,7 @@
     <record id="category_reparaciones" model="ir.module.category">
         <field name="name">Restricciones de operaciones</field>
         <field name="description">Configuracion en el modulo de Reparaciones</field>
-        <field name="sequence">9</field>
+
     </record>
 
     <record id="user_reparaciones_group" model="res.groups">
