@@ -123,7 +123,7 @@ class SaleOrderInherit(models.Model):
     _inherit = 'sale.order'
 
     need_discount_aprove = fields.Boolean("Nesesita descuento mayor?", compute='_get_value')
-    correo_enviado = fields.Boolean("Ya se envio el correo?")
+
     gerente_discount_id = fields.Many2one('res.users',"Gerente a cargo de aprobar")
 
     @api.depends('order_line')
