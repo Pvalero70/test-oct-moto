@@ -107,7 +107,7 @@ class ResUsersDiscount(models.Model):
 
         descuentos_lines = self.env['res.users.discount'].search(
             [('seller_id', '=', seller.id), ('id', '!=', self.id)])
-        self._descuento_motos(lis_category_ids)
+        self._descuento_motos(category_ids)
         self._restrictions_discounts(seller, discount_permitted, almacen_id,category_ids)
         self._verificar_duplicados(category_ids, descuentos_lines, almacen_id)
 
