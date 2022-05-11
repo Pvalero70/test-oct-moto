@@ -90,6 +90,7 @@ class ResUsersDiscount(models.Model):
         seller = self.seller_id
         discount_permitted = self.discount_permitted
         almacen_id = self.almacen_id.id
+        category_ids = [cat.id for cat in self.category_ids]
         if 'discount_permitted' in vals:
             discount_permitted = vals['discount_permitted']
 
@@ -102,11 +103,13 @@ class ResUsersDiscount(models.Model):
 
         if 'category_ids' in vals:
             lis_category_ids = vals['category_ids'][0][2]
-            descuentos_lines = self.env['res.users.discount'].search(
-                [('seller_id', '=', seller.id), ('id', '!=', self.id)])
-            self._descuento_motos(lis_category_ids)
-            self._restrictions_discounts(seller, discount_permitted, almacen_id,lis_category_ids)
-            self._verificar_duplicados(lis_category_ids, descuentos_lines, almacen_id)
+            category_ids = lis_category_ids
+
+        descuentos_lines = self.env['res.users.discount'].search(
+            [('seller_id', '=', seller.id), ('id', '!=', self.id)])
+        self._descuento_motos(lis_category_ids)
+        self._restrictions_discounts(seller, discount_permitted, almacen_id,lis_category_ids)
+        self._verificar_duplicados(lis_category_ids, descuentos_lines, almacen_id)
 
         return super(ResUsersDiscount, self).write(vals)
 
