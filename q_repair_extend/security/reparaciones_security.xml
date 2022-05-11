@@ -13,7 +13,7 @@
         <field name="name">Ver Modulo Reparaciones </field>
     </record>
 
-    <record id="contacts.menu_contacts" model="ir.ui.menu">
+    <record id="repair.menu_repair_order" model="ir.ui.menu">
         <field name="groups_id" eval="[(5,0)]"/>
     </record>
 
