@@ -1,2 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_user_reparaciones,Acceso a reparaciones,model_repair_order,user_reparaciones_group,1,1,1,1
