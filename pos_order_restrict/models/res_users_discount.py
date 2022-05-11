@@ -285,7 +285,7 @@ class SaleOrderInherit(models.Model):
         return True
 
 
-class ResCompany(models.Model):
+class ResCompanyInherit(models.Model):
     _inherit = 'res.company'
 
     user_base_discount = fields.Integer("Descuento permitido para usuarios base", default=5)
