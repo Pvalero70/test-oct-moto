@@ -8,7 +8,7 @@ class ResUsers(models.Model):
 
     pos_config_ids = fields.Many2many(
         comodel_name='pos.config',
-        string='Allowed POS',
+        string='POS permitidos',
         help="Allowed Points of Sales for the user. POS managers can use all POS.",
     )
 

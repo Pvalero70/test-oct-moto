@@ -3,7 +3,7 @@
     <data>
 
     	<record id="group_restrict_warehouse" model="res.groups">
-            <field name="name">Restrict Stock warehouses</field>
+            <field name="name">Restringir almacenes de stock</field>
         </record>
 
         <record id="filter_user_stock_picking_type_allowed_new" model="ir.rule">
