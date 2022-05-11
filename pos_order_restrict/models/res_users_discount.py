@@ -150,7 +150,6 @@ class SaleOrderInherit(models.Model):
         list = self._get_category_needs_discount()
         if len(list):
             self.need_discount_aprove = True
-            self.correo_enviado = False
         else:
             self.need_discount_aprove = False
 
@@ -189,7 +188,7 @@ class SaleOrderInherit(models.Model):
                     _logger.info("SALE ORDER: Enviamos email con %s", template_data)
                     template_id = template_obj.create(template_data)
                     template_id.send()
-                    self.correo_enviado = True
+
                     _logger.info("SALE ORDER: Enviado")
         if gerente_encontrado == 0:
             raise ValidationError(_("No hay un gerente asignado para el almacen %s", almacen.name))
