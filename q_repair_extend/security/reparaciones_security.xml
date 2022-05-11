@@ -13,10 +13,7 @@
         <field name="name">Acceso reparaciones </field>
     </record>
 
-    <record id="user_reparaciones_ocultar_group" model="res.groups">
-        <field name="category_id" ref="category_reparaciones"/>
-        <field name="name">Ocultar reparaciones </field>
-    </record>
+    
 
 
     <record id="repair.menu_repair_order" model="ir.ui.menu">
