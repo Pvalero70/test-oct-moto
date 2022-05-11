@@ -13,29 +13,11 @@
         <field name="name">Acceso reparaciones </field>
     </record>
 
-    <record id="user_reparaciones_group" model="res.groups">
+    <record id="user_reparaciones_ocultar_group" model="res.groups">
         <field name="category_id" ref="category_reparaciones"/>
         <field name="name">Ocultar reparaciones </field>
     </record>
 
-    <record id="FVO" model="ir.module.category">
-        <field name="name"> FVO </field>
-    </record>
-
-    <record id="FVO_none" model="res.groups">
-        <field name="name">FVO - no access</field>
-        <field name="category_id" ref="FVO"/>
-    </record>
-    <record id="FVO_nuova" model="res.groups">
-        <field name="name">FVO - nuova vista</field>
-        <field name="implied_ids" eval="[(4, ref('FVO_none'))]"/>
-        <field name="category_id" ref="FVO"/>
-    </record>
-    <record id="FVO_vecchia" model="res.groups">
-        <field name="name">FVO - vecchia vista</field>
-        <field name="implied_ids" eval="[(4, ref('FVO_none'))]"/>
-        <field name="category_id" ref="FVO"/>
-    </record>
 
     <record id="repair.menu_repair_order" model="ir.ui.menu">
         <field name="groups_id" eval="[(5,0),(4, ref('user_reparaciones_group'))]"/>
