@@ -48,19 +48,20 @@ class ResUsersDiscount(models.Model):
 
     def _restrictions_discounts(self, seller, discount_permitted, almacen_id):
         descuento_20 = self.env.user.has_group('pos_order_restrict.user_discount_gerente_modif_group')
-
+        descuento_user_base = seller.company_id.user_base_discount
+        _logger.info("POS ORDER: Descuento base %s",descuento_user_base)
         if descuento_20 == True and self.env.user.property_warehouse_id.id != almacen_id and discount_permitted <= 20 and discount_permitted > 5:
             almacen = self.env['stock.warehouse'].search([('id', '=', almacen_id)], limit=1)
             raise ValidationError(_('Advertencia!, No tienes permiso de gerente para el almacen %s.', almacen.name))
 
-        if discount_permitted > 5 and descuento_20 == False:
-            raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
+        if discount_permitted > descuento_user_base and descuento_20 == False:
+            raise ValidationError(_('Advertencia!, El descuento maximo permitido es %s%.',descuento_user_base))
 
         if discount_permitted > 20 and descuento_20 == True:
             raise ValidationError(_('Advertencia!, El descuento maximo permitido es 20%.'))
 
         if discount_permitted > 20 and descuento_20 == False:
-            raise ValidationError(_('Advertencia!, El descuento maximo permitido es 5%.'))
+            raise ValidationError(_('Advertencia!, El descuento maximo permitido es %s%.',descuento_user_base))
 
 
     def _verificar_duplicados(self, categorias_ids, descuentos_lines, almacen_id):
