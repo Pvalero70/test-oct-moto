@@ -140,11 +140,12 @@ class SaleOrderInherit(models.Model):
         if not self.env.user.property_warehouse_id:
             raise ValidationError(_('Advertencia!, No tienes almacen predeterminado seleccionado'))
         almacen = self.env.user.property_warehouse_id
-        list_usuarios = self.env['res.users'].sudo().search([('property_warehouse_id', '=', almacen.id)])
+        list_usuarios = self.env['res.users'].search([('property_warehouse_id', '=', almacen.id)])
         _logger.info("Usuarios con almacen predeterminado = %s",list_usuarios)
 
         gerente_encontrado = 0
         for usuario in list_usuarios:
+            _logger.info("SALE ORDER:: usuario %s , tiene grupo %s",usuario.name,usuario.has_group('pos_user_restrict.user_discount_gerente_group'))
             if usuario.has_group('pos_user_restrict.user_discount_gerente_group'):
                 descuentos_requeridos = self._get_category_needs_discount()
                 gerente_encontrado = 1
