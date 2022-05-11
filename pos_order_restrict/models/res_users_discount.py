@@ -140,7 +140,8 @@ class SaleOrderInherit(models.Model):
         if not self.env.user.property_warehouse_id:
             raise ValidationError(_('Advertencia!, No tienes almacen predeterminado seleccionado'))
         almacen = self.env.user.property_warehouse_id
-        list_usuarios = self.env['res.users'].search([('property_warehouse_id', '=', almacen.id)])
+        list_usuarios = self.env['res.users'].sudo().search([('property_warehouse_id', '=', almacen.id)])
+        _logger.info("Usuarios con almacen predeterminado = %s",list_usuarios)
         if len(list_usuarios) == 0:
             raise ValidationError(_("No hay un gerente asignado para el almacen %s", almacen.name))
         gerente_encontrado = 0

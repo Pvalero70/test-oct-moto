@@ -26,7 +26,7 @@
                             <field name="seller_id" required="1" widget='selection'
                                    domain="[('company_id','=',allowed_company_ids[0])]"/>
                             <field name="discount_permitted" string="Descuento Maximo Permitido %" required="1"/>
-                            <field name="almacen_id" required="1" widget='selection'/>
+                            <field name="almacen_id" required="1" widget='selection' domain="[('company_id','=',allowed_company_ids[0])]"/>
                         </group>
                     </group>
                     <notebook>
@@ -129,7 +129,7 @@
         <field name="arch" type="xml">
 
             <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
-                <filter name="to_aprobe_discount" string ="Mis pendietes por aprobar descuento" domain="[('gerente_discount_id','=',uid),('state','in',['draft','sent'])]"/>
+                <filter name="to_aprobe_discount" string ="Pendietes por aprobar descuento" domain="[('gerente_discount_id','=',uid),('state','in',['draft','sent'])]"/>
             </xpath>
 
         </field>
