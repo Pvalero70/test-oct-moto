@@ -31,9 +31,11 @@ class ResUsersDiscount(models.Model):
             test.name_computed = test.seller_id.name
 
     def _descuento_motos(self, categorias_ids):
+        _logger.info("Descuento en motos para loggeado = %s", self.env.user.has_group('pos_user_restrict.user_discount_motos_group'))
         if not self.env.user.has_group('pos_user_restrict.user_discount_motos_group'):
             for categoria_id in categorias_ids:
                 categoria = self.env['product.category'].search([('id', '=', categoria_id)], limit=1)
+                _logger.info("Nombre categoria %s")
                 if categoria.name == 'Motos':
                     raise UserError(_("No puedes dar descuentos en motos"))
                 categ = categoria
