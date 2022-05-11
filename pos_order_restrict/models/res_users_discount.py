@@ -47,7 +47,7 @@ class ResUsersDiscount(models.Model):
 
 
     def _restrictions_discounts(self, seller, discount_permitted, almacen_id):
-        descuento_20 = self.env.user.has_group('pos_order_restrict.user_discount_gerente_group')
+        descuento_20 = self.env.user.has_group('pos_order_restrict.user_discount_gerente_modif_group')
 
         if descuento_20 == True and self.env.user.property_warehouse_id.id != almacen_id and discount_permitted <= 20 and discount_permitted > 5:
             almacen = self.env['stock.warehouse'].search([('id', '=', almacen_id)], limit=1)
@@ -263,3 +263,8 @@ class SaleOrderInherit(models.Model):
         if self.env.user.has_group('sale.group_auto_done_setting'):
             self.action_done()
         return True
+
+class SaleOrderInherit(models.Model):
+    _inherit = 'res.company'
+
+    user_base_discount = fields.Integer("Descuento permitido para usuarios base",default=5)
