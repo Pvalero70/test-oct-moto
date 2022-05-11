@@ -55,28 +55,31 @@ class ResUsersDiscount(models.Model):
                     return True
                 categ = categ.parent_id
         return False
-    def _restrictions_discounts(self, seller, discount_permitted, almacen_id,categorias_ids):
+
+    def _restrictions_discounts(self, seller, discount_permitted, almacen_id, categorias_ids):
         descuento_gerente = self.env.user.has_group('pos_order_restrict.user_discount_gerente_modif_group')
         acceso_motos = self.env.user.has_group('pos_order_restrict.user_discount_motos_group')
         descuento_user_base = seller.company_id.user_base_discount
         descuento_user_gerente = seller.company_id.user_gerentes_discount
         descuento_motos = seller.company_id.motos_discount
 
-        _logger.info("POS ORDER:discount permited %s, Descuento base %s , gerente %s, motos %s, verifica cat motos %s", discount_permitted,descuento_user_base,descuento_user_gerente,descuento_motos,self._verifica_categoria_motos(categorias_ids))
+        _logger.info("POS ORDER:discount permited %s, Descuento base %s , gerente %s, motos %s, verifica cat motos %s",
+                     discount_permitted, descuento_user_base, descuento_user_gerente, descuento_motos,
+                     self._verifica_categoria_motos(categorias_ids))
         if acceso_motos == True and self._verifica_categoria_motos(categorias_ids) == True:
             if discount_permitted > descuento_motos:
-                raise ValidationError(_('Advertencia!, El descuento maximo permitido para motos es %s.', descuento_motos))
+                raise ValidationError(
+                    _('Advertencia!, El descuento maximo permitido para motos es %s.', descuento_motos))
             else:
                 return True
 
-        elif descuento_gerente==True and discount_permitted > descuento_user_gerente:
+        elif descuento_gerente == True and discount_permitted > descuento_user_gerente:
             raise ValidationError(
                 _('Advertencia!, El descuento maximo permitido para gerente es %s.', descuento_user_gerente))
 
         elif descuento_gerente == False and discount_permitted > descuento_user_base:
             raise ValidationError(
                 _('Advertencia!, El descuento maximo permitido usuario base es %s ', descuento_user_base))
-
 
     def _verificar_duplicados(self, categorias_ids, descuentos_lines, almacen_id):
         for j in range(len(categorias_ids)):
@@ -102,8 +105,6 @@ class ResUsersDiscount(models.Model):
         if 'almacen_id' in vals:
             almacen_id = vals['almacen_id']
 
-
-
         if 'category_ids' in vals:
             lis_category_ids = vals['category_ids'][0][2]
             category_ids = lis_category_ids
@@ -111,7 +112,7 @@ class ResUsersDiscount(models.Model):
         descuentos_lines = self.env['res.users.discount'].search(
             [('seller_id', '=', seller.id), ('id', '!=', self.id)])
         self._descuento_motos(category_ids)
-        self._restrictions_discounts(seller, discount_permitted, almacen_id,category_ids)
+        self._restrictions_discounts(seller, discount_permitted, almacen_id, category_ids)
         self._verificar_duplicados(category_ids, descuentos_lines, almacen_id)
 
         return super(ResUsersDiscount, self).write(vals)
@@ -126,9 +127,7 @@ class ResUsersDiscount(models.Model):
             almacen_id = vals[i]['almacen_id']
             categorias_ids = vals[i]['category_ids'][0][2]
 
-            self._restrictions_discounts(seller, permitted_discount, almacen_id,categorias_ids)
-
-
+            self._restrictions_discounts(seller, permitted_discount, almacen_id, categorias_ids)
 
             descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', vals[i]['seller_id'])])
 
@@ -186,7 +185,7 @@ class SaleOrderInherit(models.Model):
                         'email_to': usuario.partner_id.email
                     }
                     _logger.info("SALE ORDER: Enviamos email con %s", template_data)
-                    template_id = template_obj.create(template_data)
+                    template_id = template_obj.sudo().create(template_data)
                     template_id.send()
 
                     _logger.info("SALE ORDER: Enviado")
@@ -218,36 +217,31 @@ class SaleOrderInherit(models.Model):
         return descuentos_sol
 
     def restrictions_discount(self):
-        discount_lines = self.env['res.users.discount'].search(
+        discount_lines = self.env['res.users.discount'].sudo().search(
             [('seller_id', '=', self.env.user.id), ('almacen_id', '=', self.warehouse_id.id)], limit=1)
 
         descuentos_mayores = False
         errores_string = ''
+        _logger.info("SALE ORDER::  lineas de descuento %s", discount_lines)
         for order in self.order_line:
             descuento_encontrado = 0
             if order.product_template_id and order.product_template_id.categ_id:
 
-                if len(discount_lines) > 0:
-                    for discount_line in discount_lines:
+                for discount_line in discount_lines:
 
-                        for categ in discount_line.category_ids:
+                    for categ in discount_line.category_ids:
 
-                            if categ.id == order.product_template_id.categ_id.id:
-                                descuento_encontrado = 1
-                                if order.discount > discount_line.discount_permitted:
-                                    descuentos_mayores = True
+                        if categ.id == order.product_template_id.categ_id.id:
+                            descuento_encontrado = 1
+                            if order.discount > discount_line.discount_permitted:
+                                descuentos_mayores = True
 
-                                    errores_string += 'Advertencia!, El descuento permitido en %s para categoria %s es %s\n.' % (
-                                        order.product_template_id.name, categ.name, discount_line.discount_permitted)
+                                errores_string += 'Advertencia!, El descuento permitido en %s para categoria %s es %s\n.' % (
+                                    order.product_template_id.name, categ.name, discount_line.discount_permitted)
 
-                    if descuento_encontrado == 0 and order.discount > 0:
-                        errores_string += 'Advertencia!, No tienes permitido hacer descuentos en %s' % (
-                            order.product_template_id.categ_id.name)
-
-                else:
-                    if order.discount > 0:
-                        errores_string += 'Advertencia!, No tienes permitido hacer descuentos en categoria %s\n' % (
-                            order.product_template_id.categ_id.name)
+                if descuento_encontrado == 0 and order.discount > 0:
+                    errores_string += 'Advertencia!, No tienes permitido hacer descuentos en %s' % (
+                        order.product_template_id.categ_id.name)
 
         if descuentos_mayores == True:
             self.need_discount_aprove = True
