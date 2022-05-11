@@ -80,7 +80,7 @@
             parent="sale.sale_order_menu"
             sequence="5"
             action="user_discount_action"
-            groups="pos_user_restrict.user_discount_view_group"/>
+            groups="user_discount_view_group"/>
     />
 
     <menuitem
