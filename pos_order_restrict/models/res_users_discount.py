@@ -25,13 +25,10 @@ class ResUsersDiscount(models.Model):
     category_ids = fields.Many2many(comodel_name='product.category', string='Categorias')
     almacen_id = fields.Many2one(comodel_name='stock.warehouse', string="Almacen")
 
-
-
     @api.depends('seller_id')
     def _compute_name(self):
         for test in self:
             test.name_computed = test.seller_id.name
-
 
     def _descuento_motos(self, categorias_ids):
         if not self.env.user.has_group('pos_user_restrict.user_discount_motos_group'):
@@ -45,24 +42,37 @@ class ResUsersDiscount(models.Model):
                         raise UserError(_("No puedes dar descuentos en motos"))
                     categ = categ.parent_id
 
+    def _verifica_categoria_motos(self, categorias_ids):
 
-    def _restrictions_discounts(self, seller, discount_permitted, almacen_id):
-        descuento_20 = self.env.user.has_group('pos_order_restrict.user_discount_gerente_modif_group')
+        for categoria_id in categorias_ids:
+            categoria = self.env['product.category'].search([('id', '=', categoria_id)], limit=1)
+            if categoria.name == 'Motos':
+                return True
+            categ = categoria
+            while categ.parent_id:
+                if categ.parent_id.name == 'Motos':
+                    return True
+                categ = categ.parent_id
+        return False
+    def _restrictions_discounts(self, seller, discount_permitted, almacen_id,categorias_ids):
+        descuento_gerente = self.env.user.has_group('pos_order_restrict.user_discount_gerente_modif_group')
+        acceso_motos = self.env.user.has_group('pos_user_restrict.user_discount_motos_group')
         descuento_user_base = seller.company_id.user_base_discount
-        _logger.info("POS ORDER: Descuento base %s",descuento_user_base)
-        if descuento_20 == True and self.env.user.property_warehouse_id.id != almacen_id and discount_permitted <= 20 and discount_permitted > 5:
-            almacen = self.env['stock.warehouse'].search([('id', '=', almacen_id)], limit=1)
-            raise ValidationError(_('Advertencia!, No tienes permiso de gerente para el almacen %s.', almacen.name))
+        descuento_user_gerente = seller.company_id.user_gerente_discount
+        descuento_motos = seller.company_id.motos_discount
 
-        if discount_permitted > descuento_user_base and descuento_20 == False:
-            raise ValidationError(_('Advertencia!, El descuento maximo permitido es %s ',descuento_user_base))
+        _logger.info("POS ORDER: Descuento base %s", descuento_user_base)
 
-        if discount_permitted > 20 and descuento_20 == True:
-            raise ValidationError(_('Advertencia!, El descuento maximo permitido es 20 %.'))
+        if acceso_motos == True and discount_permitted > descuento_motos and self._verifica_categoria_motos(categorias_ids):
+            raise ValidationError(_('Advertencia!, El descuento maximo permitido para motos es %s.', descuento_motos))
 
-        if discount_permitted > 20 and descuento_20 == False:
-            raise ValidationError(_('Advertencia!, El descuento maximo permitido es %s .',descuento_user_base))
+        if descuento_gerente == True and discount_permitted > descuento_user_gerente:
+            raise ValidationError(
+                _('Advertencia!, El descuento maximo permitido para gerente es %s.', descuento_user_gerente))
 
+        if discount_permitted > descuento_user_base and descuento_gerente == False:
+            raise ValidationError(
+                _('Advertencia!, El descuento maximo permitido usuario base es %s ', descuento_user_base))
 
     def _verificar_duplicados(self, categorias_ids, descuentos_lines, almacen_id):
         for j in range(len(categorias_ids)):
@@ -74,7 +84,6 @@ class ResUsersDiscount(models.Model):
                     raise ValidationError(
                         _('Advertencia!, Ya existe otro descuento con la categoria %s y almacen %s ',
                           categoria_rep.name, descuentos_lines[k].almacen_id.name))
-
 
     def write(self, vals):
         seller = self.seller_id
@@ -88,16 +97,17 @@ class ResUsersDiscount(models.Model):
         if 'almacen_id' in vals:
             almacen_id = vals['almacen_id']
 
-        self._restrictions_discounts(seller, discount_permitted, almacen_id)
+
 
         if 'category_ids' in vals:
             lis_category_ids = vals['category_ids'][0][2]
-            descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', seller.id), ('id', '!=', self.id)])
+            descuentos_lines = self.env['res.users.discount'].search(
+                [('seller_id', '=', seller.id), ('id', '!=', self.id)])
             self._descuento_motos(lis_category_ids)
+            self._restrictions_discounts(seller, discount_permitted, almacen_id,lis_category_ids)
             self._verificar_duplicados(lis_category_ids, descuentos_lines, almacen_id)
 
         return super(ResUsersDiscount, self).write(vals)
-
 
     @api.model_create_multi
     def create(self, vals):
@@ -125,14 +135,14 @@ class SaleOrderInherit(models.Model):
 
     need_discount_aprove = fields.Boolean("Nesesita descuento mayor?", compute='_get_value')
 
-    gerente_discount_id = fields.Many2one('res.users',"Gerente a cargo de aprobar")
+    gerente_discount_id = fields.Many2one('res.users', "Gerente a cargo de aprobar")
 
     @api.depends('order_line')
     def _get_value(self):
         list = self._get_category_needs_discount()
         if len(list):
             self.need_discount_aprove = True
-            self.correo_enviado=False
+            self.correo_enviado = False
         else:
             self.need_discount_aprove = False
 
@@ -142,15 +152,16 @@ class SaleOrderInherit(models.Model):
             raise ValidationError(_('Advertencia!, No tienes almacen predeterminado seleccionado'))
         almacen = self.env.user.property_warehouse_id
         list_usuarios = self.env['res.users'].search([('property_warehouse_id', '=', almacen.id)])
-        _logger.info("Usuarios con almacen predeterminado = %s",list_usuarios)
+        _logger.info("Usuarios con almacen predeterminado = %s", list_usuarios)
 
         gerente_encontrado = 0
         for usuario in list_usuarios:
-            _logger.info("SALE ORDER:: usuario %s , tiene grupo %s",usuario.name,usuario.has_group('pos_order_restrict.user_discount_gerente_group'))
+            _logger.info("SALE ORDER:: usuario %s , tiene grupo %s", usuario.name,
+                         usuario.has_group('pos_order_restrict.user_discount_gerente_group'))
             if usuario.has_group('pos_order_restrict.user_discount_gerente_group'):
                 descuentos_requeridos = self._get_category_needs_discount()
                 gerente_encontrado = 1
-                self.gerente_discount_id=usuario
+                self.gerente_discount_id = usuario
                 _logger.info("SALE ORDER: Boton email , descuentos solicitados= %s", descuentos_requeridos)
                 if len(descuentos_requeridos) > 0:
 
@@ -170,7 +181,7 @@ class SaleOrderInherit(models.Model):
                     _logger.info("SALE ORDER: Enviamos email con %s", template_data)
                     template_id = template_obj.create(template_data)
                     template_id.send()
-                    self.correo_enviado=True
+                    self.correo_enviado = True
                     _logger.info("SALE ORDER: Enviado")
         if gerente_encontrado == 0:
             raise ValidationError(_("No hay un gerente asignado para el almacen %s", almacen.name))
@@ -220,7 +231,7 @@ class SaleOrderInherit(models.Model):
                                     descuentos_mayores = True
 
                                     errores_string += 'Advertencia!, El descuento permitido en %s para categoria %s es %s\n.' % (
-                                    order.product_template_id.name, categ.name, discount_line.discount_permitted)
+                                        order.product_template_id.name, categ.name, discount_line.discount_permitted)
 
                     if descuento_encontrado == 0 and order.discount > 0:
                         errores_string += 'Advertencia!, No tienes permitido hacer descuentos en %s' % (
@@ -265,7 +276,10 @@ class SaleOrderInherit(models.Model):
             self.action_done()
         return True
 
+
 class SaleOrderInherit(models.Model):
     _inherit = 'res.company'
 
-    user_base_discount = fields.Integer("Descuento permitido para usuarios base",default=5)
+    user_base_discount = fields.Integer("Descuento permitido para usuarios base", default=5)
+    user_gerente_discount = fields.Integer("Descuento permitido para gerentes", default=20)
+    motos_discount = fields.Integer("Descuento permitido para Motos", default=50)
