@@ -142,8 +142,7 @@ class SaleOrderInherit(models.Model):
         almacen = self.env.user.property_warehouse_id
         list_usuarios = self.env['res.users'].sudo().search([('property_warehouse_id', '=', almacen.id)])
         _logger.info("Usuarios con almacen predeterminado = %s",list_usuarios)
-        if len(list_usuarios) == 0:
-            raise ValidationError(_("No hay un gerente asignado para el almacen %s", almacen.name))
+
         gerente_encontrado = 0
         for usuario in list_usuarios:
             if usuario.has_group('pos_user_restrict.user_discount_gerente_group'):
