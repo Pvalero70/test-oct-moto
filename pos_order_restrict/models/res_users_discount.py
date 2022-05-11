@@ -117,10 +117,11 @@ class ResUsersDiscount(models.Model):
             seller = self.env['res.users'].search([('id', '=', vals[i]['seller_id'])], limit=1)
             permitted_discount = vals[i]['discount_permitted']
             almacen_id = vals[i]['almacen_id']
-
-            self._restrictions_discounts(seller, permitted_discount, almacen_id)
-
             categorias_ids = vals[i]['category_ids'][0][2]
+
+            self._restrictions_discounts(seller, permitted_discount, almacen_id,categorias_ids)
+
+
 
             descuentos_lines = self.env['res.users.discount'].search([('seller_id', '=', vals[i]['seller_id'])])
 
