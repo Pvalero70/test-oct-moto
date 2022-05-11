@@ -290,4 +290,4 @@ class ResCompanyInherit(models.Model):
 
     user_base_discount = fields.Integer("Descuento permitido para usuarios base", default=5)
     user_gerentes_discount = fields.Integer("Descuento permitido para gerentes", default=20)
-    #motos_discount = fields.Integer("Descuento permitido para Motos", default=50)
+    motos_discount = fields.Integer("Descuento permitido para Motos", default=50)
