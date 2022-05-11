@@ -14,7 +14,7 @@
     </record>
 
     <record id="contacts.menu_contacts" model="ir.ui.menu">
-        <field name="groups_id" eval="[(5,0),(4, ref('q_repair_extend.user_reparaciones_group'))]"/>
+        <field name="groups_id" eval="[(5,0)]"/>
     </record>
 
 
