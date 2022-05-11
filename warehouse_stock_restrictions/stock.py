@@ -13,11 +13,11 @@ class ResUsers(models.Model):
         'location_security_stock_location_users',
         'user_id',
         'location_id',
-        'Stock Locations')
+        'Ubicaciones de existencias')
 
     default_picking_type_ids = fields.Many2many(
         'stock.picking.type', 'stock_picking_type_users_rel',
-        'user_id', 'picking_type_id', string='Default Warehouse Operations')
+        'user_id', 'picking_type_id', string='Operaciones de almacén predeterminadas')
 
 
 class stock_move(models.Model):

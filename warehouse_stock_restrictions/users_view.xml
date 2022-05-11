@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="base.view_users_form"/>
             <field name="arch" type="xml">
                 <group name="messaging" position="before">
-                    <group string="Warehouse Restrictions" attrs="{'invisible': [('login','=', 'admin')]}">
+                    <group string="Restricciones de Almacen" attrs="{'invisible': [('login','=', 'admin')]}">
                         <field name="default_picking_type_ids" widget="many2many_tags" attrs="{'invisible': [('login','=', 'admin')]}"/>
                     </group>
                 </group>
@@ -20,12 +20,12 @@
             <field name="inherit_id" ref="base.view_users_form"/>
             <field name="arch" type="xml">
                 <group name="messaging" position="before">
-                    <group string="Locations" attrs="{'invisible': [('login','=', 'admin')]}">
-                        <field name="restrict_locations" attrs="{'invisible': [('login','=', 'admin')]}"/>
+                    <group string="Ubicaciones" attrs="{'invisible': [('login','=', 'admin')]}">
+                        <field name="restrict_locations" attrs="{'invisible': [('login','=', 'admin')]}" string="Restringir Operaciones"/>
                     </group>
                 </group>
                 <notebook>
-                    <page string="Allowed Stock Locations" attrs="{'invisible': [('restrict_locations','!=', True)]}">
+                    <page string="Ubicaciones de stock permitidas" attrs="{'invisible': [('restrict_locations','!=', True)]}">
                         <field name="stock_location_ids" nolabel="1" colspan="2"/>
                     </page>
                 </notebook>
