@@ -32,12 +32,12 @@ class RepairOrderInherit(models.Model):
     
     def _compute_picking_ids(self):
         for order in self:
-            pick_ids = self.env['stock.picking'].search([('origin', '=', order.name)]).ids
+            pick_ids = self.env['stock.picking'].search([('origin', '=', order.name),('picking_type_code','=','incoming')]).ids
             order.picking_ids = pick_ids
     
     def _compute_incoming_picking_count(self):
         for order in self:
-            count_incomings = self.env['stock.picking'].search([('origin', '=', order.name)]).ids
+            count_incomings = self.env['stock.picking'].search([('origin', '=', order.name),('picking_type_code','=','incoming')]).ids
             order.incoming_picking_count = len(count_incomings)
 
     def action_view_picking(self):
