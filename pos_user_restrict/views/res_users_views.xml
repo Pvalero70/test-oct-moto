@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="base.view_users_form"/>
         <field name="arch" type="xml">
             <xpath expr="//page[@name='access_rights']/group" position="after">
-                <group string="Punto de venta" groups="point_of_sale.group_pos_user">
+                <group string="Puntos de venta" groups="point_of_sale.group_pos_user">
                     <field
                         name="pos_config_ids"
                         widget="many2many_tags"
