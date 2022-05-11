@@ -89,7 +89,7 @@
             parent="sale.sale_order_menu"
             sequence="5"
             action="user_discount_admin_action"
-            groups="pos_user_restrict.user_discount_group,pos_user_restrict.user_discount_admin_group,pos_user_restrict.user_discount_gerente_group"/>
+            groups="user_discount_group,user_discount_admin_group,user_discount_gerente_group"/>
     />
 
     <record id="sale_order_inherit_form" model="ir.ui.view">
