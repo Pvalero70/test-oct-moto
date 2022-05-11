@@ -59,7 +59,7 @@ class ResUsersDiscount(models.Model):
         descuento_gerente = self.env.user.has_group('pos_order_restrict.user_discount_gerente_modif_group')
         acceso_motos = self.env.user.has_group('pos_order_restrict.user_discount_motos_group')
         descuento_user_base = seller.company_id.user_base_discount
-        descuento_user_gerente = seller.company_id.user_gerente_discount
+        descuento_user_gerente = seller.company_id.user_gerentes_discount
         descuento_motos = seller.company_id.motos_discount
 
         _logger.info("POS ORDER:discount permited %s, Descuento base %s , gerente %s, motos %s, verifica cat motos %s", discount_permitted,descuento_user_base,descuento_user_gerente,descuento_motos,self._verifica_categoria_motos(categorias_ids))
@@ -289,5 +289,5 @@ class ResCompanyInherit(models.Model):
     _inherit = 'res.company'
 
     user_base_discount = fields.Integer("Descuento permitido para usuarios base", default=5)
-    #user_gerente_discount = fields.Integer("Descuento permitido para gerentes", default=20)
+    user_gerentes_discount = fields.Integer("Descuento permitido para gerentes", default=20)
     #motos_discount = fields.Integer("Descuento permitido para Motos", default=50)

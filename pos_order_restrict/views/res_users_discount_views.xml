@@ -144,7 +144,7 @@
             <xpath expr="//field[@name='favicon']" position="after">
                 <field name="user_base_discount" string ="Descuento permitido maximo usuario base" groups="pos_order_restrict.user_discount_admin_group"/>
                 <field name="user_gerentes_discount" string ="Descuento permitido maximo gerentes" groups="pos_order_restrict.user_discount_admin_group"/>
-                <field name="moto_discount" string ="Descuento permitido maximo en motos" groups="pos_order_restrict.user_discount_admin_group"/>
+                <field name="motos_discount" string ="Descuento permitido maximo en motos" groups="pos_order_restrict.user_discount_admin_group"/>
             </xpath>
 
         </field>
