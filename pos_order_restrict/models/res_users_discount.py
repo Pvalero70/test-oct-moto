@@ -218,7 +218,7 @@ class SaleOrderInherit(models.Model):
 
     def restrictions_discount(self):
         discount_lines = self.env['res.users.discount'].sudo().search(
-            [('seller_id', '=', self.env.user.id), ('almacen_id', '=', self.warehouse_id.id)], limit=1)
+            [('seller_id', '=', self.env.user.id)], limit=1)
 
         descuentos_mayores = False
         errores_string = ''
