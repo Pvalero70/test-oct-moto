@@ -187,6 +187,7 @@ class SaleOrderInherit(models.Model):
                     _logger.info("SALE ORDER: Enviamos email con %s", template_data)
                     template_id = template_obj.sudo().create(template_data)
                     template_id.send()
+                    self.need_discount_aprove = False
 
                     _logger.info("SALE ORDER: Enviado")
         if gerente_encontrado == 0:
