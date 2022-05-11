@@ -154,9 +154,9 @@ class SaleOrderInherit(models.Model):
 
     def send_mail_discount(self):
 
-        if not self.env.user.property_warehouse_id:
-            raise ValidationError(_('Advertencia!, No tienes almacen predeterminado seleccionado'))
-        almacen = self.env.user.property_warehouse_id
+        if not self.warehouse_id:
+            raise ValidationError(_('Advertencia!, No tienes almacen seleccionado'))
+        almacen = self.warehouse_id
         list_usuarios = self.env['res.users'].search([('property_warehouse_id', '=', almacen.id)])
         _logger.info("Usuarios con almacen predeterminado = %s", list_usuarios)
 
