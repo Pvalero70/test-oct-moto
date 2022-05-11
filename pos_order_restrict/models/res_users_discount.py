@@ -104,7 +104,7 @@ class ResUsersDiscount(models.Model):
         if 'category_ids' in vals:
             lis_category_ids = vals['category_ids'][0][2]
             category_ids = lis_category_ids
-
+        _logger.info(_("POS ORDER::Bien"))
         descuentos_lines = self.env['res.users.discount'].search(
             [('seller_id', '=', seller.id), ('id', '!=', self.id)])
         self._descuento_motos(category_ids)
