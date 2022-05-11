@@ -63,17 +63,17 @@ class ResUsersDiscount(models.Model):
         descuento_motos = seller.company_id.motos_discount
 
         _logger.info("POS ORDER:discount permited %s, Descuento base %s , gerente %s, motos %s, verifica cat motos %s", discount_permitted,descuento_user_base,descuento_user_gerente,descuento_motos,self._verifica_categoria_motos(categorias_ids))
-
-        if acceso_motos == True and discount_permitted > descuento_motos and self._verifica_categoria_motos(categorias_ids) == True:
+        if acceso_motos == True and self._verifica_categoria_motos(categorias_ids) == True and discount_permitted > descuento_motos:
             raise ValidationError(_('Advertencia!, El descuento maximo permitido para motos es %s.', descuento_motos))
 
-        if descuento_gerente == True and discount_permitted > descuento_user_gerente:
+        elif descuento_gerente==True and discount_permitted > descuento_user_gerente:
             raise ValidationError(
                 _('Advertencia!, El descuento maximo permitido para gerente es %s.', descuento_user_gerente))
 
-        if discount_permitted > descuento_user_base and descuento_gerente == False:
+        elif descuento_gerente == False and discount_permitted > descuento_user_base:
             raise ValidationError(
                 _('Advertencia!, El descuento maximo permitido usuario base es %s ', descuento_user_base))
+
 
     def _verificar_duplicados(self, categorias_ids, descuentos_lines, almacen_id):
         for j in range(len(categorias_ids)):
