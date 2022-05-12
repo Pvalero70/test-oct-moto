@@ -54,6 +54,6 @@ class AccountPayment(models.Model):
                 invoice_id = invoice.get('id')
                 factura = self.env['account.move'].browse(invoice_id)
                 _log.info(factura)
-                factura.payment_id = payment_id
+                # factura.payment_id = payment_id
 
 
