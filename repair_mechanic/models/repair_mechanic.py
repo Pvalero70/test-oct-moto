@@ -16,7 +16,7 @@ class RepairMechanic(models.Model):
         ('numero_tecnico_unique', 'unique(numero_tecnico)', 'No puedes duplicar el numero de tecnico')
     ]
 
-    name_computed = fields.Char(string="Computado", compute='_compute_name', store=True)
+    name_computed = fields.Char(string="Computado", compute='_compute_name',store=True)
 
     first_name = fields.Char("Primer nombre",required=1)
     second_name = fields.Char("Segundo nombre")
