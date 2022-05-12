@@ -71,4 +71,22 @@
 
         </field>
     </record>
+
+    <record id="repair_order_search_inherit" model="ir.ui.view">
+        <field name="name">	repair.order.inherit.search</field>
+        <field name="model">repair.order</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//filter[@name='sale_order_id']" position="after">
+                <field name="mechanic_id" string="Mecanico"/>
+            </xpath>
+
+            <xpath expr="//filter[@name='company']" position="after">
+                <field name="mechanic_group" string="Mecanico" context="{'group_by': 'mechanic_id'}"/>
+            </xpath>
+
+        </field>
+    </record>
 </odoo>
