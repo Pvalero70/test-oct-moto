@@ -272,6 +272,10 @@ class SaleOrderInherit(models.Model):
                     dict = self.restrictions_discount()
                     if len(dict['errores']) > 0:
                         raise UserError(dict['errores'])
+            else:
+                dict = self.restrictions_discount()
+                if len(dict['errores']) > 0:
+                    raise UserError(dict['errores'])
 
         if self._get_forbidden_state_confirm() & set(self.mapped('state')):
             raise UserError(_(
