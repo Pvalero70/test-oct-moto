@@ -30,7 +30,8 @@ class AccountPayment(models.Model):
         invoice = values.get('invoice')
 
         journal = self.env['account.journal'].browse(journal_id)
-        metodos = journal.inbound_payment_method_line_ids
+        metodos = self.env['account.payment.method.line'].search([('payment_type', '=', 'inbound')], limit=1)
+        
         _log.info(metodos)
 
         try:
@@ -38,7 +39,7 @@ class AccountPayment(models.Model):
                 "partner_id" : customer.get('id'),
                 "date" : datetime.now().strftime("%Y-%m-%d"),
                 "journal_id" : journal_id,
-                "payment_method_line_id" : metodos[0].id,
+                "payment_method_line_id" : metodos.id,
                 "amount" : amount,
                 "payment_type" : "inbound",
                 "ref" : invoice.get('name')
