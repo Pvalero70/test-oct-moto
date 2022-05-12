@@ -48,7 +48,7 @@ var rpc = require('web.rpc');
                                 this.currentOrder
                             );
                     } else {
-                        if (this.currentOrder.to_invoice.is_payment_invoice){
+                        if (this.currentOrder.is_payment_invoice){
                             const payment = {
                                 is_payment_invoice : true,
                                 selected_invoice : this.currentOrder.selected_invoice
