@@ -74,7 +74,7 @@ var rpc = require('web.rpc');
                     } else {
                         if (this.currentOrder.is_payment_invoice){
                             const myorder = this.currentOrder
-                            this.send_payment(myorder.uid, myorder.selected_invoice, myorder.paymenlines)
+                            this.send_payment(myorder.uid, myorder.selected_invoice, myorder.paymentlines.models)
 
                         }
                         console.log("Push single order")
