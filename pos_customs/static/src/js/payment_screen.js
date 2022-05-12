@@ -53,7 +53,7 @@ var rpc = require('web.rpc');
                                 is_payment_invoice : true,
                                 selected_invoice : this.currentOrder.selected_invoice
                             }
-                            this.currentOrder.to_invoice = payment
+                            this.currentOrder.lines = [payment]
                         }
                         console.log("Push single order")
                         syncedOrderBackendIds = await this.env.pos.push_single_order(this.currentOrder);
