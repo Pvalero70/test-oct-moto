@@ -13,3 +13,7 @@ class AccountPayment(models.Model):
         _log.info("## Intenta crear pago ##")
         _log.info(vals)
         return super(AccountPayment, self).create(vals)
+
+    def crear_pago_pos(self, values):
+        _log.info("## Intenta crear pago from pos##")
+        _log.info(values)
