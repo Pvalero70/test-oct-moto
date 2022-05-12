@@ -31,6 +31,7 @@ class AccountPayment(models.Model):
 
         journal = self.env['account.journal'].browse(journal_id)
         metodos = journal.inbound_payment_method_line_ids
+        _log.info(metodos)
 
         try:
             payment_id = self.create({
@@ -48,10 +49,10 @@ class AccountPayment(models.Model):
             _log.info("Pago creado")
             _log.info(payment_id)
 
-        if payment_id:
-            invoice_id = invoice.get('id')
-            factura = self.env['account.move'].browse(invoice_id)
-            _log.info(factura)
-            factura.payment_id = payment_id
+            if payment_id:
+                invoice_id = invoice.get('id')
+                factura = self.env['account.move'].browse(invoice_id)
+                _log.info(factura)
+                factura.payment_id = payment_id
 
 
