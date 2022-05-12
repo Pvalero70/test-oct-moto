@@ -24,11 +24,12 @@ var rpc = require('web.rpc');
                 this.render();
             }
 
-            async send_payment(order_id, invoice_data, payments){
+            async send_payment(order_id, invoice_data, payments, customer){
                 console.log("Send payment")
                 console.log(order_id)
                 console.log(invoice_data)
                 console.log(payments)
+                console.log(customer)
                 
                 let mispagos = []
                 payments.forEach(element => {
@@ -42,7 +43,7 @@ var rpc = require('web.rpc');
                 const createPayment = await this.rpc({
                     model: 'account.payment',
                     method: 'crear_pago_pos',
-                    args: [{vals : {invoice : invoice_data, uid : order_id, payments : mispagos}}],
+                    args: [{vals : {invoice : invoice_data, uid : order_id, payments : mispagos, customer : customer}}],
                 });
 
                 console.log(createPayment)
@@ -74,7 +75,7 @@ var rpc = require('web.rpc');
                     } else {
                         if (this.currentOrder.is_payment_invoice){
                             const myorder = this.currentOrder
-                            this.send_payment(myorder.uid, myorder.selected_invoice, myorder.paymentlines.models)
+                            this.send_payment(myorder.uid, myorder.selected_invoice, myorder.paymentlines.models, myorder.attributes.client)
 
                         }
                         console.log("Push single order")
