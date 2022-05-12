@@ -203,7 +203,7 @@ class SaleOrderInherit(models.Model):
         return True
 
     def _get_category_needs_discount(self):
-        discount_lines = self.env['res.users.discount'].search(
+        discount_lines = self.env['res.users.discount'].sudo().search(
             [('seller_id', '=', self.env.user.id), ('almacen_id', '=', self.warehouse_id.id)])
 
         descuentos_sol = []
