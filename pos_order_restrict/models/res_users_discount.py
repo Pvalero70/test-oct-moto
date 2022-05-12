@@ -203,27 +203,28 @@ class SaleOrderInherit(models.Model):
         return True
 
     def _get_category_needs_discount(self):
-        discount_lines = self.env['res.users.discount'].sudo().search(
-            [('seller_id', '=', self.env.user.id), ('almacen_id', '=', self.warehouse_id.id)])
+        for rec in self:
+            discount_lines = rec.env['res.users.discount'].sudo().search(
+                [('seller_id', '=', rec.env.user.id), ('almacen_id', '=', rec.warehouse_id.id)])
 
-        descuentos_sol = []
-        for order in self.order_line:
+            descuentos_sol = []
+            for order in rec.order_line:
 
-            if order.product_template_id and order.product_template_id.categ_id:
+                if order.product_template_id and order.product_template_id.categ_id:
 
-                if len(discount_lines) > 0:
-                    for discount_line in discount_lines:
+                    if len(discount_lines) > 0:
+                        for discount_line in discount_lines:
 
-                        for categ in discount_line.category_ids:
+                            for categ in discount_line.category_ids:
 
-                            if categ.id == order.product_template_id.categ_id.id:
-                                if order.discount > discount_line.discount_permitted:
-                                    descuentos_sol.append(
-                                        {'producto': order.product_template_id.name, 'categoria': categ.name,
-                                         'descuento_solicitado': order.discount,
-                                         'descuento_permitido': discount_line.discount_permitted})
+                                if categ.id == order.product_template_id.categ_id.id:
+                                    if order.discount > discount_line.discount_permitted:
+                                        descuentos_sol.append(
+                                            {'producto': order.product_template_id.name, 'categoria': categ.name,
+                                             'descuento_solicitado': order.discount,
+                                             'descuento_permitido': discount_line.discount_permitted})
 
-        return descuentos_sol
+            return descuentos_sol
 
     def restrictions_discount(self):
         discount_lines = self.env['res.users.discount'].sudo().search(
