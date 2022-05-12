@@ -12,7 +12,7 @@ class RepairMechanic(models.Model):
     _description = "Model that saves contact of mechanics"
     _rec_name = 'name_computed'
 
-    name_computed = fields.Char(string="Computado", compute='_compute_name')
+    name_computed = fields.Char(string="Computado", compute='_compute_name',store=True)
 
     first_name = fields.Char("Primer nombre",required=1)
     second_name = fields.Char("Segundo nombre")
@@ -24,7 +24,7 @@ class RepairMechanic(models.Model):
     @api.depends('first_name','second_name','first_ap','second_ap')
     def _compute_name(self):
         for rec in self:
-            nombre = rec.first_name + " "+ (str(rec.second_name+" ") if rec.second_name else "") + rec.first_ap + (str(rec.second_ap) if rec.second_ap else "")
+            nombre = rec.first_name + " "+ (str(rec.second_name+" ") if rec.second_name else "") + rec.first_ap +" "+ (str(rec.second_ap) if rec.second_ap else "")
 
             rec.name_computed = nombre
 
