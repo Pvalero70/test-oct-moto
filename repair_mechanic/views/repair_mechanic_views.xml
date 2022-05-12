@@ -63,7 +63,7 @@
 
 
             <xpath expr="//field[@name='tag_ids']" position="after">
-                <field name="mechanic_id"  widget='selection' domain="[('company_id','in',company_id),('location_id','=',location_id)]"/>
+                <field name="mechanic_id"  widget='selection' domain="[('company_id','=',company_id),('location_id','=',location_id)]"/>
             </xpath>
 
 
