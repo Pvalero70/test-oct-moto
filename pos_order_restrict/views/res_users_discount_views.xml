@@ -129,7 +129,7 @@
             </xpath>
         </field>
     </record>
-    
+
     <record id="sale_order_search_aprobe" model="ir.ui.view">
         <field name="name">sale.order.inherit.search</field>
         <field name="model">sale.order</field>
