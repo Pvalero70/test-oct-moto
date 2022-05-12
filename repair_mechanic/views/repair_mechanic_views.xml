@@ -79,7 +79,7 @@
         <field name="inherit_id" ref="repair.view_repair_order_form_filter"/>
         <field name="arch" type="xml">
 
-            <xpath expr="//filter[@name='sale_order_id']" position="after">
+            <xpath expr="//field[@name='sale_order_id']" position="after">
                 <field name="mechanic_id" string="Mecanico"/>
             </xpath>
 
