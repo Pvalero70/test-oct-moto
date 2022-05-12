@@ -10,11 +10,7 @@ odoo.define('pos_customs.OrderReceipt', function(require) {
             get sale_seller() {
     //            Get the first line to get user of sale.order object.
                 if (this.orderlines){
-                    console.log("Orderlines")
-                    console.log(this.orderlines)
                     var order_liness = this.orderlines[0];
-                    console.log("Orderlines2")
-                    console.log(order_liness)
                     if(order_liness == undefined || order_liness["sale_order_origin_id"] == undefined){
                         return false;
                     }

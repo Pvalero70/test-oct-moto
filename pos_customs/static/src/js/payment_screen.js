@@ -48,6 +48,13 @@ var rpc = require('web.rpc');
                                 this.currentOrder
                             );
                     } else {
+                        if (this.currentOrder.to_invoice.is_payment_invoice){
+                            const payment = {
+                                is_payment_invoice : true,
+                                selected_invoice : this.currentOrder.selected_invoice
+                            }
+                            this.currentOrder.to_invoice = payment
+                        }
                         console.log("Push single order")
                         syncedOrderBackendIds = await this.env.pos.push_single_order(this.currentOrder);
                     }
