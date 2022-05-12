@@ -29,17 +29,24 @@ class AccountPayment(models.Model):
                 amount = pay.get('amount')
         invoice = values.get('invoice')
 
-        payment_id = self.create({
-            "partner_id" : customer.get('id'),
-            "date" : datetime.now().strftime("%Y-%m-%d"),
-            "journal_id" : journal_id,
-            "amount" : amount,
-            "ref" : invoice.get('name')
-        })
+        try:
+            payment_id = self.create({
+                "partner_id" : customer.get('id'),
+                "date" : datetime.now().strftime("%Y-%m-%d"),
+                "journal_id" : journal_id,
+                "amount" : amount,
+                "ref" : invoice.get('name')
+            })
+        except Exception as e:
+            _log.error(e)
+        else:
+            _log.info("Pago creado")
+            _log.info(payment_id)
 
         if payment_id:
             invoice_id = invoice.get('id')
             factura = self.env['account.move'].browse(invoice_id)
+            _log.info(factura)
             factura.payment_id = payment_id
 
 
