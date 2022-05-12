@@ -17,12 +17,16 @@
     'assets': {
         'point_of_sale.assets': [
             'pos_customs/static/src/css/payment_screen.css',
+            'pos_customs/static/src/css/pos.css',
             'pos_customs/static/src/js/payment_screen.js',
             'pos_customs/static/src/js/orderReceipt.js',
+            'pos_customs/static/src/js/ClientListScreen.js',
+            'pos_customs/static/src/js/ClientLine.js'
         ],
         'web.assets_qweb': [
             'pos_customs/static/src/xml/payment_screen.xml',
             'pos_customs/static/src/xml/pos_receipt.xml',
+            'pos_customs/static/src/xml/templates.xml',
         ],
     },
     'application': True,
