@@ -15,7 +15,7 @@ odoo.define('pos_customs.OrderReceipt', function(require) {
                     var order_liness = this.orderlines[0];
                     console.log("Orderlines2")
                     console.log(order_liness)
-                    if(order_liness["sale_order_origin_id"] == undefined){
+                    if(order_liness == undefined || order_liness["sale_order_origin_id"] == undefined){
                         return false;
                     }
                     var sale_order = order_liness.sale_order_origin_id;
