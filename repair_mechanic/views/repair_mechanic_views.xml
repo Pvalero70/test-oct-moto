@@ -25,6 +25,7 @@
                         <group>
                             <field name="second_name"/>
                             <field name="second_ap"/>
+                            <field name="numero_tecnico" required="1"/>
                         </group>
                     </group>
                 </sheet>
@@ -40,6 +41,7 @@
             <tree string="Lista de Mecanicos">
                 <field name="name_computed" string="Nombre completo"/>
                 <field name="location_id" string="Ubicacion"/>
+                 <field name="numero_tecnico"/>
             </tree>
 
         </field>
