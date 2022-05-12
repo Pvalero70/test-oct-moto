@@ -82,7 +82,7 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='sale_order_id']" position="after">
-                <field name="mechanic_id" string="Mecanico" filter_domain="[('name_computed', 'ilike', self)]"/>
+                <field name="mechanic_id" string="Mecanico" filter_domain="[('mechanic_id.name_computed', 'ilike', self)]"/>
             </xpath>
 
             <xpath expr="//group/filter[@name='company']" position="after">
