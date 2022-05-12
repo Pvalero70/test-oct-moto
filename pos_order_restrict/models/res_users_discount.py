@@ -178,7 +178,7 @@ class SaleOrderInherit(models.Model):
                     body += 'El usuario ' + self.env.user.name + ', solicita un descuento mayor al permitido en la cotizacion ' + self.name + '.<br>'
                     for desc_req in descuentos_requeridos:
                         body += "En el producto " + str(desc_req['producto']) + " con la categoria : " + str(
-                            desc_req['categoria']) + " se pide un descuento mayor del " + str(desc_req['descuento_solicitado']) + "% y El usuario cuenta con un descuento maximo de el " + str(
+                            desc_req['categoria']) + ", se pide un descuento mayor del " + str(desc_req['descuento_solicitado']) + "% y el usuario cuenta con un descuento maximo de el " + str(
                             desc_req['descuento_permitido']) + "%<br>"
                     template_obj = self.env['mail.mail']
                     template_data = {
