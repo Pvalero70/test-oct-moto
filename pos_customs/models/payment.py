@@ -30,7 +30,7 @@ class AccountPayment(models.Model):
         invoice = values.get('invoice')
 
         payment_id = self.create({
-            "patner_id" : customer.get('id'),
+            "partner_id" : customer.get('id'),
             "date" : datetime.now().strftime("%Y-%m-%d"),
             "journal_id" : journal_id,
             "amount" : amount,
