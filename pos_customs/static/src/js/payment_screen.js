@@ -28,7 +28,7 @@ var rpc = require('web.rpc');
                 const createPayment = await this.rpc({
                     model: 'account.payment',
                     method: 'create',
-                    args: [{journal_id : 1}],
+                    args: [{vals : {journal_id : 1}}],
                 });
 
                 console.log(createPayment)
