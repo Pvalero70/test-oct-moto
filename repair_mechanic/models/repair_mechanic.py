@@ -14,10 +14,10 @@ class RepairMechanic(models.Model):
 
     name_computed = fields.Char(string="Computado", compute='_compute_name')
 
-    first_name = fields.String("Primer nombre",required=1)
-    second_name = fields.String("Segundo nombre")
-    first_ap = fields.String("Primer apellido", required=1)
-    second_ap = fields.String("Segundo apellido")
+    first_name = fields.Char("Primer nombre",required=1)
+    second_name = fields.Char("Segundo nombre")
+    first_ap = fields.Char("Primer apellido", required=1)
+    second_ap = fields.Char("Segundo apellido")
     location_id = fields.Many2one('stock.location',"Ubicacion")
     company_id = fields.Many2one('res.company',"Empresa",default=lambda self: self.env.company_id)
 
