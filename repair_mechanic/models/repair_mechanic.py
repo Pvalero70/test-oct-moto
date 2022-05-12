@@ -19,7 +19,7 @@ class RepairMechanic(models.Model):
     first_ap = fields.Char("Primer apellido", required=1)
     second_ap = fields.Char("Segundo apellido")
     location_id = fields.Many2one('stock.location',"Ubicacion")
-    company_id = fields.Many2one('res.company',"Empresa",default=lambda self: self.env.company_id)
+    company_id = fields.Many2one('res.company',"Empresa",default=lambda self: self.env.company)
 
     @api.depends('first_name','second_name','first_ap','second_ap')
     def _compute_name(self):
@@ -27,3 +27,12 @@ class RepairMechanic(models.Model):
             nombre = rec.first_name + " "+ str(rec.second_name+" ") if rec.second_name else "" + rec.first_ap + str(rec.second_ap) if rec.second_ap else ""
 
             rec.name_computed = nombre
+
+
+class RepairOrderInherit(models.Model):
+
+    _inherit = 'repair.order'
+
+    mechanic_id = fields.Many2one('repair.mechanic',"Mecanico")
+
+
