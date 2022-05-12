@@ -24,13 +24,25 @@ var rpc = require('web.rpc');
                 this.render();
             }
 
-            async send_payment(order_id, invoice_data){
+            async send_payment(order_id, invoice_data, payments){
                 console.log("Send payment")
-                console.log(this.currentOrder)
+                console.log(order_id)
+                console.log(invoice_data)
+                console.log(payments)
+                
+                mispagos = []
+                payments.forEach(element => {
+                    var pay = {
+                        amount : element.amount,
+                        method : element.payment_method
+                    } 
+                    mispagos.push(pay)
+                });
+
                 const createPayment = await this.rpc({
                     model: 'account.payment',
                     method: 'crear_pago_pos',
-                    args: [{vals : {invoice : invoice_data, uid : order_id}}],
+                    args: [{vals : {invoice : invoice_data, uid : order_id, payments : mispagos}}],
                 });
 
                 console.log(createPayment)
@@ -61,8 +73,8 @@ var rpc = require('web.rpc');
                             );
                     } else {
                         if (this.currentOrder.is_payment_invoice){
-                            
-                            this.send_payment(this.currentOrder.uid, this.currentOrder.selected_invoice)
+                            const myorder = this.currentOrder
+                            this.send_payment(myorder.uid, myorder.selected_invoice, myorder.paymenlines)
 
                         }
                         console.log("Push single order")
