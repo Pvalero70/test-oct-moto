@@ -110,10 +110,10 @@
                 <button name="send_mail_discount" string="Solicitar Descuento Mayor" type="object"
                         attrs="{'invisible': ['|',('state', 'not in', ['draft']),('need_discount_aprove','=',False)]}"/>
             </xpath>
-            <xpath expr="//button[@name='action_quotation_send']" position="attributes">
+            <xpath expr="//button[@name='action_quotation_send'][0]" position="attributes">
                 <attribute name="attrs">{'readonly':[('gerente_discount_id','!=', uid),('correo_enviado','=',True)]}</attribute>
             </xpath>
-            <xpath expr="//button[@name='action_confirm']" position="attributes">
+            <xpath expr="//button[@name='action_confirm'][0]" position="attributes">
                 <attribute name="attrs">{'readonly':[('gerente_discount_id','!=', uid),('correo_enviado','=',True)]}</attribute>
             </xpath>
             <xpath expr="//field[@name='partner_id']" position="after">
