@@ -79,5 +79,15 @@ class sale_order(models.Model):
         if not self.env.user.has_group('customer_credit_limit.group_credit_limit_accountant') and self.partner_id.active_credit_limit:
             if self.amount_total > self.sale_credit_limit_customer_total:
                 raise UserError("La cotización no se puede enviar porque rebaso el limite de crédito.")
+        _log.info("SALE ORDER:: EN enviar correo")
+        if self.state == 'draft':
+            if self.need_discount_aprove == False:
+                if self.gerente_discount_id:
+                    if self.gerente_discount_id.id != self.env.user.id:
+                        raise UserError(_("Advertencia, El gerente de descuentos debe aprobarla"))
+                else:
+                    dict = self.restrictions_discount()
+                    if len(dict['errores']) > 0:
+                        raise UserError(dict['errores'])
         res = super(sale_order, self).action_quotation_send()
         return res
