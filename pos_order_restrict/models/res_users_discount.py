@@ -150,6 +150,7 @@ class SaleOrderInherit(models.Model):
         if len(list):
             self.need_discount_aprove = True
             self.correo_enviado=False
+            self.gerente_discount_id = False
         else:
             self.need_discount_aprove = False
 
@@ -261,9 +262,19 @@ class SaleOrderInherit(models.Model):
 
     def action_confirm(self):
         _logger.info("SALE ORDER::Confirmar accion")
-        dict = self.restrictions_discount()
-        if len(dict['errores']) > 0:
-            raise UserError(dict['errores'])
+        if self.state == 'draft':
+            if self.need_discount_aprove == True:
+                if self.gerente_discount_id:
+                    if self.gerente_discount_id.id != self.env.user.id:
+                        raise ValidationError(_("Advertencia, El gerente de descuentos debe aprobarla"))
+                else:
+                    dict = self.restrictions_discount()
+                    if len(dict['errores']) > 0:
+                        raise UserError(dict['errores'])
+        
+
+
+
 
         if self._get_forbidden_state_confirm() & set(self.mapped('state')):
             raise UserError(_(
