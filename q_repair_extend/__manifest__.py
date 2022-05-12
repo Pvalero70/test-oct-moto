@@ -15,9 +15,6 @@
         'l10n_mx_edi','repair'
     ],
     'data': [
-        'security/reparaciones_security.xml',
-        'security/ir.model.access.csv',
-
         'views/repair_order.xml',
 
     ],
