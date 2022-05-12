@@ -14,8 +14,12 @@ class PosOrderInherit(models.Model):
 
     @api.model
     def _order_fields(self, ui_order):
-        process_line = partial(self.env['pos.order.line']._order_line_fields, session_id=ui_order['pos_session_id'])
         
+        if 'ref_repair' in ui_order:
+            process_line = partial(self.env['pos.order.line']._order_line_fields_repair, session_id=ui_order['pos_session_id'])
+        else:
+            process_line = partial(self.env['pos.order.line']._order_line_fields, session_id=ui_order['pos_session_id'])
+
         return {
             'user_id': ui_order['user_id'] or False,
             'session_id': ui_order['pos_session_id'],
@@ -54,3 +58,11 @@ class PosOrderInherit(models.Model):
                 if repair:
                     repair.action_repair_invoice_create()
         return res
+
+class PosOrderLine(models.Model):
+    _inherit = 'pos.order.line'
+
+    def _order_line_fields_repair(self, line, session_id):
+        line[2]['sale_order_origin_id'] = False
+        result = super()._order_line_fields(line, session_id)
+        return result

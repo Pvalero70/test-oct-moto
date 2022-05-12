@@ -47,7 +47,7 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
             
             let sale_lines = await this._getSOLines_repair(sale_order[0].operations);
             let sale_lines_fees = await this._getSOLines_repair_fees(sale_order[0].fees_lines);
-            var lines = sale_lines.concat(sale_lines_fees)
+            var lines = sale_lines_fees.concat(sale_lines)
             sale_order[0].order_line = lines;
             return sale_order[0];
         }
@@ -124,7 +124,10 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
                               tax_ids: orderFiscalPos ? undefined : line.tax_id,
                               price_manually_set: true,
                               ref_repair: this.ref_repair,
+                              sale_order_origin_id: clickedOrder,
                           });
+
+                          console.log(new_line)
       
                           if (
                               new_line.get_product().tracking !== 'none' &&
@@ -185,7 +188,6 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
                               down_payment = down_payment * parse.float(payload) / 100;
                           }
       
-      
                           let new_line = new models.Orderline({}, {
                               pos: this.env.pos,
                               order: this.env.pos.get_order(),
@@ -195,6 +197,7 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
                               sale_order_origin_id: clickedOrder,
                               down_payment_details: tab,
                           });
+    
                           new_line.set_unit_price(down_payment);
                           this.env.pos.get_order().add_orderline(new_line);
                       }
@@ -283,7 +286,7 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
                             sale_order_line_id: line,
                             customer_note: line.customer_note,
                         });
-
+                        console.log(new_line)
                         if (
                             new_line.get_product().tracking !== 'none' &&
                             (this.env.pos.picking_type.use_create_lots || this.env.pos.picking_type.use_existing_lots) &&
