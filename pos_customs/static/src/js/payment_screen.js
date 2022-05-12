@@ -30,7 +30,7 @@ var rpc = require('web.rpc');
                 console.log(invoice_data)
                 console.log(payments)
                 
-                mispagos = []
+                let mispagos = []
                 payments.forEach(element => {
                     var pay = {
                         amount : element.amount,
