@@ -24,6 +24,17 @@ var rpc = require('web.rpc');
                 this.render();
             }
 
+            async send_payment(){
+                const createPayment = await this.rpc({
+                    model: 'account.payment',
+                    method: 'create',
+                    args: [{journal_id : 1}],
+                });
+
+                console.log(createPayment)
+                return createPayment
+            }
+
             async _finalizeValidation() {
                 
                 console.log("Sobre escribe finalize validation")
@@ -49,19 +60,8 @@ var rpc = require('web.rpc');
                     } else {
                         if (this.currentOrder.is_payment_invoice){
                             
-                            const createPayment = await this.rpc({
-                                model: 'account.payment',
-                                method: 'create',
-                                args: {journal_id : 1},
-                            });
+                            this.send_payment()
 
-                            console.log(createPayment)
-
-                            // const payment = {
-                            //     is_payment_invoice : true,
-                            //     selected_invoice : this.currentOrder.selected_invoice
-                            // }
-                            // this.currentOrder.lines = [payment]
                         }
                         console.log("Push single order")
                         syncedOrderBackendIds = await this.env.pos.push_single_order(this.currentOrder);
