@@ -12,12 +12,13 @@ class RepairMechanic(models.Model):
     _description = "Model that saves contact of mechanics"
     _rec_name = 'name_computed'
 
-    name_computed = fields.Char(string="Computado", compute='_compute_name',store=True)
+    name_computed = fields.Char(string="Computado", compute='_compute_name')
 
     first_name = fields.Char("Primer nombre",required=1)
     second_name = fields.Char("Segundo nombre")
     first_ap = fields.Char("Primer apellido", required=1)
     second_ap = fields.Char("Segundo apellido")
+    numero_tecnico = fields.Char("Numero de tecnico")
     location_id = fields.Many2one('stock.location',"Ubicacion")
     company_id = fields.Many2one('res.company',"Empresa",default=lambda self: self.env.company)
 
