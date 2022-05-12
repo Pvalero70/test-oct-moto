@@ -22,6 +22,11 @@ class RepairMechanic(models.Model):
     location_id = fields.Many2one('stock.location',"Ubicacion")
     company_id = fields.Many2one('res.company',"Empresa",default=lambda self: self.env.company)
 
+    _sql_constraints = [
+        ('numero_tecnico_unique', 'unique(numero_tecnico)', 'No puedes duplicar el numero de tecnico')
+
+        ]
+
     @api.depends('first_name','second_name','first_ap','second_ap')
     def _compute_name(self):
         for rec in self:
