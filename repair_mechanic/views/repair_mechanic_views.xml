@@ -83,7 +83,7 @@
                 <field name="mechanic_id" string="Mecanico"/>
             </xpath>
 
-            <xpath expr="//filter[@name='company']" position="after">
+            <xpath expr="//group/filter[@name='company']" position="after">
                 <field name="mechanic_group" string="Mecanico" context="{'group_by': 'mechanic_id'}"/>
             </xpath>
 
