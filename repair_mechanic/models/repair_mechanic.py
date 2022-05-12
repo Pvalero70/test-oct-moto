@@ -16,7 +16,7 @@ class RepairMechanic(models.Model):
         ('numero_tecnico_unique', 'unique(numero_tecnico)', 'No puedes duplicar el numero de tecnico')
     ]
 
-    name_computed = fields.Char(string="Computado", compute='_compute_name')
+    name_computed = fields.Char(string="Computado", compute='_compute_name',store=True)
 
     first_name = fields.Char("Primer nombre",required=1)
     second_name = fields.Char("Segundo nombre")
@@ -31,7 +31,16 @@ class RepairMechanic(models.Model):
     @api.depends('first_name','second_name','first_ap','second_ap')
     def _compute_name(self):
         for rec in self:
-            nombre = rec.first_name + " "+ (str(rec.second_name+" ") if rec.second_name else "") + rec.first_ap +" "+ (str(rec.second_ap) if rec.second_ap else "")
+            nombre = rec.first_name + " "
+
+            if rec.second_name:
+                nombre += rec.second_name + " "
+
+            nombre += rec.first_ap + " "
+
+            if rec.second_ap:
+                nombre+= rec.second_ap
+                
 
             rec.name_computed = nombre
 
