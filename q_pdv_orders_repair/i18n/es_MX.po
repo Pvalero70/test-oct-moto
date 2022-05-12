@@ -1,0 +1,203 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* q_pdv_orders_repair
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0+e-20220317\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-05-10 16:24+0000\n"
+"PO-Revision-Date: 2022-05-10 11:42-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_MX\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js:0
+#, python-format
+msgid "Apply a down payment"
+msgstr "Aplicar un pago inicial"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderRow.js:0
+#, python-format
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/models.js:0
+#, python-format
+msgid "Cannot access order management screen if offline."
+msgstr ""
+"No se puede acceder a la pantalla de gestión de pedidos si no está conectado."
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js:0
+#, python-format
+msgid "Do you want to load the SN/Lots linked to the Sales Order?"
+msgstr "¿Quiere cargar los NS/Lotes vinculados a la Orden de Venta?"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderRow.js:0
+#, python-format
+msgid "For invoiced"
+msgstr "Para ser facturado"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js:0
+#, python-format
+msgid ""
+"It seems that you didn't configure a down payment product in your point of "
+"sale.\r\n"
+"                              You can go to your point of sale configuration "
+"to choose one."
+msgstr ""
+"Parece que no configuró un producto de pago inicial en su punto de venta.\r\n"
+"                              Puedes ir a la configuración de tu punto de "
+"venta para elegir uno."
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js:0
+#, python-format
+msgid ""
+"It seems that you didn't configure a down payment product in your point of "
+"sale.\r\n"
+"                            You can go to your point of sale configuration "
+"to choose one."
+msgstr ""
+"Parece que no configuró un producto de pago inicial en su punto de venta.\r\n"
+"                              Puedes ir a la configuración de tu punto de "
+"venta para elegir uno."
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderRow.js:0
+#, python-format
+msgid "Locked"
+msgstr "Bloqueado"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/models.js:0
+#, python-format
+msgid "Network Error"
+msgstr "Error de red"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js:0
+#, python-format
+msgid "No"
+msgstr ""
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js:0
+#, python-format
+msgid "No down payment product"
+msgstr "Producto sin pago inicial"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js:0
+#, python-format
+msgid "Percentage of %s"
+msgstr "Porcentaje de %s"
+
+#. module: q_pdv_orders_repair
+#: model:ir.model,name:q_pdv_orders_repair.model_pos_order
+msgid "Point of Sale Orders"
+msgstr "Pedidos de punto de venta"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js:0
+#, python-format
+msgid "Products not available in POS"
+msgstr "Productos no disponibles en POS"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderRow.js:0
+#, python-format
+msgid "Quotation"
+msgstr "Cotización"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderRow.js:0
+#, python-format
+msgid "Quotation Sent"
+msgstr "Cotización enviada"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderRow.js:0
+#, python-format
+msgid "Ready"
+msgstr "Listo"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js:0
+#, python-format
+msgid "SN/Lots Loading"
+msgstr "Leyendo NS/Lotes"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderRow.js:0
+#, python-format
+msgid "Sales Order"
+msgstr "Ordenes de venta"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js:0
+#, python-format
+msgid "Settle the order"
+msgstr "Liquidar el pedido"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js:0
+#, python-format
+msgid ""
+"Some of the products in your Sale Order are not available in POS, do you "
+"want to import them?"
+msgstr ""
+"Algunos de los productos de tu Orden de Venta no están disponibles en POS, "
+"¿quieres importarlos?"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderRow.js:0
+#, python-format
+msgid "Under Repair"
+msgstr "En reparación"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js:0
+#, python-format
+msgid "What do you want to do?"
+msgstr "¿Qué es lo que quieres hacer?"
+
+#. module: q_pdv_orders_repair
+#. openerp-web
+#: code:addons/q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js:0
+#, python-format
+msgid "Yes"
+msgstr "Sí"
