@@ -141,7 +141,7 @@ class SaleOrderInherit(models.Model):
     _inherit = 'sale.order'
 
     need_discount_aprove = fields.Boolean("Nesesita descuento mayor?", compute='_get_value')
-    correo_enviado = fields.Boolean("se envio correo de aprobacion?")
+
     gerente_discount_id = fields.Many2one('res.users', "Gerente a cargo de aprobar")
 
     @api.depends('order_line')
@@ -149,7 +149,7 @@ class SaleOrderInherit(models.Model):
         list = self._get_category_needs_discount()
         if len(list):
             self.need_discount_aprove = True
-            self.correo_enviado=False
+
             self.gerente_discount_id = False
         else:
             self.need_discount_aprove = False
@@ -190,10 +190,10 @@ class SaleOrderInherit(models.Model):
                     template_id = template_obj.sudo().create(template_data)
                     template_id.send()
                     self.need_discount_aprove = False
-                    self.correo_enviado=True
+
                     _logger.info("SALE ORDER: Enviado")
                     result={}
-                    result['value'] = {'correo_enviado': True,'need_discount_aprove':False }
+                    result['value'] = {'need_discount_aprove':False }
                     return result
 
 
@@ -271,7 +271,7 @@ class SaleOrderInherit(models.Model):
                     dict = self.restrictions_discount()
                     if len(dict['errores']) > 0:
                         raise UserError(dict['errores'])
-        
+
 
 
 
