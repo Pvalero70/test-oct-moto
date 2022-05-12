@@ -173,16 +173,16 @@ class SaleOrderInherit(models.Model):
                 self.gerente_discount_id = usuario
                 _logger.info("SALE ORDER: Boton email , descuentos solicitados= %s", descuentos_requeridos)
                 if len(descuentos_requeridos) > 0:
-
-                    body = 'El usuario ' + self.env.user.name + ' en la cotizacion ' + self.name + ' solicita descuentos para las categorias:<br>'
+                    body = "Hola.<br>"
+                    body+="Tienes un pedido de venta por aprobar, en la compañia "+str(self.env.company.name)+".<br>"
+                    body += 'El usuario ' + self.env.user.name + ', solicita un descuento mayor al permitido en la cotizacion ' + self.name + '.<br>'
                     for desc_req in descuentos_requeridos:
                         body += "En el producto " + str(desc_req['producto']) + " con la categoria : " + str(
-                            desc_req['categoria']) + " se pide un descuento mayor de " + str(desc_req[
-                                                                                                 'descuento_solicitado']) + "%. El usuario cuenta con un descuento maximo de el " + str(
+                            desc_req['categoria']) + " se pide un descuento mayor del " + str(desc_req['descuento_solicitado']) + "% y El usuario cuenta con un descuento maximo de el " + str(
                             desc_req['descuento_permitido']) + "%<br>"
                     template_obj = self.env['mail.mail']
                     template_data = {
-                        'subject': 'Solicitud de descuento para' + self.env.user.name,
+                        'subject': 'Solicitud de descuento para ' + self.env.user.name,
                         'body_html': body,
                         'email_from': self.env.user.company_id.email,
                         'email_to': usuario.partner_id.email
