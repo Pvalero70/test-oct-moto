@@ -31,7 +31,7 @@ class RepairMechanic(models.Model):
     @api.depends('first_name','second_name','first_ap','second_ap')
     def _compute_name(self):
         for rec in self:
-            nombre = rec.first_name + " "+ (str(rec.second_name+" ") if rec.second_name else "") + rec.first_ap +" "+ (str(rec.second_ap) if rec.second_ap else "")
+            nombre = rec.first_name + " "+ str((rec.second_name+" ") if rec.second_name else "") + rec.first_ap +" "+ str((rec.second_ap) if rec.second_ap else "")
 
             rec.name_computed = nombre
 
