@@ -264,7 +264,7 @@ class SaleOrderInherit(models.Model):
     def action_confirm(self):
         _logger.info("SALE ORDER::Confirmar accion")
         if self.state == 'draft':
-            if self.need_discount_aprove == True:
+            if self.need_discount_aprove == False:
                 if self.gerente_discount_id:
                     if self.gerente_discount_id.id != self.env.user.id:
                         raise ValidationError(_("Advertencia, El gerente de descuentos debe aprobarla"))
