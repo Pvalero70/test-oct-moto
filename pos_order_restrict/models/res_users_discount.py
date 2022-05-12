@@ -283,7 +283,20 @@ class SaleOrderInherit(models.Model):
 
     def action_quotation_send(self):
         _logger.info("SALE ORDER:: mi funcion enviar")
-        
+        if self.state == 'draft':
+            if self.need_discount_aprove == False:
+                if self.gerente_discount_id:
+                    if self.gerente_discount_id.id != self.env.user.id:
+                        raise ValidationError(_("Advertencia, El gerente de descuentos debe aprobarla"))
+                else:
+                    dict = self.restrictions_discount()
+                    if len(dict['errores']) > 0:
+                        raise UserError(dict['errores'])
+            else:
+                dict = self.restrictions_discount()
+                if len(dict['errores']) > 0:
+                    raise UserError(dict['errores'])
+
         res = super(SaleOrderInherit, self).action_quotation_send()
         return res
 
