@@ -29,12 +29,17 @@ class AccountPayment(models.Model):
                 amount = pay.get('amount')
         invoice = values.get('invoice')
 
+        journal = self.env['account.journal'].browse(journal_id)
+        metodos = journal.inbound_payment_method_line_ids
+
         try:
             payment_id = self.create({
                 "partner_id" : customer.get('id'),
                 "date" : datetime.now().strftime("%Y-%m-%d"),
                 "journal_id" : journal_id,
+                "payment_method_line_id" : metodos[0].id,
                 "amount" : amount,
+                "payment_type" : "inbound",
                 "ref" : invoice.get('name')
             })
         except Exception as e:
