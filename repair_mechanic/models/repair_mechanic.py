@@ -29,8 +29,9 @@ class RepairMechanic(models.Model):
 
     def _compute_num_tecnico(self):
         numero_tecnicos = self.env['repair.mechanic'].search()
-        _logger.info("REPAIR MECHANIC:: numero tecnicos %s , cantidad registros %s",numero_tecnicos,len(numero_tecnicos))
-        
+        _logger.info("REPAIR MECHANIC:: numero tecnicos %s , cantidad registros %s, formateado %s",numero_tecnicos,len(numero_tecnicos),str(len(numero_tecnicos)).zfill(3))
+        self.numero_tecnico = str(len(numero_tecnicos)).zfill(3)
+
 
 
 
