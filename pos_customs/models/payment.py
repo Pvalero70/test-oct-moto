@@ -40,6 +40,11 @@ class AccountPayment(models.Model):
         
         _log.info(metodos)
 
+        _log.info(customer)
+        _log.info(journal.id)
+        _log.info("Metodos ids")
+        _log.info(metodos.id)
+
         try:
             payment_id = self.create({
                 "partner_id" : customer.get('id'),
