@@ -28,7 +28,7 @@ class RepairMechanic(models.Model):
 
     @api.depends('first_name', 'second_name', 'first_ap', 'second_ap')
     def _compute_num_tecnico(self):
-        numero_tecnicos = self.env['repair.mechanic'].search()
+        numero_tecnicos = self.env['repair.mechanic'].search([])
         _logger.info("REPAIR MECHANIC:: numero tecnicos %s , cantidad registros %s, formateado %s",numero_tecnicos,len(numero_tecnicos),str(len(numero_tecnicos)).zfill(3))
         self.numero_tecnico = str(len(numero_tecnicos)).zfill(3)
 
