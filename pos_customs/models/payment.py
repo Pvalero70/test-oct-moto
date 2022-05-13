@@ -30,7 +30,12 @@ class AccountPayment(models.Model):
         invoice = values.get('invoice')
 
         pos_method = self.env['pos.payment.method'].browse(pos_method_id)
+        _log.info(pos_method)
+        _log.info(pos_method.journal_id)
+
         journal = pos_method.journal_id.id
+        _log.info("Obtuvo Journal")
+
         metodos = self.env['account.payment.method.line'].search([('payment_type', '=', 'inbound')], limit=1)
         
         _log.info(metodos)
