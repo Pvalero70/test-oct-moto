@@ -21,7 +21,7 @@
                             <field name="first_ap" required="1"/>
 
 
-                            <field name="location_id" required="1"  widget='selection' domain="[('company_id','=',allowed_company_ids[0])]"/>
+                            <field name="location_id" required="1"  widget='selection' domain="[('company_id','=',allowed_company_ids[0]),('usage','=','internal')]"/>
 
                         </group>
 
