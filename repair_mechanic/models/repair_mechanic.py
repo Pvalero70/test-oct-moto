@@ -22,15 +22,15 @@ class RepairMechanic(models.Model):
     second_name = fields.Char("Segundo nombre")
     first_ap = fields.Char("Primer apellido", required=1)
     second_ap = fields.Char("Segundo apellido")
-    numero_tecnico = fields.Char("Numero de tecnico")
+    numero_tecnico = fields.Char("Numero de tecnico", compute='_compute_num_tecnico',store=True)
     location_id = fields.Many2one('stock.location',"Ubicacion")
     company_id = fields.Many2one('res.company',"Empresa",default=lambda self: self.env.company)
 
-    @api.onchange('numero_tecnico')
-    def _compute_total_customer_limit_total(self):
-        existe_numero_tecnico = self.env['repair.mechanic'].search([('numero_tecnico', '=', self.numero_tecnico)])
-        if existe_numero_tecnico:
-            raise ValidationError(_("El numero de tecnico %s ya existe",self.numero_tecnico))
+
+    def _compute_num_tecnico(self):
+        numero_tecnicos = self.env['repair.mechanic'].search()
+        _logger.info("REPAIR MECHANIC:: numero tecnicos %s , cantidad registros %s",numero_tecnicos,len(numero_tecnicos))
+        
 
 
 
