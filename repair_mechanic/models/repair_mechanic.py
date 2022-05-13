@@ -12,9 +12,6 @@ class RepairMechanic(models.Model):
     _description = "Model that saves contact of mechanics"
     _rec_name = 'name_computed'
 
-    _sql_constraints = [
-        ('numero_tecnico_unique', 'unique(numero_tecnico)', 'No puedes duplicar el numero de tecnico')
-    ]
 
     name_computed = fields.Char(string="Computado", compute='_compute_name',store=True)
 
