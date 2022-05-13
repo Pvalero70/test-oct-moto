@@ -28,7 +28,7 @@
                         <group>
                             <field name="second_name"/>
                             <field name="second_ap"/>
-                            <field name="numero_tecnico" invisible="1"/>
+                            <field name="numero_tecnico" readonly="1"/>
                         </group>
                     </group>
                 </sheet>
