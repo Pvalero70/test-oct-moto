@@ -50,6 +50,8 @@ class AccountPayment(models.Model):
         else:
             _log.info("Pago creado")
             _log.info(payment_id)
+            _log.info(payment_id.move_id.id)
+            _log.info(payment_id.line_ids.__dict__)
 
             if payment_id:
                 invoice_id = invoice.get('id')
