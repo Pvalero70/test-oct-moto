@@ -39,7 +39,7 @@ class RepairMechanic(models.Model):
             else:
                 max_val = max(arr)
                 _logger.info("REPAIR MECHANIC::Valor maximo = %s", max_val)
-                self.numero_tecnico = max_val+1
+                self.numero_tecnico = str(int(max_val)+1).zfill(3)
 
 
 
