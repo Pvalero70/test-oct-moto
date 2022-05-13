@@ -21,15 +21,16 @@ class AccountPayment(models.Model):
         _log.info(values)
         values = values.get('vals', {})
         customer = values.get('customer')
-        journal_id = None
+        pos_method_id = None
         amount = 0
         for pay in values.get('payments', []):
             if pay.get('method', {}).get('type') != 'pay_later':
-                journal_id = pay.get('method', {}).get('id')
+                pos_method_id = pay.get('method', {}).get('id')
                 amount = pay.get('amount')
         invoice = values.get('invoice')
 
-        journal = self.env['account.journal'].browse(journal_id)
+        pos_method = self.env['pos.payment.method'].browse(pos_method_id)
+        journal = pos_method.journal_id.id
         metodos = self.env['account.payment.method.line'].search([('payment_type', '=', 'inbound')], limit=1)
         
         _log.info(metodos)
@@ -38,7 +39,7 @@ class AccountPayment(models.Model):
             payment_id = self.create({
                 "partner_id" : customer.get('id'),
                 "date" : datetime.now().strftime("%Y-%m-%d"),
-                "journal_id" : journal_id,
+                "journal_id" : journal.id,
                 "payment_method_line_id" : metodos.id,
                 "amount" : amount,
                 "payment_type" : "inbound",
