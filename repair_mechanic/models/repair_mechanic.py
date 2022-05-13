@@ -27,10 +27,10 @@ class RepairMechanic(models.Model):
     def _compute_num_tecnico(self):
         if self.id:
 
-            mecanico_lines = self.env['repair.mechanic'].search([('company_id', '=', self.env.company), ('id', '!=', self.id)])
+            mecanico_lines = self.env['repair.mechanic'].search([('company_id', '=', self.company_id.id), ('id', '!=', self.id)])
             arr = [ mec.numero_tecnico for mec in mecanico_lines]
 
-            _logger.info("REPAIR MECHANIC::Valores encontrados = %s, array valores = %s,company activa = %s ",mecanico_lines,arr,self.env.company)
+            _logger.info("REPAIR MECHANIC::Valores encontrados = %s, array valores = %s,company activa = %s ",mecanico_lines,arr,self.company_id.name)
             if len(mecanico_lines) == 0:
                 self.numero_tecnico = str(1).zfill(3)
             else:
