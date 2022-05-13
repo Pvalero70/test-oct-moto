@@ -30,7 +30,7 @@ class RepairMechanic(models.Model):
             mecanico_lines = self.env['repair.mechanic'].search([('company_id', '=', self.env.company.id), ('id', '!=', self.id)])
             arr = [ mec.numero_tecnico for mec in mecanico_lines]
 
-            _logger.info("REPAIR MECHANIC::Valores encontrados = %s, array valores = %s",mecanico_lines,arr)
+            _logger.info("REPAIR MECHANIC::Valores encontrados = %s, array valores = %s,company activa = %s ",mecanico_lines,arr,self.env.company.name)
             if len(mecanico_lines) == 0:
                 self.numero_tecnico = str(1).zfill(3)
             else:
