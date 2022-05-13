@@ -33,7 +33,7 @@ class AccountPayment(models.Model):
         _log.info(pos_method)
         _log.info(pos_method.journal_id)
 
-        journal = pos_method.journal_id.id
+        journal = pos_method.journal_id
         _log.info("Obtuvo Journal")
 
         metodos = self.env['account.payment.method.line'].search([('payment_type', '=', 'inbound')], limit=1)
