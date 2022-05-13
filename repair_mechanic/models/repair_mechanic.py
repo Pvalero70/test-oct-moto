@@ -28,7 +28,7 @@ class RepairMechanic(models.Model):
 
     @api.onchange('numero_tecnico')
     def _compute_total_customer_limit_total(self):
-        existe_numero_tecnico = self.env['res.users.discount'].search([('numero_tecnico', '=', self.numero_tecnico)])
+        existe_numero_tecnico = self.env['repair.mechanic'].search([('numero_tecnico', '=', self.numero_tecnico)])
         if existe_numero_tecnico:
             raise ValidationError(_("El numero de tecnico %s ya existe",self.numero_tecnico))
 
