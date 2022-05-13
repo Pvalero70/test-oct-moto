@@ -21,7 +21,7 @@
                             <field name="first_ap" required="1"/>
 
 
-                            <field name="location_id" required="1"  widget='selection' domain="[('company_id','=',allowed_company_ids[0]),('usage','=','internal')]"/>
+                            <field name="location_id" required="1"  widget='selection' domain="[('company_id','=',allowed_company_ids[0]),('usage','=','internal')]" string="Sucursal"/>
 
                         </group>
 
@@ -43,7 +43,7 @@
         <field name="arch" type="xml">
             <tree string="Lista de Mecanicos">
                 <field name="name_computed" string="Nombre completo"/>
-                <field name="location_id" string="Ubicacion"/>
+                <field name="location_id" string="Sucursal"/>
                  <field name="numero_tecnico"/>
             </tree>
 
