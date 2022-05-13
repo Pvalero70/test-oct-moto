@@ -23,7 +23,7 @@ class RepairMechanic(models.Model):
     first_ap = fields.Char("Primer apellido", required=1)
     second_ap = fields.Char("Segundo apellido")
     numero_tecnico = fields.Char("Numero de tecnico", compute='_compute_num_tecnico',store=True)
-    location_id = fields.Many2one('stock.location',"Ubicacion")
+    location_id = fields.Many2one('stock.location',"Sucursal")
     company_id = fields.Many2one('res.company',"Empresa",default=lambda self: self.env.company)
 
     @api.depends('first_name')
