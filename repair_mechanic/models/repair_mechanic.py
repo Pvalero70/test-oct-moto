@@ -29,7 +29,17 @@ class RepairMechanic(models.Model):
     @api.depends('first_name')
     def _compute_num_tecnico(self):
         if self.id:
-            self.numero_tecnico = str(self.id ).zfill(3)
+
+            mecanico_lines = self.env['repair.mechanic'].search([('company_id', '=', self.env.company.id), ('id', '!=', self.id)])
+            arr = [ mec.numero_tecnico for mec in mecanico_lines]
+
+            _logger.info("REPAIR MECHANIC::Valores encontrados = %s, array valores = %s",mecanico_lines,arr)
+            if len(mecanico_lines) == 0:
+                self.numero_tecnico = str(1).zfill(3)
+            else:
+                max_val = max(arr)
+                _logger.info("REPAIR MECHANIC::Valor maximo = %s", max_val)
+                self.numero_tecnico = max_val+1
 
 
 
