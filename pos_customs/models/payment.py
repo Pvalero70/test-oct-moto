@@ -61,7 +61,13 @@ class AccountPayment(models.Model):
             _log.info("Pago creado")
             _log.info(payment_id)
             _log.info(payment_id.move_id.id)
-            _log.info(payment_id.line_ids.__dict__)
+            _log.info(payment_id.line_ids)
+
+            for line in payment_id.line_ids:
+                _log.info(line.name)
+                _log.info(line.account_id.name)
+                _log.info(line.debit)
+                _log.info(line.credit)
 
             if payment_id:
                 invoice_id = invoice.get('id')
