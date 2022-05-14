@@ -21,6 +21,7 @@
         <field name="name">account.move.inherit.tree</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_out_invoice_tree"/>
+        <field name="groups_id" eval="[(5,0),(4, ref('factura_client_group'))]"/>
         <field name="arch" type="xml">
             <xpath expr='//tree' position='attributes'>
                 <attribute name="create">false</attribute>
