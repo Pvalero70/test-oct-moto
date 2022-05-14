@@ -35,5 +35,10 @@ class AccountMoveInherit(models.Model):
                 for node_form in doc.xpath("//form"):
                     _logger.info("ACCOUNT MOVE MODEL:: create = false")
                     node_form.set("create", 'false')
+
+            if self.env.user.has_group('credit_note_restrict.credit_note_client_group') and context.get('default_move_type') == 'out_refund': #Notas de credito en clientes
+                for node_form in doc.xpath("//form"):
+                    _logger.info("ACCOUNT MOVE MODEL:: create = false")
+                    node_form.set("create", 'false')
         res['arch'] = etree.tostring(doc)
         return res
