@@ -30,6 +30,18 @@
         </field>
     </record>
 
+    <record id="account_move_inherit_createf_tree" model="ir.ui.view">
+        <field name="name">account.move.inheritf.tree</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="groups_id" eval="[(6,0,[ref('factura_client_group'),ref('credit_note_client_group')])]"/>
+        <field name="arch" type="xml">
+            <xpath expr='//form' position='attributes'>
+                <attribute name="attrs">{'create':[('move_type', '!=', 'out_invoice')]}</attribute>
+            </xpath>
+        </field>
+    </record>
+
     <!--Oculta si esta activo Notas de credito Clientes!-->
     <record id="account_move_notes_clientes_create_tree" model="ir.ui.view">
         <field name="name">account.move.inherit.ntclient.tree</field>
@@ -44,6 +56,7 @@
     </record>
 
 
+
     <!--Oculta si esta activo Facturas proveedor!-->
     <record id="account_move_fact_prov_create_tree" model="ir.ui.view">
         <field name="name">account.move.inherit.facprov.tree</field>
@@ -56,6 +69,7 @@
             </xpath>
         </field>
     </record>
+
 
     <!--Oculta si esta activo rembolso proveedor!-->
     <record id="account_move_remb_prov_create_tree" model="ir.ui.view">
