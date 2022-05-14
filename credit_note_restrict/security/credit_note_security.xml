@@ -14,12 +14,12 @@
 
     <record id="credit_note_client_group" model="res.groups">
         <field name="category_id" ref="credit_note_restrict_category"/>
-        <field name="name">Bloquear crear notas de credito en clientes</field>
+        <field name="name">Crear notas de credito en clientes</field>
     </record>
 
     <record id="factura_client_group" model="res.groups">
         <field name="category_id" ref="credit_note_restrict_category"/>
-        <field name="name">Bloquear crear facturas en clientes</field>
+        <field name="name">Crear facturas en clientes</field>
     </record>
 
     <record id="factura_client_credit_note_group" model="res.groups">
@@ -29,12 +29,12 @@
 
     <record id="reembolso_proveedor_group" model="res.groups">
         <field name="category_id" ref="credit_note_restrict_category"/>
-        <field name="name">Bloquear crear reembolsos en proveedores</field>
+        <field name="name">Crear reembolsos en proveedores</field>
     </record>
 
     <record id="factura_proveedor_group" model="res.groups">
         <field name="category_id" ref="credit_note_restrict_category"/>
-        <field name="name">Bloquear crear facturas en proveedores</field>
+        <field name="name">Crear facturas en proveedores</field>
     </record>
 
 </odoo>
