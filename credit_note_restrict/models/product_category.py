@@ -24,7 +24,7 @@ class AccountMoveInherit(models.Model):
         _logger.info("ACCOUNT MOVE MODEL:: view_type:%s",view_type)
         res = super(AccountMoveInherit, self).fields_view_get(view_id=view_id, view_type=view_type,
                                                   toolbar=toolbar, submenu=submenu)
-        _logger.info("ACCOUNT MOVE MODEL:: view type %s,permiso factura client %s,  es out invoice %s",view_type, self.env.user.has_group('credit_note_restrict.factura_client_group'), self.move_type == 'out_invoice')
+        _logger.info("ACCOUNT MOVE MODEL:: view type %s,permiso factura client %s,  es tipo %s, submenu %s",view_type, self.env.user.has_group('credit_note_restrict.factura_client_group'), self.move_type,submenu)
         doc = etree.XML(res['arch'])
         if view_type == 'form' and self.env.user.has_group('credit_note_restrict.factura_client_group') and self.move_type == 'out_invoice':
             for node_form in doc.xpath("//form"):
