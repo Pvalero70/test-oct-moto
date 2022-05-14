@@ -62,16 +62,28 @@ class AccountPayment(models.Model):
             _log.info(payment_id)
             _log.info(payment_id.move_id.id)
             _log.info(payment_id.line_ids)
-
+            
+            credit_line_id = None
             for line in payment_id.line_ids:
                 _log.info(line.name)
                 _log.info(line.account_id.name)
                 _log.info(line.debit)
                 _log.info(line.credit)
 
+                if line.credit > 0:
+                    credit_line_id = line.id
+
             if payment_id:
                 invoice_id = invoice.get('id')
                 factura = self.env['account.move'].browse(invoice_id)
+                if credit_line_id:
+                    lines = self.env['account.move.line'].browse(credit_line_id)
+                    lines += self.line_ids.filtered(lambda line: line.account_id == lines[0].account_id and not line.reconciled)
+                    _log.info("### lines ###")
+                    _log.info(lines)
+                    lines.reconcile()
+                    
+                _log.info("### Facturas ###")
                 _log.info(factura)
                 # factura.payment_id = payment_id
 
