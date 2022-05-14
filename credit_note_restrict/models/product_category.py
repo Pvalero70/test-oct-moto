@@ -33,12 +33,26 @@ class AccountMoveInherit(models.Model):
         if view_type in ['form','tree']:
             if self.env.user.has_group('credit_note_restrict.factura_client_group') and context.get('default_move_type') == 'out_invoice': #Facturas de clientes
                 for node_form in doc.xpath("//form"):
-                    _logger.info("ACCOUNT MOVE MODEL:: create = false")
+                    node_form.set("create", 'false')
+                for node_form in doc.xpath("//tree"):
                     node_form.set("create", 'false')
 
             if self.env.user.has_group('credit_note_restrict.credit_note_client_group') and context.get('default_move_type') == 'out_refund': #Notas de credito en clientes
                 for node_form in doc.xpath("//form"):
-                    _logger.info("ACCOUNT MOVE MODEL:: create = false")
+                    node_form.set("create", 'false')
+                for node_form in doc.xpath("//tree"):
+                    node_form.set("create", 'false')
+
+            if self.env.user.has_group('credit_note_restrict.factura_proveedor_group') and context.get('default_move_type') == 'in_invoice': #Facturas en proveedores
+                for node_form in doc.xpath("//form"):
+                    node_form.set("create", 'false')
+                for node_form in doc.xpath("//tree"):
+                    node_form.set("create", 'false')
+
+            if self.env.user.has_group('credit_note_restrict.reembolso_proveedor_group') and context.get('default_move_type') == 'in_refund': #reembolsos en proveedores
+                for node_form in doc.xpath("//form"):
+                    node_form.set("create", 'false')
+                for node_form in doc.xpath("//tree"):
                     node_form.set("create", 'false')
         res['arch'] = etree.tostring(doc)
         return res
