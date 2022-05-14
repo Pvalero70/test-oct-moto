@@ -18,7 +18,18 @@
     </record>
 
 
+    <record id="account_move_form_botton_add_creditnote" model="ir.ui.view">
+        <field name="name">account.move.inherit.add.creditnote</field>
+        <field name="model">account.move</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
 
+            <xpath expr="//button[@name='action_reverse']" position="attributes">
+                <attribute name="groups">credit_note_restrict.factura_client_credit_note_group</attribute>
+            </xpath>
+        </field>
+    </record>
 
 
 
