@@ -81,14 +81,14 @@ class AccountPayment(models.Model):
                     lines = self.env['account.move.line'].browse(credit_line_id)
                     _log.info("debug")
                     _log.info(factura.line_ids)
-                    for iline in self.line_ids:
+                    for iline in factura.line_ids:
                         _log.info(iline.account_id.id)
                         _log.info(iline.account_id.name)
                         _log.info(iline.credit)
                         _log.info(iline.debit)
                         _log.info("#####")
                     # invoice_lines = 
-                    invoice_lines = self.line_ids.filtered(lambda line: line.account_id == lines[0].account_id and not line.reconciled)
+                    invoice_lines = factura.line_ids.filtered(lambda line: line.account_id == lines[0].account_id and not line.reconciled)
                     _log.info("### invoice lines ###")
                     _log.info(invoice_lines)
                     
