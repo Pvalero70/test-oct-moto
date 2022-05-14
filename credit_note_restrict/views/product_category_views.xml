@@ -17,7 +17,7 @@
         </field>
     </record>
 
-
+    <!-- Oculta si esta activo!-->
     <record id="account_move_inherit_create_tree" model="ir.ui.view">
         <field name="name">account.move.inherit.tree</field>
         <field name="model">account.move</field>
