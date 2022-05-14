@@ -17,4 +17,5 @@ class AccountMove(models.Model):
         _log.info(move_line.account_id.name)
         _log.info(move_line.debit)
         _log.info(move_line.credit)
-        return
+
+        return super(AccountMove, self).js_assign_outstanding_line(line_id)
