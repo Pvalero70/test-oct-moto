@@ -21,14 +21,18 @@
         <field name="name">account.move.inherit.tree</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_out_invoice_tree"/>
+         <field name="groups_id" eval="[(4, [ref('base.group_erp_manager') ])]"/>
         <field name="arch" type="xml">
-            <xpath expr="//button[@name='create']" position="attributes">
-
-                <attribute name="groups">credit_note_restrict.factura_client_group</attribute>
-
+            <xpath expr='//tree' position='attributes'>
+                <attribute name="edit">false</attribute>
+            </xpath>
+            <xpath expr='//tree' position='attributes'>
+                <attribute name="create">false</attribute>
             </xpath>
         </field>
     </record>
+
+    
 
 
 </odoo>
