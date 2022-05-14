@@ -74,6 +74,7 @@ class AccountPayment(models.Model):
                     credit_line_id = line.id
 
             if payment_id:
+                payment_id.action_post()
                 invoice_id = invoice.get('id')
                 factura = self.env['account.move'].browse(invoice_id)
                 if credit_line_id:
@@ -82,7 +83,7 @@ class AccountPayment(models.Model):
                     _log.info("### lines ###")
                     _log.info(lines)
                     lines.reconcile()
-                    
+
                 _log.info("### Facturas ###")
                 _log.info(factura)
                 # factura.payment_id = payment_id
