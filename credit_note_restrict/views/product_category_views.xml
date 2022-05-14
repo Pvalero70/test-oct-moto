@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="product_category_inherit_form" model="ir.ui.view">
+        <field name="name">product.category.inherit.form</field>
+        <field name="model">product.category</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="account.view_category_property_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='property_account_expense_categ_id']" position="after">
+                <field name="account_credit_note_id" domain="[('deprecated','=',False),('internal_type','=','other'),('company_id','=',current_company_id),('is_off_balance','=',False)]"/>
+                <field name="account_discount_id" domain="[('deprecated','=',False),('internal_type','=','other'),('company_id','=',current_company_id),('is_off_balance','=',False)]"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

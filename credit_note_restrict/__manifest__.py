@@ -19,6 +19,7 @@
     ],
     'data': [
         'security/credit_note_security.xml',
+        'views/product_category_views.xml',
     ],
     'demo': [],
     'external_dependencies': {
