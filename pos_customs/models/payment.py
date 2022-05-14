@@ -80,7 +80,7 @@ class AccountPayment(models.Model):
                 if credit_line_id:
                     lines = self.env['account.move.line'].browse(credit_line_id)
                     _log.info("debug")
-                    _log.info(self.line_ids)
+                    _log.info(factura.line_ids)
                     for iline in self.line_ids:
                         _log.info(iline.account_id.id)
                         _log.info(iline.account_id.name)
