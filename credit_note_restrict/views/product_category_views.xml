@@ -8,8 +8,10 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='property_account_expense_categ_id']" position="after">
-                <field name="account_credit_note_id" domain="[('deprecated','=',False),('internal_type','=','other'),('company_id','=',current_company_id),('is_off_balance','=',False)]"/>
-                <field name="account_discount_id" domain="[('deprecated','=',False),('internal_type','=','other'),('company_id','=',current_company_id),('is_off_balance','=',False)]"/>
+                <field name="account_credit_note_id"
+                       domain="[('deprecated','=',False),('internal_type','=','other'),('company_id','=',current_company_id),('is_off_balance','=',False)]"/>
+                <field name="account_discount_id"
+                       domain="[('deprecated','=',False),('internal_type','=','other'),('company_id','=',current_company_id),('is_off_balance','=',False)]"/>
             </xpath>
 
         </field>
@@ -19,10 +21,11 @@
         <field name="name">account.move.inherit.tree</field>
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_out_invoice_tree"/>
-        <field name="groups_id" eval="[(4, ref('credit_note_restrict.factura_client_group)))]"/>
         <field name="arch" type="xml">
-             <xpath expr="//tree" position="attributes">
-                 <attribute name="create">true</attribute>
+            <xpath expr="//button[@name='create']" position="attributes">
+
+                <attribute name="groups">credit_note_restrict.factura_client_group</attribute>
+
             </xpath>
         </field>
     </record>
