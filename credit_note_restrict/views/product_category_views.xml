@@ -17,7 +17,7 @@
         </field>
     </record>
 
-    <!-- Oculta si esta activo!-->
+    <!-- Oculta si esta activo
     <record id="account_move_inherit_create_tree" model="ir.ui.view">
         <field name="name">account.move.inherit.tree</field>
         <field name="model">account.move</field>
@@ -28,9 +28,18 @@
                 <attribute name="create">false</attribute>
             </xpath>
         </field>
+    </record>!-->
+
+    <record id="account_move_inherit_create_tree" model="ir.ui.view">
+        <field name="name">account.move.inherit.tree</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_out_invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_set_create']" position="replace">
+                <button name="action_set_create" string="My boton Crear"/>
+            </xpath>
+        </field>
     </record>
-
-
 
 
 </odoo>
