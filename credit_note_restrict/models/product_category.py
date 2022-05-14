@@ -56,3 +56,9 @@ class AccountMoveInherit(models.Model):
                     node_form.set("create", 'false')
         res['arch'] = etree.tostring(doc)
         return res
+
+
+class AccountTranzientReversal(models.TransientModel):
+    _inherit = 'account.move.reversal'
+
+    reason_select = fields.Selection([ ('devolucion', 'Devolucion'),('descuento', 'Descuento o Bonificacion'),('otro', 'Otro')],'Type', default='devolucion')

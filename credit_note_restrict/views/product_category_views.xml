@@ -39,7 +39,9 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='reason']" position="replace">
+                <field name="reason_select" attrs="{'invisible': [('move_type', '=', 'entry')]}" string="Razon"/>
                 <field name="reason" attrs="{'invisible': [('move_type', '=', 'entry')]}" string="Otra razon"/>
+
             </xpath>
         </field>
     </record>
