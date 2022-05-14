@@ -31,6 +31,19 @@
         </field>
     </record>
 
+    <record id="account_reversal_reason_inherit" model="ir.ui.view">
+        <field name="name">account.move.reversal.reason.inherit</field>
+        <field name="model">account.move.reversal</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="account.view_account_move_reversal"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='reason']" position="replace">
+                <field name="reason" attrs="{'invisible': [('move_type', '=', 'entry')]}" string="Otra razon"/>
+            </xpath>
+        </field>
+    </record>
+
 
 
 </odoo>
