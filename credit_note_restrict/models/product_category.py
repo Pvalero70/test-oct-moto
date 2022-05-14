@@ -27,7 +27,7 @@ class AccountMoveInherit(models.Model):
                                                   toolbar=toolbar, submenu=submenu)
 
         context = self.env.context
-        _logger.info("ACCOUNT MOVE MODEL:: view type %s,permiso factura client %s,  es tipo %s, submenu %s, context default_move_type %s",view_type, self.env.user.has_group('credit_note_restrict.factura_client_group'), self.move_type,submenu,context['default_move_type'])
+        _logger.info("ACCOUNT MOVE MODEL:: view type %s,permiso factura client %s,  es tipo %s, submenu %s, context default_move_type %s",view_type, self.env.user.has_group('credit_note_restrict.factura_client_group'), self.move_type,submenu,context.get('default_move_type'))
         doc = etree.XML(res['arch'])
 
 
