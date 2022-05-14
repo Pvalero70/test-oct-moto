@@ -13,7 +13,7 @@ class ResUserInheritDiscount(models.Model):
     _inherit = 'product.category'
 
     account_credit_note_id = fields.Many2one('account.account',"Cuenta de nota de credito")
-    account_discount_id = fields.Many2one('account.account', "Cuenta de descuento o devolucion")
+    account_discount_id = fields.Many2one('account.account', "Cuenta de descuento o bonificacion")
 
 
 
@@ -62,3 +62,9 @@ class AccountTranzientReversal(models.TransientModel):
     _inherit = 'account.move.reversal'
 
     reason_select = fields.Selection([ ('devolucion', 'Devolucion'),('descuento', 'Descuento o Bonificacion'),('otro', 'Otro')],'Type', default='devolucion')
+
+    def reverse_moves(self):
+        _logger.info('REVERSE_MOVES:: en mi funcion')
+
+        res = super(AccountTranzientReversal, self).reverse_moves()
+        return res
