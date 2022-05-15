@@ -12,22 +12,10 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
 
                 super(...arguments);
 
-                const botones_control = document.getElementsByClassName("control-button");
-                for (let i = 0; i < botones_control.length; i++) {
-                  botones_control[i].style.color = "red";
-                  console.log(botones_control[i]);
-                }
-                console.log(botones_control.length);
+                const botones_control = document.getElementsByClassName("fa fa-undo");
+                console.log(botones_control);
                 console.log("Botones control len");
-
-                console.log(botones_control)
-                for (const boton in botones_control) {
-                    console.log("js:: boton name");
-                    console.log(boton);
-                    if(boton.textContent == " Reembolso"){
-                        boton.style.visibility = "hidden";
-                    }
-                }
+                
 
 
             }
