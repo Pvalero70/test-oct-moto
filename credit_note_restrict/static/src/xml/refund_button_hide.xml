@@ -2,11 +2,8 @@
 <templates id="template" xml:space="preserve">
 
      <t t-name="RefundButtonHide" t-inherit="point_of_sale.RefundButton" t-inherit-mode="primary" owl="1">
-        <xpath expr="//div[hasclass('control-button')]" position="replace">
-            <div class="control-button refund_botton">
-            <i class="fa fa-undo" role="img" aria-label="Refund" title="Refund"/>
-                Refund
-            </div>
+        <xpath expr="//div" position="attributes">
+            <attribute name="class" separator=" " add="button_refund"/>
         </xpath>
     </t>
 
