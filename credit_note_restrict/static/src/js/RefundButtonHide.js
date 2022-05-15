@@ -8,10 +8,20 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
     const POSRefundButtonCustomHide = (ButtonRefund) =>
         class extends ButtonRefund {
             constructor() {
+                console.log("js:: en mi funcion")
 
                 super(...arguments);
-                this.$button.hide();
 
+                var botones_control = this.$('.control-button');
+                console.log("Botones control")
+                console.log(botones_control)
+                for (const boton in botones_control) {
+                    console.log("js:: boton name")
+                    console.log(boton.textContent)
+                    if(boton.textContent == ' Reembolso '){
+                        boton.style.visibility = "hidden";
+                    }
+                }
 
 
             }
