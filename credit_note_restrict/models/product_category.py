@@ -71,6 +71,9 @@ class AccountTranzientReversal(models.TransientModel):
 
     def reverse_moves(self):
         _logger.info('REVERSE_MOVES:: en mi funcion')
+        if self.reason_select and self.reason_select !='otro':
+            self.reason = self.reason_select
+
 
         self.ensure_one()
         moves = self.move_ids
@@ -106,6 +109,13 @@ class AccountTranzientReversal(models.TransientModel):
             moves_to_redirect |= new_moves
 
         self.new_move_ids = moves_to_redirect
+
+        for line in self.new_move_ids.invoice_line_ids:
+            if line.product_id.categ_id:
+                if self.reason == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
+                    line.account_id = line.product_id.categ_id.account_credit_note_id
+                if self.reason == 'descuento' and line.product_id.categ_id.account_discount_id:
+                    line.account_id = line.product_id.categ_id.account_discount_id
 
         # Create action.
         action = {
