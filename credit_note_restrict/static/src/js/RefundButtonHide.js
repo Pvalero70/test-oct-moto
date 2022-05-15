@@ -17,7 +17,7 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
                   botones_control[i].style.color = "red";
                   console.log(botones_control[i]);
                 }
-                console.log("botones_control.length");
+                console.log(botones_control.length";
                 console.log("Botones control len");
 
                 console.log(botones_control)
