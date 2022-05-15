@@ -11,8 +11,15 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
                 console.log("js:: en mi funcion")
 
                 super(...arguments);
+                var botones_control = $('.control-button')[1];
+                for (const boton in botones_control) {
+                    console.log("js:: boton name")
+                    console.log(boton.textContent)
+                    if(boton.textContent == ' Reembolso '){
+                        boton.style.visibility = "hidden";
+                    }
+                }
 
-                console.log("js:: oculto")
 
             }
         };
