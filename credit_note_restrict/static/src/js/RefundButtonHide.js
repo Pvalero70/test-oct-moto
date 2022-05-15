@@ -11,7 +11,7 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
                 console.log("js:: en mi funcion")
 
                 super(...arguments);
-                document.addEventListener("DOMContentLoaded", function(e) {
+                $('document').ready(function(){
                     const botones_control = document.getElementsByClassName("fa fa-undo");
                     console.log(botones_control);
                     console.log("Botones control len");
