@@ -9,7 +9,7 @@
 
     <record id="credit_note_pos_group" model="res.groups">
         <field name="category_id" ref="credit_note_restrict_category"/>
-        <field name="name">Bloquear crear nota de credito en POS</field>
+        <field name="name">Crear nota de credito en POS</field>
     </record>
 
     <record id="credit_note_client_group" model="res.groups">
