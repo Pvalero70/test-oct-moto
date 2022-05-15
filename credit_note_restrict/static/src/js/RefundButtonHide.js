@@ -12,7 +12,7 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
 
                 super(...arguments);
 
-                var botones_control = this.$('.control-button');
+                var botones_control = $('.control-button');
                 console.log("Botones control")
                 console.log(botones_control)
                 for (const boton in botones_control) {
