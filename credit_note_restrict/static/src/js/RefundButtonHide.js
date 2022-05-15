@@ -1,33 +1,37 @@
 odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
     'use strict';
 
-    const ButtonRefund = require('point_of_sale.RefundButton');
+    const PosComponent = require('point_of_sale.PosComponent');
+    const ProductScreen = require('point_of_sale.ProductScreen');
     const Registries = require('point_of_sale.Registries');
+    const { useListener } = require('web.custom_hooks');
 
+    class RefundButton extends PosComponent {
+        constructor() {
+            super(...arguments);
+            useListener('click', this._onClick);
+            console.log("En mi funcion")
+        }
+        _onClick() {
+            const customer = this.env.pos.get_order().get_client();
+            const searchDetails = customer ? { fieldName: 'CUSTOMER', searchTerm: customer.name } : {};
+            this.trigger('close-popup');
+            this.showScreen('TicketScreen', {
+                ui: { filter: 'SYNCED', searchDetails },
+                destinationOrder: this.env.pos.get_order(),
+            });
+        }
+    }
+    RefundButton.template = 'point_of_sale.RefundButton';
 
-    const POSRefundButtonCustomHide = (ButtonRefund) =>
-        class extends ButtonRefund {
-            constructor() {
-                console.log("js:: en mi funcion")
+    ProductScreen.addControlButton({
+        component: RefundButton,
+        condition: function () {
+            return true;
+        },
+    });
 
-                super(...arguments);
-                $('.control-button')[1].style.visibility = "hidden";
-                var botones_control = $('.control-button')[1];
-                console.log("Botones control")
-                console.log(botones_control)
-                for (const boton in botones_control) {
-                    console.log("js:: boton name")
-                    console.log(boton.textContent)
-                    if(boton.textContent == ' Reembolso '){
-                        boton.style.visibility = "hidden";
-                    }
-                }
+    Registries.Component.add(RefundButton);
 
-
-            }
-        };
-
-    Registries.Component.extend(ButtonRefund, POSRefundButtonCustomHide);
-
-    return ButtonRefund;
+    return RefundButton;
 });
