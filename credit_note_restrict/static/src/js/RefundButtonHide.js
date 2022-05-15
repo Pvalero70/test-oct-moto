@@ -12,7 +12,7 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
 
                 super(...arguments);
                 $('document').ready(function(){
-                    const botones_control = document.getElementsByClassName("fa fa-undo");
+                    const botones_control = document.getElementsByClassName("fa fa-undo").parentElement;
                     console.log(botones_control);
                     console.log("Botones control len");
                 });
