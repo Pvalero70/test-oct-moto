@@ -25,11 +25,7 @@
     'demo': [],
     'external_dependencies': {
     },
-    'assets': {
-        'point_of_sale.assets': [
-            'credit_note_restrict/static/src/js/RefundButtonHide.js',
-        ],
-    },
+    
     'support': 'support@garazd.biz',
     'application': False,
     'installable': True,
