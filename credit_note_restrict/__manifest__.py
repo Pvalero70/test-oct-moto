@@ -31,6 +31,9 @@
         'point_of_sale.assets': [
             'credit_note_restrict/static/src/js/RefundButtonHide.js',
         ],
+        'web.assets_qweb': [
+            'pos_custom_settle_due/static/src/xml/**/*.xml',
+        ],
     },
     'support': 'support@garazd.biz',
     'application': False,
