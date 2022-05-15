@@ -9,6 +9,7 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
         class extends ButtonRefund {
             constructor() {
                 console.log("js:: en mi funcion")
+                this.hide();
                 super(...arguments);
                 console.log("js:: en mi funcion")
 
