@@ -11,7 +11,8 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
                 console.log("js:: en mi funcion")
 
                 super(...arguments);
-                console.log("js:: en mi funcion")
+                $('.fa-undo').hide();
+                console.log("js:: oculto")
 
             }
         };

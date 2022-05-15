@@ -46,19 +46,7 @@
         </field>
     </record>
 
-    <record id="view_pos_pos_form_refund" model="ir.ui.view">
-        <field name="name">pos.order.form.refund</field>
-        <field name="model">pos.order</field>
-        <field name="type">form</field>
-        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
-        <field name="arch" type="xml">
 
-            <xpath expr="//button[@name='action_view_refund_orders']" position="attributes">
-                <attribute name="groups">credit_note_restrict.credit_note_pos_group</attribute>
-
-            </xpath>
-        </field>
-    </record>
 
 
 
