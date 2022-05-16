@@ -33,13 +33,17 @@ class PosSession(models.Model):
         payments_rel = self.env['account.payment'].search([('pos_session_id', '=', self.id)])
         monto_payment_pos = 0
         pago_pos_close = None
+        payment_partner_move_list = []
+
         for payment in payments_rel:
             _logger.info(payment.name)
             _logger.info(payment.amount)
             
             if payment.partner_id:
-                _logger.info(payment.partner_id)
+                _logger.info("Pago de Cliente")
+                _logger.info(payment.partner_id.name)
                 monto_payment_pos += payment.amount
+                payment_partner_move_list.append(payment.move_id)
             else:
                 _logger.info("Pago de PDV")
                 pago_pos_close = payment
@@ -50,14 +54,6 @@ class PosSession(models.Model):
             _logger.info(payment.move_id.name)
             
             for move_line in payment.move_id.line_ids:
-                _logger.info(move_line.move_id.name)
-                _logger.info(move_line.account_id.code)
-                _logger.info(move_line.account_id.name)
-                _logger.info(move_line.partner_id.name)
-                _logger.info(move_line.debit)
-                _logger.info(move_line.credit)
-                _logger.info(move_line.name)
-                _logger.info(move_line.matching_number)
                 
                 if payment.partner_id:
                     move_line_ids.append(move_line.id)
@@ -94,15 +90,42 @@ class PosSession(models.Model):
 
         move_lines = lines.search([('id', 'in', related_ids)])
 
-        for line in move_lines:
-            _logger.info(line.move_id.name)
-            _logger.info(line.account_id.code)
-            _logger.info(line.account_id.name)
-            _logger.info(line.partner_id.name)
-            _logger.info(line.debit)
-            _logger.info(line.credit)
-            _logger.info(line.name)
-            _logger.info(line.matching_number)
+        _logger.info("Se empiezan a procesas la lista de los pagos")
+        for payment in payment_partner_move_list:
+
+            credit_lines = move_lines.filter(lambda line: line.journal_id.id != payment.journal_id.id and line.credit > 0)
+            debit_lines = move_lines.filter(lambda line: line.journal_id.id != payment.journal_id.id and line.debit > 0)
+
+            _logger.info("Credit Lines")
+            _logger.info(credit_lines)
+
+            _logger.info("Debit Lines")
+            _logger.info(debit_lines)
+
+            for line in credit_lines:
+
+                if line.partner_id.id == payment.partner_id.id:
+
+                    _logger.info("Linea del cliente")
+                    _logger.info(line.name)
+                    _logger.info(line.debit)
+                    _logger.info(line.credit)
+
+                    if line.move_id.state == 'posted':
+                        _logger.info("Se cambia el asiento a borrador")
+                        line.move_id.button_draft()
+
+                    _logger.info("Se actualizan los montos")
+                    line.credit = line.credit - monto_payment_pos
+                    debit_lines[0].debit = debit_lines[0].debit - monto_payment_pos  
+                    _logger.info(line.credit)
+                    _logger.info(line.debit)       
+
+                    _logger.info("Se vuelve a confirmar el pago")
+                    line.move_id.action_post()
+
+
+
 
         
 
