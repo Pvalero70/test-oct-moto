@@ -114,7 +114,7 @@ class AccountTranzientReversal(models.TransientModel):
                         move.copy_data({'date': self.date if self.date_mode == 'custom' else move.date})[0])
                 _logger.info("valores move %s",moves_vals_list)
                 new_moves = self.env['account.move'].create(moves_vals_list)
-
+            _logger.info("New moves = %s",new_moves)
             moves_to_redirect |= new_moves
 
         self.new_move_ids = moves_to_redirect
