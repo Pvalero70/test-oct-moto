@@ -9,7 +9,7 @@ from lxml import etree
 _logger = logging.getLogger(__name__)
 
 class ResUserInheritDiscount(models.Model):
-    _inherit = 'product.product'
+    _inherit = 'product.template'
 
     is_discount_product = fields.Boolean("Es producto descuento",default=False)
 
