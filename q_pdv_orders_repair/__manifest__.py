@@ -17,8 +17,6 @@
     'data': [
         'views/repair_order.xml',
         'views/pos_order.xml',
-        'views/stock_picking_type.xml',
-        'views/stock_location.xml',
     ],
     'demo': [],
     'assets': {

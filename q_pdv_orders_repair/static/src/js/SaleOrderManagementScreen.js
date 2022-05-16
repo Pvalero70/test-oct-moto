@@ -15,7 +15,6 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
     const models = require('point_of_sale.models');
     const { Component } = require('point_of_sale.Registries');
     
-    //COPIA LOS ATRIBUTOS // DUPLICADO DE LA CLASE
     const OrderButtonSet = SaleOrderManagementScreen => class extends SaleOrderManagementScreen{
 
         async _getSOLines_repair(ids) {
@@ -126,8 +125,6 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
                               ref_repair: this.ref_repair,
                               sale_order_origin_id: clickedOrder,
                           });
-
-                          console.log(new_line)
       
                           if (
                               new_line.get_product().tracking !== 'none' &&
@@ -286,7 +283,7 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
                             sale_order_line_id: line,
                             customer_note: line.customer_note,
                         });
-                        console.log(new_line)
+                        
                         if (
                             new_line.get_product().tracking !== 'none' &&
                             (this.env.pos.picking_type.use_create_lots || this.env.pos.picking_type.use_existing_lots) &&

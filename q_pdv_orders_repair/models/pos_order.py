@@ -59,7 +59,7 @@ class PosOrderInherit(models.Model):
             if order['to_invoice'] and order['ref_repair']:
                 repair = self.env['repair.order'].search([('id', '=', order['ref_repair'])])
                 if repair:
-                    repair.action_repair_invoice_create()
+                    repair.state = "done"
         return res
 
     def _create_order_picking(self):
@@ -72,12 +72,14 @@ class PosOrderInherit(models.Model):
             else:
                 if self._should_create_picking_real_time():
                     picking_type = self.config_id.picking_type_id
-                    destination_id = picking_type.default_location_repair_id.id
-                    if destination_id:
-                        pickings = self.env['stock.picking']._create_picking_from_pos_order_lines(destination_id, self.lines, picking_type, self.partner_id)
-                        pickings.write({'pos_session_id': self.session_id.id, 'pos_order_id': self.id, 'origin': self.name})
-                    else:
-                        raise ValidationError(_("If you are creating a repair it is necessary to add a repair location in the configuration."))
+                    destination_id =  self.env['stock.warehouse']._get_partner_locations()[0].id
+                    lines = self.lines.filtered(lambda l: l.ref_repair == False)
+                    if lines:
+                        if destination_id:
+                            pickings = self.env['stock.picking']._create_picking_from_pos_order_lines(destination_id, lines, picking_type, self.partner_id)
+                            pickings.write({'pos_session_id': self.session_id.id, 'pos_order_id': self.id, 'origin': self.name})
+                        else:
+                            raise ValidationError(_("If you are creating a repair it is necessary to add a repair location in the configuration."))
 
     def _compute_repair_count(self):
          for order in self:
@@ -113,7 +115,12 @@ class PosOrderInherit(models.Model):
 class PosOrderLine(models.Model):
     _inherit = 'pos.order.line'
 
+    ref_repair = fields.Boolean("Is repair")
+
     def _order_line_fields_repair(self, line, session_id):
+        if "sale_order_origin_id" in line[2]:
+            if "model" in line[2]['sale_order_origin_id']:
+                line[2]['ref_repair'] = True
         line[2]['sale_order_origin_id'] = False
         result = super()._order_line_fields(line, session_id)
         return result
