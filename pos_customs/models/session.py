@@ -31,10 +31,19 @@ class PosSession(models.Model):
         _logger.info("###Pagos relacionados####")
         move_line_ids = []
         payments_rel = self.env['account.payment'].search([('pos_session_id', '=', self.id)])
+        monto_payment_pos = 0
+        pago_pos_close = None
         for payment in payments_rel:
             _logger.info(payment.name)
             _logger.info(payment.amount)
-            _logger.info(payment.partner_id.name)
+            
+            if payment.partner_id:
+                _logger.info(payment.partner_id)
+                monto_payment_pos += payment.amount
+            else:
+                _logger.info("Pago de PDV")
+                pago_pos_close = payment
+
             _logger.info(payment.date)
             _logger.info(payment.journal_id.name)
             _logger.info("## Asiento ##")
@@ -49,15 +58,33 @@ class PosSession(models.Model):
                 _logger.info(move_line.credit)
                 _logger.info(move_line.name)
                 _logger.info(move_line.matching_number)
-                move_line_ids.append(move_line.id)
+                
+                if payment.partner_id:
+                    move_line_ids.append(move_line.id)
+
+        if pago_pos_close:
+            _logger.info("## PAGO POS CLOSE ##")
+            _logger.info(pago_pos_close.name)
+
+            pago_pos_close.action_draft()
+            _logger.info("## Se cambia a borrador ##")
+            _logger.info(pago_pos_close.amount)
+            pago_pos_close.amount = pago_pos_close.amount - monto_payment_pos
+            _logger.info("## Se actualiza monto ##")
+            _logger.info(pago_pos_close.amount)
+            pago_pos_close.action_post()
+            _logger.info("## Se vuelve a confirmar ##")
 
         all_related_moves = self._get_related_account_moves()
         lines = self.env['account.move.line']
         related_ids = all_related_moves.mapped('line_ids').ids
         
-        _logger.info("## Lineas con pago ##")
+        _logger.info("## Lineas relacionadas a la sesion ##")
         _logger.info(related_ids)
         
+        _logger.info("## Lineas de pagos ##")
+        _logger.info(move_line_ids)
+
         set_related_ids = set(related_ids)
         set_move_line_ids = set(move_line_ids)
         related_ids = list(set_related_ids - set_move_line_ids)
