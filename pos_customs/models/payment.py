@@ -28,6 +28,8 @@ class AccountPayment(models.Model):
                 pos_method_id = pay.get('method', {}).get('id')
                 amount = pay.get('amount')
         invoice = values.get('invoice')
+        pos_session_id = invoice.get('pos_session_id')
+        _log.info(pos_session_id)
 
         pos_method = self.env['pos.payment.method'].browse(pos_method_id)
         _log.info(pos_method)
@@ -52,6 +54,7 @@ class AccountPayment(models.Model):
                 "journal_id" : journal.id,
                 "payment_method_line_id" : metodos.id,
                 "amount" : amount,
+                "pos_session_id" : pos_session_id,
                 "payment_type" : "inbound",
                 "ref" : invoice.get('name')
             })

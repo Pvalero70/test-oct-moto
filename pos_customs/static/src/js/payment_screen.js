@@ -27,6 +27,8 @@ var rpc = require('web.rpc');
             async send_payment(order_id, invoice_data, payments, customer){
                 console.log("Send payment")
                 console.log(order_id)
+                console.log(this.currentOrder.pos_session_id)
+                invoice_data['pos_session_id'] = this.currentOrder.pos_session_id
                 console.log(invoice_data)
                 console.log(payments)
                 console.log(customer)
