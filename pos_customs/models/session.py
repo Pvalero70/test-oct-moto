@@ -106,7 +106,7 @@ class PosSession(models.Model):
 
             _logger.info("Debit Lines")
             _logger.info(debit_lines)
-            for dline in credit_lines:
+            for dline in debit_lines:
                 _logger.info(dline.name)
                 _logger.info(dline.debit)
                 _logger.info(dline.credit)
