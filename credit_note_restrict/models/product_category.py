@@ -63,7 +63,7 @@ class AccountMoveInherit(models.Model):
 class AccountTranzientReversal(models.TransientModel):
     _inherit = 'account.move.reversal'
 
-    tipo
+    
     reason_select = fields.Selection(
         [('devolucion', 'Devolucion'), ('descuento', 'Descuento o Bonificacion'), ('otro', 'Otro')], 'Type',
         default='devolucion')
