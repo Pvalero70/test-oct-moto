@@ -98,9 +98,19 @@ class PosSession(models.Model):
 
             _logger.info("Credit Lines")
             _logger.info(credit_lines)
+            for cline in credit_lines:
+                _logger.info(cline.name)
+                _logger.info(cline.debit)
+                _logger.info(cline.credit)
+                _logger.info(cline.partner_id.name)
 
             _logger.info("Debit Lines")
             _logger.info(debit_lines)
+            for dline in credit_lines:
+                _logger.info(dline.name)
+                _logger.info(dline.debit)
+                _logger.info(dline.credit)
+                _logger.info(dline.partner_id.name)
 
             for line in credit_lines:
 
@@ -110,6 +120,7 @@ class PosSession(models.Model):
                     _logger.info(line.name)
                     _logger.info(line.debit)
                     _logger.info(line.credit)
+                    _logger.info(line.partner_id.name)
 
                     if line.move_id.state == 'posted':
                         _logger.info("Se cambia el asiento a borrador")
@@ -121,8 +132,8 @@ class PosSession(models.Model):
                     _logger.info(line.credit)
                     _logger.info(line.debit)       
 
-                    _logger.info("Se vuelve a confirmar el pago")
-                    line.move_id.action_post()
+                    # _logger.info("Se vuelve a confirmar el pago")
+                    # line.move_id.action_post()
 
 
 
