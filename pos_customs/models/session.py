@@ -28,9 +28,44 @@ class PosSession(models.Model):
 
         _logger.info("Metodo que se ejecuta cuando se cierra una session")
 
+        _logger.info("###Pagos relacionados####")
+        move_line_ids = []
+        payments_rel = self.env['account.payment'].search([('pos_session_id', '=', self.id)])
+        for payment in payments_rel:
+            _logger.info(payment.name)
+            _logger.info(payment.amount)
+            _logger.info(payment.partner_id.name)
+            _logger.info(payment.date)
+            _logger.info(payment.journal_id.name)
+            _logger.info("## Asiento ##")
+            _logger.info(payment.move_id.name)
+            
+            for move_line in payment.move_id.line_ids:
+                _logger.info(move_line.move_id.name)
+                _logger.info(move_line.account_id.code)
+                _logger.info(move_line.account_id.name)
+                _logger.info(move_line.partner_id.name)
+                _logger.info(move_line.debit)
+                _logger.info(move_line.credit)
+                _logger.info(move_line.name)
+                _logger.info(move_line.matching_number)
+                move_line_ids.append(move_line.id)
+
         all_related_moves = self._get_related_account_moves()
         lines = self.env['account.move.line']
-        move_lines = lines.search([('id', 'in', all_related_moves.mapped('line_ids').ids)])
+        related_ids = all_related_moves.mapped('line_ids').ids
+        
+        _logger.info("## Lineas con pago ##")
+        _logger.info(related_ids)
+        
+        set_related_ids = set(related_ids)
+        set_move_line_ids = set(move_line_ids)
+        related_ids = list(set_related_ids - set_move_line_ids)
+
+        _logger.info("## Lineas sin pago ##")
+        _logger.info(related_ids)
+
+        move_lines = lines.search([('id', 'in', related_ids)])
 
         for line in move_lines:
             _logger.info(line.move_id.name)
@@ -42,23 +77,5 @@ class PosSession(models.Model):
             _logger.info(line.name)
             _logger.info(line.matching_number)
 
-        _logger.info("###Pagos relacionados####")
-        payments_rel = self.env['account.payment'].search([('pos_session_id', '=', self.id)])
-        for payment in payments_rel:
-            _logger.info(payment.name)
-            _logger.info(payment.amount)
-            _logger.info(payment.partner_id.name)
-            _logger.info(payment.date)
-            _logger.info(payment.journal_id.name)
-            _logger.info("## Asiento ##")
-            _logger.info(payment.move_id.name)
-            for move_line in payment.move_id.line_ids:
-                _logger.info(move_line.move_id.name)
-                _logger.info(move_line.account_id.code)
-                _logger.info(move_line.account_id.name)
-                _logger.info(move_line.partner_id.name)
-                _logger.info(move_line.debit)
-                _logger.info(move_line.credit)
-                _logger.info(move_line.name)
-                _logger.info(move_line.matching_number)
+        
 
