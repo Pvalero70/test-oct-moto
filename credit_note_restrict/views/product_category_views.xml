@@ -39,8 +39,8 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='reason']" position="replace">
-                <field name="reason_select" attrs="{'invisible': ['|',('move_type', '=', 'entry'),('move_type','!=','out_invoice')]}" string="Razón"/>
-                <field name="reason" attrs="{'invisible': ['|',('move_type', '=', 'entry'),('reason_select','!=','otro')]}" string="Otra razón"/>
+                <field name="reason_select" attrs="{'invisible': ['|',('move_type', '=', 'entry')]}" string="Razón"/>
+                <field name="reason" attrs="{'invisible': ['|',('move_type', '=', 'entry'),('reason_select','in',['devolucion','descuento'])]}" string="Otra razón"/>
                 <field name="move_type" invisible="1"/>
 
             </xpath>
