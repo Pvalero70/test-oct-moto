@@ -104,6 +104,7 @@ class AccountTranzientReversal(models.TransientModel):
         # Handle reverse method.
         moves_to_redirect = self.env['account.move']
         for moves, default_values_list, is_cancel_needed in batches:
+            _logger.info("valores default move %s", default_values_list)
             new_moves = moves._reverse_moves(default_values_list, cancel=is_cancel_needed)
 
             if self.refund_method == 'modify':
