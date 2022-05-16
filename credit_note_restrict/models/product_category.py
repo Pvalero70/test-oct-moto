@@ -134,10 +134,8 @@ class AccountTranzientReversal(models.TransientModel):
                             line.account_id = line.product_id.categ_id.account_credit_note_id
                         if self.reason_select == 'descuento' and line.product_id.categ_id.account_discount_id:
                             line.account_id = line.product_id.categ_id.account_discount_id
-                            if product_descuento :
-                                line.product_id = product_descuento.id
-        for move in self.new_move_ids:
-            move.callOnchange() ##intentamos actualizar
+                            if product_descuento:
+                                line.write({'product_id':product_descuento.id}) 
         # Create action.
         action = {
             'name': _('Reverse Moves'),
