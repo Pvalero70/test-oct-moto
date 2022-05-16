@@ -24,6 +24,9 @@ class ResUserInheritDiscount(models.Model):
 class AccountMoveInherit(models.Model):
     _inherit = 'account.move'
 
+    def callOnchange(self):
+        _logger.info("Llamamos update ")
+        self._onchange_invoice_line_ids()
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         res = super(AccountMoveInherit, self).fields_view_get(view_id=view_id, view_type=view_type,
@@ -134,7 +137,7 @@ class AccountTranzientReversal(models.TransientModel):
                             if product_descuento :
                                 line.product_id = product_descuento.id
         for move in self.new_move_ids:
-            move._onchange_invoice_line_ids() ##intentamos actualizar
+            move.callOnchange() ##intentamos actualizar
         # Create action.
         action = {
             'name': _('Reverse Moves'),
