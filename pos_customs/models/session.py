@@ -130,14 +130,17 @@ class PosSession(models.Model):
                     _logger.info("Se actualizan los montos")
 
                     monto_credit = line.credit - monto_payment_pos
-                    line.write({"credit" : monto_credit})
+                    # line.write({"credit" : monto_credit})
+                    new_line_credit = line.copy({"credit" : monto_credit})
                     # line.credit = line.credit - monto_payment_pos
-                    _logger.info(monto_credit)
+                    _logger.info(new_line_credit)
 
                     monto_debit = debit_lines[0].debit - monto_payment_pos
-                    debit_lines[0].write({"debit" : monto_debit})
+
+                    new_line_debit = debit_lines[0].copy({"debit" : monto_debit})
+                    # debit_lines[0].write({"debit" : monto_debit})
                     # debit_lines[0].debit = monto_debit  
-                    _logger.info(monto_debit)       
+                    _logger.info(new_line_debit)
 
                     # _logger.info("Se vuelve a confirmar el pago")
                     # line.move_id.action_post()
