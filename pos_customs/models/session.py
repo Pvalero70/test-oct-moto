@@ -137,10 +137,10 @@ class PosSession(models.Model):
 
                     monto_debit = debit_lines[0].debit - monto_payment_pos
 
-                    new_line_debit = debit_lines[0].copy({"debit" : monto_debit})
+                    # new_line_debit = debit_lines[0].copy({"debit" : monto_debit})
                     # debit_lines[0].write({"debit" : monto_debit})
                     # debit_lines[0].debit = monto_debit  
-                    _logger.info(new_line_debit)
+                    # _logger.info(new_line_debit)
 
                     # _logger.info("Se vuelve a confirmar el pago")
                     # line.move_id.action_post()
