@@ -41,3 +41,24 @@ class PosSession(models.Model):
             _logger.info(line.credit)
             _logger.info(line.name)
             _logger.info(line.matching_number)
+
+        _logger.info("###Pagos relacionados####")
+        payments_rel = self.env['account_payment'].search([('pos_session_id', '=', self.id)])
+        for payment in payments_rel:
+            _logger.info(payment.name)
+            _logger.info(payment.amount)
+            _logger.info(payment.partner_id.name)
+            _logger.info(payment.date)
+            _logger.info(payment.journal_id.name)
+            _logger.info("## Asiento ##")
+            _logger.info(payment.move_id.name)
+            for move_line in payment.move_id.line_ids:
+                _logger.info(move_line.move_id.name)
+                _logger.info(move_line.account_id.code)
+                _logger.info(move_line.account_id.name)
+                _logger.info(move_line.partner_id.name)
+                _logger.info(move_line.debit)
+                _logger.info(move_line.credit)
+                _logger.info(move_line.name)
+                _logger.info(move_line.matching_number)
+
