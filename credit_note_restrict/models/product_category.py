@@ -8,6 +8,11 @@ from lxml import etree
 
 _logger = logging.getLogger(__name__)
 
+class ResUserInheritDiscount(models.Model):
+    _inherit = 'product.product'
+
+    is_discount_product = fields.Boolean("Es producto descuento",default=False)
+
 
 class ResUserInheritDiscount(models.Model):
     _inherit = 'product.category'
@@ -116,12 +121,16 @@ class AccountTranzientReversal(models.TransientModel):
             if self.move_type == 'out_invoice':
                 _logger.info("si es out_invoice invoice lines %s ", move.invoice_line_ids)
                 for line in move.invoice_line_ids:
-                    _logger.info("Cat linea %s ", line.product_id.categ_id.name)
+                    product_descuento = self.env['product.product'].search(
+                        [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
+                    _logger.info("product desc %s, company %s ", product_descuento,move.company_id.name)
                     if line.product_id.categ_id:
                         if self.reason_select == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
                             line.account_id = line.product_id.categ_id.account_credit_note_id
                         if self.reason_select == 'descuento' and line.product_id.categ_id.account_discount_id:
                             line.account_id = line.product_id.categ_id.account_discount_id
+                            if product_descuento :
+                                line.product_id == product_descuento.id
 
         # Create action.
         action = {
