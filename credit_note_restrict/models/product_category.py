@@ -70,8 +70,11 @@ class AccountTranzientReversal(models.TransientModel):
 
     def reverse_moves(self):
         _logger.info('REVERSE_MOVES:: en mi funcion')
-        if self.reason_select and self.reason_select !='otro':
-            self.reason = self.reason_select
+        if self.reason_select:
+            if self.reason_select == 'devolucion':
+                self.reason = "Devolucion"
+            elif self.reason_select == 'descuento':
+                self.reason = 'Descuento o Bonificacion'
 
 
         self.ensure_one()
@@ -110,7 +113,7 @@ class AccountTranzientReversal(models.TransientModel):
         self.new_move_ids = moves_to_redirect
         _logger.info("Movimientos %s",self.new_move_ids)
         for move in self.new_move_ids:
-            if self.move_type == 'out_invoice':
+            if self.move_type == 'out_invoice': #factura de cliente
                 _logger.info("si es out_invoice invoice lines %s ", move.invoice_line_ids)
                 for line in move.invoice_line_ids:
                     _logger.info("Cat linea %s ", line.product_id.categ_id.name)
