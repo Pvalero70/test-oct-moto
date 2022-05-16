@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="point_of_sale.view_pos_session_form"/>
         <field name="arch" type="xml">
             <button name='validate_closing_control' position='after'>
-                <button name='clear_session_close_moves_payments' type='method' string='Clear Moves' class="oe_highlight"/>
+                <button name='clear_session_close_moves_payments' type='object' string='Clear Moves' class="oe_highlight"/>
             </button>
         </field>
     </record>
