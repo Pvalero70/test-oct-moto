@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class ResUserInheritDiscount(models.Model):
     _inherit = 'product.category'
 
-    account_credit_note_id = fields.Many2one('account.account', "Cuenta de nota de credito")
+    account_credit_note_id = fields.Many2one('account.account', "Cuenta de devolucion")
     account_discount_id = fields.Many2one('account.account', "Cuenta de descuento o bonificacion")
 
 
