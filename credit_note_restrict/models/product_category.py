@@ -110,8 +110,7 @@ class AccountTranzientReversal(models.TransientModel):
         self.new_move_ids = moves_to_redirect
         _logger.info("Movimientos %s",self.new_move_ids)
         for move in self.new_move_ids:
-            _logger.info("Movimiento %s,tipo %s ", move,move.move_type)
-            if move.move_type == 'out_invoice':
+            if self.move_type == 'out_invoice':
                 _logger.info("si es out_invoice invoice lines %s ", move.invoice_line_ids)
                 for line in move.invoice_line_ids:
                     _logger.info("Cat linea %s ", line.product_id.categ_id.name)
