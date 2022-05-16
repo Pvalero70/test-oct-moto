@@ -43,7 +43,7 @@ class PosSession(models.Model):
             _logger.info(line.matching_number)
 
         _logger.info("###Pagos relacionados####")
-        payments_rel = self.env['account_payment'].search([('pos_session_id', '=', self.id)])
+        payments_rel = self.env['account.payment'].search([('pos_session_id', '=', self.id)])
         for payment in payments_rel:
             _logger.info(payment.name)
             _logger.info(payment.amount)
