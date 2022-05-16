@@ -93,8 +93,8 @@ class PosSession(models.Model):
         _logger.info("Se empiezan a procesas la lista de los pagos")
         for payment in payment_partner_move_list:
 
-            credit_lines = move_lines.filter(lambda line: line.journal_id.id != payment.journal_id.id and line.credit > 0)
-            debit_lines = move_lines.filter(lambda line: line.journal_id.id != payment.journal_id.id and line.debit > 0)
+            credit_lines = move_lines.filtered(lambda line: line.journal_id.id != payment.journal_id.id and line.credit > 0)
+            debit_lines = move_lines.filtered(lambda line: line.journal_id.id != payment.journal_id.id and line.debit > 0)
 
             _logger.info("Credit Lines")
             _logger.info(credit_lines)
