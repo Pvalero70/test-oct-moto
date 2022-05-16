@@ -63,6 +63,7 @@ class AccountMoveInherit(models.Model):
 class AccountTranzientReversal(models.TransientModel):
     _inherit = 'account.move.reversal'
 
+    tipo
     reason_select = fields.Selection(
         [('devolucion', 'Devolucion'), ('descuento', 'Descuento o Bonificacion'), ('otro', 'Otro')], 'Type',
         default='devolucion')
@@ -107,13 +108,14 @@ class AccountTranzientReversal(models.TransientModel):
             moves_to_redirect |= new_moves
 
         self.new_move_ids = moves_to_redirect
-
-        for line in self.new_move_ids.invoice_line_ids:
-            if line.product_id.categ_id:
-                if self.reason == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
-                    line.account_id = line.product_id.categ_id.account_credit_note_id
-                if self.reason == 'descuento' and line.product_id.categ_id.account_discount_id:
-                    line.account_id = line.product_id.categ_id.account_discount_id
+        for move in self.new_move_ids:
+            if move.move_type == 'out_invoice':
+                for line in move.invoice_line_ids:
+                    if line.product_id.categ_id:
+                        if self.reason == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
+                            line.account_id = line.product_id.categ_id.account_credit_note_id
+                        if self.reason == 'descuento' and line.product_id.categ_id.account_discount_id:
+                            line.account_id = line.product_id.categ_id.account_discount_id
 
         # Create action.
         action = {
