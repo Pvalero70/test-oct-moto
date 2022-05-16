@@ -14,7 +14,12 @@
     'depends': [
         'l10n_mx_edi','repair','point_of_sale'
     ],
-    'data': [],
+    'data': [
+        'views/repair_order.xml',
+        'views/pos_order.xml',
+        'views/stock_picking_type.xml',
+        'views/stock_location.xml',
+    ],
     'demo': [],
     'assets': {
         'point_of_sale.assets': [

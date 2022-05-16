@@ -1,16 +1,19 @@
 # -*- coding: utf-8 -*-
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# Copyright 2022 - QUADIT, SA DE CV(https://www.quadit.mx)
+# License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 
 from odoo import api, fields, models, _
 from odoo.tools import float_compare, float_is_zero
 from functools import partial
-
+from odoo.exceptions import ValidationError
 
 class PosOrderInherit(models.Model):
     _inherit = "pos.order"
     _description = "Point of Sale Orders"
 
     ref_repair = fields.Integer("Repair reference")
+    repair_count = fields.Integer(string='Orders repair count', compute='_compute_repair_count', copy=False)
+    repair_ids = fields.Many2many('repair.order', compute='_compute_repair_ids', string='Orders Repair', copy=False)
 
     @api.model
     def _order_fields(self, ui_order):
@@ -58,6 +61,54 @@ class PosOrderInherit(models.Model):
                 if repair:
                     repair.action_repair_invoice_create()
         return res
+
+    def _create_order_picking(self):
+        self.ensure_one()
+        if not self.ref_repair:
+            res = super(PosOrderInherit, self)._create_order_picking()
+        else:
+            if self.to_ship:
+                self.lines._launch_stock_rule_from_pos_order_lines()
+            else:
+                if self._should_create_picking_real_time():
+                    picking_type = self.config_id.picking_type_id
+                    destination_id = picking_type.default_location_repair_id.id
+                    if destination_id:
+                        pickings = self.env['stock.picking']._create_picking_from_pos_order_lines(destination_id, self.lines, picking_type, self.partner_id)
+                        pickings.write({'pos_session_id': self.session_id.id, 'pos_order_id': self.id, 'origin': self.name})
+                    else:
+                        raise ValidationError(_("If you are creating a repair it is necessary to add a repair location in the configuration."))
+
+    def _compute_repair_count(self):
+         for order in self:
+            if order.ref_repair:
+                orders_ids = self.env['repair.order'].search([('id','=', order.ref_repair)]).ids
+                order.repair_count = len(orders_ids)
+            else:
+                order.repair_count = 0
+
+    def _compute_repair_ids(self):
+         for order in self:
+            if order.ref_repair:
+                orders_ids = self.env['repair.order'].search([('id','=', order.ref_repair)]).ids
+                order.repair_ids = orders_ids
+            else:
+                order.repair_ids = 0
+    
+    def action_repair_view(self):
+        for order in self:
+            return self.action_view_repair_order(order.repair_ids)
+
+    def action_view_repair_order(self, order):
+        self.ensure_one()
+        linked_orders = order.ids
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Linked Repair Orders'),
+            'res_model': 'repair.order',
+            'view_mode': 'tree,form',
+            'domain': [('id', 'in', linked_orders)],
+        }
 
 class PosOrderLine(models.Model):
     _inherit = 'pos.order.line'
