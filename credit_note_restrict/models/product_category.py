@@ -113,14 +113,14 @@ class AccountTranzientReversal(models.TransientModel):
         self.new_move_ids = moves_to_redirect
         _logger.info("Movimientos %s",self.new_move_ids)
         for move in self.new_move_ids:
-            if self.move_type == 'out_invoice': #factura de cliente
+            if self.move_type == 'out_invoice':
                 _logger.info("si es out_invoice invoice lines %s ", move.invoice_line_ids)
                 for line in move.invoice_line_ids:
                     _logger.info("Cat linea %s ", line.product_id.categ_id.name)
                     if line.product_id.categ_id:
-                        if self.reason == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
+                        if self.reason_select == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
                             line.account_id = line.product_id.categ_id.account_credit_note_id
-                        if self.reason == 'descuento' and line.product_id.categ_id.account_discount_id:
+                        if self.reason_select == 'descuento' and line.product_id.categ_id.account_discount_id:
                             line.account_id = line.product_id.categ_id.account_discount_id
 
         # Create action.
