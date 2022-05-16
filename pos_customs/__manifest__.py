@@ -12,7 +12,8 @@
     ],
     "data": [
         'views/pos_conf_views.xml',
-        'views/pos_order.xml'
+        'views/pos_order.xml',
+        'views/pos_session.xml'
     ],
     'assets': {
         'point_of_sale.assets': [

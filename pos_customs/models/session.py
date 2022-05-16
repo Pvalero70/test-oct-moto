@@ -24,69 +24,20 @@ class PosSession(models.Model):
 
         return super(PosSession, self)._validate_session(balancing_account, amount_to_balance, bank_payment_method_diffs)
 
-    
-    def _create_account_move(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
-        
-        _logger.info("## SOBRE ESCRIBE CREA ACCOUNT MOVE ###")
-        _logger.info(balancing_account)
-        _logger.info(amount_to_balance)
-        _logger.info(bank_payment_method_diffs)
-        
-        res = super(PosSession, self)._create_account_move(balancing_account, amount_to_balance, bank_payment_method_diffs)
+    def clear_session_close_moves_payments(self):
 
-        _logger.info("### DATA ###")
-        _logger.info(res)
+        _logger.info("Metodo que se ejecuta cuando se cierra una session")
 
-        return res
+        all_related_moves = self._get_related_account_moves()
+        lines = self.env['account.move.line']
+        move_lines = lines.search([('id', 'in', all_related_moves.mapped('line_ids').ids)])
 
-    def _accumulate_amounts(self, data):
-        res = super(PosSession, self)._accumulate_amounts(data)
-        _logger.info("### 1 ###")
-        _logger.info(res)
-        return res
-
-    def _create_non_reconciliable_move_lines(self, data):
-        res = super(PosSession, self)._create_non_reconciliable_move_lines(data)
-        _logger.info("### 2 ###")
-        _logger.info(res)
-        return res
-
-    def _create_bank_payment_moves(self, data):
-        res = super(PosSession, self)._create_bank_payment_moves(data)
-        _logger.info("### 3 ###")
-        _logger.info(res)
-        return res
-
-    def _create_pay_later_receivable_lines(self, data):
-        res = super(PosSession, self)._create_pay_later_receivable_lines(data)
-        _logger.info("### 4 ###")
-        _logger.info(res)
-        return res
-
-    def _create_cash_statement_lines_and_cash_move_lines(self, data):
-        res = super(PosSession, self)._create_cash_statement_lines_and_cash_move_lines(data)
-        _logger.info("### 5 ###")
-        _logger.info(res)
-        return res
-
-    def _create_invoice_receivable_lines(self, data):
-        res = super(PosSession, self)._create_invoice_receivable_lines(data)
-        _logger.info("### 6 ###")
-        _logger.info(res)
-        return res
-
-    def _create_stock_output_lines(self, data):
-        res = super(PosSession, self)._create_stock_output_lines(data)
-        _logger.info("### 7 ###")
-        _logger.info(res)
-        return res
-
-    def _create_balancing_line(self, data):
-        res = super(PosSession, self)._create_balancing_line(data)
-        _logger.info("### 8 ###")
-        _logger.info(res)
-        return res
-
-    
-
-    
+        for line in move_lines:
+            _logger.info(line.move_id.name)
+            _logger.info(line.account_id.code)
+            _logger.info(line.account_id.name)
+            _logger.info(line.partner_id.name)
+            _logger.info(line.debit)
+            _logger.info(line.credit)
+            _logger.info(line.name)
+            _logger.info(line.matching_number)
