@@ -146,6 +146,7 @@ class AccountTranzientReversal(models.TransientModel):
 
             if self.reason_select == 'descuento':
                 total_sum = sum([(line.quantity * line.price_unit) for move in self.new_move_ids for line in move.invoice_line_ids])
+                ids_lines = [(2,line.id) for move in self.new_move_ids for line in move.invoice_line_ids].pop(0)
                 for move in self.new_move_ids:
                     num_line = 1
                     for line in move.invoice_line_ids:
@@ -155,10 +156,10 @@ class AccountTranzientReversal(models.TransientModel):
                             line.account_id = line.product_id.categ_id.account_discount_id
                             line.product_id = product_descuento
 
+                            ids_lines.append((1,line.id,{'product_id':product_descuento.id,'quantity': 1, 'price_unit': total_sum, 'amount_currency': line.amount_currency}))
 
-
-                            _logger.info("Hacemos write %s" ,{'invoice_line_ids':[(5),(1,line.id,{'quantity': 1, 'price_unit': total_sum, 'amount_currency': line.amount_currency})]} )
-                            move.write({'invoice_line_ids':[(5),(1,line.id,{'product_id':product_descuento.id,'quantity': 1, 'price_unit': total_sum, 'amount_currency': line.amount_currency})]})
+                            _logger.info("Hacemos write %s" ,{'invoice_line_ids':ids_lines} )
+                            move.write({'invoice_line_ids':ids_lines})
                             _logger.info("Terminamos de hacer write")
                             _logger.info("Calculamos total")
                             line._onchange_price_subtotal()
