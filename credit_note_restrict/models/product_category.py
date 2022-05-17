@@ -24,7 +24,7 @@ class ResUserInheritDiscount(models.Model):
 class AccountMoveInherit(models.Model):
     _inherit = 'account.move'
 
-    def _changeProductinLine(self,product_id):
+    def _changeProductinLine(self):
         _logger.info("Account.move:: llamando al super")
         return "hola"
 
