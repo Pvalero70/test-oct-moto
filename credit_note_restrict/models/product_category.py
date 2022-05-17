@@ -156,21 +156,18 @@ class AccountTranzientReversal(models.TransientModel):
                             num_line += 1
 
                             line.product_id = product_descuento
+                            _logger.info("Cambiamos producto")
+                            line._onchange_product_id()
+                            _logger.info("Cambiamos producto")
 
                             ids_lines.append((1,line.id,{'product_id':product_descuento.id,'quantity': 1, 'price_unit': total_sum, 'amount_currency': line.amount_currency}))
 
                             _logger.info("Hacemos write %s" ,{'invoice_line_ids':ids_lines} )
                             move.write({'invoice_line_ids':ids_lines})
                             _logger.info("Terminamos de hacer write")
-                            line.name = line._get_computed_name()
-                            line.account_id = line._get_computed_account()
-                            taxes = line._get_computed_taxes()
-                            if taxes and line.move_id.fiscal_position_id:
-                                taxes = line.move_id.fiscal_position_id.map_tax(taxes)
-                            line.tax_ids = taxes
-                            line.product_uom_id = line._get_computed_uom()
 
-                            _logger.info("Cambiamos producto")
+
+
                             line.account_id = line.product_id.categ_id.account_discount_id
                             line._onchange_account_id()
 
