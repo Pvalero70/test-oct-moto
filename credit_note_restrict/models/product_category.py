@@ -22,8 +22,17 @@ class ResUserInheritDiscount(models.Model):
     account_discount_id = fields.Many2one('account.account', "Cuenta de descuento o bonificacion")
 
 
+class AccountMoveLine(models.Model):
+    _inherit = 'account.move.line'
+
+    def write(self, vals):
+        _logger.info("Vals %s",vals)
+        return super(AccountMoveInherit, self).write(vals)
+
+
 class AccountMoveInherit(models.Model):
     _inherit = 'account.move'
+
 
     @api.onchange('invoice_line_ids')
     def _onchange_invoice_line_ids(self):
@@ -32,9 +41,6 @@ class AccountMoveInherit(models.Model):
         _logger.info("ACCOUNT MOVE: Despues de ejecutar funcion con res %s",res)
         return res
 
-    def write(self, vals):
-        _logger.info("Vals %s",vals)
-        super(AccountMoveInherit, self).write(vals)
 
 
     @api.model
