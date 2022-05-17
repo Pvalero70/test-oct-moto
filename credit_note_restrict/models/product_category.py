@@ -157,7 +157,7 @@ class AccountTranzientReversal(models.TransientModel):
                             line._onchange_price_subtotal()
                             line.product_id = product_descuento
                             line._onchange_product_id()
-                            move._onchange_invoice_line_ids()
+                move._onchange_invoice_line_ids()
 
 
 
