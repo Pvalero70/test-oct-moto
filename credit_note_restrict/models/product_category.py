@@ -99,8 +99,7 @@ class AccountTranzientReversal(models.TransientModel):
         # Create default values.
         default_values_list = []
         for move in moves:
-            _logger.info("Llamando privada func")
-            move.ejecutarFuncionPrivada()
+
             default_values_list.append(self._prepare_default_reversal(move))
 
         batches = [
@@ -149,7 +148,7 @@ class AccountTranzientReversal(models.TransientModel):
                                 _logger.info("Modificamos")
                                 line.product_id = product_descuento
                                 move._onchange_invoice_line_ids()
-        self.env['account.move']._onchange_invoice_line_ids()
+
 
 
         # Create action.
