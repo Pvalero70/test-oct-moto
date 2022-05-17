@@ -163,6 +163,7 @@ class AccountTranzientReversal(models.TransientModel):
                             move.write({'invoice_line_ids':ids_lines})
                             _logger.info("Terminamos de hacer write")
                             line.name = line._get_computed_name()
+                            line.account_id = line._get_computed_account()
                             taxes = line._get_computed_taxes()
                             if taxes and line.move_id.fiscal_position_id:
                                 taxes = line.move_id.fiscal_position_id.map_tax(taxes)
