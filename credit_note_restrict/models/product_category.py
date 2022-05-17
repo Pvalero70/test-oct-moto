@@ -25,13 +25,9 @@ class AccountMoveInherit(models.Model):
     _inherit = 'account.move'
 
     def callOnchange(self):
-        _logger.info("ACCONT MOVE: En onchange")
-        current_invoice_lines = self.line_ids.filtered(lambda line: not line.exclude_from_invoice_tab)
-        others_lines = self.line_ids - current_invoice_lines
-        if others_lines and current_invoice_lines - self.invoice_line_ids:
-            others_lines[0].recompute_tax_line = True
-        self.line_ids = others_lines + self.invoice_line_ids
-        self._onchange_recompute_dynamic_lines()
+        _logger.info("Account.move:: llamando al super")
+        res = super(AccountMoveInherit, self)._onchange_invoice_line_ids()
+        return res
 
 
 
