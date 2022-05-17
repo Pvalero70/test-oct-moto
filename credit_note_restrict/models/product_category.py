@@ -162,6 +162,9 @@ class AccountTranzientReversal(models.TransientModel):
                             _logger.info("Hacemos write %s" ,{'invoice_line_ids':ids_lines} )
                             move.write({'invoice_line_ids':ids_lines})
                             _logger.info("Terminamos de hacer write")
+                            line._onchange_account_id()
+                            _logger.info("Cambiamos producto")
+                            line._onchange_product_id()
                             _logger.info("Calculamos total")
                             line._onchange_price_subtotal()
                             continue
@@ -176,25 +179,7 @@ class AccountTranzientReversal(models.TransientModel):
                         if self.reason_select == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
                             line.account_id = line.product_id.categ_id.account_credit_note_id
                             line._onchange_account_id()
-                        if self.reason_select == 'descuento' and line.product_id.categ_id.account_discount_id:
-                            line.account_id = line.product_id.categ_id.account_discount_id
-                            if not product_descuento:
-                                raise ValidationError(_("No se ha definido un producto para Descuentos "))
-                            _logger.info("Modificamos")
-
-
-
-                            _logger.info("Cant %s , precio %s, total %s", 1, total_sum, total)
-                            line.product_id = product_descuento
-
-                            line._onchange_account_id()
-                            _logger.info("Cambiamos producto")
-                            line._onchange_product_id()
-
-                            line.write({'quantity': 1, 'price_unit': total, 'amount_currency': line.amount_currency})
-                            _logger.info("en price subtottal")
-                            _logger.info("Calculamos total")
-                            line._onchange_price_subtotal()
+                        
                 _logger.info("guardamos nota credito")
                 move._onchange_invoice_line_ids()
 
