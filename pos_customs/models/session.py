@@ -150,6 +150,9 @@ class PosSession(models.Model):
                     _logger.info(e)
                 else:
                     _logger.info("Se ha actualizado correctamente.")
+                    for line in debit_move_id.line_ids:
+                        if line.debit == 0 and line.credit == 0:
+                            line.unlink()
                     debit_move_id.action_post()
             
             if debit_move_id.state != 'posted':
