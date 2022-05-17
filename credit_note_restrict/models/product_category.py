@@ -142,19 +142,19 @@ class AccountTranzientReversal(models.TransientModel):
 
         if self.move_type == 'out_invoice':
             total_sum = 0
-
-            for move in self.new_move_ids:
-                num_line = 1
-                for line in move.invoice_line_ids:
-                    total_sum += line.quantity * line.price_unit
-                    if num_line == 1:
-                        num_line += 1
-                        continue
-                    else:
-                        _logger.info("Quitamos linea %s", num_line)
-                        line.unlink()
-                        _logger.info("Linea quitada")
-                        num_line += 1
+            if self.reason_select == 'descuento':
+                for move in self.new_move_ids:
+                    num_line = 1
+                    for line in move.invoice_line_ids:
+                        total_sum += line.quantity * line.price_unit
+                        if num_line == 1:
+                            num_line += 1
+                            continue
+                        else:
+                            _logger.info("Quitamos linea %s", num_line)
+                            line.unlink()
+                            _logger.info("Linea quitada")
+                            num_line += 1
 
             for move in self.new_move_ids:
                 _logger.info("si es out_invoice invoice lines %s ", move.invoice_line_ids)
