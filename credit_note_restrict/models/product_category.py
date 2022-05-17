@@ -27,7 +27,7 @@ class AccountMoveLine(models.Model):
 
     def write(self, vals):
         _logger.info("Vals %s",vals)
-        return super(AccountMoveInherit, self).write(vals)
+        return super(AccountMoveLine, self).write(vals)
 
 
 class AccountMoveInherit(models.Model):
