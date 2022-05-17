@@ -141,26 +141,35 @@ class AccountTranzientReversal(models.TransientModel):
         _logger.info("Movimientos %s", self.new_move_ids)
 
         if self.move_type == 'out_invoice':
-            total_sum = 0
+            product_descuento = self.env['product.product'].search(
+                [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
+
             if self.reason_select == 'descuento':
+                total_sum = [(line.quantity * line.price_unit) for move in self.new_move_ids for line in move.invoice_line_ids]
                 for move in self.new_move_ids:
                     num_line = 1
                     for line in move.invoice_line_ids:
                         total_sum += line.quantity * line.price_unit
                         if num_line == 1:
                             num_line += 1
+                            line.account_id = line.product_id.categ_id.account_discount_id
+                            line.product_id = product_descuento
+
+                            line._onchange_account_id()
+                            _logger.info("Cambiamos producto")
+                            line._onchange_product_id()
+                            _logger.info("Hacemos write %s" ,{'invoice_line_ids':[(5),(1,line.id,{'quantity': 1, 'price_unit': total_sum, 'amount_currency': line.amount_currency})]} )
+                            move.write({'invoice_line_ids':[(5),(1,line.id,{'quantity': 1, 'price_unit': total_sum, 'amount_currency': line.amount_currency})]})
+                            _logger.info("Terminamos de hacer write")
+                            _logger.info("Calculamos total")
+                            line._onchange_price_subtotal()
                             continue
-                        else:
-                            _logger.info("Quitamos linea %s", num_line)
-                            line.unlink()
-                            _logger.info("Linea quitada")
-                            num_line += 1
+
 
             for move in self.new_move_ids:
                 _logger.info("si es out_invoice invoice lines %s ", move.invoice_line_ids)
                 for line in move.invoice_line_ids:
-                    product_descuento = self.env['product.product'].search(
-                        [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
+
                     _logger.info("product desc %s, company %s ", product_descuento, move.company_id.name)
                     if line.product_id.categ_id:
                         if self.reason_select == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
