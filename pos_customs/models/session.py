@@ -159,6 +159,7 @@ class PosSession(models.Model):
                     else:
                         debit_move_id.action_post()
             
+            _logger.info("FIN")
             _logger.info(debit_move_id)
             if debit_move_id and debit_move_id.state != 'posted':
                 _logger.info("Se intenta procesar el move id")
