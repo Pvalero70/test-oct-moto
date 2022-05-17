@@ -145,13 +145,16 @@ class PosSession(models.Model):
                 try:
                     debit_move_id.write({"line_ids" : update_lines})
                 except Exception as e:
+                    debit_move_id.action_post()
                     _logger.info("Ocurrio un error al actualizar el movimiento")
                     _logger.info(e)
                 else:
                     _logger.info("Se ha actualizado correctamente.")
-                    
-
-
-
-        
-
+                    debit_move_id.action_post()
+            
+            if debit_move_id.state != 'posted':
+                try:
+                    debit_move_id.action_post()
+                except Exception as e:                    
+                    _logger.info("Ocurrio un error al intentar publicar el asiento")
+                    _logger.info(e)
