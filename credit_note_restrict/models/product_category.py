@@ -49,7 +49,7 @@ class AccountMoveInherit(models.Model):
                                                               toolbar=toolbar, submenu=submenu)
 
         context = self.env.context
- 
+
         doc = etree.XML(res['arch'])
 
         if view_type in ['form', 'tree']:
@@ -87,7 +87,7 @@ class AccountMoveInherit(models.Model):
 class AccountTranzientReversal(models.TransientModel):
     _inherit = 'account.move.reversal'
 
-    
+
     reason_select = fields.Selection(
         [('devolucion', 'Devolucion'), ('descuento', 'Descuento o Bonificacion'), ('otro', 'Otro')], 'Type',
         default='devolucion')
@@ -139,7 +139,7 @@ class AccountTranzientReversal(models.TransientModel):
             moves_to_redirect |= new_moves
 
         self.new_move_ids = moves_to_redirect
-
+        total = 0
         _logger.info("Movimientos %s",self.new_move_ids)
         for move in self.new_move_ids:
             if self.move_type == 'out_invoice':
@@ -151,14 +151,15 @@ class AccountTranzientReversal(models.TransientModel):
                     if line.product_id.categ_id:
                         if self.reason_select == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
                             line.account_id = line.product_id.categ_id.account_credit_note_id
+                            line._onchange_account_id()
                         if self.reason_select == 'descuento' and line.product_id.categ_id.account_discount_id:
                             line.account_id = line.product_id.categ_id.account_discount_id
-
-                            if product_descuento:
-                                _logger.info("Modificamos")
-                                cantidad = line.quantity
-                                precio_unidad = line.price_unit
-                                total = cantidad * precio_unidad
+                            if not product_descuento:
+                                raise ValidationError(_("No se ha definido un producto para Descuentos "))
+                            _logger.info("Modificamos")
+                            cantidad = line.quantity
+                            precio_unidad = line.price_unit
+                            total += cantidad * precio_unidad
 
 
                             _logger.info("Cant %s , precio %s, total %s",cantidad,precio_unidad,total)
