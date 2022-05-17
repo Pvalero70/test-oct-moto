@@ -153,9 +153,12 @@ class PosSession(models.Model):
                     for line in debit_move_id.line_ids:
                         if line.debit == 0 and line.credit == 0:
                             line.unlink()
-                    debit_move_id.action_post()
+                    if not debit_move_id.line_ids:
+                        debit_move_id.unlink()
+                    else:
+                        debit_move_id.action_post()
             
-            if debit_move_id.state != 'posted':
+            if debit_move_id and debit_move_id.state != 'posted':
                 try:
                     debit_move_id.action_post()
                 except Exception as e:                    
