@@ -87,32 +87,33 @@ class PosOrder(models.Model):
             if not order.partner_id:
                 raise UserError(_('Please provide a partner for the sale.'))
             move_vals = order._prepare_invoice_vals()
-            new_move = order._create_invoice(move_vals)
-            order.write({'account_move': new_move.id, 'state': 'invoiced'})
-            new_move.sudo().with_company(order.company_id)._post()
-            moves += new_move
-            line_zerodays = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.value_amount == 0 and x.days == 0 and x.option == "day_after_invoice_date")
-            if line_zerodays:
-                order._apply_invoice_payments()
-            else:
-                delta_days = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.days > 0 and x.option == "day_after_invoice_date")[:1].days
-                new_move.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
-                new_move._compute_l10n_mx_edi_payment_policy()
-
-        if not moves:
-            return {}
-
-        return {
-            'name': _('Customer Invoice'),
-            'view_mode': 'form',
-            'view_id': self.env.ref('account.view_move_form').id,
-            'res_model': 'account.move',
-            'context': "{'move_type':'out_invoice'}",
-            'type': 'ir.actions.act_window',
-            'nodestroy': True,
-            'target': 'current',
-            'res_id': moves and moves.ids[0] or False,
-        }
+            _log.info("\n ============== MOVE VALS to SPLIT :: %s" % move_vals)
+        #     new_move = order._create_invoice(move_vals)
+        #     order.write({'account_move': new_move.id, 'state': 'invoiced'})
+        #     new_move.sudo().with_company(order.company_id)._post()
+        #     moves += new_move
+        #     line_zerodays = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.value_amount == 0 and x.days == 0 and x.option == "day_after_invoice_date")
+        #     if line_zerodays:
+        #         order._apply_invoice_payments()
+        #     else:
+        #         delta_days = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.days > 0 and x.option == "day_after_invoice_date")[:1].days
+        #         new_move.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
+        #         new_move._compute_l10n_mx_edi_payment_policy()
+        #
+        # if not moves:
+        #     return {}
+        #
+        # return {
+        #     'name': _('Customer Invoice'),
+        #     'view_mode': 'form',
+        #     'view_id': self.env.ref('account.view_move_form').id,
+        #     'res_model': 'account.move',
+        #     'context': "{'move_type':'out_invoice'}",
+        #     'type': 'ir.actions.act_window',
+        #     'nodestroy': True,
+        #     'target': 'current',
+        #     'res_id': moves and moves.ids[0] or False,
+        # }
 
     @api.depends('lines.sale_order_origin_id')
     def _compute_salesman(self):

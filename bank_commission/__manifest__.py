@@ -5,7 +5,7 @@
     'author': 'Ing. Isaac Chávez Arroyo',
     'website': 'https://isaaccv.ml',
     "depends": [
-        "base", "point_of_sale"
+        "base", "point_of_sale", "pos_customs"
     ],
     "data": [
         'data/product_commission.xml',
@@ -13,6 +13,9 @@
     ],
     'assets': {
         'point_of_sale.assets': [
+            'bank_commission/static/src/js/PaymentScreen.js',
+            'bank_commission/static/src/js/PaymentScreenStatusBc.js',
+            'bank_commission/static/src/js/ProductScreen.js'
         ],
         'web.assets_qweb': [
         ],
