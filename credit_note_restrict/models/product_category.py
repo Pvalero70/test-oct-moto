@@ -5,6 +5,7 @@ from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, UserError, Warning
 from lxml import etree
 
+### notas de credito en contabilidad
 _logger = logging.getLogger(__name__)
 
 
