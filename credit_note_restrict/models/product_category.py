@@ -97,9 +97,9 @@ class AccountTranzientReversal(models.TransientModel):
             product_descuento = self.env['product.product'].search(
                 [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
             if not product_descuento:
-                raise ValidationError("No se ha elegido un producto para tomar como descuento en notas de credito")
-            if product_descuento.categ_id.account_discount_id:
-                raise ValidationError("No se ha elegido la cuenta de descuento o bonificacion para la categoria %s",product_descuento.categ_id.name)
+                raise ValidationError(_("No se ha elegido un producto para tomar como descuento en notas de credito"))
+            if not product_descuento.categ_id.account_discount_id:
+                raise ValidationError(_("No se ha elegido la cuenta de descuento o bonificacion para la categoria %s",product_descuento.categ_id.name))
             num_line = 1
             for line in move.invoice_line_ids:
 
