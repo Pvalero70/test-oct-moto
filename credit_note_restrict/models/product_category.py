@@ -145,8 +145,9 @@ class AccountTranzientReversal(models.TransientModel):
                                 _logger.info("Modificamos")
                                 line.product_id = product_descuento
                                 move._onchange_invoice_line_ids()
+        self.env['account.move']._onchange_invoice_line_ids(self.new_move_ids)
 
-        self.new_move_ids._onchange_invoice_line_ids()
+        
         # Create action.
         action = {
             'name': _('Reverse Moves'),
