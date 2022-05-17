@@ -95,6 +95,9 @@ class PosSession(models.Model):
 
             credit_lines = move_lines.filtered(lambda line: line.journal_id.id != payment.journal_id.id and line.credit > 0)
             debit_lines = move_lines.filtered(lambda line: line.journal_id.id != payment.journal_id.id and line.debit > 0)
+            debit_line_id = debit_lines[0].id
+            debit_line_monto = debit_lines[0].debit
+            debit_move_id = debit_lines[0].move_id
 
             _logger.info("Credit Lines")
             _logger.info(credit_lines)
@@ -106,13 +109,12 @@ class PosSession(models.Model):
 
             _logger.info("Debit Lines")
             _logger.info(debit_lines)
-            for dline in debit_lines:
-                _logger.info(dline.name)
-                _logger.info(dline.debit)
-                _logger.info(dline.credit)
-                _logger.info(dline.partner_id.name)
+
+            _logger.info("Debit Line Id")
+            _logger.info(debit_line_id)
 
             monto_credit = 0
+            update_lines = []
             for line in credit_lines:
 
                 if line.partner_id.id == payment.partner_id.id:
@@ -129,26 +131,25 @@ class PosSession(models.Model):
 
                     _logger.info("Se actualizan los montos")
 
-                    line.credit = line.credit - monto_payment_pos
-                    # line.write({"credit" : monto_credit})
-                    # new_line_credit = line.copy({"credit" : monto_credit})
-                    # line.credit = line.credit - monto_payment_pos
-                    _logger.info(line.credit)
+                    new_credit = line.credit - monto_payment_pos
+                    update_lines.append((1, line.id, {"credit" : new_credit}))
+                    _logger.info(monto_credit)
 
-                    monto_debit = debit_lines[0].debit - monto_payment_pos
+                    new_debit = debit_line_monto - monto_payment_pos
+                    update_lines.append((1, debit_line_id, {"debut" : new_debit}))
+                    _logger.info(new_debit)
 
-                    for dline in debit_lines:
-                        dline.debit = monto_debit
-                        
-
-                    # new_line_debit = debit_lines[0].copy({"debit" : monto_debit})
-                    # debit_lines[0].write({"debit" : monto_debit})
-                    # debit_lines[0].debit = monto_debit  
-                    # _logger.info(new_line_debit)
-
-                    # _logger.info("Se vuelve a confirmar el pago")
-                    # line.move_id.action_post()
-
+            if update_lines and debit_move_id:
+                _logger.info("Se intenta actualizar lineas")
+                _logger.info(update_lines)
+                try:
+                    debit_move_id.write({"line_ids" : update_lines})
+                except Exception as e:
+                    _logger.info("Ocurrio un error al actualizar el movimiento")
+                    _logger.info(e)
+                else:
+                    _logger.info("Se ha actualizado correctamente.")
+                    
 
 
 
