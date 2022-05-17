@@ -36,6 +36,7 @@ class AccountPayment(models.Model):
         # _log.info(pos_method.journal_id)
 
         journal = pos_method.journal_id
+        forma_pago = pos_method.payment_method_c
         # _log.info("Obtuvo Journal")
 
         metodos = self.env['account.payment.method.line'].search([('payment_type', '=', 'inbound')], limit=1)
@@ -47,7 +48,7 @@ class AccountPayment(models.Model):
         # _log.info("Metodos ids")
         # _log.info(metodos.id)
 
-        payment_method_id = journal.l10n_mx_edi_payment_method_id.id
+        # payment_method_id = journal.l10n_mx_edi_payment_method_id.id
 
         try:
             payment_id = self.create({
@@ -80,8 +81,8 @@ class AccountPayment(models.Model):
 
             if payment_id:
 
-                if payment_method_id:
-                    payment_id.write({"l10n_mx_edi_payment_method_id" : payment_method_id})
+                if forma_pago:
+                    payment_id.write({"l10n_mx_edi_payment_method_id" : forma_pago.id})
 
                 payment_id.action_post()
                 invoice_id = invoice.get('id')
