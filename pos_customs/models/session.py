@@ -136,7 +136,7 @@ class PosSession(models.Model):
                     _logger.info(monto_credit)
 
                     new_debit = debit_line_monto - monto_payment_pos
-                    update_lines.append((1, debit_line_id, {"debut" : new_debit}))
+                    update_lines.append((1, debit_line_id, {"debit" : new_debit}))
                     _logger.info(new_debit)
 
             if update_lines and debit_move_id:
