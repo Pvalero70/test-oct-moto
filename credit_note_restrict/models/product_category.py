@@ -158,10 +158,12 @@ class AccountTranzientReversal(models.TransientModel):
                             line.product_id = product_descuento
                             line._onchange_product_id()
 
-                            line.price_unit = total
-                            line.quantity = 1
+                            line.price_unit = precio_unidad
+                            line.quantity = cantidad
+
                             _logger.info("en price subtottal")
-                            line._onchange_price_subtotal()
+                            line.price_unit = precio_unidad
+                            #line._onchange_price_subtotal()
 
                 move._onchange_invoice_line_ids()
 
