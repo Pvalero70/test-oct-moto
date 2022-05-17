@@ -6,6 +6,7 @@ from odoo.exceptions import ValidationError, UserError, Warning
 # import xml.etree.ElementTree as etree
 from lxml import etree
 
+
 _logger = logging.getLogger(__name__)
 
 class ResUserInheritDiscount(models.Model):
@@ -24,9 +25,11 @@ class ResUserInheritDiscount(models.Model):
 class AccountMoveInherit(models.Model):
     _inherit = 'account.move'
 
-    def _changeProductinLine(self):
-        _logger.info("Account.move:: llamando al super")
-        return "hola"
+    def ejecutarFuncionPrivada(self):
+        _logger.info("ACCOUNT MOVE: Ejecutar funcion privada")
+        self._onchange_invoice_line_ids()
+        _logger.info("ACCOUNT MOVE: Despues de ejecutar funcion")
+
 
 
 
@@ -91,12 +94,13 @@ class AccountTranzientReversal(models.TransientModel):
 
         self.ensure_one()
         moves = self.move_ids
+
         _logger.info("REVERSE_MOVES:: MOVES = %s",moves)
         # Create default values.
         default_values_list = []
         for move in moves:
             _logger.info("Llamando privada func")
-            move._changeProductinLine()
+            move.ejecutarFuncionPrivada()
             default_values_list.append(self._prepare_default_reversal(move))
 
         batches = [
