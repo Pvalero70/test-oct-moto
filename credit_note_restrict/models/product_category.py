@@ -97,6 +97,19 @@ class AccountTranzientReversal(models.TransientModel):
         # Create default values.
         default_values_list = []
         for move in moves:
+            for line in move.invoice_line_ids:
+                product_descuento = self.env['product.product'].search(
+                    [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
+                _logger.info("product desc %s, company %s ", product_descuento, move.company_id.name)
+                if line.product_id.categ_id:
+                    if self.reason_select == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
+                        line.account_id = line.product_id.categ_id.account_credit_note_id
+                    if self.reason_select == 'descuento' and line.product_id.categ_id.account_discount_id:
+                        line.account_id = line.product_id.categ_id.account_discount_id
+                        if product_descuento:
+                            _logger.info("Modificamos")
+                            line.product_id = product_descuento
+
             default_values_list.append(self._prepare_default_reversal(move))
 
         batches = [
