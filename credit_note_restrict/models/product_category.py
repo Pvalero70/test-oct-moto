@@ -146,7 +146,7 @@ class AccountTranzientReversal(models.TransientModel):
                             line.account_id = line.product_id.categ_id.account_credit_note_id
                         if self.reason_select == 'descuento' and line.product_id.categ_id.account_discount_id:
                             line.account_id = line.product_id.categ_id.account_discount_id
-                            line._onchange_account_id()
+
                             if product_descuento:
                                 _logger.info("Modificamos")
                                 cantidad = line.quantity
@@ -156,7 +156,7 @@ class AccountTranzientReversal(models.TransientModel):
 
                             _logger.info("Cant %s , precio %s, total %s",cantidad,precio_unidad,total)
                             line.product_id = product_descuento
-                            line._onchange_product_id()
+
                             _logger.info("en price unidad")
                             line.price_unit = total
                             _logger.info("en quantity")
@@ -170,7 +170,9 @@ class AccountTranzientReversal(models.TransientModel):
             _logger.info("En for 2do")
             for move in self.new_move_ids:
                 for line in move.invoice_line_ids:
+                    line._onchange_product_id()
                     line._onchange_price_subtotal()
+                    line._onchange_account_id()
                 move._onchange_invoice_line_ids()
 
         # Create action.
