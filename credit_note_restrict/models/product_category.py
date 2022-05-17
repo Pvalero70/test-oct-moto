@@ -165,11 +165,12 @@ class AccountTranzientReversal(models.TransientModel):
                             line.price_unit = total
                             #line._onchange_price_subtotal()
 
+        if self.move_type == 'out_invoice':
+            _logger.info("En for 2do")
+            for move in self.new_move_ids:
+                for line in move.invoice_line_ids:
+                    line._onchange_price_subtotal()
                 move._onchange_invoice_line_ids()
-
-        for move in self.new_move_ids:
-            for line in move.invoice_line_ids:
-                line._onchange_price_subtotal()
 
         # Create action.
         action = {
