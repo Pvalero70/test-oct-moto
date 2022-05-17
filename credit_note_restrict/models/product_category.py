@@ -32,8 +32,9 @@ class AccountMoveInherit(models.Model):
         _logger.info("ACCOUNT MOVE: Despues de ejecutar funcion con res %s",res)
         return res
 
-
-
+    def write(self, vals):
+        _logger.info("Vals %s",vals)
+        super(AccountMoveInherit, self).write(vals)
 
 
     @api.model
