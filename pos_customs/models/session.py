@@ -62,14 +62,14 @@ class PosSession(models.Model):
             _logger.info("## PAGO POS CLOSE ##")
             _logger.info(pago_pos_close.name)
 
-            # pago_pos_close.action_draft()
-            # _logger.info("## Se cambia a borrador ##")
-            # _logger.info(pago_pos_close.amount)
-            # pago_pos_close.amount = pago_pos_close.amount - monto_payment_pos
-            # _logger.info("## Se actualiza monto ##")
-            # _logger.info(pago_pos_close.amount)
-            # pago_pos_close.action_post()
-            # _logger.info("## Se vuelve a confirmar ##")
+            pago_pos_close.action_draft()
+            _logger.info("## Se cambia a borrador ##")
+            _logger.info(pago_pos_close.amount)
+            pago_pos_close.amount = pago_pos_close.amount - monto_payment_pos
+            _logger.info("## Se actualiza monto ##")
+            _logger.info(pago_pos_close.amount)
+            pago_pos_close.action_post()
+            _logger.info("## Se vuelve a confirmar ##")
 
         all_related_moves = self._get_related_account_moves()
         lines = self.env['account.move.line']
