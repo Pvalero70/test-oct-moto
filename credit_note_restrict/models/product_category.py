@@ -154,7 +154,7 @@ class AccountTranzientReversal(models.TransientModel):
 
                         if num_line == 1:
                             num_line += 1
-                            line.account_id = line.product_id.categ_id.account_discount_id
+
                             line.product_id = product_descuento
 
                             ids_lines.append((1,line.id,{'product_id':product_descuento.id,'quantity': 1, 'price_unit': total_sum, 'amount_currency': line.amount_currency}))
@@ -162,9 +162,17 @@ class AccountTranzientReversal(models.TransientModel):
                             _logger.info("Hacemos write %s" ,{'invoice_line_ids':ids_lines} )
                             move.write({'invoice_line_ids':ids_lines})
                             _logger.info("Terminamos de hacer write")
-                            line._onchange_account_id()
+                            line.name = line._get_computed_name()
+                            taxes = line._get_computed_taxes()
+                            if taxes and line.move_id.fiscal_position_id:
+                                taxes = line.move_id.fiscal_position_id.map_tax(taxes)
+                            line.tax_ids = taxes
+                            line.product_uom_id = line._get_computed_uom()
+
                             _logger.info("Cambiamos producto")
-                            line._onchange_product_id()
+                            line.account_id = line.product_id.categ_id.account_discount_id
+                            line._onchange_account_id()
+
                             _logger.info("Calculamos total")
                             line._onchange_price_subtotal()
                             continue
@@ -179,7 +187,7 @@ class AccountTranzientReversal(models.TransientModel):
                         if self.reason_select == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
                             line.account_id = line.product_id.categ_id.account_credit_note_id
                             line._onchange_account_id()
-                        
+
                 _logger.info("guardamos nota credito")
                 move._onchange_invoice_line_ids()
 
