@@ -12,7 +12,7 @@ _logger = logging.getLogger(__name__)
 class ResUserInheritDiscount(models.Model):
     _inherit = 'product.template'
 
-    is_discount_product = fields.Boolean("Es producto descuento", default=False)
+    is_discount_product = fields.Boolean("Producto para nota de credito", default=False)
 
 
 class ResUserInheritDiscount(models.Model):
@@ -22,27 +22,12 @@ class ResUserInheritDiscount(models.Model):
     account_discount_id = fields.Many2one('account.account', "Cuenta de descuento o bonificacion")
 
 
-class AccountMoveLine(models.Model):
-    _inherit = 'account.move.line'
 
-    def write(self, vals):
-        _logger.info("Vals en account line %s", vals)
-        return super(AccountMoveLine, self).write(vals)
 
 
 class AccountMoveInherit(models.Model):
     _inherit = 'account.move'
 
-    def write(self, vals):
-        _logger.info("Vals en account move %s", vals)
-        return super(AccountMoveInherit, self).write(vals)
-
-    @api.onchange('invoice_line_ids')
-    def _onchange_invoice_line_ids(self):
-        _logger.info("ACCOUNT MOVE: Ejecutar funcion privada")
-        res = super(AccountMoveInherit, self)._onchange_invoice_line_ids()
-        _logger.info("ACCOUNT MOVE: Despues de ejecutar funcion con res %s", res)
-        return res
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
@@ -94,8 +79,6 @@ class AccountTranzientReversal(models.TransientModel):
 
     def reverse_devolucion(self):
         for move in self.new_move_ids:
-            product_descuento = self.env['product.product'].search(
-                [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
             for line in move.invoice_line_ids:
                 if line.product_id.categ_id:
                     if self.reason_select == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
@@ -113,6 +96,10 @@ class AccountTranzientReversal(models.TransientModel):
         for move in self.new_move_ids:
             product_descuento = self.env['product.product'].search(
                 [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
+            if not product_descuento:
+                raise ValidationError("No se ha elegido un producto para tomar como descuento en notas de credito")
+            if product_descuento.categ_id.account_discount_id:
+                raise ValidationError("No se ha elegido la cuenta de descuento o bonificacion para la categoria %s",product_descuento.categ_id.name)
             num_line = 1
             for line in move.invoice_line_ids:
 
@@ -131,7 +118,7 @@ class AccountTranzientReversal(models.TransientModel):
 
                     ids_lines.append((1, line.id,
                                       {'product_id': product_descuento.id, 'quantity': 1, 'price_unit': total_sum,
-                                       'amount_currency': line.amount_currency}))
+                                       'amount_currency': line.amount_currency,'account_id':product_descuento.categ_id.account_discount_id.id}))
 
                     move.write({'invoice_line_ids': ids_lines})
 
@@ -139,11 +126,11 @@ class AccountTranzientReversal(models.TransientModel):
                     line._onchange_price_subtotal()
 
                     continue
-            _logger.info("guardamos nota credito")
+
             move._onchange_invoice_line_ids()
 
     def reverse_moves(self):
-        _logger.info('REVERSE_MOVES:: en mi funcion')
+
         if self.reason_select:
             if self.reason_select == 'devolucion':
                 self.reason = "Devolucion"
