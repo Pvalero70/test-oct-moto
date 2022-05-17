@@ -82,7 +82,8 @@ class AccountTranzientReversal(models.TransientModel):
             for line in move.invoice_line_ids:
                 if line.product_id.categ_id:
                     if self.reason_select == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
-                        line.account_id = line.product_id.categ_id.account_credit_note_id
+                        if line.product_id.categ_id.account_credit_note_id:
+                            line.account_id = line.product_id.categ_id.account_credit_note_id
                         line._onchange_account_id()
 
 
