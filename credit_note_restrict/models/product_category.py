@@ -142,8 +142,9 @@ class AccountTranzientReversal(models.TransientModel):
                         if self.reason_select == 'descuento' and line.product_id.categ_id.account_discount_id:
                             line.account_id = line.product_id.categ_id.account_discount_id
                             if product_descuento:
-
-                                move.changeProductinLine(product_descuento)
+                                _logger.info("Modificamos")
+                                line.product_id = product_descuento
+                                move._onchange_invoice_line_ids()
         # Create action.
         action = {
             'name': _('Reverse Moves'),
