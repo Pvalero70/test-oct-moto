@@ -87,12 +87,16 @@ class AccountTranzientReversal(models.TransientModel):
 
         self.ensure_one()
         moves = self.move_ids
+        prod_obj = self.env['account.move']
+        for move in moves:
+            new_dict = move.read(list(set(prod_obj._fields)))
+            print(new_dict)
         _logger.info("REVERSE_MOVES:: MOVES = %s",moves)
         # Create default values.
         default_values_list = []
         for move in moves:
             default_values_list.append(self._prepare_default_reversal(move))
-
+        _logger.info('Valores default values list %s',default_values_list)
         batches = [
             [self.env['account.move'], [], True],  # Moves to be cancelled by the reverses.
             [self.env['account.move'], [], False],  # Others.
@@ -135,7 +139,7 @@ class AccountTranzientReversal(models.TransientModel):
                         if self.reason_select == 'descuento' and line.product_id.categ_id.account_discount_id:
                             line.account_id = line.product_id.categ_id.account_discount_id
                             if product_descuento:
-                                line.write({'product_id':product_descuento.id}) 
+                                line.write({'product_id':product_descuento.id})
         # Create action.
         action = {
             'name': _('Reverse Moves'),
