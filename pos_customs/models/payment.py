@@ -47,12 +47,15 @@ class AccountPayment(models.Model):
         _log.info("Metodos ids")
         _log.info(metodos.id)
 
+        payment_method_id = journal.l10n_mx_edi_payment_method_id.id
+
         try:
             payment_id = self.create({
                 "partner_id" : customer.get('id'),
                 "date" : datetime.now().strftime("%Y-%m-%d"),
                 "journal_id" : journal.id,
                 "payment_method_line_id" : metodos.id,
+                "l10n_mx_edi_payment_method_id" : payment_method_id,
                 "amount" : amount,
                 "pos_session_id" : pos_session_id,
                 "payment_type" : "inbound",
