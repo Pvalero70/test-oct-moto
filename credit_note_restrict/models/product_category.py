@@ -146,7 +146,8 @@ class AccountTranzientReversal(models.TransientModel):
 
             if self.reason_select == 'descuento':
                 total_sum = sum([(line.quantity * line.price_unit) for move in self.new_move_ids for line in move.invoice_line_ids])
-                ids_lines = [(2,line.id) for move in self.new_move_ids for line in move.invoice_line_ids].pop(0)
+                ids_lines = [(2,line.id) for move in self.new_move_ids for line in move.invoice_line_ids]
+                ids_lines.pop(0)
                 for move in self.new_move_ids:
                     num_line = 1
                     for line in move.invoice_line_ids:
