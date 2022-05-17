@@ -24,10 +24,12 @@ class ResUserInheritDiscount(models.Model):
 class AccountMoveInherit(models.Model):
     _inherit = 'account.move'
 
-    def callOnchange(self):
+    def changeProductinLine(self,product_id):
         _logger.info("Account.move:: llamando al super")
-        res = super(AccountMoveInherit, self)._onchange_invoice_line_ids()
-        return res
+        for line in self.invoice_line_ids:
+            line.product_id = product_id
+        self._onchange_invoice_line_ids()
+
 
 
 
@@ -140,8 +142,8 @@ class AccountTranzientReversal(models.TransientModel):
                         if self.reason_select == 'descuento' and line.product_id.categ_id.account_discount_id:
                             line.account_id = line.product_id.categ_id.account_discount_id
                             if product_descuento:
-                                line.write({'product_id':product_descuento.id})
-                                move.callOnchange()
+                                
+                                move.changeProductinLine(product_descuento)
         # Create action.
         action = {
             'name': _('Reverse Moves'),
