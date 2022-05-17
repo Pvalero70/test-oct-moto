@@ -175,10 +175,13 @@ class AccountTranzientReversal(models.TransientModel):
             _logger.info("En for 2do")
             for move in self.new_move_ids:
                 for line in move.invoice_line_ids:
+                    _logger.info("Cambiamos cuenta")
                     line._onchange_account_id()
+                    _logger.info("Cambiamos producto")
                     line._onchange_product_id()
+                    _logger.info("Calculamos total")
                     line._onchange_price_subtotal()
-
+                _logger.info("guardamos nota credito")
                 move._onchange_invoice_line_ids()
 
         # Create action.
