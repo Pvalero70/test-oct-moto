@@ -26,6 +26,10 @@
             'q_pdv_orders_repair/static/src/js/SaleOrderFetcher.js',
             'q_pdv_orders_repair/static/src/js/Orderline.js',
             'q_pdv_orders_repair/static/src/js/SaleOrderRow.js',
+            'q_pdv_orders_repair/static/src/js/ProductItem.js',
+        ],
+        'web.assets_qweb': [
+            'q_pdv_orders_repair/static/src/xml/*.xml'
         ],
     },
     'maintainers': [
