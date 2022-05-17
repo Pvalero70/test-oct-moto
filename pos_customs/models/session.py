@@ -17,12 +17,16 @@ class PosSession(models.Model):
 
     def _validate_session(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
         
-        _logger.info("## SOBRE ESCRIBE VALIDA SESION ###")
+        _logger.info("## SOBRE ESCRIBE VALIDATE SESION ###")
         _logger.info(balancing_account)
         _logger.info(amount_to_balance)
         _logger.info(bank_payment_method_diffs)
 
-        return super(PosSession, self)._validate_session(balancing_account, amount_to_balance, bank_payment_method_diffs)
+        res = super(PosSession, self)._validate_session(balancing_account, amount_to_balance, bank_payment_method_diffs)
+
+        self.clear_session_close_moves_payments()
+
+        return res
 
     def clear_session_close_moves_payments(self):
 
@@ -159,12 +163,12 @@ class PosSession(models.Model):
                     else:
                         debit_move_id.action_post()
             
-            _logger.info("FIN")
-            _logger.info(debit_move_id)
-            if debit_move_id and debit_move_id.state != 'posted':
-                _logger.info("Se intenta procesar el move id")
-                try:
-                    debit_move_id.action_post()
-                except Exception as e:                    
-                    _logger.info("Ocurrio un error al intentar publicar el asiento")
-                    _logger.info(e)
+            # _logger.info("FIN")
+            # _logger.info(debit_move_id)
+            # if debit_move_id and debit_move_id.state != 'posted':
+            #     _logger.info("Se intenta procesar el move id")
+            #     try:
+            #         debit_move_id.action_post()
+            #     except Exception as e:                    
+            #         _logger.info("Ocurrio un error al intentar publicar el asiento")
+            #         _logger.info(e)
