@@ -149,6 +149,7 @@ class AccountTranzientReversal(models.TransientModel):
                             if product_descuento:
                                 _logger.info("Modificamos")
                                 line.product_id = product_descuento
+                                line._onchange_product_id()
                                 move._onchange_invoice_line_ids()
 
 
