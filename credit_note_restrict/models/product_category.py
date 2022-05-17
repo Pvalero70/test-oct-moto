@@ -26,12 +26,16 @@ class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
     def write(self, vals):
-        _logger.info("Vals %s", vals)
+        _logger.info("Vals en account line %s", vals)
         return super(AccountMoveLine, self).write(vals)
 
 
 class AccountMoveInherit(models.Model):
     _inherit = 'account.move'
+
+    def write(self, vals):
+        _logger.info("Vals en account move %s", vals)
+        return super(AccountMoveInherit, self).write(vals)
 
     @api.onchange('invoice_line_ids')
     def _onchange_invoice_line_ids(self):
