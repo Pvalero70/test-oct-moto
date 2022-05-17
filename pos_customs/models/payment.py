@@ -54,8 +54,7 @@ class AccountPayment(models.Model):
                 "partner_id" : customer.get('id'),
                 "date" : datetime.now().strftime("%Y-%m-%d"),
                 "journal_id" : journal.id,
-                "payment_method_line_id" : metodos.id,
-                "l10n_mx_edi_payment_method_id" : payment_method_id,
+                "payment_method_line_id" : metodos.id,                
                 "amount" : amount,
                 "pos_session_id" : pos_session_id,
                 "payment_type" : "inbound",
@@ -80,6 +79,10 @@ class AccountPayment(models.Model):
                     credit_line_id = line.id
 
             if payment_id:
+
+                if payment_method_id:
+                    payment_id.write({"l10n_mx_edi_payment_method_id" : payment_method_id})
+
                 payment_id.action_post()
                 invoice_id = invoice.get('id')
                 factura = self.env['account.move'].browse(invoice_id)
