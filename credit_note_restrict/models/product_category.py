@@ -145,11 +145,11 @@ class AccountTranzientReversal(models.TransientModel):
                 [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
 
             if self.reason_select == 'descuento':
-                total_sum = [(line.quantity * line.price_unit) for move in self.new_move_ids for line in move.invoice_line_ids]
+                total_sum = sum([(line.quantity * line.price_unit) for move in self.new_move_ids for line in move.invoice_line_ids])
                 for move in self.new_move_ids:
                     num_line = 1
                     for line in move.invoice_line_ids:
-                        total_sum += line.quantity * line.price_unit
+                        
                         if num_line == 1:
                             num_line += 1
                             line.account_id = line.product_id.categ_id.account_discount_id
