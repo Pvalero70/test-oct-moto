@@ -6,13 +6,13 @@ from odoo.exceptions import ValidationError, UserError, Warning
 # import xml.etree.ElementTree as etree
 from lxml import etree
 
-
 _logger = logging.getLogger(__name__)
+
 
 class ResUserInheritDiscount(models.Model):
     _inherit = 'product.template'
 
-    is_discount_product = fields.Boolean("Es producto descuento",default=False)
+    is_discount_product = fields.Boolean("Es producto descuento", default=False)
 
 
 class ResUserInheritDiscount(models.Model):
@@ -26,22 +26,19 @@ class AccountMoveLine(models.Model):
     _inherit = 'account.move.line'
 
     def write(self, vals):
-        _logger.info("Vals %s",vals)
+        _logger.info("Vals %s", vals)
         return super(AccountMoveLine, self).write(vals)
 
 
 class AccountMoveInherit(models.Model):
     _inherit = 'account.move'
 
-
     @api.onchange('invoice_line_ids')
     def _onchange_invoice_line_ids(self):
         _logger.info("ACCOUNT MOVE: Ejecutar funcion privada")
-        res = super(AccountMoveInherit,self)._onchange_invoice_line_ids()
-        _logger.info("ACCOUNT MOVE: Despues de ejecutar funcion con res %s",res)
+        res = super(AccountMoveInherit, self)._onchange_invoice_line_ids()
+        _logger.info("ACCOUNT MOVE: Despues de ejecutar funcion con res %s", res)
         return res
-
-
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
@@ -87,7 +84,6 @@ class AccountMoveInherit(models.Model):
 class AccountTranzientReversal(models.TransientModel):
     _inherit = 'account.move.reversal'
 
-
     reason_select = fields.Selection(
         [('devolucion', 'Devolucion'), ('descuento', 'Descuento o Bonificacion'), ('otro', 'Otro')], 'Type',
         default='devolucion')
@@ -100,15 +96,13 @@ class AccountTranzientReversal(models.TransientModel):
             elif self.reason_select == 'descuento':
                 self.reason = 'Descuento o Bonificacion'
 
-
         self.ensure_one()
         moves = self.move_ids
 
-        _logger.info("REVERSE_MOVES:: MOVES = %s",moves)
+        _logger.info("REVERSE_MOVES:: MOVES = %s", moves)
         # Create default values.
         default_values_list = []
         for move in moves:
-
             default_values_list.append(self._prepare_default_reversal(move))
 
         batches = [
@@ -125,7 +119,7 @@ class AccountTranzientReversal(models.TransientModel):
         # Handle reverse method.
         moves_to_redirect = self.env['account.move']
         for moves, default_values_list, is_cancel_needed in batches:
-            _logger.info("valores default move %s, y moves = %s", default_values_list,moves)
+            _logger.info("valores default move %s, y moves = %s", default_values_list, moves)
             new_moves = moves._reverse_moves(default_values_list, cancel=is_cancel_needed)
 
             if self.refund_method == 'modify':
@@ -133,21 +127,37 @@ class AccountTranzientReversal(models.TransientModel):
                 for move in moves.with_context(include_business_fields=True):
                     moves_vals_list.append(
                         move.copy_data({'date': self.date if self.date_mode == 'custom' else move.date})[0])
-                _logger.info("valores move %s",moves_vals_list)
+                _logger.info("valores move %s", moves_vals_list)
                 new_moves = self.env['account.move'].create(moves_vals_list)
-            _logger.info("New moves = %s",new_moves)
+            _logger.info("New moves = %s", new_moves)
             moves_to_redirect |= new_moves
 
         self.new_move_ids = moves_to_redirect
         total = 0
-        _logger.info("Movimientos %s",self.new_move_ids)
-        for move in self.new_move_ids:
-            if self.move_type == 'out_invoice':
+        _logger.info("Movimientos %s", self.new_move_ids)
+
+        if self.move_type == 'out_invoice':
+            total_sum = 0
+
+            for move in self.new_move_ids:
+                line = 1
+                for line in move.invoice_line_ids:
+                    total_sum += line.quantity * line.price_unit
+                    if line == 1:
+                        line += 1
+                        continue
+                    else:
+                        _logger.info("Quitamos linea %s", line)
+                        line.unlink()
+                        _logger.info("Linea quitada")
+                        line += 1
+
+            for move in self.new_move_ids:
                 _logger.info("si es out_invoice invoice lines %s ", move.invoice_line_ids)
                 for line in move.invoice_line_ids:
                     product_descuento = self.env['product.product'].search(
                         [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
-                    _logger.info("product desc %s, company %s ", product_descuento,move.company_id.name)
+                    _logger.info("product desc %s, company %s ", product_descuento, move.company_id.name)
                     if line.product_id.categ_id:
                         if self.reason_select == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
                             line.account_id = line.product_id.categ_id.account_credit_note_id
@@ -157,25 +167,24 @@ class AccountTranzientReversal(models.TransientModel):
                             if not product_descuento:
                                 raise ValidationError(_("No se ha definido un producto para Descuentos "))
                             _logger.info("Modificamos")
-                            cantidad = line.quantity
-                            precio_unidad = line.price_unit
-                            total += cantidad * precio_unidad
 
 
-                            _logger.info("Cant %s , precio %s, total %s",cantidad,precio_unidad,total)
+
+                            _logger.info("Cant %s , precio %s, total %s", 1, total_sum, total)
                             line.product_id = product_descuento
 
                             line._onchange_account_id()
                             _logger.info("Cambiamos producto")
                             line._onchange_product_id()
 
-                            line.write({'quantity':1,'price_unit':total,'amount_currency':line.amount_currency})
+                            line.write({'quantity': 1, 'price_unit': total, 'amount_currency': line.amount_currency})
                             _logger.info("en price subtottal")
                             _logger.info("Calculamos total")
                             line._onchange_price_subtotal()
-            _logger.info("guardamos nota credito")
-            move._onchange_invoice_line_ids()
-                            #line._onchange_price_subtotal()
+                _logger.info("guardamos nota credito")
+                move._onchange_invoice_line_ids()
+
+        # line._onchange_price_subtotal()
 
         # Create action.
         action = {
