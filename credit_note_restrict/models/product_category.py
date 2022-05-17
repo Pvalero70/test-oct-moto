@@ -92,6 +92,56 @@ class AccountTranzientReversal(models.TransientModel):
         [('devolucion', 'Devolucion'), ('descuento', 'Descuento o Bonificacion'), ('otro', 'Otro')], 'Type',
         default='devolucion')
 
+    def reverse_devolucion(self):
+        for move in self.new_move_ids:
+            product_descuento = self.env['product.product'].search(
+                [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
+            for line in move.invoice_line_ids:
+                if line.product_id.categ_id:
+                    if self.reason_select == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
+                        line.account_id = line.product_id.categ_id.account_credit_note_id
+                        line._onchange_account_id()
+
+
+            move._onchange_invoice_line_ids()
+
+    def reverse_descuento(self):
+        total_sum = sum(
+            [(line.quantity * line.price_unit) for move in self.new_move_ids for line in move.invoice_line_ids])
+        ids_lines = [(2, line.id) for move in self.new_move_ids for line in move.invoice_line_ids]
+        ids_lines.pop(0)
+        for move in self.new_move_ids:
+            product_descuento = self.env['product.product'].search(
+                [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
+            num_line = 1
+            for line in move.invoice_line_ids:
+
+                if num_line == 1:
+                    num_line += 1
+
+                    line.product_id = product_descuento
+                    line.name = line._get_computed_name()
+                    line.account_id = line._get_computed_account()
+                    taxes = line._get_computed_taxes()
+                    if taxes and line.move_id.fiscal_position_id:
+                        taxes = line.move_id.fiscal_position_id.map_tax(taxes)
+                    line.tax_ids = taxes
+                    line.product_uom_id = line._get_computed_uom()
+
+
+                    ids_lines.append((1, line.id,
+                                      {'product_id': product_descuento.id, 'quantity': 1, 'price_unit': total_sum,
+                                       'amount_currency': line.amount_currency}))
+
+                    move.write({'invoice_line_ids': ids_lines})
+
+                    line._onchange_account_id()
+                    line._onchange_price_subtotal()
+
+                    continue
+            _logger.info("guardamos nota credito")
+            move._onchange_invoice_line_ids()
+
     def reverse_moves(self):
         _logger.info('REVERSE_MOVES:: en mi funcion')
         if self.reason_select:
@@ -103,7 +153,6 @@ class AccountTranzientReversal(models.TransientModel):
         self.ensure_one()
         moves = self.move_ids
 
-        _logger.info("REVERSE_MOVES:: MOVES = %s", moves)
         # Create default values.
         default_values_list = []
         for move in moves:
@@ -123,7 +172,7 @@ class AccountTranzientReversal(models.TransientModel):
         # Handle reverse method.
         moves_to_redirect = self.env['account.move']
         for moves, default_values_list, is_cancel_needed in batches:
-            _logger.info("valores default move %s, y moves = %s", default_values_list, moves)
+
             new_moves = moves._reverse_moves(default_values_list, cancel=is_cancel_needed)
 
             if self.refund_method == 'modify':
@@ -131,70 +180,22 @@ class AccountTranzientReversal(models.TransientModel):
                 for move in moves.with_context(include_business_fields=True):
                     moves_vals_list.append(
                         move.copy_data({'date': self.date if self.date_mode == 'custom' else move.date})[0])
-                _logger.info("valores move %s", moves_vals_list)
+
                 new_moves = self.env['account.move'].create(moves_vals_list)
-            _logger.info("New moves = %s", new_moves)
+
             moves_to_redirect |= new_moves
 
         self.new_move_ids = moves_to_redirect
         total = 0
-        _logger.info("Movimientos %s", self.new_move_ids)
+
 
         if self.move_type == 'out_invoice':
-            product_descuento = self.env['product.product'].search(
-                [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
-
             if self.reason_select == 'descuento':
-                total_sum = sum([(line.quantity * line.price_unit) for move in self.new_move_ids for line in move.invoice_line_ids])
-                ids_lines = [(2,line.id) for move in self.new_move_ids for line in move.invoice_line_ids]
-                ids_lines.pop(0)
-                for move in self.new_move_ids:
-                    num_line = 1
-                    for line in move.invoice_line_ids:
+                self.reverse_descuento()
 
-                        if num_line == 1:
-                            num_line += 1
+            if self.reason_select == 'devolucion':
+                self.reverse_devolucion()
 
-                            line.product_id = product_descuento
-                            _logger.info("Cambiamos producto")
-                            line.name = line._get_computed_name()
-                            line.account_id = line._get_computed_account()
-                            taxes = line._get_computed_taxes()
-                            if taxes and line.move_id.fiscal_position_id:
-                                taxes = line.move_id.fiscal_position_id.map_tax(taxes)
-                            line.tax_ids = taxes
-                            line.product_uom_id = line._get_computed_uom()
-
-                            _logger.info("Cambiamos producto")
-
-                            ids_lines.append((1,line.id,{'product_id':product_descuento.id,'quantity': 1, 'price_unit': total_sum, 'amount_currency': line.amount_currency}))
-
-                            _logger.info("Hacemos write %s" ,{'invoice_line_ids':ids_lines} )
-                            move.write({'invoice_line_ids':ids_lines})
-                            _logger.info("Terminamos de hacer write")
-
-
-
-                            
-                            line._onchange_account_id()
-
-                            _logger.info("Calculamos total")
-                            line._onchange_price_subtotal()
-                            continue
-
-
-            for move in self.new_move_ids:
-                _logger.info("si es out_invoice invoice lines %s ", move.invoice_line_ids)
-                for line in move.invoice_line_ids:
-
-                    _logger.info("product desc %s, company %s ", product_descuento, move.company_id.name)
-                    if line.product_id.categ_id:
-                        if self.reason_select == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
-                            line.account_id = line.product_id.categ_id.account_credit_note_id
-                            line._onchange_account_id()
-
-                _logger.info("guardamos nota credito")
-                move._onchange_invoice_line_ids()
 
         # line._onchange_price_subtotal()
 
