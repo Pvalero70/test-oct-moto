@@ -98,7 +98,7 @@ class AccountTranzientReversal(models.TransientModel):
         default_values_list = []
         for move in moves:
             default_values_list.append(self._prepare_default_reversal(move))
-        _logger.info('Valores default values list %s',default_values_list)
+
         batches = [
             [self.env['account.move'], [], True],  # Moves to be cancelled by the reverses.
             [self.env['account.move'], [], False],  # Others.
@@ -113,7 +113,7 @@ class AccountTranzientReversal(models.TransientModel):
         # Handle reverse method.
         moves_to_redirect = self.env['account.move']
         for moves, default_values_list, is_cancel_needed in batches:
-            _logger.info("valores default move %s", default_values_list)
+            _logger.info("valores default move %s, y moves = %s", default_values_list,moves)
             new_moves = moves._reverse_moves(default_values_list, cancel=is_cancel_needed)
 
             if self.refund_method == 'modify':
@@ -142,7 +142,7 @@ class AccountTranzientReversal(models.TransientModel):
                         if self.reason_select == 'descuento' and line.product_id.categ_id.account_discount_id:
                             line.account_id = line.product_id.categ_id.account_discount_id
                             if product_descuento:
-                                
+
                                 move.changeProductinLine(product_descuento)
         # Create action.
         action = {
