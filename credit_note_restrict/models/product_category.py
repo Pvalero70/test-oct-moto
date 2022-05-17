@@ -25,10 +25,12 @@ class ResUserInheritDiscount(models.Model):
 class AccountMoveInherit(models.Model):
     _inherit = 'account.move'
 
+    @api.onchange('invoice_line_ids')
     def _onchange_invoice_line_ids(self):
         _logger.info("ACCOUNT MOVE: Ejecutar funcion privada")
-        res = super()._onchange_invoice_line_ids()
+        res = super(AccountMoveInherit,self)._onchange_invoice_line_ids()
         _logger.info("ACCOUNT MOVE: Despues de ejecutar funcion con res %s",res)
+        return res
 
 
 
