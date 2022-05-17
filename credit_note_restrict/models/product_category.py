@@ -140,17 +140,17 @@ class AccountTranzientReversal(models.TransientModel):
             total_sum = 0
 
             for move in self.new_move_ids:
-                line = 1
+                num_line = 1
                 for line in move.invoice_line_ids:
                     total_sum += line.quantity * line.price_unit
-                    if line == 1:
-                        line += 1
+                    if num_line == 1:
+                        num_line += 1
                         continue
                     else:
-                        _logger.info("Quitamos linea %s", line)
+                        _logger.info("Quitamos linea %s", num_line)
                         line.unlink()
                         _logger.info("Linea quitada")
-                        line += 1
+                        num_line += 1
 
             for move in self.new_move_ids:
                 _logger.info("si es out_invoice invoice lines %s ", move.invoice_line_ids)
