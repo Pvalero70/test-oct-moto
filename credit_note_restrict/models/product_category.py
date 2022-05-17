@@ -27,6 +27,17 @@ class AccountMoveInherit(models.Model):
     def callOnchange(self):
         _logger.info("Llamamos update ")
         self._onchange_invoice_line_ids()
+
+    @api.onchange('invoice_line_ids')
+    def _onchange_invoice_line_ids(self):
+        _logger.info("ACCONT MOVE: En onchange")
+        current_invoice_lines = self.line_ids.filtered(lambda line: not line.exclude_from_invoice_tab)
+        others_lines = self.line_ids - current_invoice_lines
+        if others_lines and current_invoice_lines - self.invoice_line_ids:
+            others_lines[0].recompute_tax_line = True
+        self.line_ids = others_lines + self.invoice_line_ids
+        self._onchange_recompute_dynamic_lines()
+
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         res = super(AccountMoveInherit, self).fields_view_get(view_id=view_id, view_type=view_type,
@@ -87,10 +98,6 @@ class AccountTranzientReversal(models.TransientModel):
 
         self.ensure_one()
         moves = self.move_ids
-        prod_obj = self.env['account.move']
-        for move in moves:
-            new_dict = move.read(list(set(prod_obj._fields)))
-            print(new_dict)
         _logger.info("REVERSE_MOVES:: MOVES = %s",moves)
         # Create default values.
         default_values_list = []
@@ -125,6 +132,7 @@ class AccountTranzientReversal(models.TransientModel):
             moves_to_redirect |= new_moves
 
         self.new_move_ids = moves_to_redirect
+
         _logger.info("Movimientos %s",self.new_move_ids)
         for move in self.new_move_ids:
             if self.move_type == 'out_invoice':
