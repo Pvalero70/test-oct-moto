@@ -154,11 +154,14 @@ class PosSession(models.Model):
                         if line.debit == 0 and line.credit == 0:
                             line.unlink()
                     if not debit_move_id.line_ids:
+                        _logger.info("Se elimina move porque no tiene lineas")
                         debit_move_id.unlink()
                     else:
                         debit_move_id.action_post()
             
+            _logger.info(debit_move_id)
             if debit_move_id and debit_move_id.state != 'posted':
+                _logger.info("Se intenta procesar el move id")
                 try:
                     debit_move_id.action_post()
                 except Exception as e:                    
