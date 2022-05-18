@@ -17,8 +17,8 @@ class AccountPayment(models.Model):
 
     @api.model
     def crear_pago_pos(self, values):
-        # _log.info("## Intenta crear pago from pos##")
-        # _log.info(values)
+        _log.info("## Intenta crear pago from pos##")
+        _log.info(values)
         values = values.get('vals', {})
         customer = values.get('customer')
         pos_method_id = None
