@@ -136,17 +136,21 @@ class PosSession(models.Model):
                         credit_pending = credit_pending - line.credit
                         sum_credits_updated += line.credit
                         new_credit = 0
+                    _logger.info(new_credit)
                     update_lines.append((1, line.id, {"credit" : new_credit}))
-
+            _logger.info(sum_credits_updated)
             debit_line = None
             for line in debit_lines:
                 if line.debit >= sum_credits_updated:
                     debit_line = line
                     break
             if debit_line:
+                _logger.info("DEBIT LINE")
                 new_debit = debit_line.debit - sum_credits_updated
+                _logger.info(new_debit)                
                 update_lines.append((1, debit_line.id, {"debit" : new_debit}))
             else:
+                _logger.info("ELSE")
                 debit_pending = sum_credits_updated
                 for line in debit_lines:
                     if debit_pending > 0:
@@ -155,6 +159,7 @@ class PosSession(models.Model):
                         else:
                             debit_pending = debit_pending - line.debit
                             new_debit = 0
+                        _logger.info(new_debit)
                         update_lines.append((1, line.id, {"debit" : new_debit}))
 
             if update_lines and session_move:
