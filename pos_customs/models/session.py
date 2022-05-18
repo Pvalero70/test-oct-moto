@@ -115,12 +115,12 @@ class PosSession(models.Model):
         _logger.info(debit_lines)
 
         procesed_lines = []
+        update_lines = []
         for payment in payment_partner_list:
 
             payment_amount = payment.amount
-            update_lines = []
+            credit_pending = payment_amount
 
-            credit_pending = payment_amount            
             for line in credit_lines:
 
                 if line.id in procesed_lines:
@@ -140,7 +140,8 @@ class PosSession(models.Model):
                     _logger.info(new_credit)
                     procesed_lines.append(line.id)
                     update_lines.append((1, line.id, {"credit" : new_credit}))
-            _logger.info(sum_credits_updated)
+        
+        _logger.info(sum_credits_updated)
         
         debit_line = None
         for line in debit_lines:
@@ -149,6 +150,8 @@ class PosSession(models.Model):
                 break
         if debit_line:
             _logger.info("DEBIT LINE")
+            _logger.info(debit_line.debit)
+            _logger.info(sum_credits_updated)
             new_debit = debit_line.debit - sum_credits_updated
             _logger.info(new_debit)                
             update_lines.append((1, debit_line.id, {"debit" : new_debit}))
