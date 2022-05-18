@@ -103,25 +103,22 @@ class PosSession(models.Model):
             session_move.button_draft()
 
         _logger.info("Se empiezan a procesas la lista de los pagos")
+        sum_credits_updated = 0
+
+        credit_lines = move_lines.filtered(lambda line: line.journal_id.id == session_journal.id and line.credit > 0)
+        debit_lines = move_lines.filtered(lambda line: line.journal_id.id == session_journal.id and line.debit > 0)
+
+        _logger.info("Credit Lines")
+        _logger.info(credit_lines)
+
+        _logger.info("Debit Lines")
+        _logger.info(debit_lines)
+
         for payment in payment_partner_list:
 
             payment_amount = payment.amount
-
-            credit_lines = move_lines.filtered(lambda line: line.journal_id.id == session_journal.id and line.credit > 0)
-            debit_lines = move_lines.filtered(lambda line: line.journal_id.id == session_journal.id and line.debit > 0)
-            # debit_line_id = debit_lines[0].id
-            # debit_line_monto = debit_lines[0].debit
-            # debit_move_id = debit_lines[0].move_id
-
-            _logger.info("Credit Lines")
-            _logger.info(credit_lines)
-
-            _logger.info("Debit Lines")
-            _logger.info(debit_lines)
-
-            # monto_credit = 0
             update_lines = []
-            sum_credits_updated = 0
+
             credit_pending = payment_amount            
             for line in credit_lines:
 
@@ -139,48 +136,49 @@ class PosSession(models.Model):
                     _logger.info(new_credit)
                     update_lines.append((1, line.id, {"credit" : new_credit}))
             _logger.info(sum_credits_updated)
-            debit_line = None
+        
+        debit_line = None
+        for line in debit_lines:
+            if line.debit >= sum_credits_updated:
+                debit_line = line
+                break
+        if debit_line:
+            _logger.info("DEBIT LINE")
+            new_debit = debit_line.debit - sum_credits_updated
+            _logger.info(new_debit)                
+            update_lines.append((1, debit_line.id, {"debit" : new_debit}))
+        else:
+            _logger.info("ELSE")
+            debit_pending = sum_credits_updated
             for line in debit_lines:
-                if line.debit >= sum_credits_updated:
-                    debit_line = line
-                    break
-            if debit_line:
-                _logger.info("DEBIT LINE")
-                new_debit = debit_line.debit - sum_credits_updated
-                _logger.info(new_debit)                
-                update_lines.append((1, debit_line.id, {"debit" : new_debit}))
-            else:
-                _logger.info("ELSE")
-                debit_pending = sum_credits_updated
-                for line in debit_lines:
-                    if debit_pending > 0:
-                        if line.debit >= debit_pending:
-                            new_debit = line.debit - sum_credits_updated
-                        else:
-                            debit_pending = debit_pending - line.debit
-                            new_debit = 0
-                        _logger.info(new_debit)
-                        update_lines.append((1, line.id, {"debit" : new_debit}))
+                if debit_pending > 0:
+                    if line.debit >= debit_pending:
+                        new_debit = line.debit - sum_credits_updated
+                    else:
+                        debit_pending = debit_pending - line.debit
+                        new_debit = 0
+                    _logger.info(new_debit)
+                    update_lines.append((1, line.id, {"debit" : new_debit}))
 
-            if update_lines and session_move:
-                _logger.info("Se intenta actualizar lineas")
-                _logger.info(update_lines)
-                try:
-                    session_move.write({"line_ids" : update_lines})
-                except Exception as e:
-                    session_move.action_post()
-                    _logger.info("Ocurrio un error al actualizar el movimiento")
-                    _logger.info(e)
-                else:
-                    _logger.info("Se ha actualizado correctamente.")
-                    session_move.action_post()
-                    # Descomentar para borrar el asiento
-                    # for line in debit_move_id.line_ids:
-                    #     if line.debit == 0 and line.credit == 0:
-                    #         line.unlink()
-                    # if not debit_move_id.line_ids:
-                    #     _logger.info("Se elimina move porque no tiene lineas")
-                    #     debit_move_id.unlink()
-                    # else:
-                    #     debit_move_id.action_post()
+        if update_lines and session_move:
+            _logger.info("Se intenta actualizar lineas")
+            _logger.info(update_lines)
+            try:
+                session_move.write({"line_ids" : update_lines})
+            except Exception as e:
+                session_move.action_post()
+                _logger.info("Ocurrio un error al actualizar el movimiento")
+                _logger.info(e)
+            else:
+                _logger.info("Se ha actualizado correctamente.")
+                session_move.action_post()
+                # Descomentar para borrar el asiento
+                # for line in debit_move_id.line_ids:
+                #     if line.debit == 0 and line.credit == 0:
+                #         line.unlink()
+                # if not debit_move_id.line_ids:
+                #     _logger.info("Se elimina move porque no tiene lineas")
+                #     debit_move_id.unlink()
+                # else:
+                #     debit_move_id.action_post()
             
