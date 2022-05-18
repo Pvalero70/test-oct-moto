@@ -38,6 +38,8 @@ class PosSession(models.Model):
         monto_payment_pos = 0
         pago_pos_close = None
         payment_partner_move_list = []
+        session_move = self.move_id
+        session_journal = session_move.journal_id
 
         for payment in payments_rel:
             _logger.info(payment.name)
@@ -52,10 +54,10 @@ class PosSession(models.Model):
                 _logger.info("Pago de PDV")
                 pago_pos_close = payment
 
-            _logger.info(payment.date)
-            _logger.info(payment.journal_id.name)
-            _logger.info("## Asiento ##")
-            _logger.info(payment.move_id.name)
+            # _logger.info(payment.date)
+            # _logger.info(payment.journal_id.name)
+            # _logger.info("## Asiento ##")
+            # _logger.info(payment.move_id.name)
             
             for move_line in payment.move_id.line_ids:
                 
@@ -63,17 +65,17 @@ class PosSession(models.Model):
                     move_line_ids.append(move_line.id)
 
         if pago_pos_close:
-            _logger.info("## PAGO POS CLOSE ##")
-            _logger.info(pago_pos_close.name)
+            # _logger.info("## PAGO POS CLOSE ##")
+            # _logger.info(pago_pos_close.name)
 
             pago_pos_close.action_draft()
-            _logger.info("## Se cambia a borrador ##")
-            _logger.info(pago_pos_close.amount)
+            # _logger.info("## Se cambia a borrador ##")
+            # _logger.info(pago_pos_close.amount)
             pago_pos_close.amount = pago_pos_close.amount - monto_payment_pos
-            _logger.info("## Se actualiza monto ##")
-            _logger.info(pago_pos_close.amount)
+            # _logger.info("## Se actualiza monto ##")
+            # _logger.info(pago_pos_close.amount)
             pago_pos_close.action_post()
-            _logger.info("## Se vuelve a confirmar ##")
+            # _logger.info("## Se vuelve a confirmar ##")
 
         all_related_moves = self._get_related_account_moves()
         lines = self.env['account.move.line']
@@ -94,62 +96,72 @@ class PosSession(models.Model):
 
         move_lines = lines.search([('id', 'in', related_ids)])
 
+        if payment_partner_move_list:
+            _logger.info("Se cambia a borrador el asiento del POS")
+            session_move.button_draft()
+
         _logger.info("Se empiezan a procesas la lista de los pagos")
         for payment in payment_partner_move_list:
 
-            credit_lines = move_lines.filtered(lambda line: line.journal_id.id != payment.journal_id.id and line.credit > 0)
-            debit_lines = move_lines.filtered(lambda line: line.journal_id.id != payment.journal_id.id and line.debit > 0)
-            debit_line_id = debit_lines[0].id
-            debit_line_monto = debit_lines[0].debit
-            debit_move_id = debit_lines[0].move_id
+            payment_amount = payment.amount
+
+            credit_lines = move_lines.filtered(lambda line: line.journal_id.id == session_journal.id and line.credit > 0)
+            debit_lines = move_lines.filtered(lambda line: line.journal_id.id == session_journal.id and line.debit > 0)
+            # debit_line_id = debit_lines[0].id
+            # debit_line_monto = debit_lines[0].debit
+            # debit_move_id = debit_lines[0].move_id
 
             _logger.info("Credit Lines")
             _logger.info(credit_lines)
-            for cline in credit_lines:
-                _logger.info(cline.name)
-                _logger.info(cline.debit)
-                _logger.info(cline.credit)
-                _logger.info(cline.partner_id.name)
 
             _logger.info("Debit Lines")
             _logger.info(debit_lines)
 
-            _logger.info("Debit Line Id")
-            _logger.info(debit_line_id)
-
             monto_credit = 0
             update_lines = []
+            sum_credits_updated = 0
+            credit_pending = payment_amount            
             for line in credit_lines:
 
-                if line.partner_id.id == payment.partner_id.id:
-
-                    _logger.info("Linea del cliente")
-                    _logger.info(line.name)
-                    _logger.info(line.debit)
-                    _logger.info(line.credit)
-                    _logger.info(line.partner_id.name)
-
-                    if line.move_id.state == 'posted':
-                        _logger.info("Se cambia el asiento a borrador")
-                        line.move_id.button_draft()
-
+                if credit_pending > 0 and line.partner_id.id == payment.partner_id.id:
+                   
                     _logger.info("Se actualizan los montos")
 
-                    new_credit = line.credit - monto_payment_pos
+                    if line.credit >= payment_amount:
+                        new_credit = line.credit - payment_amount
+                        sum_credits_updated += payment_amount
+                    else:
+                        credit_pending = credit_pending - line.credit
+                        sum_credits_updated += line.credit
+                        new_credit = 0
                     update_lines.append((1, line.id, {"credit" : new_credit}))
-                    _logger.info(monto_credit)
 
-                    new_debit = debit_line_monto - monto_payment_pos
-                    update_lines.append((1, debit_line_id, {"debit" : new_debit}))
-                    _logger.info(new_debit)
+            debit_line = None
+            for line in debit_lines:
+                if line.debit >= sum_credits_updated:
+                    debit_line = line
+                    break
+            if debit_line:
+                new_debit = debit_line.debit - sum_credits_updated
+                update_lines.append((1, debit_line.id, {"debit" : new_debit}))
+            else:
+                debit_pending = sum_credits_updated
+                for line in debit_lines:
+                    if debit_pending > 0:
+                        if line.debit >= debit_pending:
+                            new_debit = line.debit - sum_credits_updated
+                        else:
+                            debit_pending = debit_pending - line.debit
+                            new_debit = 0
+                        update_lines.append((1, line.id, {"debit" : new_debit}))
 
-            if update_lines and debit_move_id:
+            if update_lines and session_move:
                 _logger.info("Se intenta actualizar lineas")
                 _logger.info(update_lines)
                 try:
-                    debit_move_id.write({"line_ids" : update_lines})
+                    session_move.write({"line_ids" : update_lines})
                 except Exception as e:
-                    debit_move_id.action_post()
+                    session_move.action_post()
                     _logger.info("Ocurrio un error al actualizar el movimiento")
                     _logger.info(e)
                 else:
