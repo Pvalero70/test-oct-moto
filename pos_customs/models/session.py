@@ -37,6 +37,7 @@ class PosSession(models.Model):
         payments_rel = self.env['account.payment'].search([('pos_session_id', '=', self.id)])
         monto_payment_pos = 0
         pago_pos_close = None
+        payment_partner_list = []
         payment_partner_move_list = []
         session_move = self.move_id
         session_journal = session_move.journal_id
@@ -49,6 +50,7 @@ class PosSession(models.Model):
                 _logger.info("Pago de Cliente")
                 _logger.info(payment.partner_id.name)
                 monto_payment_pos += payment.amount
+                payment_partner_list.append(payment)
                 payment_partner_move_list.append(payment.move_id)
             else:
                 _logger.info("Pago de PDV")
@@ -96,12 +98,12 @@ class PosSession(models.Model):
 
         move_lines = lines.search([('id', 'in', related_ids)])
 
-        if payment_partner_move_list:
+        if payment_partner_list:
             _logger.info("Se cambia a borrador el asiento del POS")
             session_move.button_draft()
 
         _logger.info("Se empiezan a procesas la lista de los pagos")
-        for payment in payment_partner_move_list:
+        for payment in payment_partner_list:
 
             payment_amount = payment.amount
 
@@ -117,7 +119,7 @@ class PosSession(models.Model):
             _logger.info("Debit Lines")
             _logger.info(debit_lines)
 
-            monto_credit = 0
+            # monto_credit = 0
             update_lines = []
             sum_credits_updated = 0
             credit_pending = payment_amount            
