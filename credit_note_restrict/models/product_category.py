@@ -3,21 +3,31 @@ import logging
 
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, UserError, Warning
-# import xml.etree.ElementTree as etree
 from lxml import etree
 
+### notas de credito en contabilidad
 _logger = logging.getLogger(__name__)
+
+
+class ResUserInheritDiscount(models.Model):
+    _inherit = 'product.template'
+
+    is_discount_product = fields.Boolean("Producto para nota de credito", default=False)
 
 
 class ResUserInheritDiscount(models.Model):
     _inherit = 'product.category'
 
-    account_credit_note_id = fields.Many2one('account.account', "Cuenta de nota de credito")
+    account_credit_note_id = fields.Many2one('account.account', "Cuenta de devolucion")
     account_discount_id = fields.Many2one('account.account', "Cuenta de descuento o bonificacion")
+
+
+
 
 
 class AccountMoveInherit(models.Model):
     _inherit = 'account.move'
+
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
@@ -25,7 +35,7 @@ class AccountMoveInherit(models.Model):
                                                               toolbar=toolbar, submenu=submenu)
 
         context = self.env.context
- 
+
         doc = etree.XML(res['arch'])
 
         if view_type in ['form', 'tree']:
@@ -63,20 +73,74 @@ class AccountMoveInherit(models.Model):
 class AccountTranzientReversal(models.TransientModel):
     _inherit = 'account.move.reversal'
 
-    
     reason_select = fields.Selection(
         [('devolucion', 'Devolucion'), ('descuento', 'Descuento o Bonificacion'), ('otro', 'Otro')], 'Type',
         default='devolucion')
 
-    def reverse_moves(self):
-        _logger.info('REVERSE_MOVES:: en mi funcion')
-        if self.reason_select and self.reason_select !='otro':
-            self.reason = self.reason_select
+    def reverse_devolucion(self):
+        for move in self.new_move_ids:
+            for line in move.invoice_line_ids:
+                if line.product_id.categ_id:
+                    if self.reason_select == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
+                        if line.product_id.categ_id.account_credit_note_id:
+                            line.account_id = line.product_id.categ_id.account_credit_note_id
+                        line._onchange_account_id()
 
+
+            move._onchange_invoice_line_ids()
+
+    def reverse_descuento(self):
+        total_sum = sum(
+            [(line.quantity * line.price_unit) for move in self.new_move_ids for line in move.invoice_line_ids])
+        ids_lines = [(2, line.id) for move in self.new_move_ids for line in move.invoice_line_ids]
+        ids_lines.pop(0)
+        for move in self.new_move_ids:
+            product_descuento = self.env['product.product'].search(
+                [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
+            if not product_descuento:
+                raise ValidationError(_("No se ha elegido un producto para tomar como descuento en notas de credito"))
+            if not product_descuento.categ_id.account_discount_id:
+                raise ValidationError(_("No se ha elegido la cuenta de descuento o bonificacion para la categoria %s",product_descuento.categ_id.name))
+            num_line = 1
+            for line in move.invoice_line_ids:
+
+                if num_line == 1:
+                    num_line += 1
+
+                    line.product_id = product_descuento
+                    line.name = line._get_computed_name()
+                    line.account_id = line._get_computed_account()
+                    taxes = line._get_computed_taxes()
+                    if taxes and line.move_id.fiscal_position_id:
+                        taxes = line.move_id.fiscal_position_id.map_tax(taxes)
+                    line.tax_ids = taxes
+                    line.product_uom_id = line._get_computed_uom()
+
+
+                    ids_lines.append((1, line.id,
+                                      {'product_id': product_descuento.id, 'quantity': 1, 'price_unit': total_sum,
+                                       'amount_currency': line.amount_currency,'account_id':product_descuento.categ_id.account_discount_id.id}))
+
+                    move.write({'invoice_line_ids': ids_lines})
+
+                    line._onchange_account_id()
+                    line._onchange_price_subtotal()
+
+                    continue
+
+            move._onchange_invoice_line_ids()
+
+    def reverse_moves(self):
+
+        if self.reason_select:
+            if self.reason_select == 'devolucion':
+                self.reason = "Devolucion"
+            elif self.reason_select == 'descuento':
+                self.reason = 'Descuento o Bonificacion'
 
         self.ensure_one()
         moves = self.move_ids
-        _logger.info("REVERSE_MOVES:: MOVES = %s",moves)
+
         # Create default values.
         default_values_list = []
         for move in moves:
@@ -96,6 +160,7 @@ class AccountTranzientReversal(models.TransientModel):
         # Handle reverse method.
         moves_to_redirect = self.env['account.move']
         for moves, default_values_list, is_cancel_needed in batches:
+
             new_moves = moves._reverse_moves(default_values_list, cancel=is_cancel_needed)
 
             if self.refund_method == 'modify':
@@ -103,19 +168,24 @@ class AccountTranzientReversal(models.TransientModel):
                 for move in moves.with_context(include_business_fields=True):
                     moves_vals_list.append(
                         move.copy_data({'date': self.date if self.date_mode == 'custom' else move.date})[0])
+
                 new_moves = self.env['account.move'].create(moves_vals_list)
 
             moves_to_redirect |= new_moves
 
         self.new_move_ids = moves_to_redirect
-        for move in self.new_move_ids:
-            if move.move_type == 'out_invoice':
-                for line in move.invoice_line_ids:
-                    if line.product_id.categ_id:
-                        if self.reason == 'devolucion' and line.product_id.categ_id.account_credit_note_id:
-                            line.account_id = line.product_id.categ_id.account_credit_note_id
-                        if self.reason == 'descuento' and line.product_id.categ_id.account_discount_id:
-                            line.account_id = line.product_id.categ_id.account_discount_id
+        total = 0
+
+
+        if self.move_type == 'out_invoice':
+            if self.reason_select == 'descuento':
+                self.reverse_descuento()
+
+            if self.reason_select == 'devolucion':
+                self.reverse_devolucion()
+
+
+        # line._onchange_price_subtotal()
 
         # Create action.
         action = {
