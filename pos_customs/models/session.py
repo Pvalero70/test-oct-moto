@@ -114,6 +114,7 @@ class PosSession(models.Model):
         _logger.info("Debit Lines")
         _logger.info(debit_lines)
 
+        procesed_lines = []
         for payment in payment_partner_list:
 
             payment_amount = payment.amount
@@ -122,6 +123,9 @@ class PosSession(models.Model):
             credit_pending = payment_amount            
             for line in credit_lines:
 
+                if line.id in procesed_lines:
+                    continue
+                
                 if credit_pending > 0 and line.partner_id.id == payment.partner_id.id:
                    
                     _logger.info("Se actualizan los montos")
@@ -134,6 +138,7 @@ class PosSession(models.Model):
                         sum_credits_updated += line.credit
                         new_credit = 0
                     _logger.info(new_credit)
+                    procesed_lines.append(line.id)
                     update_lines.append((1, line.id, {"credit" : new_credit}))
             _logger.info(sum_credits_updated)
         
