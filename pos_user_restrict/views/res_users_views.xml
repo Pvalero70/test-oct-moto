@@ -8,14 +8,12 @@
         <field name="arch" type="xml">
             <xpath expr="//page[@name='access_rights']/group" position="after">
                 <group string="Puntos de venta" groups="point_of_sale.group_pos_user">
-                    <field name="pos_config_ids"
-                                   options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True,}"
-                                   required="1">
-                                <tree editable="bottom" required="1">
-                                    <field name="name"/>
-                                </tree>
-                            </field>
 
+                    <field
+                        name="pos_config_ids"
+                        widget="many2many_tags"
+                        options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True,}"
+                    />
                 </group>
             </xpath>
         </field>
