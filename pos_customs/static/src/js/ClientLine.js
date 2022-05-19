@@ -13,10 +13,11 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                 if (this.props.selectedClient == this.props.partner) {
                     event.stopPropagation();
                 }
-                // console.log("Da clic")
-                // console.log(this.pos.company.id)
-                // console.log(this.props.partner.id)
-                // console.log(this.env.pos.db.partner_sorted)
+                console.log("Da clic")
+                console.log(this)
+                console.log(this.pos.company.id)
+                console.log(this.props.partner.id)
+                console.log(this.env.pos.db.partner_sorted)
 
                 company_id = this.pos.company.id
 
