@@ -26,7 +26,7 @@
                 </group>
                 <notebook>
                     <page string="Ubicaciones de stock permitidas" attrs="{'invisible': [('restrict_locations','!=', True)]}">
-                        <field name="stock_location_ids" nolabel="1" colspan="2"/>
+                        <field name="stock_location_ids" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True,}" nolabel="1" colspan="2"/>
                     </page>
                 </notebook>
             </field>
