@@ -10,7 +10,15 @@ class RepairOrderInherit(models.Model):
 
     incoming_picking_count = fields.Integer("Incoming Shipment count", compute='_compute_incoming_picking_count')
     picking_ids = fields.Many2many('stock.picking', compute='_compute_picking_ids', string='Receptions', copy=False)
-    operation_id = fields.Many2one('stock.picking.type', 'Operation Type', required=True, domain="[('default_location_dest_id', '=',location_id),('code', '=', 'incoming')]")
+    
+    def _default_operation(self):
+        if self.location_id:
+            rec = self.env['stock.picking.type'].search([('default_location_dest_id', '=',self.location_id,id),('code', '=', 'incoming')], limit=1).id
+        else:
+            rec = self.env['stock.picking.type'].search([('default_location_dest_id', '=',self.env.user.property_warehouse_id.lot_stock_id.id),('code', '=', 'incoming')], limit=1).id
+        return rec
+    
+    operation_id = fields.Many2one('stock.picking.type', 'Operation Type', required=True, domain="[('default_location_dest_id', '=',location_id),('code', '=', 'incoming')]", default=_default_operation)
     repair_confirm = fields.Boolean('Repair confirm', default=False, copy=False)
     picking_confirm = fields.Boolean('Picking confirm', default=False, copy=False)
     invisible_button = fields.Boolean('Invisible button', copy=False, compute="_invisible_button")
@@ -100,3 +108,10 @@ class RepairOrderInherit(models.Model):
             result['views'] = form_view + [(state, view) for state, view in result.get('views', []) if view != 'form']
             result['res_id'] = pickings.id
         return result
+
+    @api.onchange('location_id')
+    def _on_change_location(self):
+        for record in self:
+            print("ENTRA")
+            rec = self.env['stock.picking.type'].search([('default_location_dest_id', '=',record.location_id.id),('code', '=', 'incoming')], limit=1).id
+            record.operation_id = rec
