@@ -7,8 +7,8 @@
             <field name="inherit_id" ref="base.view_users_form"/>
             <field name="arch" type="xml">
                 <group name="messaging" position="before">
-                    <group string="Restricciones de Almacen" attrs="{'invisible': [('login','=', 'admin')]}">
-                        <field name="default_picking_type_ids" widget="many2many_tags" attrs="{'invisible': [('login','=', 'admin')]}"/>
+                    <group string="Restricciones de Almacen" attrs="{'invisible': [('login','=', 'admin')]}" >
+                        <field name="default_picking_type_ids" widget="many2many_tags" attrs="{'invisible': [('login','=', 'admin')]}" options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True,}"/>
                     </group>
                 </group>
             </field>
