@@ -15,11 +15,11 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                 }
                 console.log("Da clic")
                 console.log(this)
-                console.log(this.pos.company.id)
+                console.log(this.env.pos.company.id)
                 console.log(this.props.partner.id)
                 console.log(this.env.pos.db.partner_sorted)
 
-                company_id = this.pos.company.id
+                company_id = this.env.pos.company.id
 
                 const partnerInvoices = await this.rpc({
                     model: 'account.move',
