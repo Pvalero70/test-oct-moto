@@ -13,16 +13,18 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                 if (this.props.selectedClient == this.props.partner) {
                     event.stopPropagation();
                 }
-                console.log("Da clic")
-                console.log(this)
-                console.log(this.props.partner.id)
-                console.log(this.env.pos.db.partner_sorted)
+                // console.log("Da clic")
+                // console.log(this.pos.company.id)
+                // console.log(this.props.partner.id)
+                // console.log(this.env.pos.db.partner_sorted)
+
+                company_id = this.pos.company.id
 
                 const partnerInvoices = await this.rpc({
                     model: 'account.move',
                     method: 'search_read',
                     // args: [[['partner_id', '=', this.props.partner.id]], ['name', 'amount_total', 'amount_residual_signed', 'state']],
-                    args: [[['partner_id', '=', this.props.partner.id], ['state', '=', 'posted'], ['amount_residual_signed', '>', 0]], ['name', 'amount_total', 'amount_residual_signed', 'state']],
+                    args: [[['company_id', '=', company_id], ['partner_id', '=', this.props.partner.id], ['state', '=', 'posted'], ['amount_residual_signed', '>', 0]], ['name', 'amount_total', 'amount_residual_signed', 'state']],
                 });
                 
                 console.log(partnerInvoices)
