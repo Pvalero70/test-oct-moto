@@ -87,6 +87,8 @@ class PosOrder(models.Model):
             if not order.partner_id:
                 raise UserError(_('Please provide a partner for the sale.'))
             move_vals = order._prepare_invoice_vals()
+            _log.info("\n ============== MOVE VALS to SPLIT :: %s" % move_vals)
+# Comentado por pruebas.
             new_move = order._create_invoice(move_vals)
             order.write({'account_move': new_move.id, 'state': 'invoiced'})
             new_move.sudo().with_company(order.company_id)._post()
