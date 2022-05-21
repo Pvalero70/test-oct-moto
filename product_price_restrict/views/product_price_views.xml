@@ -31,7 +31,7 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
 
-            <xpath expr="//page[@name='order_lines']/form/field[@name='price_unit']" position="attributes">
+            <xpath expr="//field[@name='order_line']/form/field[@name='price_unit']" position="attributes">
                 <attribute name="readonly">1</attribute>
 
             </xpath>
