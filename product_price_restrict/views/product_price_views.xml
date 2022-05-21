@@ -17,6 +17,10 @@
                 <attribute name="attrs">{'readonly':[('edit_price_sale','=', False)]}</attribute>
             </xpath>
 
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+                <attribute name="attrs">{'readonly':[('edit_coste','=', False)]}</attribute>
+            </xpath>
+
         </field>
     </record>
 
