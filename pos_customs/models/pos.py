@@ -131,16 +131,28 @@ class PosOrder(models.Model):
                     }
 
         """
-        _log.info("\n Invoice data original :: \n\n%s\n\n " % invoice_data)
-        for pl in order.payment_ids:
-            # Se tienen que agrupar  por método de pago
-            if quit_commissions:
-                # quitamos las lineas de comisiones de invoice data.
-                pass
-            else:
-                # quitamos las lineas que no sean comisiones.
-                pass
+        # Get payment methods with bank commission.
+        payment_bc_used_ids = order.payment_ids.filtered(lambda pa: pa.payment_method_id.bank_commission_method != False)
+        ori_invoice_lines = invoice_data['invoice_line_ids']
 
+        if not payment_bc_used_ids:
+            return invoice_data
+        product_bc_ids = payment_bc_used_ids.mapped('payment_method_id').mapped('bank_commission_product_id')
+        new_invoice_line_ids = []
+        # quitamos las lineas de comisiones de invoice data.
+        # Iterate ori invoice lines, copy in a new array lines.
+        # search each line and find the line product in payment metho
+        for ori_line in ori_invoice_lines:
+            line_product_id = ori_line[2]['product_id']
+            is_bc = True if line_product_id in product_bc_ids.ids else False
+            if is_bc and not quit_commissions:
+                # Dejamos comisiones.
+                new_invoice_line_ids.append(ori_line)
+            if not is_bc and quit_commissions:
+                # Dejamos lineas que no son comision.
+                new_invoice_line_ids.append(ori_line)
+        if len(new_invoice_line_ids) > 1:
+            invoice_data['invoice_line_ids'] = new_invoice_line_ids
         return invoice_data
 
     def _generate_pos_order_invoice(self):
@@ -160,12 +172,17 @@ class PosOrder(models.Model):
             move_vals_commissions = self._split_invoice_vals_bk(move_vals, quit_commissions=False, order=order)
             move_vals = self._split_invoice_vals_bk(move_vals, quit_commissions=True, order=order)
 
+
+
 # Comentado por pruebas.
             new_move = order._create_invoice(move_vals)
-            # new_move_bc = order._create_invoice(move_vals_commissions)
+            new_move_bc = order._create_invoice(move_vals_commissions)
+
+            _log.info("\n Factura SIN comision:: %s \n Factura CON comision :: %s " % (new_move, new_move_bc))
+
             order.write({'account_move': new_move.id, 'state': 'invoiced'})
             new_move.sudo().with_company(order.company_id)._post()
-            # new_move_bc.sudo().with_company(order.company_id)._post()
+            new_move_bc.sudo().with_company(order.company_id)._post()
             moves += new_move
             line_zerodays = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.value_amount == 0 and x.days == 0 and x.option == "day_after_invoice_date")
             if line_zerodays:
