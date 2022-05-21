@@ -31,12 +31,12 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
 
-            <xpath expr="//notebook/page[@name='order_lines']/form/field[@name='price_unit']" position="attributes">
+            <xpath expr="//page[@name='order_lines']/form/field[@name='price_unit']" position="attributes">
                 <attribute name="readonly">1</attribute>
 
             </xpath>
 
-            
+
         </field>
     </record>
 
