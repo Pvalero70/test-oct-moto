@@ -21,6 +21,7 @@
     ],
     'data': [
         'security/product_price_security.xml',
+        'views/product_price_views.xml'
 
     ],
     'demo': [],
