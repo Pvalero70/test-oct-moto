@@ -13,7 +13,7 @@
     </record>
 
     <record id="product_price_group" model="res.groups">
-        <field name="category_id" ref="credit_note_restrict_category"/>
+        <field name="category_id" ref="product_price_restrict_category"/>
         <field name="name">Coste en productos</field>
     </record>
 
