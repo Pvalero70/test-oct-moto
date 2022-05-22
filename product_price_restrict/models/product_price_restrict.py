@@ -2,20 +2,22 @@
 
 from odoo import models, fields, api
 import logging
+
 _log = logging.getLogger("___name: %s" % __name__)
 
 from lxml import etree
 
+
 class PosOrderC(models.Model):
     _inherit = "product.template"
 
+    # edit_price_sale = fields.Boolean("Editar precio de venta", compute='_compute_group_edit_sale_price', store=False)
+    edit_coste = fields.Boolean("Editar precio de venta", compute='_compute_group_coste', store=False)
 
-    #edit_price_sale = fields.Boolean("Editar precio de venta", compute='_compute_group_edit_sale_price', store=False)
-    edit_coste = fields.Boolean("Editar precio de venta", compute='_compute_group_coste',store=False)
+    edit_price_sale = fields.Boolean("Grupo sale", default=lambda self: self.env.user.has_group(
+        'product_price_restrict.product_sale_price_group'))
 
-    edit_price_sale = fields.Boolean("Grupo sale",default=lambda self: self.env.user.has_group('product_price_restrict.product_sale_price_group'))
-
-   """ 
+    """ 
     @api.onchange('name')
     def _compute_group_edit_sale_price(self):
         self.edit_price_sale = self.env.user.has_group('product_price_restrict.product_sale_price_group')
@@ -48,4 +50,4 @@ class PosOrderC(models.Model):
 
         res['arch'] = etree.tostring(doc)
         return res
-"""
+        """
