@@ -8,8 +8,8 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='list_price']" position="before">
-                <field name="edit_price_sale" invisible="1" />
-                <field name="edit_coste" invisible="1" />
+                <field name="edit_price_sale" invisible="0" />
+                <field name="edit_coste" invisible="0" />
 
             </xpath>
 
