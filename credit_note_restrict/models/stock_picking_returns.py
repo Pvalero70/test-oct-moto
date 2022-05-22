@@ -14,7 +14,7 @@ class StockPickingReturn(models.Model):
 
     permiso_devolucion = fields.Boolean(string="Permiso devolucion", compute="_compute_devolucion_permiso", store=False)
     es_devolucion = fields.Boolean(string="Permiso devolucion", compute="_compute_es_devolucion", store=False)
-    is_sent_mail = fields.Boolean(string="El correo ha sido enviado para aprobacion?",default=False)
+
 
     @api.onchange('picking_type_id')
     def _compute_devolucion_permiso(self):
