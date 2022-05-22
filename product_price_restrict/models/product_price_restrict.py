@@ -13,16 +13,16 @@ class PosOrderC(models.Model):
     _inherit = "product.template"
 
     # edit_price_sale = fields.Boolean("Editar precio de venta", compute='_compute_group_edit_sale_price', store=False)
-    
+
 
     @api.onchange("list_price")
     def _onchangeprice(self):
-        if not self.env.user.has_group('product_price_restrict.product_sale_price_group'):
+        if self.id and not self.env.user.has_group('product_price_restrict.product_sale_price_group'):
             raise ValidationError(_("Advertencia, no puedes modificar el precio de venta"))
 
     @api.onchange("standard_price")
     def _onchangestandarprice(self):
-        if not self.env.user.has_group('product_price_restrict.product_price_group'):
+        if self.id and not self.env.user.has_group('product_price_restrict.product_price_group'):
             raise ValidationError(_("Advertencia, no puedes modificar el coste"))
 
 
