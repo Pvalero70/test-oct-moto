@@ -28,18 +28,18 @@ class PosOrderC(models.Model):
         res = super(PosOrderC, self).fields_view_get(view_id=view_id, view_type=view_type,
                                                               toolbar=toolbar, submenu=submenu)
 
-        context = self.env.context
-        self._compute_group_edit_sale_price()
-        self._compute_group_coste()
+
+
         doc = etree.XML(res['arch'])
         _log.info("Calculamos las vistas")
         if view_type =='form':
             if not self.env.user.has_group('product_price_restrict.product_sale_price_group'):
+                _log.info("Grupo sale %s, grupo coste %s",self.env.user.has_group('product_price_restrict.product_sale_price_group'), self.env.user.has_group('product_price_restrict.product_price_group'))
                 for node_form in doc.xpath("//field[@name='list_price']"):
-                    node_form.set("readonly", 'true')
+                    node_form.set("readonly", '1')
             if not self.env.user.has_group('product_price_restrict.product_price_group'):
                 for node_form in doc.xpath("//field[@name='standard_price']"):
-                    node_form.set("readonly", 'true')
+                    node_form.set("readonly", '1')
 
 
         res['arch'] = etree.tostring(doc)
