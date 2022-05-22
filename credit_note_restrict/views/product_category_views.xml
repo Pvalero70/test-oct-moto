@@ -61,20 +61,24 @@
         </field>
     </record>
 
-    <!--<record id="stock_picking_devolucion_inherit" model="ir.ui.view">
+    <record id="stock_picking_devolucion_inherit" model="ir.ui.view">
         <field name="name">stock.picking.devolucion</field>
         <field name="model">stock.picking</field>
         <field name="type">form</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
+             <xpath expr="//header/button[@name='button_validate'][1]" position="after">
+                <field name="permiso_devolucion" invisible="1"/>
+             </xpath>
             <xpath expr="//header/button[@name='button_validate'][1]" position="attributes">
-                <attribute name="groups">credit_note_restrict.aprobe_devolucion_group</attribute>
+
+                <attribute name="attrs">{'invisible': ['|', ('|',('state', 'in', ('waiting','confirmed')),('show_validate', '=', False)),('&',('picking_type_id.sequence_code','=','DEV'),('permiso_devolucion','=',True)]}</attribute>
             </xpath>
-            <xpath expr="//header/button[@name='button_validate'][2]" position="after">
-                <attribute name="groups">credit_note_restrict.aprobe_devolucion_group</attribute>
+            <xpath expr="//header/button[@name='button_validate'][2]" position="attributes">
+                <attribute name="attrs">{'invisible': ['|', ('|',('state', 'not in', ('waiting','confirmed')),('show_validate', '=', False)),('&',('picking_type_id.sequence_code','=','DEV'),('permiso_devolucion','=',True)]}</attribute>
             </xpath>
         </field>
-    </record>!-->
+    </record>
 
 
 

@@ -12,6 +12,12 @@ _logger = logging.getLogger(__name__)
 class StockPickingReturn(models.Model):
     _inherit = 'stock.picking'
 
+    permiso_devolucion = fields.Boolean(string="Necesita aprovación", compute="_compute_devolucion_permiso", store=False)
+
+    def _compute_devolucion_permiso(self):
+        self.permiso_devolucion = self.env.user.has_group('credit_note_restrict.aprobe_devolucion_group')
+        _logger.info("STOCK.PICKING::Computamos permiso dev %s",self.permiso_devolucion)
+
     def button_validate(self):
         if self.picking_type_id:
             if self.picking_type_id.sequence_code =='DEV':
