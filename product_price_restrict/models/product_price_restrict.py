@@ -17,7 +17,7 @@ class PosOrderC(models.Model):
 
     @api.onchange("list_price")
     def _onchangeprice(self):
-        
+        _log.info("id del registro = %s",self.id)
         if not self.env.user.has_group('product_price_restrict.product_sale_price_group'):
             raise ValidationError(_("Advertencia, no puedes modificar el precio de venta"))
 
