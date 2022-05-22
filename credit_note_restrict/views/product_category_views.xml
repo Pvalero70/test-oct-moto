@@ -61,6 +61,21 @@
         </field>
     </record>
 
+    <record id="stock_picking_devolucion_inherit" model="ir.ui.view">
+        <field name="name">stock.picking.devolucion</field>
+        <field name="model">stock.picking</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='button_validate'][1]" position="attributes">
+                <attribute name="groups">credit_note_restrict.aprobe_devolucion_group</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='button_validate'][2]" position="after">
+                <attribute name="groups">credit_note_restrict.aprobe_devolucion_group</attribute>
+            </xpath>
+        </field>
+    </record>
+
 
 
 
