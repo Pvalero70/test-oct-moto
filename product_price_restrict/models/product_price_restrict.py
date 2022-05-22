@@ -17,15 +17,13 @@ class PosOrderC(models.Model):
 
     @api.onchange("list_price")
     def _onchangeprice(self):
-        _log.info("id del registro = %s",self.id)
-        registro = self.env['product.template'].search([('id', '=', self.id)], limit=1)
-        _log.info("Registro = %s , len %s",registro,len(registro))
-        if registro and not self.env.user.has_group('product_price_restrict.product_sale_price_group'):
+
+        if str(self.id).isnumeric() and self.env.user.has_group('product_price_restrict.product_sale_price_group') == False:
             raise ValidationError(_("Advertencia, no puedes modificar el precio de venta"))
 
     @api.onchange("standard_price")
     def _onchangestandarprice(self):
-        if not self.env.user.has_group('product_price_restrict.product_price_group'):
+        if str(self.id).isnumeric() and self.env.user.has_group('product_price_restrict.product_price_group') == False:
             raise ValidationError(_("Advertencia, no puedes modificar el coste"))
 
 
