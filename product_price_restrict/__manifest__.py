@@ -5,7 +5,7 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.html).
 
 {
-    'name': 'Restricciones precio de productos',
+    'name': 'Restricciones de precio en productos',
     'version': '15.0.1.0.1',
     'category': 'Ventas',
     'author': 'Ing. Alejandro Garcia Magaña',
@@ -16,8 +16,8 @@
     'depends': [
         'account',
         'pos_sale',
-        'pos_settle_due',
-        'point_of_sale',
+        'repair',
+
     ],
     'data': [
         'security/product_price_security.xml',
