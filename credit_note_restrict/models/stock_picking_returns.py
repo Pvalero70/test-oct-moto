@@ -32,7 +32,7 @@ class StockPickingReturn(models.Model):
                 self.permiso_devolucion = False
         else:
             self.permiso_devolucion = True
-        _logger.info("STOCK.PICKING::Computamos permiso dev %s",self.permiso_devolucion)
+
 
     @api.onchange('picking_type_id')
     def _compute_es_devolucion(self):
@@ -63,10 +63,10 @@ class StockPickingReturn(models.Model):
                         'email_from': self.env.user.company_id.email,
                         'email_to': usuario.partner_id.email
                     }
-                    _logger.info("Picking:: Enviamos email con %s", template_data)
+
                     template_id = template_obj.sudo().create(template_data)
                     template_id.send()
-                    _logger.info("Picking:: Enviado %s", template_data)
+
         if not gerente_encontrado:
             raise ValidationError(_("Advertencia, No hay un gerente asignado para aprobar en el almacen %s", self.picking_type_id.warehouse_id.name))
 
