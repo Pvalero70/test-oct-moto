@@ -72,10 +72,10 @@
              </xpath>
             <xpath expr="//header/button[@name='button_validate'][1]" position="attributes">
 
-                <attribute name="attrs">{'invisible': ['|', ('|',('state', 'in', ('waiting','confirmed')),('show_validate', '=', False)),('&amp;',('picking_type_id.sequence_code','=','DEV'),('permiso_devolucion','=',True))]}</attribute>
+                <attribute name="attrs">{'invisible': ['|','|',('state', 'in', ('waiting','confirmed')),('show_validate', '=', False),('&amp;',('picking_type_id.sequence_code','=','DEV'),('permiso_devolucion','=',True))]}</attribute>
             </xpath>
             <xpath expr="//header/button[@name='button_validate'][2]" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', ('|',('state', 'not in', ('waiting','confirmed')),('show_validate', '=', False)),('&amp;',('picking_type_id.sequence_code','=','DEV'),('permiso_devolucion','=',True))]}</attribute>
+                <attribute name="attrs">{'invisible': ['|','|',('state', 'not in', ('waiting','confirmed')),('show_validate', '=', False),('&amp;',('picking_type_id.sequence_code','=','DEV'),('permiso_devolucion','=',True))]}</attribute>
             </xpath>
         </field>
     </record>
