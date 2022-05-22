@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api
-import logging
+from odoo import api, fields, models, _
+from odoo.exceptions import ValidationError, UserError, Warning
+from lxml import etree
 
 _log = logging.getLogger("___name: %s" % __name__)
 
@@ -19,12 +20,13 @@ class PosOrderC(models.Model):
     @api.onchange("list_price")
     def _onchangeprice(self):
         if not self.env.user.has_group('product_price_restrict.product_sale_price_group'):
-            raise ValueError("Advertencia, no puedes modificar el precio de venta")
+            raise ValidationError(_("Advertencia, no puedes modificar el precio de venta"))
 
     @api.onchange("standard_price")
     def _onchangeprice(self):
         if not self.env.user.has_group('product_price_restrict.product_price_restrict.product_price_group'):
-            raise ValueError("Advertencia, no puedes modificar el coste")
+            raise ValidationError(_("Advertencia, no puedes modificar el coste"))
+
     """ 
     @api.onchange('name')
     def _compute_group_edit_sale_price(self):
