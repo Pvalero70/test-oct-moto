@@ -14,8 +14,13 @@ class StockPickingReturn(models.Model):
 
     permiso_devolucion = fields.Boolean(string="Necesita aprovación", compute="_compute_devolucion_permiso", store=False)
 
+    @api.onchange('picking_type_id')
     def _compute_devolucion_permiso(self):
-        self.permiso_devolucion = self.env.user.has_group('credit_note_restrict.aprobe_devolucion_group')
+        grupo_devolucion = self.env.user.has_group('credit_note_restrict.aprobe_devolucion_group')
+        if self.picking_type_id and self.picking_type_id.sequence_code =='DEV' and grupo_devolucion:
+            self.permiso_devolucion = True
+        else:
+            self.permiso_devolucion=False
         _logger.info("STOCK.PICKING::Computamos permiso dev %s",self.permiso_devolucion)
 
     def button_validate(self):
