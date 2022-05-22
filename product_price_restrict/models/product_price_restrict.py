@@ -17,7 +17,7 @@ class PosOrderC(models.Model):
 
     @api.onchange("list_price")
     def _onchangeprice(self):
-        _log.info("Es numero %s",str(self.id).isnumeric())
+        _log.info("Es numero %s,number %s",str(self.id).isnumeric(),self.id)
         if not str(self.id).isnumeric():
             return
 
