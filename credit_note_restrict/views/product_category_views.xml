@@ -69,6 +69,9 @@
         <field name="arch" type="xml">
              <xpath expr="//header/button[@name='button_validate'][1]" position="after">
                 <field name="permiso_devolucion" invisible="1"/>
+                 <button name="button_solicitar_devolucion" attrs="{'invisible': ['|','|',('state', 'in', ('waiting','confirmed')),('show_validate', '=', False),('permiso_devolucion','=',True)]}" string="Solicitar devolucion" type="object"  groups="stock.group_stock_user" data-hotkey="v"/>
+                 <button name="button_solicitar_devolucion" attrs="{'invisible': ['|','|',('state', 'not in', ('waiting','confirmed')),('show_validate', '=', False),('permiso_devolucion','=',True)]}" string="Solicitar devolucion" type="object"  groups="stock.group_stock_user" data-hotkey="v"/>
+
              </xpath>
             <xpath expr="//header/button[@name='button_validate'][1]" position="attributes">
 

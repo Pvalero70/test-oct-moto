@@ -35,15 +35,7 @@ class StockPickingReturn(models.Model):
 
 
 
-    def button_validate(self):
-        if self.picking_type_id:
-            if self.picking_type_id.sequence_code =='DEV':
-                if not self.env.user.has_group('credit_note_restrict.aprobe_devolucion_group'):
-                    raise ValidationError("Advertencia, no tienes permiso para aprobar la devolucion")
-            if self.picking_type_id.sequence_code =='IN':
-                if not self.env.user.has_group('credit_note_restrict.aprobe_devolucion_compra_group'):
-                    raise ValidationError("Advertencia, no tienes permiso para aprobar la Recepcion")
-
-        vals = super(StockPickingReturn, self).button_validate()
+    def button_solicitar_devolucion(self):
+        _logger.info("STOCK.PICKING:: My boton solicitar dev")
 
 
