@@ -32,7 +32,7 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="before">
-                <field name="move_type" invisible="1">
+                <field name="move_type" invisible="1"/>
 
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
