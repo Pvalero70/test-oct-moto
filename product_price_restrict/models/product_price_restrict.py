@@ -36,6 +36,7 @@ class PosOrderC(models.Model):
             if not self.env.user.has_group('product_price_restrict.product_sale_price_group'):
                 _log.info("Grupo sale %s, grupo coste %s",self.env.user.has_group('product_price_restrict.product_sale_price_group'), self.env.user.has_group('product_price_restrict.product_price_group'))
                 for node_form in doc.xpath("//field[@name='list_price']"):
+                    _log.info("Ponemos readonly")
                     node_form.set("readonly", '1')
             if not self.env.user.has_group('product_price_restrict.product_price_group'):
                 for node_form in doc.xpath("//field[@name='standard_price']"):
