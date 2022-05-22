@@ -33,14 +33,7 @@ class StockPickingReturn(models.Model):
             self.permiso_devolucion = True
         _logger.info("STOCK.PICKING::Computamos permiso dev %s",self.permiso_devolucion)
 
-    @api.onchange('picking_type_id')
-    def _compute_devolucion_permiso(self):
-        grupo_recepcion = self.env.user.has_group('credit_note_restrict.aprobe_devolucion_compra_group')
-        if self.picking_type_id and self.picking_type_id.sequence_code == 'IN' and grupo_recepcion:
-            self.permiso_recepcion = True
-        else:
-            self.permiso_recepcion = False
-        _logger.info("STOCK.PICKING::Computamos permiso in %s", self.permiso_recepcion)
+
 
     def button_validate(self):
         if self.picking_type_id:
