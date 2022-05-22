@@ -4,6 +4,7 @@ from odoo import models, fields, api
 import logging
 _log = logging.getLogger("___name: %s" % __name__)
 
+from lxml import etree
 
 class PosOrderC(models.Model):
     _inherit = "product.template"
@@ -26,8 +27,20 @@ class PosOrderC(models.Model):
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
         res = super(PosOrderC, self).fields_view_get(view_id=view_id, view_type=view_type,
                                                               toolbar=toolbar, submenu=submenu)
-        _log.info("PRODUCT:: Recalculamnos permisos")
+
+        context = self.env.context
         self._compute_group_edit_sale_price()
         self._compute_group_coste()
+        doc = etree.XML(res['arch'])
+        _log.info("Calculamos las vistas")
+        if view_type =='form':
+            if not self.env.user.has_group('product_price_restrict.product_sale_price_group'):
+                for node_form in doc.xpath("//field[@name='list_price']"):
+                    node_form.set("readonly", 'true')
+            if not self.env.user.has_group('product_price_restrict.product_price_group'):
+                for node_form in doc.xpath("//field[@name='standard_price']"):
+                    node_form.set("readonly", 'true')
 
+
+        res['arch'] = etree.tostring(doc)
         return res
