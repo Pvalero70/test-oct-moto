@@ -15,7 +15,8 @@ class PosOrderC(models.Model):
 
     edit_price_sale = fields.Boolean("Grupo sale",default=lambda self: self.env.user.has_group('product_price_restrict.product_sale_price_group'))
 
-   """ @api.onchange('name')
+   """ 
+    @api.onchange('name')
     def _compute_group_edit_sale_price(self):
         self.edit_price_sale = self.env.user.has_group('product_price_restrict.product_sale_price_group')
         _log.info("PRODUCT:: Grupo sale permiso %s", self.edit_price_sale)
