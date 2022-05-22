@@ -68,6 +68,6 @@ class StockPickingReturn(models.Model):
                     template_id.send()
                     _logger.info("Picking:: Enviado %s", template_data)
         if not gerente_encontrado:
-            raise ValidationError("Advertencia, No hay un gerente asignado para aprobar en el almacen %s", self.picking_type_id.warehouse_id.name)
+            raise ValidationError(_("Advertencia, No hay un gerente asignado para aprobar en el almacen %s", self.picking_type_id.warehouse_id.name))
 
 
