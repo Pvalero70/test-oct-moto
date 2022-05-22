@@ -21,3 +21,13 @@ class PosOrderC(models.Model):
     def _compute_group_coste(self):
         self.edit_coste = self.env.user.has_group('product_price_restrict.product_price_group')
         _log.info("PRODUCT:: Grupo coste permiso %s", self.edit_coste)
+
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):
+        res = super(PosOrderC, self).fields_view_get(view_id=view_id, view_type=view_type,
+                                                              toolbar=toolbar, submenu=submenu)
+        _log.info("PRODUCT:: Recalculamnos permisos")
+        self._compute_group_edit_sale_price()
+        self._compute_group_coste()
+
+        return res
