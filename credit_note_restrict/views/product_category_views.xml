@@ -95,6 +95,10 @@
                     ('waiting','confirmed')),('show_validate', '=', False),('permiso_devolucion','=',False)]}
                 </attribute>
             </xpath>
+            <xpath expr="//header/button[@name='298']" position="attributes">
+                <attribute name="groups">credit_note_restrict.aprobe_devolucion_compra_group</attribute>
+            </xpath>
+
         </field>
     </record>
 
