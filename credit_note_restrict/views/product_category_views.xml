@@ -61,7 +61,7 @@
         </field>
     </record>
 
-    <record id="stock_picking_devolucion_inherit" model="ir.ui.view">
+    <!--<record id="stock_picking_devolucion_inherit" model="ir.ui.view">
         <field name="name">stock.picking.devolucion</field>
         <field name="model">stock.picking</field>
         <field name="type">form</field>
@@ -74,7 +74,7 @@
                 <attribute name="groups">credit_note_restrict.aprobe_devolucion_group</attribute>
             </xpath>
         </field>
-    </record>
+    </record>!-->
 
 
 
