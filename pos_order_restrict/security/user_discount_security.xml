@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<odoo>
+
+
+    <record id="category_user_discount" model="ir.module.category">
+        <field name="name">Descuentos sobre vendedores</field>
+        <field name="description">Configuracion acerca de los limites de descuento para vendedores.</field>
+        <field name="sequence">7</field>
+    </record>
+
+    <record id="user_discount_group" model="res.groups">
+        <field name="category_id" ref="category_user_discount"/>
+        <field name="name">Administrador de descuentos</field>
+    </record>
+
+    <record id="user_discount_admin_group" model="res.groups">
+        <field name="category_id" ref="category_user_discount"/>
+        <field name="name">Actualizar descuentos</field>
+    </record>
+
+    <record id="user_discount_view_group" model="res.groups">
+        <field name="category_id" ref="category_user_discount"/>
+        <field name="name">Ver tabla descuentos</field>
+    </record>
+
+    <record id="user_discount_gerente_modif_group" model="res.groups">
+        <field name="category_id" ref="category_user_discount"/>
+        <field name="name">Descuento de Gerente</field>
+    </record>
+
+    <record id="user_discount_gerente_group" model="res.groups">
+        <field name="category_id" ref="category_user_discount"/>
+        <field name="name">Gerente de sucursal</field>
+    </record>
+
+    <record id="user_discount_motos_group" model="res.groups">
+        <field name="category_id" ref="category_user_discount"/>
+        <field name="name">Permitir descuentos en motos</field>
+    </record>
+
+
+</odoo>
+
+

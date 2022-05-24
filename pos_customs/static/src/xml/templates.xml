@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+     <t t-name="ClientLine" t-inherit="point_of_sale.ClientLine" t-inherit-mode="extension" owl="1">
+        <xpath expr="//td[hasclass('client-line-last-column-placeholder')]" position="before">
+            <td class="custom-customer-due pos-right-align cursor-pointer" t-on-click="settleCustomerInvoiceDue">                
+                <i class="fa fa-external-link"></i>
+            </td>
+        </xpath>
+    </t>
+
+    <t t-name="ClientListScreen" t-inherit="point_of_sale.ClientListScreen" t-inherit-mode="extension" owl="1">
+        <xpath expr="//th[hasclass('client-line-last-column-placeholder')]" position="before">            
+            <th class="custom-customer-due">Facturas <i class="fa fa-refresh cursor-pointer" t-on-click="refreshTotalInvoiceDue"></i></th>
+        </xpath>
+    </t>
+
+ </templates>

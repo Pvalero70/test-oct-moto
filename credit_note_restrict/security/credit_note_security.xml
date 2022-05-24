@@ -1,0 +1,55 @@
+<?xml version="1.0" ?>
+<odoo>
+
+     <record id="credit_note_restrict_category" model="ir.module.category">
+            <field name="name">Restricciones Contabilidad </field>
+        <field name="description">Restricciones en el modulo de contabilidad</field>
+        <field name="sequence">7</field>
+    </record>
+
+    <record id="credit_note_pos_group" model="res.groups">
+        <field name="category_id" ref="credit_note_restrict_category"/>
+        <field name="name">Crear nota de credito en POS</field>
+    </record>
+
+    <record id="credit_note_client_group" model="res.groups">
+        <field name="category_id" ref="credit_note_restrict_category"/>
+        <field name="name">Crear notas de credito en clientes</field>
+    </record>
+
+    <record id="factura_client_group" model="res.groups">
+        <field name="category_id" ref="credit_note_restrict_category"/>
+        <field name="name">Crear facturas en clientes</field>
+    </record>
+
+    <record id="factura_client_credit_note_group" model="res.groups">
+        <field name="category_id" ref="credit_note_restrict_category"/>
+        <field name="name">Boton agregar nota de credito en facturas clientes</field>
+    </record>
+
+    <record id="factura_proov_credit_note_group" model="res.groups">
+        <field name="category_id" ref="credit_note_restrict_category"/>
+        <field name="name">Boton agregar nota de credito en facturas proveedores</field>
+    </record>
+
+    <record id="reembolso_proveedor_group" model="res.groups">
+        <field name="category_id" ref="credit_note_restrict_category"/>
+        <field name="name">Crear reembolsos en proveedores</field>
+    </record>
+
+    <record id="factura_proveedor_group" model="res.groups">
+        <field name="category_id" ref="credit_note_restrict_category"/>
+        <field name="name">Crear facturas en proveedores</field>
+    </record>
+
+    <record id="aprobe_devolucion_group" model="res.groups">
+        <field name="category_id" ref="credit_note_restrict_category"/>
+        <field name="name">Aprobación de operación de devolución.</field>
+    </record>
+
+    <record id="aprobe_devolucion_compra_group" model="res.groups">
+        <field name="category_id" ref="credit_note_restrict_category"/>
+        <field name="name">Devolucion de entrada de compras</field>
+    </record>
+
+</odoo>
