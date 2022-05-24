@@ -11,7 +11,6 @@
 
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
                 <attribute name="readonly">1</attribute>
-
             </xpath>
 
 
@@ -35,7 +34,7 @@
         </field>
     </record>
 
-    <!-- d
+
     <record id="repair_order_priceunit_form" model="ir.ui.view">
         <field name="name">repair.order.priceunit.form</field>
         <field name="model">repair.order</field>
@@ -45,18 +44,20 @@
 
             <xpath expr="//field[@name='operations']/tree/field[@name='price_unit']" position="attributes">
                 <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
 
             </xpath>
 
             <xpath expr="//field[@name='fees_lines']/tree/field[@name='price_unit']" position="attributes">
                 <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
 
             </xpath>
 
 
         </field>
     </record>
-    !-->
+
 
 
 
