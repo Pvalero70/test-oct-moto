@@ -18,6 +18,7 @@
         'pos_sale',
         'pos_settle_due',
         'point_of_sale',
+        'stock',
     ],
     'data': [
         'security/credit_note_security.xml',
