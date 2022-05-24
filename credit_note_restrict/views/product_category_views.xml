@@ -67,7 +67,7 @@
         </field>
     </record>
 
-    <record id="stock_picking_devolucion_inherit" model="ir.ui.view">
+    <record id="stock_picking_devolucion_inherit" model="ir.ui.view"> <!--boton solicitar devolucion !-->
         <field name="name">stock.picking.devolucion</field>
         <field name="model">stock.picking</field>
         <field name="type">form</field>
