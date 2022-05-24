@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="SaleOrderList" t-inherit="pos_sale.SaleOrderList" t-inherit-mode="extension" owl="1">
+        <xpath expr="//div[hasclass('order-list')]" position="replace">
+            <div class="order-list">
+                <!--Filter by state here. SaleOrderRow.js-->
+                <t t-foreach="props.orders" t-as="order" t-key="order.id">
+                    <t t-if="order.state === 'sale'">
+                        <SaleOrderRow order="order" highlightedOrder="highlightedOrder" />
+                    </t>
+                </t>
+            </div>
+        </xpath>
+    </t>
+</templates>
