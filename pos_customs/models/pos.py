@@ -134,30 +134,26 @@ class PosOrder(models.Model):
         # Get payment methods with bank commission.
         payment_bc_used_ids = order.payment_ids.filtered(lambda pa: pa.payment_method_id.bank_commission_method != False)
         ori_invoice_lines = invoice_data['invoice_line_ids']
-
-        if not payment_bc_used_ids:
+        # Avoid make two invoices when there isn't bc
+        if not payment_bc_used_ids and quit_commissions:
             return invoice_data
+        if not payment_bc_used_ids and not quit_commissions:
+            return False
         product_bc_ids = payment_bc_used_ids.mapped('payment_method_id').mapped('bank_commission_product_id')
         new_invoice_line_ids = []
-        # quitamos las lineas de comisiones de invoice data.
-        # Iterate ori invoice lines, copy in a new array lines.
-        # search each line and find the line product in payment metho
         for ori_line in ori_invoice_lines:
             line_product_id = ori_line[2]['product_id']
             is_bc = True if line_product_id in product_bc_ids.ids else False
             if is_bc and not quit_commissions:
-                # Dejamos comisiones.
                 new_invoice_line_ids.append(ori_line)
             if not is_bc and quit_commissions:
-                # Dejamos lineas que no son comision.
                 new_invoice_line_ids.append(ori_line)
-        if len(new_invoice_line_ids) > 1:
+        if len(new_invoice_line_ids) > 0:
             invoice_data['invoice_line_ids'] = new_invoice_line_ids
         return invoice_data
 
     def _generate_pos_order_invoice(self):
         moves = self.env['account.move']
-
         for order in self:
             # Force company for all SUPERUSER_ID action
             if order.account_move:
@@ -167,22 +163,21 @@ class PosOrder(models.Model):
             if not order.partner_id:
                 raise UserError(_('Please provide a partner for the sale.'))
             move_vals = order._prepare_invoice_vals()
-            # La idea es facturar por separado, creamos una copia de move_vals y
-            # al original le quitamos la o las lineas con algún producto que
-            move_vals_commissions = self._split_invoice_vals_bk(move_vals, quit_commissions=False, order=order)
+            move_vals_commissions = move_vals.copy()
+            move_vals_commissions = self._split_invoice_vals_bk(move_vals_commissions, quit_commissions=False, order=order)
             move_vals = self._split_invoice_vals_bk(move_vals, quit_commissions=True, order=order)
-
-
-
 # Comentado por pruebas.
             new_move = order._create_invoice(move_vals)
-            new_move_bc = order._create_invoice(move_vals_commissions)
+            _log.info("\n\n _____________________ Factura normal:: %s " % new_move)
+            if move_vals_commissions:
+                new_move_bc = order._create_invoice(move_vals_commissions)
+                new_move_bc.sudo().with_company(order.company_id)._post()
+                moves += new_move_bc
+                _log.info("\n\n _____________________ Factura de comision: :: %s " % new_move_bc)
 
-            _log.info("\n Factura SIN comision:: %s \n Factura CON comision :: %s " % (new_move, new_move_bc))
 
             order.write({'account_move': new_move.id, 'state': 'invoiced'})
             new_move.sudo().with_company(order.company_id)._post()
-            new_move_bc.sudo().with_company(order.company_id)._post()
             moves += new_move
             line_zerodays = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.value_amount == 0 and x.days == 0 and x.option == "day_after_invoice_date")
             if line_zerodays:
@@ -191,9 +186,6 @@ class PosOrder(models.Model):
                 delta_days = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.days > 0 and x.option == "day_after_invoice_date")[:1].days
                 new_move.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
                 new_move._compute_l10n_mx_edi_payment_policy()
-
-            # Ya creada la factura de comisiones, aplicar las mismas validaciones anterires que aplican a la factura convencional.
-
         if not moves:
             return {}
 

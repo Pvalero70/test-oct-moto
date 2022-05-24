@@ -81,7 +81,7 @@ class PosOrderBc(models.Model):
     #     return invoice
     #
 
-    def _prepare_invoice_vals(self):
-        vals = super(PosOrderBc, self)._prepare_invoice_vals()
-        _log.info("\n ========= VALS:: %s " % vals)
-        return vals
+    # def _prepare_invoice_vals(self):
+    #     vals = super(PosOrderBc, self)._prepare_invoice_vals()
+    #     _log.info("\n ========= VALS:: %s " % vals)
+    #     return vals

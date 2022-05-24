@@ -16,7 +16,7 @@ class PosOrderTt(models.Model):
             return res
         if 'pos_order_line_id' not in res:
             res['pos_order_line_id'] = order_line.id
-        _log.info("\nPREPARANDO LINEA:: %s " % res)
+        # _log.info("\nPREPARANDO LINEA:: %s " % res)
         lot_ori_id = self.env['stock.production.lot'].search([
             ('name', 'in', order_line.pack_lot_ids.mapped('lot_name'))
         ], limit=1)
