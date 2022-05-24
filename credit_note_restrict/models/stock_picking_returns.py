@@ -19,17 +19,14 @@ class StockPickingReturn(models.Model):
     @api.onchange('picking_type_id')
     def _compute_devolucion_permiso(self):
         grupo_devolucion = self.env.user.has_group('credit_note_restrict.aprobe_devolucion_group')
-        grupo_recepcion = self.env.user.has_group('credit_note_restrict.aprobe_devolucion_compra_group')
+
         if self.picking_type_id and (self.picking_type_id.sequence_code == 'DEV' or self.picking_type_id.name =='Devoluciones'):
-            if grupo_devolucion:
+            if grupo_devolucion and self.env.user.property_warehouse_id.id == self.picking_type_id.warehouse_id.id:
                 self.permiso_devolucion = True
             else:
                 self.permiso_devolucion = False
         elif self.picking_type_id and (self.picking_type_id.sequence_code =='IN' or self.picking_type_id.name == 'Recepciones'):
-            if grupo_recepcion:
-                self.permiso_devolucion=True
-            else:
-                self.permiso_devolucion = False
+            self.permiso_devolucion = True
         else:
             self.permiso_devolucion = True
 
