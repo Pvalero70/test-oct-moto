@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+		<record id="view_sale_order_inherit" model="ir.ui.view">
+			<field name="name">sale.order.form.inherit</field>
+			<field name="model">sale.order</field>
+			<field name="inherit_id" ref="sale.view_order_form"/>
+			<field name="arch" type="xml">
+				<field name="payment_term_id" position="after">
+					<field name="company_currency_id" invisible="1"/>
+					<field name="approve_needed" invisible="1"/>
+					<field name="waiting_approve" invisible="1"/>
+					<field name="sale_credit_limit_customer_total" widget="monetary" force_save="1"
+						   options="{'currency_field': 'company_currency_id', 'field_digits': True}"/>
+				</field>
+				<header>
+					<button name="action_request_approve" string="Solicitar aprobación" type="object"
+							class="btn-primary" attrs="{'invisible': ['|', ('approve_needed', '=', False), ('waiting_approve', '=', True)]}"/>
+				</header>
+				<!-- Hide confirm button. -->
+				<xpath expr="//header/button[7]" position="replace">
+					<button name="action_confirm" id="action_confirm"
+							data-hotkey="v" string="Confirmar" class="btn-primary"
+							type="object" attrs="{'invisible': ['|', ('state', 'not in', ['sent']), ('approve_needed', '=', True)]}"/>
+				</xpath>
+				<xpath expr="//header/button[8]" position="replace">
+					<button name="action_confirm" data-hotkey="v" string="Confirmar"
+							type="object" attrs="{'invisible': ['|', ('state', 'not in', ['draft']), ('approve_needed', '=', True)]}"/>
+				</xpath>
+				<xpath expr="//div[hasclass('oe_title')]" position="before">
+					<div attrs="{'invisible': ['|', ('waiting_approve', '=', False), ('state', 'not in', ['draft', 'sent'])]}">
+						<h3>Esperando aprobación</h3>
+					</div>
+				</xpath>
+			</field>
+		</record>
+
+		<record id="sale_order_view_search_inherit_credit_limit_toconfirm" model="ir.ui.view">
+			<field name="name">sale.order.list.select.toconfirm.inherit</field>
+			<field name="model">sale.order</field>
+			<field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='campaign_id']" position="before">
+					<field name="waiting_approve"/>
+				</xpath>
+				<xpath expr="//filter[@name='my_quotation']" position="after">
+					<filter string="Por aprobar" name="to_approve" domain="['&amp;', ('waiting_approve', '!=', False), ('state', 'in', ['draft', 'sent'])]"/>
+				</xpath>
+			</field>
+		</record>
+	</data>
+</odoo>

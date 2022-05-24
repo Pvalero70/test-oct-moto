@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="repair_mechanic_action" model="ir.actions.act_window">
+        <field name="name">Mecanicos</field>
+        <field name="domain">[('company_id', '=', allowed_company_ids[0])]</field>
+        <field name="res_model">repair.mechanic</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="repair_mechanic_form_view" model="ir.ui.view">
+        <field name="name">repair.mechanic.form.view</field>
+        <field name="model">repair.mechanic</field>
+        <field name="arch" type="xml">
+            <form string="Mecanico">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name_computed" invisible="1"/>
+                            <field name="first_name" required="1"/>
+                            <field name="first_ap" required="1"/>
+
+
+                            <field name="location_id" required="1"  widget='selection' domain="[('company_id','=',allowed_company_ids[0]),('usage','=','internal')]" string="Sucursal"/>
+
+                        </group>
+
+                        <group>
+                            <field name="second_name"/>
+                            <field name="second_ap"/>
+                            <field name="numero_mecanico" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="repair_mechanic_tree_view" model="ir.ui.view">
+        <field name="name">repair.mechanic.tree.view</field>
+        <field name="model">repair.mechanic</field>
+        <field name="arch" type="xml">
+            <tree string="Lista de Mecanicos">
+                <field name="name_computed" string="Nombre completo"/>
+                <field name="location_id" string="Sucursal"/>
+                 <field name="numero_mecanico"/>
+            </tree>
+
+        </field>
+    </record>
+
+    <menuitem
+            name="Mecanicos"
+            id="repair_mechanic_menu"
+            parent="repair.repair_menu_config"
+            sequence="5"
+            action="repair_mechanic_action"
+            groups="admin_repair_mechanic_group"/>
+    />
+
+    <record id="repair_order_inherit_form" model="ir.ui.view">
+        <field name="name">repair.order.inherit.form</field>
+        <field name="model">repair.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form"/>
+        <field name="arch" type="xml">
+
+
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="mechanic_id"  widget='selection' domain="[('company_id','=',company_id),('location_id','=',location_id)]"/>
+            </xpath>
+
+
+        </field>
+    </record>
+
+    <record id="repair_order_search_inherit" model="ir.ui.view">
+        <field name="name">	repair.order.inherit.search</field>
+        <field name="model">repair.order</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='sale_order_id']" position="after">
+                <field name="mechanic_id" string="Mecanico" filter_domain="[('mechanic_id.name_computed', 'ilike', self)]"/>
+            </xpath>
+
+            <xpath expr="//group/filter[@name='company']" position="after">
+                <field name="mechanic_id" string="Mecanico" context="{'group_by': 'mechanic_id'}"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

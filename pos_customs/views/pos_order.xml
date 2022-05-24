@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- POS ORDER -->
+    <record id="view_pos_order_salesman_form" model="ir.ui.view">
+        <field name="name">view_pos_order_salesman_form</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_pos_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="salesman_id" force_save="1" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_pos_order_salesman_tree" model="ir.ui.view">
+        <field name="name">view_pos_order_salesman_tree</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount_total']" position="before">
+                <field name="salesman_id" widget="many2one_avatar_user" force_save="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="pos_order_list_select_salesman_inherit" model="ir.ui.view">
+        <field name="name">pos.order.list.select.salesman.inherit</field>
+        <field name="model">pos.order</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_order_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="before">
+                <field name="salesman_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='posted']" position="after">
+                <filter string="Ventas de ejecutivo" name="salesman" domain="[('salesman_id', '!=', False)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='user_id']" position="after">
+                <filter string="Ejecutivo" name="gp_salesman" domain="[]" context="{'group_by': 'salesman_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
