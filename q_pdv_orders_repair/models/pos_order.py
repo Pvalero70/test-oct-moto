@@ -17,7 +17,6 @@ class PosOrderInherit(models.Model):
 
     @api.model
     def _order_fields(self, ui_order):
-        
         if 'ref_repair' in ui_order:
             process_line = partial(self.env['pos.order.line']._order_line_fields_repair, session_id=ui_order['pos_session_id'])
         else:
