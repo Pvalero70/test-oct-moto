@@ -1,5 +1,0 @@
-1.- Completar el popup
-2.- Establecer los datos en la factura correspondiente
-
-
-https://apps.odoo.com/apps/modules/14.0/pos_order_quotation/
