@@ -73,7 +73,7 @@
         <field name="type">form</field>
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//button[@name='button_validate'][1]" position="after">
+            <xpath expr="(//button[@name='button_validate'])[1]" position="after">
                 <field name="permiso_devolucion" invisible="1"/>
                 <field name="es_devolucion" invisible="1"/>
                 <button name="button_solicitar_devolucion"
@@ -84,13 +84,13 @@
                         string="Solicitar devolucion" type="object" groups="stock.group_stock_user" data-hotkey="v"/>
 
             </xpath>
-            <xpath expr="//button[@name='button_validate'][1]" position="attributes">
+            <xpath expr="(//button[@name='button_validate'])[1]" position="attributes">
 
                 <attribute name="attrs">{'invisible': ['|','|',('state', 'in',
                     ('waiting','confirmed')),('show_validate', '=', False),('permiso_devolucion','=',False)]}
                 </attribute>
             </xpath>
-            <xpath expr="//button[@name='button_validate'][2]" position="attributes">
+            <xpath expr="(//button[@name='button_validate'])[2]" position="attributes">
                 <attribute name="attrs">{'invisible': ['|','|',('state', 'not in',
                     ('waiting','confirmed')),('show_validate', '=', False),('permiso_devolucion','=',False)]}
                 </attribute>
