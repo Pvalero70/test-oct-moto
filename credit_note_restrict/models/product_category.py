@@ -141,7 +141,7 @@ class AccountTranzientReversal(models.TransientModel):
                         continue
             else:
                 for line in move.invoice_line_ids:
-
+                    categoria = line.product_id.categ_id
                     line.product_id = product_descuento
                     line.name = line._get_computed_name()
                     line.account_id = line._get_computed_account()
@@ -154,7 +154,8 @@ class AccountTranzientReversal(models.TransientModel):
                     line_arr = []
                     line_arr.append((1, line.id,
                                      {'quantity': 1, 'price_unit': total,
-                                      'amount_currency': line.amount_currency}))
+                                      'amount_currency': line.amount_currency,
+                                           'account_id': categoria.account_discount_id.id}))
 
                     move.write({'invoice_line_ids': line_arr})
                     line._onchange_account_id()
