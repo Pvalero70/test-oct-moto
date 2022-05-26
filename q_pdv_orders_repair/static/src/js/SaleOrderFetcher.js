@@ -1,4 +1,3 @@
-/* global Backbone, waitForWebfonts */
 odoo.define('q_pdv_orders_repair.SaleOrderFetcher', function (require) {
     "use strict";
 

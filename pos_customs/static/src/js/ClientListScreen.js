@@ -18,7 +18,7 @@ odoo.define('pos_custom_settle_due.ClientListScreen', function (require) {
                     method: 'search_read',
                     args: [[['id', 'in', this.env.pos.db.partner_sorted]], ['total_due']],
                 });
-                console.log(partnersWithUpdatedFields)
+                // console.log(partnersWithUpdatedFields)
                 // this.env.pos.db.update_partners(partnersWithUpdatedFields);
                 // this.render();
             }

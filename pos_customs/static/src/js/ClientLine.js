@@ -13,15 +13,19 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                 if (this.props.selectedClient == this.props.partner) {
                     event.stopPropagation();
                 }
-                console.log("Da clic")
-                console.log(this.props.partner.id)
-                console.log(this.env.pos.db.partner_sorted)
+                // console.log("Da clic")
+                // console.log(this)
+                // console.log(this.env.pos.company.id)
+                // console.log(this.props.partner.id)
+                // console.log(this.env.pos.db.partner_sorted)
+
+                const company_id = this.env.pos.company.id
 
                 const partnerInvoices = await this.rpc({
                     model: 'account.move',
                     method: 'search_read',
                     // args: [[['partner_id', '=', this.props.partner.id]], ['name', 'amount_total', 'amount_residual_signed', 'state']],
-                    args: [[['partner_id', '=', this.props.partner.id], ['payment_state', '=', 'not_paid'], ['state', '=', 'posted'], ['amount_residual_signed', '>', 0]], ['name', 'amount_total', 'amount_residual_signed', 'state']],
+                    args: [[['company_id', '=', company_id], ['partner_id', '=', this.props.partner.id], ['state', '=', 'posted'], ['amount_residual_signed', '>', 0]], ['name', 'amount_total', 'amount_residual_signed', 'state']],
                 });
                 
                 console.log(partnerInvoices)
@@ -41,17 +45,17 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                     title: this.env._t('Selecciona la factura a pagar'),
                     list: selectionInvoiceList,
                 });
+                
+                // console.log("Factura seleccionada")
+                // console.log(selectedInvoice)
+                // console.log(confirmedInvoice)
 
-                console.log("Factura seleccionada")
-                console.log(selectedInvoice)
-                console.log(confirmedInvoice)
-
-                // if (!confirmedInvoice) return;
+                if (!selectedInvoice) return;
 
                 const paymentMethods = this.env.pos.payment_methods.filter(
                     (method) => this.env.pos.config.payment_method_ids.includes(method.id) && method.type != 'pay_later'
                 );
-                console.log(paymentMethods)
+                // console.log(paymentMethods)
 
                 const selectionList = paymentMethods.map((paymentMethod) => ({
                     id: paymentMethod.id,
@@ -59,17 +63,17 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                     item: paymentMethod,
                 }));
                 
-                console.log(selectionList)
+                // console.log(selectionList)
 
                 const { confirmed, payload: selectedPaymentMethod } = await this.showPopup('SelectionPopup', {
                     title: this.env._t('Selecciona el metodo de pago para la factura'),
                     list: selectionList,
                 });
-                console.log(confirmed)
+                // console.log(confirmed)
 
                 if (!confirmed) return;
 
-                console.log("Pasa")
+                // console.log("Pasa")
 
                 this.trigger('discard'); // make sure the ClientListScreen resolves and properly closed.
                 const newOrder = this.env.pos.add_new_order();
