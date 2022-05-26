@@ -106,7 +106,7 @@ class AccountTranzientReversal(models.TransientModel):
         ids_lines.pop(0)
         lineasdiferentescategorias=[]
         for move in self.new_move_ids:
-            product_descuento = self.env['product.template'].search(
+            product_descuento = self.env['product.product'].search(
                 [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
             _logger.info("Producto de descuento %s",product_descuento)
             if not product_descuento:
