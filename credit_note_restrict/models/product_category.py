@@ -108,6 +108,7 @@ class AccountTranzientReversal(models.TransientModel):
         for move in self.new_move_ids:
             product_descuento = self.env['product.product'].search(
                 [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
+            _logger.info("Producto de descuento %s",product_descuento)
             if not product_descuento:
                 raise ValidationError(_("No se ha elegido un producto para tomar como descuento en notas de credito"))
 
