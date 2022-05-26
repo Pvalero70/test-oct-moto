@@ -97,7 +97,7 @@
             </xpath>
             
             <xpath expr="//button[@data-hotkey='k']" position="attributes">
->>>>>>> Stashed changes
+
                 <attribute name="groups">credit_note_restrict.aprobe_devolucion_compra_group</attribute>
             </xpath>
 
