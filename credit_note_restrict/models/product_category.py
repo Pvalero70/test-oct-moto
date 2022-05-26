@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 
 class ResUserInheritDiscount(models.Model):
-    _inherit = 'product.template'
+    _inherit = 'product.product'
 
     is_discount_product = fields.Boolean("Producto para nota de credito", default=False)
 
