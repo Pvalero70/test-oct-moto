@@ -150,6 +150,7 @@ class AccountTranzientReversal(models.TransientModel):
                         taxes = line.move_id.fiscal_position_id.map_tax(taxes)
                     line.tax_ids = taxes
                     line.product_uom_id = line._get_computed_uom()
+                    total = line.quantity * line.price_unit
                     line_arr = []
                     line_arr.append((1, line.id,
                                      {'quantity': 1, 'price_unit': total,
