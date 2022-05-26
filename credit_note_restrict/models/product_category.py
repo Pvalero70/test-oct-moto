@@ -88,45 +88,81 @@ class AccountTranzientReversal(models.TransientModel):
 
 
             move._onchange_invoice_line_ids()
+    def misma_categoria_lines(self,lineas):
+        categorias = [line.product_id.categ_id.id for line in lineas]
+        _logger.info("Categorias = %s",categorias)
+        cat = categorias[0]
+        for categ in categorias:
+            if cat != categ:
+                _logger.info("misma categoria= False")
+                return False
+        _logger.info("misma categoria = True")
+        return True
 
     def reverse_descuento(self):
         total_sum = sum(
             [(line.quantity * line.price_unit) for move in self.new_move_ids for line in move.invoice_line_ids])
         ids_lines = [(2, line.id) for move in self.new_move_ids for line in move.invoice_line_ids]
         ids_lines.pop(0)
+        lineasdiferentescategorias=[]
         for move in self.new_move_ids:
             product_descuento = self.env['product.product'].search(
                 [('is_discount_product', '=', True), ('company_id', '=', move.company_id.id)], limit=1)
             if not product_descuento:
                 raise ValidationError(_("No se ha elegido un producto para tomar como descuento en notas de credito"))
-            if not product_descuento.categ_id.account_discount_id:
-                raise ValidationError(_("No se ha elegido la cuenta de descuento o bonificacion para la categoria %s",product_descuento.categ_id.name))
+
             num_line = 1
             for line in move.invoice_line_ids:
+                if not line.product_id.categ_id.account_discount_id:
+                    raise ValidationError(
+                        _("No se ha elegido la cuenta de descuento o bonificacion para la categoria %s",
+                          line.product_id.categ_id.name))
 
-                if num_line == 1:
-                    num_line += 1
+            if self.misma_categoria_lines(move.invoice_line_ids):
+                for line in move.invoice_line_ids:
+                    if num_line == 1:
+                        num_line += 1
 
-                    line.product_id = product_descuento
-                    line.name = line._get_computed_name()
-                    line.account_id = line._get_computed_account()
-                    taxes = line._get_computed_taxes()
-                    if taxes and line.move_id.fiscal_position_id:
-                        taxes = line.move_id.fiscal_position_id.map_tax(taxes)
-                    line.tax_ids = taxes
-                    line.product_uom_id = line._get_computed_uom()
+                        line.product_id = product_descuento
+                        line.name = line._get_computed_name()
+                        line.account_id = line._get_computed_account()
+                        taxes = line._get_computed_taxes()
+                        if taxes and line.move_id.fiscal_position_id:
+                            taxes = line.move_id.fiscal_position_id.map_tax(taxes)
+                        line.tax_ids = taxes
+                        line.product_uom_id = line._get_computed_uom()
 
 
-                    ids_lines.append((1, line.id,
-                                      {'product_id': product_descuento.id, 'quantity': 1, 'price_unit': total_sum,
-                                       'amount_currency': line.amount_currency,'account_id':product_descuento.categ_id.account_discount_id.id}))
+                        ids_lines.append((1, line.id,
+                                          {'product_id': product_descuento.id, 'quantity': 1, 'price_unit': total_sum,
+                                           'amount_currency': line.amount_currency,'account_id':product_descuento.categ_id.account_discount_id.id}))
 
-                    move.write({'invoice_line_ids': ids_lines})
+                        move.write({'invoice_line_ids': ids_lines})
 
+                        line._onchange_account_id()
+                        line._onchange_price_subtotal()
+
+                        continue
+                else:
+                    for line in move.invoice_line_ids:
+                        categoria_descuento = line.product_id.categ_id
+                        line.product_id = product_descuento
+                        line.name = line._get_computed_name()
+                        line.account_id = line._get_computed_account()
+                        taxes = line._get_computed_taxes()
+                        if taxes and line.move_id.fiscal_position_id:
+                            taxes = line.move_id.fiscal_position_id.map_tax(taxes)
+                        line.tax_ids = taxes
+                        line.product_uom_id = line._get_computed_uom()
+                        total = line.quantity * line.price_unit
+                        lineasdiferentescategorias.append((1, line.id,
+                                          {'product_id': product_descuento.id, 'quantity': 1, 'price_unit': total,
+                                           'amount_currency': line.amount_currency,
+                                           'account_id': categoria_descuento.account_discount_id.id}))
+
+                    move.write({'invoice_line_ids': lineasdiferentescategorias})
                     line._onchange_account_id()
                     line._onchange_price_subtotal()
-
-                    continue
 
             move._onchange_invoice_line_ids()
 
