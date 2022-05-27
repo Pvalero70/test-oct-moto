@@ -1,7 +1,4 @@
+
 ## TestFinal-TTFullMoto [24 may 2022]
-
-## fork: TestVehiculosTT
-
-### with quadit changes
-
-Merge from pruebastt to isaac.
+- Merge to main (dev2) in May 24th (Geradev) 
+- Merge Alejandrodev (24/may/2022)

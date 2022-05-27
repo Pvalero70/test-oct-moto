@@ -8,7 +8,7 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
     const POSRefundButtonCustomHide = (ButtonRefund) =>
         class extends ButtonRefund {
             constructor() {
-                console.log("js:: en mi funcion")
+
 
                 super(...arguments);
                 var session = require('web.session');
@@ -17,12 +17,9 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
 
                 session.user_has_group('credit_note_restrict.credit_note_pos_group').then(function(has_group) {
                     if(has_group) {
-                        console.log("Si tiene grupo")
 
                     } else {
-                        console.log("No tiene grupo")
                         $('document').ready(function(){
-                            console.log("Boton Oculto");
                             document.getElementsByClassName("fa fa-undo")[0].parentElement.style.visibility = "hidden"
                         });
                     }

@@ -1,8 +1,6 @@
-/* global Backbone, waitForWebfonts */
 odoo.define('q_pdv_orders_repair.SaleOrderRow', function (require) {
     "use strict";
 
-    const models = require('point_of_sale.models');
     const { Component } = require('point_of_sale.Registries');
     const SaleOrderRow = require('pos_sale.SaleOrderRow');
 
