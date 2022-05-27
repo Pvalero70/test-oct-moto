@@ -19,7 +19,6 @@
         'pos_settle_due',
         'point_of_sale',
         'stock',
-        'stock_account'
     ],
     'data': [
         'security/credit_note_security.xml',
@@ -40,4 +39,3 @@
     'installable': True,
     'auto_install': False,
 }
-
