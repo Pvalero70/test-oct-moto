@@ -21,8 +21,6 @@ const PaymentScreenBc = (PaymentScreen) =>
                 let product_id = paymentMethod.bank_commission_product_id[0];
                 let product_byid = this.env.pos.db.get_product_by_id(product_id);
                 let oline = this.currentOrder.get_orderlines().find(line => line.product.id === product_id);
-//                console.log("ORDER LINEA:: ");
-//                console.log(oline);
                 let current_com = 0;
                 if (oline && this.currentOrder.get_due() > 0){
                     current_com = oline.price;
