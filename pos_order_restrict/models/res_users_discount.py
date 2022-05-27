@@ -209,7 +209,7 @@ class SaleOrderInherit(models.Model):
 
             descuentos_sol = []
             for order in rec.order_line:
-
+                descuento_encontrado = 0
                 if order.product_template_id and order.product_template_id.categ_id:
 
                     if len(discount_lines) > 0:
@@ -218,11 +218,17 @@ class SaleOrderInherit(models.Model):
                             for categ in discount_line.category_ids:
 
                                 if categ.id == order.product_template_id.categ_id.id:
+                                    descuento_encontrado = 1
                                     if order.discount > discount_line.discount_permitted:
                                         descuentos_sol.append(
                                             {'producto': order.product_template_id.name, 'categoria': categ.name,
                                              'descuento_solicitado': order.discount,
                                              'descuento_permitido': discount_line.discount_permitted})
+                        if descuento_encontrado == 0 and order.discount > 0:
+                            descuentos_sol.append(
+                                {'producto': order.product_template_id.name, 'categoria': order.product_template_id.categ_id.name,
+                                 'descuento_solicitado': order.discount,
+                                 'descuento_permitido': 0})
 
             return descuentos_sol
 
@@ -231,6 +237,7 @@ class SaleOrderInherit(models.Model):
             [('seller_id', '=', self.env.user.id), ('almacen_id', '=', self.warehouse_id.id)])
 
         descuentos_mayores = False
+        tiene_permiso_descuento = True
         errores_string = ''
         _logger.info("SALE ORDER::  lineas de descuento %s", discount_lines)
         for order in self.order_line:
@@ -250,10 +257,11 @@ class SaleOrderInherit(models.Model):
                                     order.product_template_id.name, categ.name, discount_line.discount_permitted)
 
                 if descuento_encontrado == 0 and order.discount > 0:
+                    tiene_permiso_descuento = False
                     errores_string += 'Advertencia!, No tienes permitido hacer descuentos en %s' % (
                         order.product_template_id.categ_id.name)
 
-        if descuentos_mayores == True:
+        if descuentos_mayores == True or tiene_permiso_descuento==False:
             self.need_discount_aprove = True
         else:
             self.need_discount_aprove = False
