@@ -35,7 +35,7 @@
 
     },
     'support': 'support@garazd.biz',
-    'application': True,
+    'application': False,
     'installable': True,
     'auto_install': False,
 }

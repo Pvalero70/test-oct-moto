@@ -10,6 +10,7 @@ class StockPickingInherit(models.Model):
     def button_validate(self):
         res = super(StockPickingInherit, self).button_validate()
         record_repair = self.env['repair.order'].search([('name','=',self.origin)])
+        print(record_repair)
         if record_repair:
             record_repair.write({'picking_confirm': True})
         return res

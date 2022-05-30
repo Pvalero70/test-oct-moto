@@ -38,6 +38,44 @@
                  </div>
             </t>
 
+
+            <!--
+            <div class="invoicing-info">
+                <span class="label">Política de pago</span>
+                <div class="piselect">
+                    <select class="needsclick dfd" t-on-change="captureChange">
+                        <option value="pue">PUE</option>
+                        <option value="ppd">PPD</option>
+                    </select>
+                    <select class="needsclick dffd" t-on-change="captureChange">
+                        <option value="G01">Adquisición de mercancías</option>
+                        <option value="G02">Devoluciones, descuentos o bonificaciones</option>
+                        <option value="G03">Gastos en general</option>
+                        <option value="I01">Construcciones</option>
+                        <option value="I02">Mobilario y equipo de oficina por inversiones</option>
+                        <option value="I03">Equipo de transporte</option>
+                        <option value="I04">Equipo de cómputo y accesorios</option>
+                        <option value="I05">Dados, troqueles, moldes, matrices y herramental</option>
+                        <option value="I06">Comunicaciones telefónicas</option>
+                        <option value="I07">Comunicaciones satelitales</option>
+                        <option value="I08">Otra maquinaria y equipo</option>
+                        <option value="D01">Honorarios médicos, dentales y gastos hospitalarios</option>
+                        <option value="D02">Gastos médicos por incapacidad o discapacidad</option>
+                        <option value="D03">Gastos funerales</option>
+                        <option value="D04">Donativos</option>
+                        <option value="D05">Intereses reales efectivamente pagados por créditos hipotecarios (casa habitación)</option>
+                        <option value="D06">Aportaciones voluntarias al SAR</option>
+                        <option value="D07">Primas por seguros de gastos médicos</option>
+                        <option value="D08">Gastos de transportación escolar obligatoria.</option>
+                        <option value="D09">Depósitos en cuentas para el ahorro, primas que tengan como base planes de pensiones.</option>
+                        <option value="D10">Pagos por servicios educativos (colegiaturas)</option>
+                        <option value="P01">Por definir</option>
+                    </select>
+                </div>
+
+
+            </div>
+            -->
         </xpath>
         <xpath expr="//div[hasclass('payment-buttons')]" position="inside">
             <t t-if="currentOrder.is_payment_invoice">

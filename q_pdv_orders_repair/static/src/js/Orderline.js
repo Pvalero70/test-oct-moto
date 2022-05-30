@@ -1,8 +1,11 @@
+/* global Backbone, waitForWebfonts */
 odoo.define('q_pdv_orders_repair.Orderline', function (require) {
     "use strict";
     
     const models = require('point_of_sale.models');
     var exports = {};
+
+    const _super_orderline = models.Orderline.prototype;
     
     exports.Packlotline = Backbone.Model.extend({
         defaults: {

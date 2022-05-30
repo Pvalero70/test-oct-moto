@@ -6,10 +6,6 @@ from odoo import api, fields, models, _
 from odoo.tools import float_compare, float_is_zero
 from functools import partial
 from odoo.exceptions import ValidationError
-import logging
-
-_log = logging.getLogger("pos order [%s] " % __name__)
-
 
 class PosOrderInherit(models.Model):
     _inherit = "pos.order"
@@ -21,12 +17,13 @@ class PosOrderInherit(models.Model):
 
     @api.model
     def _order_fields(self, ui_order):
+        
         if 'ref_repair' in ui_order:
             process_line = partial(self.env['pos.order.line']._order_line_fields_repair, session_id=ui_order['pos_session_id'])
         else:
             process_line = partial(self.env['pos.order.line']._order_line_fields, session_id=ui_order['pos_session_id'])
 
-        data = {
+        return {
             'user_id': ui_order['user_id'] or False,
             'session_id': ui_order['pos_session_id'],
             'lines': [process_line(l) for l in ui_order['lines']] if ui_order['lines'] else False,
@@ -47,14 +44,11 @@ class PosOrderInherit(models.Model):
             'tip_amount': ui_order.get('tip_amount', 0),
             'ref_repair': ui_order.get('ref_repair', False),
         }
-        _log.info("\n\n DATA =========================>>> %s " % data)
-        return data
     
     @api.model
     def create(self, values):
         session = self.env['pos.session'].browse(values['session_id'])
         values = self._complete_values_from_session(session, values)
-        _log.info("\n\n Create inherit ... VALUES :: %s " % values)
         return super(PosOrderInherit, self).create(values)
 
     @api.model

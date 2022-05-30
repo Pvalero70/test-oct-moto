@@ -1,7 +1,9 @@
 
 odoo.define('pos_customs_sale_order.SaleOrderFetcher', function (require) {
     'use strict';
-
+    
+    // import { patch } from "@web/core/utils/patch";
+    // const patch = require('web/.core.utils.patch')
     const { patch } = require('web.utils');
 
     // console.log(patch)
@@ -45,6 +47,9 @@ odoo.define('pos_customs_sale_order.SaleOrderFetcher', function (require) {
                     this.searchDomain.unshift(['team_id', '=', team_id[0]]);
                 }               
             }
+
+            // console.log("Default domain..")
+            // console.log(this.searchDomain)      
 
             return await this.rpc({
                 model: 'sale.order',

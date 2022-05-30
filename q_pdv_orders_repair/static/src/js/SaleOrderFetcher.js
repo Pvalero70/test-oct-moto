@@ -1,3 +1,4 @@
+/* global Backbone, waitForWebfonts */
 odoo.define('q_pdv_orders_repair.SaleOrderFetcher', function (require) {
     "use strict";
 
@@ -7,37 +8,10 @@ odoo.define('q_pdv_orders_repair.SaleOrderFetcher', function (require) {
     patch(SaleOrderFetcher, "static patch", {
 
         async _getOrderIdsForCurrentPage(limit, offset) {
-            if (this.searchDomain == undefined){
-
-                if (this.comp.env.pos.config.crm_team_id){
-                    let team_id = this.comp.env.pos.config.crm_team_id;
-                    this.searchDomain = [
-                        ['team_id', '=', team_id[0]],
-                        ['state', 'in', ['sale']],
-                        ['invoice_status', 'in', ['to invoice']]
-                    ]
-                }
-                else{
-                    this.searchDomain = [
-                        ['state', 'in', ['sale']]
-                        ['invoice_status', 'in', ['to invoice']]
-                    ]
-                }
-            }
-            else{
-                this.searchDomain[0] = ['state', 'in', ['sale']]
-                this.searchDomain[1] = ['invoice_status', 'in', ['to invoice']]
-
-                if (this.comp.env.pos.config.crm_team_id){
-                    let team_id = this.comp.env.pos.config.crm_team_id;
-                    this.searchDomain.unshift(['team_id', '=', team_id[0]]);
-                }
-            }
-
             return await this.rpc({
                 model: 'sale.order',
                 method: 'search_read',
-                args: [this.searchDomain ? this.searchDomain : [], ['name', 'partner_id', 'amount_total', 'date_order', 'state', 'user_id', 'team_id'], offset, limit],
+                args: [[], ['name', 'partner_id', 'amount_total', 'date_order', 'state', 'user_id'], offset, limit],
                 context: this.comp.env.session.user_context,
             });
         },

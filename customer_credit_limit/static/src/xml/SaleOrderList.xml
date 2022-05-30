@@ -5,7 +5,7 @@
             <div class="order-list">
                 <!--Filter by state here. SaleOrderRow.js-->
                 <t t-foreach="props.orders" t-as="order" t-key="order.id">
-                    <t t-if="order.state === 'sale' or order.state === '2binvoiced'">
+                    <t t-if="order.state === 'sale'">
                         <SaleOrderRow order="order" highlightedOrder="highlightedOrder" />
                     </t>
                 </t>

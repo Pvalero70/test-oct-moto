@@ -13,7 +13,7 @@
     ],
     'assets': {
         'point_of_sale.assets': [
-            # 'pos_customs_sale_order/static/src/js/SaleOrderFetcher.js'
+            'pos_customs_sale_order/static/src/js/SaleOrderFetcher.js'
         ],
         'web.assets_qweb': [
         ],
