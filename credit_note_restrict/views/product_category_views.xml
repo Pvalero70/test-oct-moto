@@ -67,7 +67,8 @@
         </field>
     </record>
 
-    <record id="stock_picking_devolucion_inherit" model="ir.ui.view"> <!--boton solicitar devolucion !-->
+
+    <record id="stock_picking_devolucion_inherit" model="ir.ui.view">
         <field name="name">stock.picking.devolucion</field>
         <field name="model">stock.picking</field>
         <field name="type">form</field>
@@ -85,11 +86,11 @@
 
             </xpath>
             <xpath expr="//header/button[@name='button_validate'][1]" position="attributes">
-
                 <attribute name="attrs">{'invisible': ['|','|',('state', 'in',
                     ('waiting','confirmed')),('show_validate', '=', False),('permiso_devolucion','=',False)]}
                 </attribute>
             </xpath>
+
             <xpath expr="//header/button[@name='button_validate'][2]" position="attributes">
                 <attribute name="attrs">{'invisible': ['|','|',('state', 'not in',
                     ('waiting','confirmed')),('show_validate', '=', False),('permiso_devolucion','=',False)]}
@@ -97,7 +98,6 @@
             </xpath>
 
             <xpath expr="//button[@data-hotkey='k']" position="attributes">
-
                 <attribute name="groups">credit_note_restrict.aprobe_devolucion_compra_group</attribute>
             </xpath>
 
