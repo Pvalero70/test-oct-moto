@@ -38,6 +38,7 @@ odoo.define('q_pdv_orders_repair.PaymentScreen', function (require) {
             this.error = false;
             this.payment_methods_from_config = this.env.pos.payment_methods.filter(method => this.env.pos.config.payment_method_ids.includes(method.id));
         }
+        /*
         get currentOrder() {
             return this.env.pos.get_order();
         }
@@ -47,6 +48,9 @@ odoo.define('q_pdv_orders_repair.PaymentScreen', function (require) {
         get selectedPaymentLine() {
             return this.currentOrder.selected_paymentline;
         }
+        */
+
+        /*
         async selectClient() {
             // IMPROVEMENT: This code snippet is repeated multiple times.
             // Maybe it's better to create a function for it.
@@ -60,6 +64,8 @@ odoo.define('q_pdv_orders_repair.PaymentScreen', function (require) {
                 this.currentOrder.updatePricelist(newClient);
             }
         }
+        */
+        /*
         addNewPaymentLine({ detail: paymentMethod }) {
             // original function: click_paymentmethods
             let result = this.currentOrder.add_paymentline(paymentMethod);
@@ -75,6 +81,8 @@ odoo.define('q_pdv_orders_repair.PaymentScreen', function (require) {
                 return false;
             }
         }
+        */
+        /*
         _updateSelectedPaymentline() {
             if (this.paymentLines.every((line) => line.paid)) {
                 this.currentOrder.add_paymentline(this.payment_methods_from_config[0]);
@@ -94,6 +102,8 @@ odoo.define('q_pdv_orders_repair.PaymentScreen', function (require) {
                 this.selectedPaymentLine.set_amount(NumberBuffer.getFloat());
             }
         }
+        */
+        /*
         toggleIsToInvoice() {
             // click_invoice
             this.currentOrder.set_to_invoice(!this.currentOrder.is_to_invoice());
@@ -102,6 +112,8 @@ odoo.define('q_pdv_orders_repair.PaymentScreen', function (require) {
         openCashbox() {
             this.env.pos.proxy.printer.open_cashbox();
         }
+        */
+        /*
         async addTip() {
             // click_tip
             const tip = this.currentOrder.get_tip();
@@ -118,11 +130,15 @@ odoo.define('q_pdv_orders_repair.PaymentScreen', function (require) {
                 this.currentOrder.set_tip(parse.float(payload));
             }
         }
+        */
+        /*
         toggleIsToShip() {
             // click_ship
             this.currentOrder.set_to_ship(!this.currentOrder.is_to_ship());
             this.render();
         }
+        */
+        /*
         deletePaymentLine(event) {
             var self = this;
             const { cid } = event.detail;
@@ -145,17 +161,18 @@ odoo.define('q_pdv_orders_repair.PaymentScreen', function (require) {
                 this.render();
             }
         }
-        selectPaymentLine(event) {
+        */
+        /*selectPaymentLine(event) {
             const { cid } = event.detail;
             const line = this.paymentLines.find((line) => line.cid === cid);
             this.currentOrder.select_paymentline(line);
             NumberBuffer.reset();
             this.render();
         }
-        /**
+        *//**
          * Returns false if the current order is empty and has no payments.
          * @returns {boolean}
-         */
+         *//*
         _isValidEmptyOrder() {
             const order = this.currentOrder;
             if (order.get_orderlines().length == 0) {
@@ -164,6 +181,7 @@ odoo.define('q_pdv_orders_repair.PaymentScreen', function (require) {
                 return true;
             }
         }
+        */
         async validateOrder(isForceValidate) {
             if(this.env.pos.config.cash_rounding) {
                 if(!this.env.pos.get_order().check_paymentlines_rounding()) {
@@ -184,7 +202,7 @@ odoo.define('q_pdv_orders_repair.PaymentScreen', function (require) {
                 await this._finalizeValidation();
             }
         }
-        async _finalizeValidation() {
+        /*async _finalizeValidation() {
             if ((this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) && this.env.pos.config.iface_cashdrawer) {
                 this.env.pos.proxy.printer.open_cashbox();
             }
@@ -256,7 +274,7 @@ odoo.define('q_pdv_orders_repair.PaymentScreen', function (require) {
                     this.env.pos.push_orders();
                 }
             }
-        }
+        }*/
         get nextScreen() {
             return !this.error? 'ReceiptScreen' : 'ProductScreen';
         }

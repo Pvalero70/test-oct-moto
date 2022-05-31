@@ -21,6 +21,7 @@ class PosOrder(models.Model):
         vals = super()._order_fields(ui_order)
         vals_pos = ui_order.get('to_invoice')
         if isinstance(vals_pos, list):
+            _log.info("\n\n VALS CUSTOM POS FOR INVOICE:: %s " % vals_pos)
             vals['l10n_mx_edi_usage'] = vals_pos[0]
             vals['cfdi_payment_term_id'] = vals_pos[1]
         vals['to_invoice'] = True if ui_order.get('to_invoice') else False
@@ -68,6 +69,7 @@ class PosOrder(models.Model):
             rec.payment_method_id = met[0] if met else False
 
     def _prepare_invoice_vals(self):
+        _log.info("\n\n2) Preparando los valores del uso del CFDI:::  %s " % self.l10n_mx_edi_usage)
         vals = super(PosOrder, self)._prepare_invoice_vals()
         vals['l10n_mx_edi_payment_method_id'] = self.payment_method_id.payment_method_c.id
         vals['l10n_mx_edi_usage'] = self.l10n_mx_edi_usage
