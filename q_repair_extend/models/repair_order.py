@@ -97,7 +97,6 @@ class RepairOrderInherit(models.Model):
         """ This function returns an action that display existing picking orders of given purchase order ids. When only one found, show the picking immediately.
         """
         self.ensure_one()
-        print(pickings)
         result = self.env["ir.actions.actions"]._for_xml_id('stock.action_picking_tree_all')
         result['context'] = {'origin': self.name}
         if not pickings or len(pickings) > 1:
@@ -112,6 +111,5 @@ class RepairOrderInherit(models.Model):
     @api.onchange('location_id')
     def _on_change_location(self):
         for record in self:
-            print("ENTRA")
             rec = self.env['stock.picking.type'].search([('default_location_dest_id', '=',record.location_id.id),('code', '=', 'incoming')], limit=1).id
             record.operation_id = rec

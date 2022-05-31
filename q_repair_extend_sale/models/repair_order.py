@@ -37,8 +37,7 @@ class RepairOrderInherit(models.Model):
         return self._get_action_view_picking(self.picking_sale_ids)
 
     def action_out_sale(self):
-        for record in self:
-            print("Vamos a crear la orden de salida")
+        for record in self: 
             location = self.env['stock.warehouse'].search([('code', '=', record.location_id.location_id.name)])
             obj_picking = self.env['stock.picking']
             record_stock = obj_picking.create(
