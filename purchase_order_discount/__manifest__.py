@@ -18,6 +18,7 @@
         'purchase',
     ],
     'data': [
+        'security/user_discount_security.xml',
         'views/purchase_line_discount_view.xml',
     ],
     'demo': [],

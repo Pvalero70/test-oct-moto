@@ -12,6 +12,17 @@ class PurchaseOrderLineDiscount(models.Model):
     _inherit = 'purchase.order.line'
 
     discount = fields.Float('Descuento %')
+    discount_permited = fields.Boolean(string="Readonly para el campo discount", compute='get_user')
+
+    @api.depends('discount_permited')
+    def get_user(self):
+        _logger.info("Computamos usuario")
+        res_user = self.env['res.users'].search([('id', '=', self._uid)])
+        if res_user.has_group('purchase_order_discount.user_discount_purchase_group'):
+            self.discount_permited = True
+        else:
+            self.discount_permited = False
+        _logger.info("Computamos usuario readonly %s",self.discount_permited)
 
     @api.depends('product_qty', 'price_unit', 'taxes_id','discount')
     def _compute_amount(self):
@@ -38,6 +49,5 @@ class PurchaseOrderLineDiscount(models.Model):
     def _prepare_account_move_line(self):
         vals = super(PurchaseOrderLineDiscount, self)._prepare_account_move_line()
         vals.update({'discount':self.discount})
-        _logger.info("Vals : ",vals)
         return vals
 
