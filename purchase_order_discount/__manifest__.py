@@ -20,6 +20,7 @@
     'data': [
         'security/user_discount_security.xml',
         'views/purchase_line_discount_view.xml',
+        'report/sol_cotizacion_inherit_template.xml',
     ],
     'demo': [],
     'external_dependencies': {

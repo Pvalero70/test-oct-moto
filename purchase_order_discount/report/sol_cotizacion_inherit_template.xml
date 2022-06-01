@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="sol_cotizacion_inherit_template" inherit_id="purchase.report_purchasequotation_document">
+        <xpath expr="//div[hasclass('page')]" position="replace">
+            <div class="page">
+                <h1>Inherit report success</h1>
+            </div>
+        </xpath>
+    </template>
+</odoo>
