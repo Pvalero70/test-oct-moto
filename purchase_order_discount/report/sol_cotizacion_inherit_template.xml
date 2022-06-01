@@ -12,25 +12,25 @@
                     <thead>
                         <tr>
                             <th name="th_description">
-                                <strong>Description</strong>
+                                <strong>Descripcion</strong>
                             </th>
                             <th name="th_taxes">
-                                <strong>Taxes</strong>
+                                <strong>Impuestos</strong>
                             </th>
                             <th name="th_date_req" class="text-center">
-                                <strong>Date Req.</strong>
+                                <strong>Fecha Esperada.</strong>
                             </th>
                             <th name="th_quantity" class="text-right">
-                                <strong>Qty</strong>
+                                <strong>Cantidad</strong>
                             </th>
                             <th name="th_price_unit" class="text-right">
-                                <strong>Unit Price</strong>
+                                <strong>Precio Unitario</strong>
                             </th>
                             <th name="th_discount" class="text-right">
                                 <strong>Descuento</strong>
                             </th>
                             <th name="th_amount" class="text-right">
-                                <strong>Amount</strong>
+                                <strong>Cantidad</strong>
                             </th>
                         </tr>
                     </thead>
