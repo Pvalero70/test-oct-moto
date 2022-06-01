@@ -18,8 +18,8 @@ class ResUserInheritDiscount(models.Model):
 class ResUserInheritDiscount(models.Model):
     _inherit = 'product.category'
 
-    account_credit_note_id = fields.Many2one('account.account', "Cuenta de devolucion")
-    account_discount_id = fields.Many2one('account.account', "Cuenta de descuento o bonificacion")
+    account_credit_note_id = fields.Many2one('account.account', string="Cuenta de devolucion", company_dependent=True)
+    account_discount_id = fields.Many2one('account.account', string="Cuenta de descuento o bonificacion", company_dependent=True)
 
 
 class AccountMoveInherit(models.Model):

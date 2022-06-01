@@ -9,9 +9,11 @@
 
             <xpath expr="//field[@name='property_account_expense_categ_id']" position="after">
                 <field name="account_credit_note_id"
-                       domain="[('deprecated','=',False),('internal_type','=','other'),('company_id','=',current_company_id),('is_off_balance','=',False)]"/>
+                       domain="[('deprecated','=',False),('internal_type','=','other'),('company_id','=',current_company_id),('is_off_balance','=',False)]"
+                        options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True,}"/>
                 <field name="account_discount_id"
-                       domain="[('deprecated','=',False),('internal_type','=','other'),('company_id','=',current_company_id),('is_off_balance','=',False)]"/>
+                       domain="[('deprecated','=',False),('internal_type','=','other'),('company_id','=',current_company_id),('is_off_balance','=',False)]"
+                       options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True,}"/>
             </xpath>
 
         </field>
