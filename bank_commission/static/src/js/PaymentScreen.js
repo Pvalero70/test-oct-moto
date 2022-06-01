@@ -21,8 +21,6 @@ const PaymentScreenBc = (PaymentScreen) =>
                 let product_id = paymentMethod.bank_commission_product_id[0];
                 let product_byid = this.env.pos.db.get_product_by_id(product_id);
                 let oline = this.currentOrder.get_orderlines().find(line => line.product.id === product_id);
-                console.log("ORDER LINEA:: ");
-                console.log(oline);
                 let current_com = 0;
                 if (oline && this.currentOrder.get_due() > 0){
                     current_com = oline.price;
@@ -31,7 +29,6 @@ const PaymentScreenBc = (PaymentScreen) =>
                 if (paymentMethod.bank_commission_method == "percentage"){
                     let total_due = this.currentOrder.get_total_with_tax()-current_com-this.currentOrder.get_total_paid()+ this.currentOrder.get_rounding_applied();
                     price = total_due * (paymentMethod.bank_commission_amount/100);
-//                     Restar lo que ya se tenga de comision.
 //                    price = this.currentOrder.get_due() * (paymentMethod.bank_commission_amount/100);
                 }
                 if (paymentMethod.bank_commission_method == "fixed"){

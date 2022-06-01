@@ -22,10 +22,10 @@ _logger = logging.getLogger(__name__)
 class PosOrder(models.Model):
     _inherit = "pos.order"
 
-    @api.model
-    def create_from_ui(self, orders, draft=False):
-        _logger.info("## SOBRE ESCRIBE CREAR ORDEN ##")
-        _logger.info(orders)
-        res = super(PosOrder, self).create_from_ui(orders, draft)
-        _logger.info(res)
-        return res
+    # @api.model
+    # def create_from_ui(self, orders, draft=False):
+        # _logger.info("## SOBRE ESCRIBE CREAR ORDEN ##")
+        # _logger.info(orders)
+        # res = super(PosOrder, self).create_from_ui(orders, draft)
+        # _logger.info(res)
+        # return res

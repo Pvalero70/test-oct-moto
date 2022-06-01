@@ -21,6 +21,7 @@ class PosOrder(models.Model):
         vals = super()._order_fields(ui_order)
         vals_pos = ui_order.get('to_invoice')
         if isinstance(vals_pos, list):
+            _log.info("\n\n VALS CUSTOM POS FOR INVOICE:: %s " % vals_pos)
             vals['l10n_mx_edi_usage'] = vals_pos[0]
             vals['cfdi_payment_term_id'] = vals_pos[1]
         vals['to_invoice'] = True if ui_order.get('to_invoice') else False
@@ -68,6 +69,7 @@ class PosOrder(models.Model):
             rec.payment_method_id = met[0] if met else False
 
     def _prepare_invoice_vals(self):
+        _log.info("\n\n2) Preparando los valores del uso del CFDI:::  %s " % self.l10n_mx_edi_usage)
         vals = super(PosOrder, self)._prepare_invoice_vals()
         vals['l10n_mx_edi_payment_method_id'] = self.payment_method_id.payment_method_c.id
         vals['l10n_mx_edi_usage'] = self.l10n_mx_edi_usage
@@ -152,13 +154,10 @@ class PosOrder(models.Model):
             invoice_data['invoice_line_ids'] = new_invoice_line_ids
         return invoice_data
 
-    def _apply_invoice_payments_bc(self, invoice):
+    def _apply_invoice_payments_bc(self, invoice, order):
         receivable_account = self.env["res.partner"]._find_accounting_partner(self.partner_id).property_account_receivable_id
-        # payment_moves = self.payment_ids._create_payment_moves()
-        # Buscar los pagos creados
-        invoice_receivable = self.account_move.line_ids.filtered(lambda line: line.account_id == receivable_account)
-        # Reconcile the invoice to the created payment moves.
-        # But not when the invoice's total amount is zero because it's already reconciled.
+        payment_moves = order.payment_ids.mapped('account_move_id')
+        invoice_receivable = invoice.line_ids.filtered(lambda line: line.account_id == receivable_account)
         if not invoice_receivable.reconciled and receivable_account.reconcile:
             payment_receivables = payment_moves.mapped('line_ids').filtered(lambda line: line.account_id == receivable_account)
             (invoice_receivable | payment_receivables).reconcile()
@@ -194,9 +193,8 @@ class PosOrder(models.Model):
                 delta_days = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.days > 0 and x.option == "day_after_invoice_date")[:1].days
                 new_move.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
                 new_move._compute_l10n_mx_edi_payment_policy()
-            # Add payment to bc here. the payment moves must be created before here.
-            # if new_move_bc is not None:
-            #     self._apply_invoice_payments_bc(new_move_bc)
+            if new_move_bc is not None:
+                self._apply_invoice_payments_bc(new_move_bc, order=order)
 
         if not moves:
             return {}
