@@ -16,13 +16,13 @@ class PurchaseOrderLineDiscount(models.Model):
 
     @api.depends('discount_permited')
     def get_user(self):
-        _logger.info("Computamos usuario")
+
         res_user = self.env['res.users'].search([('id', '=', self._uid)])
         if res_user.has_group('purchase_order_discount.user_discount_purchase_group'):
             self.discount_permited = True
         else:
             self.discount_permited = False
-        _logger.info("Computamos usuario readonly %s",self.discount_permited)
+
 
     @api.depends('product_qty', 'price_unit', 'taxes_id','discount')
     def _compute_amount(self):
