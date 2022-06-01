@@ -18,5 +18,8 @@ class PurchaseOrderLineDiscount(models.Model):
     def _compute_discount_subtotal(self):
         _logger.info("Descuento computar")
         subtotal = self.price_unit * self.product_qty
-        self.price_subtotal = subtotal - (subtotal * (self.discount/100))
+        total = subtotal - (subtotal * (self.discount/100))
+        _logger.info("total %s",self.total)
+        self.write({'price_subtotal':total})
+
 
