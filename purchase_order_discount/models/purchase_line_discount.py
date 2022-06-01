@@ -16,9 +16,10 @@ class PurchaseOrderLineDiscount(models.Model):
     @api.depends('product_qty', 'price_unit', 'taxes_id','discount')
     def _compute_amount(self):
         vals = super(PurchaseOrderLineDiscount, self)._compute_amount()
+        return vals
 
     def _prepare_compute_all_values(self):
-        _logger.info("Computamos discount")
+
         # Hook method to returns the different argument values for the
         # compute_all method, due to the fact that discounts mechanism
         # is not implemented yet on the purchase orders.
