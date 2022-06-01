@@ -24,10 +24,10 @@ class PurchaseOrderLineDiscount(models.Model):
             self.discount_permited = False
 
 
-    #@api.depends('product_qty', 'price_unit', 'taxes_id','discount')
-    #def _compute_amount(self):
-    #    vals = super(PurchaseOrderLineDiscount, self)._compute_amount()
-    #    return vals
+    @api.depends('product_qty', 'price_unit', 'taxes_id','discount')
+    def _compute_amount(self):
+        vals = super(PurchaseOrderLineDiscount, self)._compute_amount()
+        return vals
 
     def _prepare_compute_all_values(self):
 

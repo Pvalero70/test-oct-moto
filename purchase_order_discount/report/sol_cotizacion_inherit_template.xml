@@ -5,7 +5,7 @@
             <div class="page">
                 <div class="oe_structure"/>
 
-                <h2>Request for Quotation
+                <h2>Solicitud de presupuesto
                     <span t-field="o.name"/>
                 </h2>
                 <table class="table table-sm o_main_table">
