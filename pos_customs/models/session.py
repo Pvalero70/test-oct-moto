@@ -70,17 +70,21 @@ class PosSession(models.Model):
                     move_line_ids.append(move_line.id)
 
         if pago_pos_close:
-            # _logger.info("## PAGO POS CLOSE ##")
-            # _logger.info(pago_pos_close.name)
+            _logger.info("## PAGO POS CLOSE ##")
+            _logger.info(pago_pos_close.name)
+            _logger.info(pago_pos_close.amount)
+            _logger.info(monto_payment_pos)
 
-            pago_pos_close.action_draft()
-            # _logger.info("## Se cambia a borrador ##")
-            # _logger.info(pago_pos_close.amount)
-            pago_pos_close.amount = pago_pos_close.amount - monto_payment_pos
-            # _logger.info("## Se actualiza monto ##")
-            # _logger.info(pago_pos_close.amount)
-            pago_pos_close.action_post()
-            # _logger.info("## Se vuelve a confirmar ##")
+            if monto_payment_pos > 0:
+
+                pago_pos_close.action_draft()
+                # _logger.info("## Se cambia a borrador ##")
+                # _logger.info(pago_pos_close.amount)
+                pago_pos_close.amount = pago_pos_close.amount - monto_payment_pos
+                # _logger.info("## Se actualiza monto ##")
+                # _logger.info(pago_pos_close.amount)
+                pago_pos_close.action_post()
+                # _logger.info("## Se vuelve a confirmar ##")
 
         all_related_moves = self._get_related_account_moves()
         lines = self.env['account.move.line']
@@ -101,9 +105,11 @@ class PosSession(models.Model):
 
         move_lines = lines.search([('id', 'in', related_ids)])
 
-        if payment_partner_list:
-            _logger.info("Se cambia a borrador el asiento del POS")
-            session_move.button_draft()
+        if not payment_partner_list:
+            return
+
+        _logger.info("Se cambia a borrador el asiento del POS")
+        session_move.button_draft()
 
         _logger.info("Se empiezan a procesas la lista de los pagos")
         sum_credits_updated = 0
