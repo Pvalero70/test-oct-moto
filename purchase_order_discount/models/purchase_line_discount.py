@@ -13,10 +13,22 @@ class PurchaseOrderLineDiscount(models.Model):
 
     discount = fields.Float('Descuento %')
 
-    @api.onchange('discount', 'price_unit', 'product_qty')
-    def _compute_discount_subtotal(self):
-        _logger.info("Descuento computar")
-        subtotal = self.price_unit * self.product_qty
-        total = subtotal - (subtotal * (self.discount / 100))
-        _logger.info("total %s", total)
-        self.write({'price_subtotal': total})
+    @api.depends('product_qty', 'price_unit', 'taxes_id','discount')
+    def _compute_amount(self):
+        vals = super(PurchaseOrderLineDiscount, self)._compute_amount()
+
+    def _prepare_compute_all_values(self):
+        _logger.info("Computamos discount")
+        # Hook method to returns the different argument values for the
+        # compute_all method, due to the fact that discounts mechanism
+        # is not implemented yet on the purchase orders.
+        # This method should disappear as soon as this feature is
+        # also introduced like in the sales module.
+        self.ensure_one()
+        return {
+            'price_unit': self.price_unit - (self.price_unit * (self.discount/100)),
+            'currency': self.order_id.currency_id,
+            'quantity': self.product_qty,
+            'product': self.product_id,
+            'partner': self.order_id.partner_id,
+        }
