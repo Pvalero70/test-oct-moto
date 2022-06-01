@@ -33,3 +33,11 @@ class PurchaseOrderLineDiscount(models.Model):
             'product': self.product_id,
             'partner': self.order_id.partner_id,
         }
+
+    #Modificamos para la creacion de la factura
+    def _prepare_account_move_line(self):
+        vals = super(PurchaseOrderLineDiscount, self)._prepare_account_move_line()
+        vals.update({'discount':self.discount})
+        _logger.info("Vals : ",vals)
+        return vals
+
