@@ -5,7 +5,12 @@
 
         <xpath expr="//div[hasclass('search-box')]" position="before">
             <div class="tipo-box">
-                <label for="">Ordenes de reparación: <input class='tipo_orden_filtro' type='checkbox' /></label> 
+                <label for="">Ordenes de reparación: 
+                    <select class='tipo_orden_filtro' >
+                        <option value='sale'>Ventas</option>
+                        <option value='repair'>Reparaciones</option>
+                    </select>
+                </label> 
             </div>
         </xpath>
                
