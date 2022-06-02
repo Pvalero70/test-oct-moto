@@ -22,6 +22,7 @@
     'assets': {
         'point_of_sale.assets': [
             'q_pdv_orders_repair/static/src/js/models.js',
+            'q_pdv_orders_repair/static/src/css/pos.css',
             'q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js',
             'q_pdv_orders_repair/static/src/js/SaleOrderFetcher.js',
             'q_pdv_orders_repair/static/src/js/Orderline.js',
