@@ -21,8 +21,17 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
                     } else {
                         try {
                           $('document').ready(function(){
-                            document.getElementsByClassName("fa fa-undo")[0].parentElement.style.visibility = "hidden"
-                            });
+                            var button = document.getElementsByClassName("fa fa-undo");
+                            if (button.length > 0){
+                                button = button[0];
+                                if (button){
+                                    if(button.parentElement){
+                                        button.parentElement.style.visibility = "hidden";
+                                    }
+                                }
+
+                            }
+
                         } catch (error) {
                           console.error(error);
 
