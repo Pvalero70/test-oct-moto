@@ -12,7 +12,7 @@
     'summary': 'Plugin for PdV',
     'license': 'LGPL-3',
     'depends': [
-        'l10n_mx_edi','repair','point_of_sale'
+        'l10n_mx_edi','repair','point_of_sale', 'pos_sale'
     ],
     'data': [
         'views/repair_order.xml',
