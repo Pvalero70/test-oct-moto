@@ -8,7 +8,7 @@ from lxml import etree
 _logger = logging.getLogger(__name__)
 
 
-class PurchaseOrderLineDiscount(models.Model):
+class StockQuantInherit(models.Model):
     _inherit = 'stock.quant'
 
     default_code = fields.Char(string="Referencia interna", related='product_id.default_code')
