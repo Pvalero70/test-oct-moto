@@ -89,12 +89,12 @@ odoo.define('q_pdv_orders_repair.SaleOrderFetcher', function (require) {
                 delete element.schedule_date;
                 return element;
             })
-            console.log.log(sale_repairs)
+            console.log(sale_repairs)
             var sale_orders_real = sale_orders.concat(sale_repairs)
-            console.log.log("Total Orders")
-            console.log.log(sale_orders_real)
+            console.log("Total Orders")
+            console.log(sale_orders_real)
             this.totalCount = sale_orders_real.length;
-            console.log.log( this.totalCount)
+            console.log( this.totalCount)
             return sale_orders_real;
         }
 
