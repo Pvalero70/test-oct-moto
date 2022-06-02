@@ -1,0 +1,13 @@
+.order-management-screen .control-panel .search-box
+{
+    flex: 1 !important;
+    text-align: left !important;
+}
+
+.order-management-screen .control-panel .tipo-box
+{
+    flex: 1;
+    position: relative;
+    text-align: right;
+    margin: 0.2rem;
+}

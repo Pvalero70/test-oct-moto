@@ -22,7 +22,7 @@
 
         ],
         'web.assets_qweb': [
-            'customer_credit_limit/static/src/xml/SaleOrderList.xml',
+            # 'customer_credit_limit/static/src/xml/SaleOrderList.xml',
         ],
     },
     "auto_install": False,

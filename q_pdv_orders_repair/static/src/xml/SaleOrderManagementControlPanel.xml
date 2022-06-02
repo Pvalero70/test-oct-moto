@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="SaleOrderManagementControlPanel" t-inherit="pos_sale.SaleOrderManagementControlPanel" t-inherit-mode="extension" owl="1">
+
+        <xpath expr="//div[hasclass('search-box')]" position="before">
+            <div class="item tipo-box">
+                <label for="">Tipo ordenes: 
+                    <select class='item tipo_orden_filtro' >
+                        <option value='sale'>Ventas</option>
+                        <option value='repair'>Reparaciones</option>
+                    </select>
+                </label> 
+            </div>
+        </xpath>
+               
+    </t>
+
+</templates>

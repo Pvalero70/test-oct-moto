@@ -12,7 +12,7 @@
     'summary': 'Plugin for PdV',
     'license': 'LGPL-3',
     'depends': [
-        'l10n_mx_edi','repair','point_of_sale'
+        'l10n_mx_edi','repair','point_of_sale', 'pos_sale'
     ],
     'data': [
         'views/repair_order.xml',
@@ -22,6 +22,7 @@
     'assets': {
         'point_of_sale.assets': [
             'q_pdv_orders_repair/static/src/js/models.js',
+            'q_pdv_orders_repair/static/src/css/pos.css',
             'q_pdv_orders_repair/static/src/js/SaleOrderManagementScreen.js',
             'q_pdv_orders_repair/static/src/js/SaleOrderFetcher.js',
             'q_pdv_orders_repair/static/src/js/Orderline.js',
