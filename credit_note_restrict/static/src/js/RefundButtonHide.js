@@ -31,7 +31,7 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
                                 }
 
                             }
-
+                           }
                         } catch (error) {
                           console.error(error);
 
