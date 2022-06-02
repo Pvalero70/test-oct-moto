@@ -18,28 +18,27 @@ odoo.define('credit_note_restrict.RefundButtonHide', function (require) {
                 session.user_has_group('credit_note_restrict.credit_note_pos_group').then(function(has_group) {
                     if(has_group) {
 
-                    }
-                    else {
+                    } else {
                         try {
-                           $('document').ready(function(){
-                                var button = document.getElementsByClassName("fa fa-undo");
-                                if (button.length > 0){
+                          $('document').ready(function(){
+                            var button = document.getElementsByClassName("fa fa-undo");
+                                if (button.length > 0) {
                                     button = button[0];
-                                    if (typeof(button) != 'undefined'){
-                                        if(typeof(button.parentElement)!='undefined'){
+                                    if ( typeof(button) != 'undefined'){
+                                        if( typeof(button.parentElement) != 'undefined'){
                                             button.parentElement.style.visibility = "hidden";
                                         }
                                     }
 
                                 }
-                           }
+
+                            });
                         } catch (error) {
                           console.error(error);
 
                         }
                     }
                 });
-
 
 
 
