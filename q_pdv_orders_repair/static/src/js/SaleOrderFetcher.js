@@ -72,8 +72,8 @@ odoo.define('q_pdv_orders_repair.SaleOrderFetcher', function (require) {
             console.log("## Fetch ##")
             
             var tipo_orden_filtro = $('.tipo_orden_filtro').val();
-            console.log("Is checked: ")
-            console.log(is_checked)
+            console.log("Tipo Filtro: ")
+            console.log(tipo_orden_filtro)
 
             console.log("## Orders ##")
             const sale_orders = await this._getOrderIdsForCurrentPage(limit, offset);
