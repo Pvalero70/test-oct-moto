@@ -70,6 +70,11 @@ odoo.define('q_pdv_orders_repair.SaleOrderFetcher', function (require) {
 
         async _fetch(limit, offset) {
             console.log("## Fetch ##")
+            
+            var is_checked = $('.tipo_order_filtro').is(':checked');
+            console.log("Is checked: ")
+            console.log(is_checked)
+
             console.log("## Orders ##")
             const sale_orders = await this._getOrderIdsForCurrentPage(limit, offset);
             console.log(sale_orders)
@@ -91,6 +96,9 @@ odoo.define('q_pdv_orders_repair.SaleOrderFetcher', function (require) {
             })
             console.log(sale_repairs)
             var sale_orders_real = sale_orders//.concat(sale_repairs)
+            if (is_checked){
+                sale_orders_real = sale_repairs
+            }
             // var sale_orders_real = sale_orders.concat(sale_repairs)
             console.log("Total Orders")
             console.log(sale_orders_real)

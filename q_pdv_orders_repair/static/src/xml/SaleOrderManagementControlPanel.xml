@@ -5,7 +5,7 @@
 
         <xpath expr="//div[hasclass('search-box')]" position="before">
             <div class="item tipo-box">
-                <input type='checkbox' /> 
+                <label for="">Ordenes de reparación: <input class='tipo_order_filtro' type='checkbox' /></label> 
             </div>
         </xpath>
                
