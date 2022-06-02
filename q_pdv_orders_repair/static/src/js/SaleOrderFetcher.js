@@ -90,7 +90,8 @@ odoo.define('q_pdv_orders_repair.SaleOrderFetcher', function (require) {
                 return element;
             })
             console.log(sale_repairs)
-            var sale_orders_real = sale_orders.concat(sale_repairs)
+            var sale_orders_real = sale_orders//.concat(sale_repairs)
+            // var sale_orders_real = sale_orders.concat(sale_repairs)
             console.log("Total Orders")
             console.log(sale_orders_real)
             this.totalCount = sale_orders_real.length;
