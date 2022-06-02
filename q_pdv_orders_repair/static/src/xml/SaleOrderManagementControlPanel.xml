@@ -4,8 +4,8 @@
     <t t-name="SaleOrderManagementControlPanel" t-inherit="pos_sale.SaleOrderManagementControlPanel" t-inherit-mode="extension" owl="1">
 
         <xpath expr="//div[hasclass('search-box')]" position="before">
-            <div class="item tipo-box">
-                <label for="">Ordenes de reparación: <input class='tipo_order_filtro' type='checkbox' /></label> 
+            <div class="tipo-box">
+                <label for="">Ordenes de reparación: <input class='tipo_orden_filtro' type='checkbox' /></label> 
             </div>
         </xpath>
                
