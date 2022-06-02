@@ -82,7 +82,7 @@ odoo.define('q_pdv_orders_repair.SaleOrderFetcher', function (require) {
             console.log("## Repairs ##")
             
             const sale_repairs = await this._getRepairsIdsForCurrentPage(limit, offset);
-            console.log.log(sale_repairs)
+            console.log(sale_repairs)
             sale_repairs.map(element => {
                 element.date_order = element.schedule_date;
                 element.model = 'repair';      
