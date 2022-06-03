@@ -16,6 +16,7 @@ class PurchaseOrderLineDiscount(models.Model):
 
     @api.onchange('discount')
     def _compute_discount_permited(self):
+        _logger.info("ON CHANGE DISCOUNT %s",self.discount)
         if self.discount>100 or self.discount<0:
             raise ValidationError(_("El descuento introducido debe ser entre 0 y 100"))
 
