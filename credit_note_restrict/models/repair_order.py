@@ -9,8 +9,8 @@ from lxml import etree
 _logger = logging.getLogger(__name__)
 
 
-class SaleOrderButtonInherit(models.Model):
-    _inherit = 'sale.order'
+class RepairOrderButtonInherit(models.Model):
+    _inherit = 'repair.order'
 
     create_invoice_permited = fields.Boolean(string="Permiso para ver el boton CREAR FACTURA", compute='get_user')
 
@@ -18,7 +18,7 @@ class SaleOrderButtonInherit(models.Model):
     def get_user(self):
 
         res_user = self.env['res.users'].search([('id', '=', self._uid)])
-        if res_user.has_group('credit_note_restrict.button_create_inv_sale_group'):
+        if res_user.has_group('credit_note_restrict.button_create_inv_repair_group'):
             self.create_invoice_permited = True
         else:
             self.create_invoice_permited = False
