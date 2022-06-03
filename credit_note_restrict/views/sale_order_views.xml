@@ -17,6 +17,12 @@
                 </attribute>
             </xpath>
 
+            <xpath expr="//button[@data-hotkey='q'][2]" position="attributes">
+                <attribute name="attrs">{'invisible': ['|','|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale'),('create_invoice_permited','=',False)]}
+
+                </attribute>
+            </xpath>
+
 
 
         </field>
