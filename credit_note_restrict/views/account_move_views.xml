@@ -1,0 +1,8 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="account.action_move_out_invoice_type" model="account.move">
+        <field name="context">{'default_move_type': 'out_invoice','default_invoice_date':context_today()}</field>
+    </record>
+
+</odoo>
