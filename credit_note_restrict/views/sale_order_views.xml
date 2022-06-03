@@ -7,11 +7,11 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
 
-            <xpath expr="//field[@data-hotkey='q'][1]" position="before">
+            <xpath expr="//button[@data-hotkey='q'][1]" position="before">
                 <field name="create_invoice_permited" invisible="1"/>
             </xpath>
 
-            <xpath expr="//field[@data-hotkey='q'][1]" position="attributes">
+            <xpath expr="//button[@data-hotkey='q'][1]" position="attributes">
                 <attribute name="attrs">{'invisible': ['|',('invoice_status', '!=', 'to invoice'),('create_invoice_permited','=',False)]}
 
                 </attribute>
