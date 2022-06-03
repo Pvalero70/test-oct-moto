@@ -14,6 +14,11 @@ class PurchaseOrderLineDiscount(models.Model):
     discount = fields.Float('Descuento %')
     discount_permited = fields.Boolean(string="Readonly para el campo discount", compute='get_user')
 
+    @api.onchange('discount')
+    def _compute_discount_permited(self):
+        if self.discount>100 or self.discount<0:
+            raise ValidationError(_("El descuento introducido debe ser entre 0 y 100"))
+
     @api.depends('discount_permited')
     def get_user(self):
 
