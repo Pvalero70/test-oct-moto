@@ -14,10 +14,10 @@ class ResPartnertInherit(models.Model):
     def _default_seq_code(self):
         for rec in self:
             seq = ""
-            if self.supplier_rank > 0: #Es un proveedor
+            if rec.supplier_rank > 0: #Es un proveedor
                 seq = rec.env['ir.sequence'].next_by_code('res.partner.proveedor.sequence')
 
-            if self.customer_rank > 0: #es un cliente
+            if rec.customer_rank > 0: #es un cliente
                 seq = rec.env['ir.sequence'].next_by_code('res.partner.cliente.sequence')
             _logger.info("Sequencial = %s",seq)
             rec.sequencial_code_z = seq
