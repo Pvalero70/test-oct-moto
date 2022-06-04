@@ -11,8 +11,8 @@
             <xpath expr="//field[@name='ref']" position="before">
                 <field name="supplier_rank" invisible="1"/>
                 <field name="customer_rank" invisible="1"/>
-                <field name="sequencial_code_prov" string="Sequencial Code Proveedor" attrs="{'invisible': [('supplier_rank','=', 0)]}"/>
-                <field name="sequencial_code_client" string="Sequencial Code Cliente" attrs="{'invisible': [('customer_rank','=', 0)]}"/>
+                <field name="sequencial_code_prov" string="Numero de Proveedor" attrs="{'invisible': [('supplier_rank','=', 0)]}"/>
+                <field name="sequencial_code_client" string="Numero de Cliente" attrs="{'invisible': [('customer_rank','=', 0)]}"/>
             </xpath>
 
         </field>

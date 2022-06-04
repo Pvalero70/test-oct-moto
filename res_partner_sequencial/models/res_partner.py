@@ -28,7 +28,7 @@ class ResPartnertInherit(models.Model):
 
 
 
-    sequencial_code_prov = fields.Char(string="Sequencial Cliente", readonly=True, required=True, compute='_default_seq_code',store=True)
-    sequencial_code_client = fields.Char(string="Sequencial Proveedor", readonly=True, required=True, compute='_default_seq_code',store=True)
+    sequencial_code_prov = fields.Char(string="Numero de Cliente", readonly=True, compute='_default_seq_code',store=True)
+    sequencial_code_client = fields.Char(string="Numero de Proveedor", readonly=True, compute='_default_seq_code',store=True)
 
 
