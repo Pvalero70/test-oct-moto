@@ -18,9 +18,10 @@ class ResPartnertInherit(models.Model):
 
         if self.customer_rank > 0: #es un cliente
             seq = self.env['ir.sequence'].next_by_code('res.partner.cliente.sequence')
+        _logger.info("Sequencial = %s",seq)
         return seq
 
-    sequencial_code = fields.Char(string="Numero Contacto", readonly=True, required=True, default=_default_seq_code)
+    sequencial_code_n = fields.Char(string="Numero Contacto", readonly=True, required=True, default=_default_seq_code)
 
 
 
