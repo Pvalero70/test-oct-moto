@@ -122,6 +122,7 @@ class PosSession(models.Model):
         _logger.info("Credit Lines")
         _logger.info(credit_lines)
         for crl in credit_lines:
+            _logger.info(crl.move_id.name)
             _logger.info(crl.account_id.name)
             _logger.info(crl.name)
             _logger.info(crl.debit)
@@ -130,6 +131,7 @@ class PosSession(models.Model):
         _logger.info("Debit Lines")
         _logger.info(debit_lines)
         for dbt in debit_lines:
+            _logger.info(dbt.move_id.name)
             _logger.info(dbt.account_id.name)
             _logger.info(dbt.name)
             _logger.info(dbt.debit)
