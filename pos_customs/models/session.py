@@ -160,7 +160,7 @@ class PosSession(models.Model):
                     #     credit_pending = credit_pending - line.credit
                     #     sum_credits_updated += line.credit
                     #     new_credit = 0
-                        _logger.info(new_credit)
+                        _logger.info(new_credit)                       
                         update_lines.append((1, line.id, {"credit" : new_credit}))
                     procesed_lines.append(line.id)
         
@@ -201,6 +201,11 @@ class PosSession(models.Model):
                 _logger.info("Ocurrio un error al actualizar el movimiento")
                 _logger.info(e)
             else:
+                _logger.info("## Elimina lineas en 0 ##")
+                for line in session_move.line_ids:
+                    _logger.info(line.name)
+                    if line.debit == 0 and line.credit == 0:
+                        line.unlink()
                 _logger.info("Se ha actualizado correctamente.")
                 session_move.action_post()
                 # Descomentar para borrar el asiento
