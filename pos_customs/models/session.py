@@ -28,6 +28,14 @@ class PosSession(models.Model):
 
         return res
 
+    def _check_invoices_are_posted(self):
+        unposted_invoices = self.order_ids.account_move.filtered(lambda x: x.state != 'posted' and x.state != 'cancel')
+        if unposted_invoices:
+            raise UserError(_('You cannot close the POS when invoices are not posted or canceled.\n'
+                              'Invoices: %s') % str.join('\n',
+                                                         ['%s - %s' % (invoice.name, invoice.state) for invoice in
+                                                          unposted_invoices]))
+
     def clear_session_close_moves_payments(self):
 
         _logger.info("Metodo que se ejecuta cuando se cierra una session")
