@@ -42,6 +42,8 @@ class PosSession(models.Model):
         session_move = self.move_id
         session_journal = session_move.journal_id
 
+        _logger.info(session_journal.name)
+
         if not payments_rel.ids:
             return
 
