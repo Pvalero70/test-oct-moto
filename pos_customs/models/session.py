@@ -24,7 +24,7 @@ class PosSession(models.Model):
 
         res = super(PosSession, self)._validate_session(balancing_account, amount_to_balance, bank_payment_method_diffs)
 
-        # self.clear_session_close_moves_payments()
+        self.clear_session_close_moves_payments()
 
         return res
 
