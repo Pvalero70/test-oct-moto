@@ -22,7 +22,6 @@ class ResPartnertInherit(models.Model):
         return seq
 
     sequencial_code = fields.Char(string="Numero Contacto", readonly=True, required=True, default=_default_seq_code)
-    sequencial_code_n = fields.Char(string="Numero Contacto", readonly=True, required=True, default=_default_seq_code)
 
 
 
