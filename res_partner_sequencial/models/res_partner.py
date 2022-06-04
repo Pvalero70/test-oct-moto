@@ -11,7 +11,7 @@ _logger = logging.getLogger(__name__)
 class ResPartnertInherit(models.Model):
     _inherit = 'res.partner'
 
-    @api.onchange('supplier_rank')
+    @api.onchange('supplier_rank','company_id')
     def _default_seq_code_prov(self):
         for rec in self:
             if rec.supplier_rank > 0: #Es un proveedor
@@ -21,7 +21,7 @@ class ResPartnertInherit(models.Model):
 
 
 
-    @api.onchange('customer_rank')
+    @api.onchange('customer_rank','company_id')
     def _default_seq_code_client(self):
         for rec in self:
             if rec.customer_rank > 0:  # es un cliente
