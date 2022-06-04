@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- POS ORDER -->
-    <!-- <record id="view_pos_session_form_custom_inherit" model="ir.ui.view">
+    <record id="view_pos_session_form_custom_inherit" model="ir.ui.view">
         <field name="name">view_pos_session_form_custom_inherit</field>
         <field name="model">pos.session</field>
         <field name="inherit_id" ref="point_of_sale.view_pos_session_form"/>
@@ -10,6 +10,6 @@
                 <button name='clear_session_close_moves_payments' type='object' string='Clear Moves' class="oe_highlight"/>
             </button>
         </field>
-    </record> -->
+    </record>
 
 </odoo>
