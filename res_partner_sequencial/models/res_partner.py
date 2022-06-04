@@ -21,8 +21,7 @@ class ResPartnertInherit(models.Model):
         _logger.info("Sequencial = %s",seq)
         return seq
 
-    sequencial_code = fields.Char(string="Numero Contacto", readonly=True, required=True, default=_default_seq_code)
-    sequencial_code_n = fields.Char(string="Numero Contacto", readonly=True, required=True, compute='_default_seq_code',store=True)
 
+    sequencial_code_z = fields.Char(string="Numero Contacto", readonly=True, required=True, compute='_default_seq_code',store=True)
 
 

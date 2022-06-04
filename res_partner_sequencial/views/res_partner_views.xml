@@ -10,7 +10,7 @@
 
             <xpath expr="//field[@name='ref']" position="before">
 
-                <field name="sequencial_code_n" string="Sequencial Code Proveedor"/>
+                <field name="sequencial_code_z" string="Sequencial Code Proveedor"/>
             </xpath>
 
         </field>
