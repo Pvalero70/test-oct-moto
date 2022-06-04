@@ -10,7 +10,8 @@
 
             <xpath expr="//field[@name='ref']" position="before">
 
-                <field name="sequencial_code_z" string="Sequencial Code Proveedor"/>
+                <field name="sequencial_code_prov" string="Sequencial Code Proveedor" attrs="{'invisible': [('supplier_rank','=', 0)]}"/>
+                <field name="sequencial_code_client" string="Sequencial Code Cliente" attrs="{'invisible': [('customer_rank','=', 0)]}"/>
             </xpath>
 
         </field>

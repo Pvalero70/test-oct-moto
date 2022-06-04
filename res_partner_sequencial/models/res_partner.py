@@ -11,6 +11,7 @@ _logger = logging.getLogger(__name__)
 class ResPartnertInherit(models.Model):
     _inherit = 'res.partner'
 
+    @api.onchange('supplier_rank','customer_rank')
     def _default_seq_code(self):
         for rec in self:
             seq = ""
@@ -23,6 +24,7 @@ class ResPartnertInherit(models.Model):
             rec.sequencial_code_z = seq
 
 
-    sequencial_code_z = fields.Char(string="Numero Contacto", readonly=True, required=True, compute='_default_seq_code',store=True)
+    sequencial_code_prov = fields.Char(string="Sequencial Cliente", readonly=True, required=True, compute='_default_seq_code',store=True)
+    sequencial_code_client = fields.Char(string="Sequencial Proveedor", readonly=True, required=True, compute='_default_seq_code',store=True)
 
 
