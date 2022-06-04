@@ -14,8 +14,10 @@ class ResPartnertInherit(models.Model):
     @api.onchange('supplier_rank','company_id')
     def _default_seq_code_prov(self):
         for rec in self:
-            if rec.supplier_rank > 0: #Es un proveedor
-                seq = rec.env['ir.sequence'].next_by_code('res.partner.proveedor.sequence')
+            if rec.supplier_rank > 0 and rec.company_id: #Es un proveedor
+                context = {}
+                context['force_company'] = rec.company_id.id
+                seq = rec.env['ir.sequence'].next_by_code('res.partner.proveedor.sequence',context=context)
                 rec.sequencial_code_prov = seq
                 _logger.info("Proveedor Sequencial = %s", seq)
 
@@ -24,8 +26,10 @@ class ResPartnertInherit(models.Model):
     @api.onchange('customer_rank','company_id')
     def _default_seq_code_client(self):
         for rec in self:
-            if rec.customer_rank > 0:  # es un cliente
-                seq = rec.env['ir.sequence'].next_by_code('res.partner.cliente.sequence')
+            if rec.customer_rank > 0 and rec.company_id:  # es un cliente
+                context = {}
+                context['force_company'] = rec.company_id.id
+                seq = rec.env['ir.sequence'].next_by_code('res.partner.cliente.sequence',context=context)
                 rec.sequencial_code_client = seq
                 _logger.info("Cliente Sequencial = %s", seq)
 
