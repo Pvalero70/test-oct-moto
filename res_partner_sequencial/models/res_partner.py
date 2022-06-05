@@ -68,8 +68,23 @@ class ResPartnertInherit(models.Model):
         for rec in self:
             rec.seq_code_client()
 
+    is_partner_user = fields.Boolean(string="Es partner de un usuario", compute='_get_user_partner')
+
+    @api.depends('is_partner_user')
+    def _get_user_partner(self):
+
+        if self.id:
+            res_user = self.env['res.users'].search([('partner_id', '=', self.id)],limit=1)
+            if len(res_user) == 1:
+                self.is_partner_user = True
+            else:
+                self.is_partner_user = False
+            _logger.info("Is partner User: %s",self.is_partner_user)
+
     sequencial_code_prov = fields.Char(string="Numero de Cliente", compute='_default_seq_code_prov',store=True)
     sequencial_code_client = fields.Char(string="Numero de Proveedor", compute='_default_seq_code_client',store=True)
+
+
 
     @api.onchange('company_id')
     def _compute_sequential(self):
