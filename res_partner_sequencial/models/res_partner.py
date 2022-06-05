@@ -12,7 +12,7 @@ class ResPartnertInherit(models.Model):
     _inherit = 'res.partner'
 
     def seq_code_prov(self):
-        if self.company_id:
+        if self.company_id and self.supplier_rank > 0:
 
             res_partner = self.env['res.partner'].search(
                 [('company_id', '=', self.company_id.id), ('supplier_rank', '>', 0)])
@@ -32,7 +32,7 @@ class ResPartnertInherit(models.Model):
             rec.seq_code_prov()
 
     def seq_code_client(self):
-        if self.company_id:
+        if self.company_id and self.customer_rank > 0:
 
             res_partner = self.env['res.partner'].search(
                 [('company_id', '=', self.company_id.id), ('customer_rank', '>', 0)])
