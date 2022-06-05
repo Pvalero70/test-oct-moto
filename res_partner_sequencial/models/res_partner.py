@@ -65,7 +65,7 @@ class ResPartnertInherit(models.Model):
         for rec in self:
             rec.seq_code_client()
 
-    is_partner_user = fields.Boolean(string="Es partner de un usuario", compute='_get_user_partner')
+    is_partner_user = fields.Boolean(string="Es partner de un usuario", compute='_get_user_partner',store=True)
 
     @api.depends('is_partner_user')
     def _get_user_partner(self):
