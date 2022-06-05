@@ -69,14 +69,13 @@ class ResPartnertInherit(models.Model):
 
     @api.depends('is_partner_user')
     def _get_user_partner(self):
-
-        if self.id:
-            res_user = self.env['res.users'].search([('partner_id', '=', self.id)],limit=1)
+        for rec in self:
+            res_user = rec.env['res.users'].search([('partner_id', '=', rec.id)],limit=1)
             if len(res_user) == 1:
-                self.is_partner_user = True
+                rec.is_partner_user = True
             else:
-                self.is_partner_user = False
-            _logger.info("Is partner User: %s",self.is_partner_user)
+                rec.is_partner_user = False
+            _logger.info("%s Is partner User: %s",rec.name,rec.is_partner_user)
 
     sequencial_code_prov = fields.Char(string="Numero de Cliente", compute='_default_seq_code_prov',store=True)
     sequencial_code_client = fields.Char(string="Numero de Proveedor", compute='_default_seq_code_client',store=True)
