@@ -83,7 +83,7 @@ class ResPartnertInherit(models.Model):
                 rec.is_partner_user = True
             else:
                 rec.is_partner_user = False
-            _logger.info("%s Is partner User: %s", rec.name, rec.is_partner_user)
+
 
     sequencial_code_prov = fields.Char(string="Numero de Cliente", compute='_default_seq_code_prov', store=True)
     sequencial_code_client = fields.Char(string="Numero de Proveedor", compute='_default_seq_code_client', store=True)
