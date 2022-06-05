@@ -12,13 +12,15 @@ class ResPartnertInherit(models.Model):
     _inherit = 'res.partner'
 
     @api.model
-    def _name_search(self, name, args=None, operator='ilike', limit=100):
+    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
         _logger.info("RES PARTNER SEARCH FUNC")
         args = args or []
-        recs = self.browse()
-        if not recs:
-            recs = self.search([('sequencial_code_prov', 'ilike', name),('sequencial_code_client', 'ilike', name)] + args, limit=limit)
-        return recs.name_get()
+
+        if not (name == '' and operator == 'ilike'):
+            args += ['|', ('sequencial_code_prov', 'ilike', name),('sequencial_code_client', 'ilike', name)]
+        return self._search(args, limit=limit, access_rights_uid=name_get_uid)
+
+
 
     def seq_code_prov(self):
         if self.company_id and self.supplier_rank > 0:
