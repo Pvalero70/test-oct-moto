@@ -13,9 +13,11 @@ class ResPartnertInherit(models.Model):
 
     def seq_code_prov(self):
         if self.company_id and self.supplier_rank > 0:
-
             res_partner = self.env['res.partner'].search(
                 [('company_id', '=', self.company_id.id), ('supplier_rank', '>', 0)])
+            if self.id:
+                res_partner = self.env['res.partner'].search(
+                    [('company_id', '=', self.company_id.id), ('id','!=',self.id), ('supplier_rank', '>', 0)])
             arr = [contac.sequencial_code_prov for contac in res_partner]
 
             _logger.info("Res Partner Prov::Valores encontrados = %s, array valores = %s,company activa = %s ",
@@ -36,6 +38,10 @@ class ResPartnertInherit(models.Model):
 
             res_partner = self.env['res.partner'].search(
                 [('company_id', '=', self.company_id.id), ('customer_rank', '>', 0)])
+            if self.id:
+                res_partner = self.env['res.partner'].search(
+                    [('company_id', '=', self.company_id.id), ('id','!=',self.id), ('customer_rank', '>', 0)])
+                
             arr = [contac.sequencial_code_client for contac in res_partner]
 
             _logger.info("Res Partner::Valores encontrados = %s, array valores = %s,company activa = %s ",
