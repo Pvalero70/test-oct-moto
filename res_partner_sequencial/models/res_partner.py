@@ -8,15 +8,6 @@ from lxml import etree
 _logger = logging.getLogger(__name__)
 
 
-class ResUsersInherit(models.Model):
-    _inherit = 'res.users'
-
-    @api.model_create_multi
-    def create(self, vals):
-        id = super(ResUsersInherit, self).create(vals)
-        _logger.info('RES USER::id user %s',id)
-        return id
-
 
 class ResPartnertInherit(models.Model):
     _inherit = 'res.partner'
