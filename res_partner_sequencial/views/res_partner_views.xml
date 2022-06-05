@@ -11,8 +11,25 @@
             <xpath expr="//field[@name='ref']" position="before">
                 <field name="supplier_rank" invisible="1"/>
                 <field name="customer_rank" invisible="1"/>
-                <field name="sequencial_code_prov" string="Numero de Proveedor" force_save="1" readonly ="1" attrs="{'invisible': [('supplier_rank','=', 0)]}"/>
-                <field name="sequencial_code_client" string="Numero de Cliente" force_save="1" readonly ="1" attrs="{'invisible': [('customer_rank','=', 0)]}"/>
+                <field name="sequencial_code_prov" string="Numero de Proveedor" force_save="1" readonly="1"
+                       attrs="{'invisible': [('supplier_rank','=', 0)]}"/>
+                <field name="sequencial_code_client" string="Numero de Cliente" force_save="1" readonly="1"
+                       attrs="{'invisible': [('customer_rank','=', 0)]}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="res_partner_seq_view_search" model="ir.ui.view">
+        <field name="name">res.partner.search.seq.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="sequencial_code_prov" string="Numero Proveedor"
+                       filter_domain="[('sequencial_code_prov', 'ilike', self)]"/>
+                <field name="sequencial_code_client" string="Numero Cliente"
+                       filter_domain="[('sequencial_code_client', 'ilike', self)]"/>
             </xpath>
 
         </field>
