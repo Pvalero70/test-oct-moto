@@ -44,9 +44,9 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='partner_id']" position="attributes">
-                <attribute name="domain">[('partner_id.is_partner_user','=',False)]</attribute>
+                <attribute name="domain">[('is_partner_user','=',False)]</attribute>
             </xpath>
-            
+
         </field>
     </record>
 
