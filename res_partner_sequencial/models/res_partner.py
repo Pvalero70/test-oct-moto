@@ -14,24 +14,40 @@ class ResPartnertInherit(models.Model):
     @api.onchange('supplier_rank','company_id')
     def _default_seq_code_prov(self):
         for rec in self:
-            if rec.supplier_rank > 0 and rec.company_id: #Es un proveedor
-                context = {}
-                context['force_company'] = rec.company_id.id
-                seq = rec.env['ir.sequence'].next_by_code('res.partner.proveedor.sequence',context=context)
-                rec.sequencial_code_prov = seq
-                _logger.info("Proveedor Sequencial = %s", seq)
+            if rec.id and rec.company_id:
+
+                res_partner = rec.env['res.partner'].search(
+                    [('company_id', '=', rec.company_id.id), ('id', '!=', rec.id), ('supplier_rank', '>', 0)])
+                arr = [contac.sequencial_code_prov for contac in res_partner]
+
+                _logger.info("Res Partner Prov::Valores encontrados = %s, array valores = %s,company activa = %s ",
+                             res_partner, arr, rec.company_id.name)
+                if len(res_partner) == 0:
+                    rec.sequencial_code_prov = str(1).zfill(3)
+                else:
+                    max_val = max(arr)
+                    _logger.info("Res Partner Prov::Valor maximo = %s", max_val)
+                    rec.sequencial_code_prov = str(int(max_val) + 1).zfill(3)
 
 
 
-    @api.onchange('customer_rank','company_id')
+    @api.onchange('company_id')
     def _default_seq_code_client(self):
         for rec in self:
-            if rec.customer_rank > 0 and rec.company_id:  # es un cliente
-                context = {}
-                context['force_company'] = rec.company_id.id
-                seq = rec.env['ir.sequence'].next_by_code('res.partner.cliente.sequence',context=context)
-                rec.sequencial_code_client = seq
-                _logger.info("Cliente Sequencial = %s", seq)
+            if rec.id and rec.company_id:
+
+                res_partner = rec.env['res.partner'].search(
+                    [('company_id', '=', rec.company_id.id), ('id', '!=', rec.id),('customer_rank','>',0)])
+                arr = [contac.sequencial_code_client for contac in res_partner]
+
+                _logger.info("Res Partner::Valores encontrados = %s, array valores = %s,company activa = %s ",
+                             res_partner, arr, rec.company_id.name)
+                if len(res_partner) == 0:
+                    rec.sequencial_code_client = str(1).zfill(3)
+                else:
+                    max_val = max(arr)
+                    _logger.info("Res Partner::Valor maximo = %s", max_val)
+                    rec.sequencial_code_client = str(int(max_val) + 1).zfill(3)
 
 
 
