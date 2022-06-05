@@ -19,7 +19,6 @@
         'base',
     ],
     'data': [
-        'views/res_partner_sequence.xml',
         'views/res_partner_views.xml',
 
     ],
