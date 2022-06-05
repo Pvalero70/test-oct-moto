@@ -13,7 +13,7 @@ class ResPartnertInherit(models.Model):
 
     @api.model
     def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
-        _logger.info("RES PARTNER SEARCH FUNC")
+
         args = args or []
 
         if not (name == '' and operator == 'ilike'):
@@ -31,13 +31,12 @@ class ResPartnertInherit(models.Model):
                     [('company_id', '=', self.company_id.id), ('id','!=',self.id), ('supplier_rank', '>', 0)])
             arr = [int(contac.sequencial_code_prov) for contac in res_partner]
 
-            _logger.info("Res Partner Prov::Valores encontrados = %s, array valores = %s,company activa = %s ",
-                         res_partner, arr, self.company_id.name)
+
             if len(res_partner) == 0:
                 self.sequencial_code_prov = str(1).zfill(3)
             else:
                 max_val = max(arr)
-                _logger.info("Res Partner Prov::Valor maximo = %s", max_val)
+
                 self.sequencial_code_prov = str(int(max_val) + 1).zfill(3)
 
     def _default_seq_code_prov(self):
@@ -55,13 +54,11 @@ class ResPartnertInherit(models.Model):
 
             arr = [int(contac.sequencial_code_client) for contac in res_partner]
 
-            _logger.info("Res Partner::Valores encontrados = %s, array valores = %s,company activa = %s ",
-                         res_partner, arr, self.company_id.name)
             if len(res_partner) == 0:
                 self.sequencial_code_client = str(1).zfill(3)
             else:
                 max_val = max(arr)
-                _logger.info("Res Partner::Valor maximo = %s", max_val)
+
                 self.sequencial_code_client = str(int(max_val) + 1).zfill(3)
 
     def _default_seq_code_client(self):
