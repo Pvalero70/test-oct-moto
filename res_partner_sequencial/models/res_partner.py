@@ -17,7 +17,7 @@ class ResPartnertInherit(models.Model):
         args = args or []
         recs = self.browse()
         if not recs:
-            recs = self.search([('sequencial_code_prov', operator, name),('sequencial_code_client', operator, name)] + args, limit=limit)
+            recs = self.search([('sequencial_code_prov', 'ilike', name),('sequencial_code_client', 'ilike', name)] + args, limit=limit)
         return recs.name_get()
 
     def seq_code_prov(self):
