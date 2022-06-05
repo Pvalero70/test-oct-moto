@@ -11,6 +11,15 @@ _logger = logging.getLogger(__name__)
 class ResPartnertInherit(models.Model):
     _inherit = 'res.partner'
 
+    @api.model
+    def name_search(self, name, args=None, operator='ilike', limit=100):
+        _logger.info("RES PARTNER SEARCH FUNC")
+        args = args or []
+        recs = self.browse()
+        if not recs:
+            recs = self.search([('sequencial_code_prov', operator, name),('sequencial_code_client', operator, name)] + args, limit=limit)
+        return recs.name_get()
+
     def seq_code_prov(self):
         if self.company_id and self.supplier_rank > 0:
             res_partner = self.env['res.partner'].search(
@@ -41,7 +50,7 @@ class ResPartnertInherit(models.Model):
             if self.id:
                 res_partner = self.env['res.partner'].search(
                     [('company_id', '=', self.company_id.id), ('id','!=',self.id), ('customer_rank', '>', 0)])
-                
+
             arr = [contac.sequencial_code_client for contac in res_partner]
 
             _logger.info("Res Partner::Valores encontrados = %s, array valores = %s,company activa = %s ",
