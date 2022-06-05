@@ -11,48 +11,52 @@ _logger = logging.getLogger(__name__)
 class ResPartnertInherit(models.Model):
     _inherit = 'res.partner'
 
-    @api.onchange('supplier_rank','company_id')
+    def seq_code_prov(self):
+        if self.company_id:
+
+            res_partner = self.env['res.partner'].search(
+                [('company_id', '=', self.company_id.id), ('supplier_rank', '>', 0)])
+            arr = [contac.sequencial_code_prov for contac in res_partner]
+
+            _logger.info("Res Partner Prov::Valores encontrados = %s, array valores = %s,company activa = %s ",
+                         res_partner, arr, self.company_id.name)
+            if len(res_partner) == 0:
+                self.sequencial_code_prov = str(1).zfill(3)
+            else:
+                max_val = max(arr)
+                _logger.info("Res Partner Prov::Valor maximo = %s", max_val)
+                self.sequencial_code_prov = str(int(max_val) + 1).zfill(3)
+
     def _default_seq_code_prov(self):
         for rec in self:
-            if rec.id and rec.company_id:
+            rec.seq_code_prov()
 
-                res_partner = rec.env['res.partner'].search(
-                    [('company_id', '=', rec.company_id.id), ('id', '!=', rec.id), ('supplier_rank', '>', 0)])
-                arr = [contac.sequencial_code_prov for contac in res_partner]
+    def seq_code_client(self):
+        if self.company_id:
 
-                _logger.info("Res Partner Prov::Valores encontrados = %s, array valores = %s,company activa = %s ",
-                             res_partner, arr, rec.company_id.name)
-                if len(res_partner) == 0:
-                    rec.sequencial_code_prov = str(1).zfill(3)
-                else:
-                    max_val = max(arr)
-                    _logger.info("Res Partner Prov::Valor maximo = %s", max_val)
-                    rec.sequencial_code_prov = str(int(max_val) + 1).zfill(3)
+            res_partner = self.env['res.partner'].search(
+                [('company_id', '=', self.company_id.id), ('customer_rank', '>', 0)])
+            arr = [contac.sequencial_code_client for contac in res_partner]
 
+            _logger.info("Res Partner::Valores encontrados = %s, array valores = %s,company activa = %s ",
+                         res_partner, arr, self.company_id.name)
+            if len(res_partner) == 0:
+                self.sequencial_code_client = str(1).zfill(3)
+            else:
+                max_val = max(arr)
+                _logger.info("Res Partner::Valor maximo = %s", max_val)
+                self.sequencial_code_client = str(int(max_val) + 1).zfill(3)
 
-
-    @api.onchange('company_id')
     def _default_seq_code_client(self):
         for rec in self:
-            if rec.id and rec.company_id:
+            rec.seq_code_client()
 
-                res_partner = rec.env['res.partner'].search(
-                    [('company_id', '=', rec.company_id.id), ('id', '!=', rec.id),('customer_rank','>',0)])
-                arr = [contac.sequencial_code_client for contac in res_partner]
+    sequencial_code_prov = fields.Char(string="Numero de Cliente", compute='_default_seq_code_prov',store=True)
+    sequencial_code_client = fields.Char(string="Numero de Proveedor", compute='_default_seq_code_client',store=True)
 
-                _logger.info("Res Partner::Valores encontrados = %s, array valores = %s,company activa = %s ",
-                             res_partner, arr, rec.company_id.name)
-                if len(res_partner) == 0:
-                    rec.sequencial_code_client = str(1).zfill(3)
-                else:
-                    max_val = max(arr)
-                    _logger.info("Res Partner::Valor maximo = %s", max_val)
-                    rec.sequencial_code_client = str(int(max_val) + 1).zfill(3)
-
-
-
-
-    sequencial_code_prov = fields.Char(string="Numero de Cliente", readonly=True, compute='_default_seq_code_prov',store=True)
-    sequencial_code_client = fields.Char(string="Numero de Proveedor", readonly=True, compute='_default_seq_code_client',store=True)
-
+    @api.onchange('company_id')
+    def _compute_sequential(self):
+        _logger.info('Res Partner:: Cambio la company')
+        self.seq_code_prov()
+        self.seq_code_client()
 
