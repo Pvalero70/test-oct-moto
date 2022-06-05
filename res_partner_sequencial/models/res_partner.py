@@ -12,7 +12,7 @@ class ResPartnertInherit(models.Model):
     _inherit = 'res.partner'
 
     @api.model
-    def name_search(self, name, args=None, operator='ilike', limit=100):
+    def _name_search(self, name, args=None, operator='ilike', limit=100):
         _logger.info("RES PARTNER SEARCH FUNC")
         args = args or []
         recs = self.browse()
