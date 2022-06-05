@@ -13,9 +13,10 @@ class ResUsersInherit(models.Model):
 
     @api.model_create_multi
     def create(self, vals):
-        id = super(ResUsersInherit, self).create(vals)
-        _logger.info('RES USER::id user %s',id)
-        return id
+        user = super(ResUsersInherit, self).create(vals)
+        if user.partner_id:
+            user.partner_id.is_partner_user = True
+        return user
 
 
 class ResPartnertInherit(models.Model):
@@ -89,6 +90,5 @@ class ResPartnertInherit(models.Model):
 
     @api.onchange('company_id')
     def _compute_sequential(self):
-        _logger.info('Res Partner:: Cambio la company')
         self.seq_code_prov()
         self.seq_code_client()
