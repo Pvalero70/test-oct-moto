@@ -19,3 +19,6 @@ class AccountMove(models.Model):
         _log.info(move_line.credit)
 
         return super(AccountMove, self).js_assign_outstanding_line(line_id)
+    
+    # def create_credit_note_pos(self, data):
+        # move_type = 'out_refund'

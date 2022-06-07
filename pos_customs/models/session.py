@@ -15,6 +15,13 @@ _logger = logging.getLogger(__name__)
 class PosSession(models.Model):
     _inherit = 'pos.session'
 
+    def obtener_facturas_anticipo(self, partner_id=13, pos_config_id=3):
+        pos_config = self.env['pos.config'].search([('id', '=', pos_config_id)])
+        product_credit = pos_config.credit_note_product_id
+        invoice_ids = self.env['account.move'].search([('invoice_line_ids.product_id', 'ilike', product_credit.id), ('parnter_id', '=', partner_id)])
+        _logger.info('## Facturas de anticipo ##')
+        _logger.info(invoice_ids.ids)
+
     def _validate_session(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
         
         _logger.info("## SOBRE ESCRIBE VALIDATE SESION ###")
