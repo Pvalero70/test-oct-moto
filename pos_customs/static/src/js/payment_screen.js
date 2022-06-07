@@ -20,10 +20,11 @@ var rpc = require('web.rpc');
                 return this.to_credit_note
             }
 
-            async clickNotaCredito(to_credit_note){
+            async clickNotaCredito(){
                 console.log("Click en nota de credito")
                 console.log(this)
-                this.to_credit_note = to_credit_note;
+                this.to_credit_note = !this.to_credit_note;
+                this.render();
             }
 
             async setInvoiceInfo(){
