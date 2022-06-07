@@ -7,16 +7,23 @@ const Registries = require('point_of_sale.Registries');
 var rpc = require('web.rpc');
 
     const IIPaymentScreen = (PaymentScreen) =>
-        class extends PaymentScreen{
+        class extends PaymentScreen{            
+
             constructor() {
                 super(...arguments);
                 this.payment_termss;
+                this.to_credit_note = false
                 this.setInvoiceInfo();
             }
 
-            async clickNotaCredito(){
+            isCreditNote(){
+                return this.to_credit_note
+            }
+
+            async clickNotaCredito(to_credit_note){
                 console.log("Click en nota de credito")
                 console.log(this)
+                this.to_credit_note = to_credit_note;
             }
 
             async setInvoiceInfo(){

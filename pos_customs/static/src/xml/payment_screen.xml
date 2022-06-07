@@ -53,7 +53,9 @@
             </t>
             <br/>
             <div class="nota-credito">
-                <div class="button highlight" t-on-click="clickNotaCredito">
+                <div class="button"
+                     t-att-class="{ highlight: isCreditNote() }"
+                     t-on-click="clickNotaCredito">
                     <i class="fa fa-file-text-o" />
                     <span>
                         Nota de credito
