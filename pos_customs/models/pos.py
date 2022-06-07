@@ -223,3 +223,9 @@ class PosOrder(models.Model):
             else:
                 posord.salesman_id = False
 
+
+class PosConfig(models.Model):
+    _inherit = 'pos.config'
+
+    credit_note_product_id = fields.Many2one('product.product', 'Producto para nota de credito')
+
