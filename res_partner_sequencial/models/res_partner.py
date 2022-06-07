@@ -32,14 +32,15 @@ class ResUsersInherit(models.Model):
 class ResPartnertInherit(models.Model):
     _inherit = 'res.partner'
 
-    #@api.model
-    #def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
+    @api.model
+    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
 
-    #    args = args or []
+        args = args or []
+        _logger.info("Args = %s",args)
 
-     #   if not (name == '' and operator == 'ilike'):
-      #      args += ['|','|', ('sequencial_code_prov', 'ilike', name), ('sequencial_code_client', 'ilike', name),('name','ilike',name)]
-       # return self._search(args, limit=limit, access_rights_uid=name_get_uid)
+        #if not (name == '' and operator == 'ilike'):
+        #    args += ['|','|', ('sequencial_code_prov', 'ilike', name), ('sequencial_code_client', 'ilike', name),('name','ilike',name)]
+        return self._search(args, limit=limit, access_rights_uid=name_get_uid)
 
     def seq_code_prov(self):
         if self.company_id and self.supplier_rank > 0:
