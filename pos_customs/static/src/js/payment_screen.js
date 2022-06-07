@@ -38,7 +38,7 @@ var rpc = require('web.rpc');
                 
                 const selectionInvoiceList = partnerInvoices.map((invoice) => ({
                     id: invoice.id,
-                    label: invoice.name + ' $' + invoice.residual,
+                    label: invoice.name + ' $' + invoice.total,
                     item: invoice,
                 }));
 
