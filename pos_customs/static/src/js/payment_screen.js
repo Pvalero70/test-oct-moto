@@ -14,6 +14,11 @@ var rpc = require('web.rpc');
                 this.setInvoiceInfo();
             }
 
+            async clickNotaCredito(){
+                console.log("Click en nota de credito")
+                console.log(this)
+            }
+
             async setInvoiceInfo(){
                 let vals = await this.rpc({
                             model: 'account.payment.term',

@@ -51,7 +51,15 @@
                     </div>
                 </div>
             </t>
-           
+            <br/>
+            <div class="nota-credito">
+                <div class="button highlight" t-on-click="clickNotaCredito">
+                    <i class="fa fa-file-text-o" />
+                    <span>
+                        Nota de credito
+                    </span>                      
+                </div>
+            </div>
         </xpath>
     </t>
 </templates>
