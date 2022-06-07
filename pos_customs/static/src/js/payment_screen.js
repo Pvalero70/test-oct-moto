@@ -28,6 +28,30 @@ var rpc = require('web.rpc');
                 console.log(this.currentOrder)
                 // console.log(this.currentOrder.attributes.client)
                 this.to_credit_note = !this.to_credit_note;
+                const config_id = this.env.pos.config_id
+                const partner = this.env.pos.get_client()
+                
+                const partnerInvoices = await this.rpc({
+                    model: 'pos.session',
+                    method: 'obtener_facturas_anticipo',
+                    args: [partner.id, config_id],
+                });
+                
+                
+                const selectionInvoiceList = partnerInvoices.map((invoice) => ({
+                    id: invoice.id,
+                    label: invoice.name + ' $' + invoice.residual,
+                    item: invoice,
+                }));
+
+
+                const { confirmedInvoice, payload: selectedInvoice } = await this.showPopup('SelectionPopup', {
+                    title: this.env._t('Selecciona la factura de anticipo a pagar'),
+                    list: selectionInvoiceList,
+                });
+
+                if (!selectedInvoice) return;
+
                 this.render();
             }
 

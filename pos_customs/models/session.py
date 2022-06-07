@@ -21,6 +21,16 @@ class PosSession(models.Model):
         invoice_ids = self.env['account.move'].search([('invoice_line_ids.product_id', 'ilike', product_credit.id), ('partner_id', '=', partner_id), ('move_type', '=', 'out_invoice')])
         _logger.info('## Facturas de anticipo ##')
         _logger.info(invoice_ids.ids)
+        invoice_list = []
+        if invoice_ids:
+            for inv in invoice_ids:
+                invoice_list.append({
+                    "id" : inv.id,
+                    "name" : inv.name,
+                    "total" : inv.amount_total,
+                    "residual" : inv.amount_residual,
+                })
+        return invoice_list            
 
     def _validate_session(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
         
