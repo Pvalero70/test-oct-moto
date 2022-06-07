@@ -38,7 +38,7 @@ class ResPartnertInherit(models.Model):
         args = args or []
 
         if not (name == '' and operator == 'ilike'):
-            args += ['|','|', ('sequencial_code_prov', 'ilike', name), ('sequencial_code_client', 'ilike', name)]
+            args += ['|','|', ('sequencial_code_prov', 'ilike', name), ('sequencial_code_client', 'ilike', name),('name','ilike',name)]
         return self._search(args, limit=limit, access_rights_uid=name_get_uid)
 
     def seq_code_prov(self):
