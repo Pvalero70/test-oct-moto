@@ -120,7 +120,7 @@
                                         />
                                     </td>
                                 </tr>
-                                <tr class="border-black o_subtotal">
+                                <tr class="o_subtotal">
                                     <td>
                                         <span>Total de descuento</span>
                                     </td>
