@@ -16,6 +16,8 @@ class PosSession(models.Model):
     _inherit = 'pos.session'
 
     def obtener_facturas_anticipo(self, partner_id=13, pos_config_id=3):
+        _logger.info(partner_id)
+        _logger.info(pos_config_id)
         pos_config = self.env['pos.config'].search([('id', '=', pos_config_id)])
         product_credit = pos_config.credit_note_product_id
         invoice_ids = self.env['account.move'].search([('invoice_line_ids.product_id', 'ilike', product_credit.id), ('partner_id', '=', partner_id), ('move_type', '=', 'out_invoice')])
