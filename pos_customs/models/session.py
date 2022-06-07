@@ -15,7 +15,9 @@ _logger = logging.getLogger(__name__)
 class PosSession(models.Model):
     _inherit = 'pos.session'
 
-    def obtener_facturas_anticipo(self, partner_id=13, pos_config_id=3):
+    @api.model
+    def obtener_facturas_anticipo(self, partner_id, pos_config_id):
+        _logger.info(self)
         _logger.info(partner_id)
         _logger.info(pos_config_id)
         pos_config = self.env['pos.config'].search([('id', '=', pos_config_id)])
