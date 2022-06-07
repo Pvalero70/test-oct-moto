@@ -19,6 +19,7 @@
         'pos_settle_due',
         'point_of_sale',
         'stock',
+        'repair'
     ],
     'data': [
         'security/credit_note_security.xml',
