@@ -26,8 +26,6 @@ var rpc = require('web.rpc');
                 console.log(this.env.pos.config_id)
                 console.log(this.env.pos.get_client())
                 console.log(this.currentOrder)
-                // console.log(this.currentOrder.attributes.client)
-                this.to_credit_note = !this.to_credit_note;
                 const config_id = this.env.pos.config_id
                 const partner = this.env.pos.get_client()
                 
@@ -50,8 +48,10 @@ var rpc = require('web.rpc');
                     list: selectionInvoiceList,
                 });
 
-                if (!selectedInvoice) return;
-
+                if (!selectedInvoice) {
+                    return;
+                }
+                this.to_credit_note = !this.to_credit_note;
                 this.render();
             }
 
