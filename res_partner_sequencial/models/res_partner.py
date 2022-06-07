@@ -84,7 +84,7 @@ class ResPartnertInherit(models.Model):
             rec.seq_code_client()
 
     is_partner_user = fields.Boolean(string="Es partner de un usuario", compute='_get_user_partner', store=True)
-    #is_partner_company = fields.Boolean(string="Es partner de una company", compute='_get_company_partner', store=True)
+    is_partner_company = fields.Boolean(string="Es partner de una company", compute='_get_company_partner', store=True)
 
     @api.depends('is_partner_user')
     def _get_user_partner(self):
@@ -95,14 +95,14 @@ class ResPartnertInherit(models.Model):
             else:
                 rec.is_partner_user = False
 
-    #@api.depends('is_partner_company')
-    #def _get_company_partner(self):
-    #    for rec in self:
-    #        company_part = rec.env['res.company'].search([('partner_id', '=', rec.id)], limit=1)
-    #        if len(company_part) == 1:
-    #            rec.is_partner_company = True
-    #        else:
-    #            rec.is_partner_company = False
+    @api.depends('is_partner_company')
+    def _get_company_partner(self):
+        for rec in self:
+            company_part = rec.env['res.company'].search([('partner_id', '=', rec.id)], limit=1)
+            if len(company_part) == 1:
+                rec.is_partner_company = True
+            else:
+                rec.is_partner_company = False
 
     sequencial_code_prov = fields.Char(string="Numero de Cliente", compute='_default_seq_code_prov', store=True)
     sequencial_code_client = fields.Char(string="Numero de Proveedor", compute='_default_seq_code_client', store=True)
