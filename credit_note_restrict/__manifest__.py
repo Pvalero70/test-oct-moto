@@ -19,11 +19,15 @@
         'pos_settle_due',
         'point_of_sale',
         'stock',
+        'repair'
     ],
     'data': [
         'security/credit_note_security.xml',
         'security/ir.model.access.csv',
         'views/product_category_views.xml',
+        'views/account_move_views.xml',
+        'views/sale_order_views.xml',
+        'views/repair_views.xml',
     ],
     'demo': [],
     'external_dependencies': {
