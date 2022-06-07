@@ -102,6 +102,11 @@
                     <div class="col-4">
                         <table class="table table-sm">
                             <t t-set="tax_totals" t-value="json.loads(o.tax_totals_json)"/>
+                            <t t-set="discount_total" t-value="0"/>
+                            <t t-foreach="o.order_line" t-as="line">
+                                <t t-set="discount_total"
+                                   t-value="discount_total + (line.price_unit * line.product_qty * (line.discount/100))"/>
+                            </t>
                             <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
                                 <tr class="border-black o_subtotal">
                                     <td>
@@ -115,16 +120,8 @@
                                         />
                                     </td>
                                 </tr>
-
-                                <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
-                                <t t-call="account.tax_groups_totals"/>
-                            </t>
-                            <t t-set="discount_total" t-value="0"/>
-                            <t t-foreach="o.order_line" t-as="line">
-                                <t t-set="discount_total" t-value="discount_total + (line.price_unit * line.product_qty * (line.discount/100))"/>
-                            </t>
-                            <tr class="o_subtotal">
-                                <td>
+                                <tr class="border-black o_subtotal">
+                                    <td>
                                         <span>Total de descuento</span>
                                     </td>
 
@@ -134,7 +131,12 @@
                                                 t-esc="'$ ' + str(discount_total)"
                                         />
                                     </td>
-                            </tr>
+                                </tr>
+
+                                <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
+                                <t t-call="account.tax_groups_totals"/>
+                            </t>
+
 
                             <!--Total amount with all taxes-->
                             <tr class="border-black o_total">
