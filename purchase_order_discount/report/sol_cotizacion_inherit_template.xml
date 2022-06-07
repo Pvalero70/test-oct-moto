@@ -123,15 +123,15 @@
                             <t t-foreach="o.order_line" t-as="line">
                                 <t t-set="discount_total" t-value="discount_total + (line.price_unit * line.product_qty * (line.discount/100))"/>
                             </t>
-                            <tr class="border-black o_subtotal">
+                            <tr class="o_subtotal">
                                 <td>
-                                        <strong>Total de descuento</strong>
+                                        <span>Total de descuento</span>
                                     </td>
 
                                     <td class="text-right">
                                         <span
                                                 t-att-class="oe_subtotal_footer_separator"
-                                                t-esc="discount_total"
+                                                t-esc="'$ ' + str(discount_total)"
                                         />
                                     </td>
                             </tr>
