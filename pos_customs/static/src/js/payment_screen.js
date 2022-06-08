@@ -51,6 +51,9 @@ var rpc = require('web.rpc');
                 if (!selectedInvoice) {
                     return;
                 }
+                this.selectedCreditNoteId = selectedInvoice
+                console.log(this.selectedCreditNoteId)
+                
                 this.to_credit_note = !this.to_credit_note;
                 this.render();
             }
