@@ -83,6 +83,7 @@ class PosOrder(models.Model):
 
     @api.model
     def _split_invoice_vals_bk(self, invoice_data, quit_commissions=True, order=None):
+        _log.info("#OVERRIDE SPLIT INVOICE#")
         """
         This method process invoice data to generate two different sets; one for common lines and other for
         lines that have bank commission products.
@@ -187,8 +188,8 @@ class PosOrder(models.Model):
             move_vals = order._prepare_invoice_vals()
             move_vals_commissions = move_vals.copy()
             move_vals_commissions = self._split_invoice_vals_bk(move_vals_commissions, quit_commissions=False, order=order)
-            move_vals = self._split_invoice_vals_bk(move_vals, quit_commissions=True, order=order)
-            
+            _log.info("Split invoice vals")
+            move_vals = self._split_invoice_vals_bk(move_vals, quit_commissions=True, order=order)            
             _log.info(move_vals)
             return
 # Comentado por pruebas.
