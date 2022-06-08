@@ -4,6 +4,8 @@ odoo.define('pos_customs.PaymentScreenC', function (require) {
 var models = require('point_of_sale.models');
 const PaymentScreen = require('point_of_sale.PaymentScreen');
 const Registries = require('point_of_sale.Registries');
+const { isConnectionError } = require('point_of_sale.utils');
+
 var rpc = require('web.rpc');
 
     const IIPaymentScreen = (PaymentScreen) =>
