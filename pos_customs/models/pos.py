@@ -138,6 +138,15 @@ class PosOrder(models.Model):
                     }
 
         """
+        if invoice_data.get('credit_note_id'):
+            _log.info("Tiene nota de credito")
+            credit_note_id = int(invoice_data.get('credit_note_id'))
+            _log.info(credit_note_id)
+            notacred = self.env['account.move'].browse(credit_note_id)            
+            if notacred.l10n_mx_edi_origin:
+                _log.info(notacred.l10n_mx_edi_origin)
+                invoice_data['l10n_mx_edi_origin'] = f'07|{notacred.l10n_mx_edi_origin}'
+                
         # Get payment methods with bank commission.
         payment_bc_used_ids = order.payment_ids.filtered(lambda pa: pa.payment_method_id.bank_commission_method != False)
         ori_invoice_lines = invoice_data['invoice_line_ids']
@@ -157,15 +166,6 @@ class PosOrder(models.Model):
                 new_invoice_line_ids.append(ori_line)
         if len(new_invoice_line_ids) > 0:
             invoice_data['invoice_line_ids'] = new_invoice_line_ids
-        
-        if invoice_data.get('credit_note_id'):
-            _log.info("Tiene nota de credito")
-            credit_note_id = int(invoice_data.get('credit_note_id'))
-            _log.info(credit_note_id)
-            notacred = self.env['account.move'].browse(credit_note_id)            
-            if notacred.l10n_mx_edi_origin:
-                _log.info(notacred.l10n_mx_edi_origin)
-                invoice_data['l10n_mx_edi_origin'] = f'07|{notacred.l10n_mx_edi_origin}'
         
         return invoice_data
 
