@@ -23,6 +23,7 @@ class PosSession(models.Model):
         pos_config = self.env['pos.config'].search([('id', '=', pos_config_id)])
         product_credit = pos_config.credit_note_product_id
         invoice_ids = self.env['account.move'].search([('invoice_line_ids.product_id', 'ilike', product_credit.id), ('partner_id', '=', partner_id), ('move_type', '=', 'out_invoice')])
+        # invoice_ids = self.env['account.move'].search([('invoice_line_ids.product_id', 'ilike', product_credit.id), ('partner_id', '=', partner_id), ('move_type', '=', 'out_invoice'), ('state', '=', 'not_paid')])
         _logger.info('## Facturas de anticipo ##')
         _logger.info(invoice_ids.ids)
         invoice_list = []

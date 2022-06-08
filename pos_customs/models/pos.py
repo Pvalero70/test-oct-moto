@@ -24,9 +24,11 @@ class PosOrder(models.Model):
             _log.info("\n\n VALS CUSTOM POS FOR INVOICE:: %s " % vals_pos)
             vals['l10n_mx_edi_usage'] = vals_pos[0]
             vals['cfdi_payment_term_id'] = vals_pos[1]
+            vals['credit_note_id'] = vals_pos[2]
         vals['to_invoice'] = True if ui_order.get('to_invoice') else False
         return vals
 
+    credit_note_id = fields.Many2one('account.move', string='Nota de credito')
     salesman_id = fields.Many2one('res.users', string="Ejecutivo", compute="_compute_salesman", store=True)
     cfdi_payment_term_id = fields.Many2one('account.payment.term', 'Terminos de pago')
     payment_method_id = fields.Many2one('pos.payment.method', "Metodo de Pago", compute="get_payment_method",
@@ -74,6 +76,7 @@ class PosOrder(models.Model):
         vals['l10n_mx_edi_payment_method_id'] = self.payment_method_id.payment_method_c.id
         vals['l10n_mx_edi_usage'] = self.l10n_mx_edi_usage
         vals['invoice_payment_term_id'] = self.cfdi_payment_term_id.id
+        vals['credit_note_id'] = self.credit_note_id.id
 
         return vals
 
@@ -163,6 +166,7 @@ class PosOrder(models.Model):
             (invoice_receivable | payment_receivables).reconcile()
 
     def _generate_pos_order_invoice(self):
+        _log.info("INTENTA GENERAR FACTURA")
         moves = self.env['account.move']
         for order in self:
             # Force company for all SUPERUSER_ID action
@@ -173,6 +177,8 @@ class PosOrder(models.Model):
             if not order.partner_id:
                 raise UserError(_('Please provide a partner for the sale.'))
             move_vals = order._prepare_invoice_vals()
+            _log.info(move_vals)
+            return
             move_vals_commissions = move_vals.copy()
             move_vals_commissions = self._split_invoice_vals_bk(move_vals_commissions, quit_commissions=False, order=order)
             move_vals = self._split_invoice_vals_bk(move_vals, quit_commissions=True, order=order)
