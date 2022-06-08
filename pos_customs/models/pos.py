@@ -195,7 +195,7 @@ class PosOrder(models.Model):
             _log.info("Split invoice vals")
             move_vals = self._split_invoice_vals_bk(move_vals, quit_commissions=True, order=order)            
             _log.info(move_vals)
-            return
+            # return
 # Comentado por pruebas.
             new_move = order._create_invoice(move_vals)
             new_move_bc = None
