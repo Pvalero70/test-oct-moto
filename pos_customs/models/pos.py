@@ -143,9 +143,9 @@ class PosOrder(models.Model):
             credit_note_id = int(invoice_data.get('credit_note_id'))
             _log.info(credit_note_id)
             notacred = self.env['account.move'].browse(credit_note_id)            
-            if notacred.l10n_mx_edi_origin:
-                _log.info(notacred.l10n_mx_edi_origin)
-                invoice_data['l10n_mx_edi_origin'] = f'07|{notacred.l10n_mx_edi_origin}'
+            if notacred.l10n_mx_edi_cfdi_uuid:
+                _log.info(notacred.l10n_mx_edi_cfdi_uuid)
+                invoice_data['l10n_mx_edi_origin'] = f'07|{notacred.l10n_mx_edi_cfdi_uuid}'
 
         # Get payment methods with bank commission.
         payment_bc_used_ids = order.payment_ids.filtered(lambda pa: pa.payment_method_id.bank_commission_method != False)
