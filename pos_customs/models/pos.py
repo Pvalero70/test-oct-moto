@@ -24,7 +24,8 @@ class PosOrder(models.Model):
             _log.info("\n\n VALS CUSTOM POS FOR INVOICE:: %s " % vals_pos)
             vals['l10n_mx_edi_usage'] = vals_pos[0]
             vals['cfdi_payment_term_id'] = vals_pos[1]
-            vals['credit_note_id'] = vals_pos[2]
+            if len(vals_pos) == 3:
+                vals['credit_note_id'] = vals_pos[2]
         vals['to_invoice'] = True if ui_order.get('to_invoice') else False
         return vals
 
