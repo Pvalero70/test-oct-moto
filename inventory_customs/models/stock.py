@@ -73,6 +73,40 @@ class StockMoveTt(models.Model):
                         ml.lot_id.tt_inventory_number = ml.tt_inventory_number
         return res
 
+    @api.onchange("move_line_nosuggest_ids")
+    def calc_inv_number(self):
+        _log.info("\n\n ===>> padre original :: %s PADRE: %s Hijos: %s " % (self._origin, self, self.move_line_nosuggest_ids))
+        # Buscamos el último puesto en el wizard (no guardado)
+        mlns_with_inv_num = self.move_line_nosuggest_ids.filtered(lambda x: x.tt_inventory_number_seq is not False)
+        mlns_to_calc = self.move_line_nosuggest_ids.filtered(lambda x: not x.tt_inventory_number_seq)
+        invn_num_self_max = 0
+        # We search in the same document
+        if mlns_with_inv_num:
+            for mlns in mlns_with_inv_num:
+                invn_num_self_max = mlns.tt_inventory_number_seq if mlns.tt_inventory_number_seq > invn_num_self_max else invn_num_self_max
+        # Buscamos el último guardado.
+        last_ml = self.env['stock.move.line'].search(
+            [('tt_inventory_number_seq', '!=', False), ('company_id', '=', self.company_id.id)],
+            order="tt_inventory_number_seq desc", limit=1)
+        # we search other documents inside.
+        if last_ml:
+            _log.info("\n\n El mayor de otros documentos :: %s " % last_ml.tt_inventory_number_seq)
+            if invn_num_self_max > last_ml.tt_inventory_number_seq:
+                # The max seq is in self.
+                next_seq = invn_num_self_max + 1
+            else:
+                # Max is in other documents.
+                next_seq = last_ml.tt_inventory_number_seq + 1
+        else:
+            # Max is in self
+            next_seq = invn_num_self_max + 1
+
+        # Establecemos el mayor de los dos anteriores + 1 como el que debe establecerse, lo establecemos.
+        for mln in mlns_to_calc:
+            mln.tt_inventory_number_seq = next_seq
+            mln.tt_inventory_number = str(next_seq).zfill(4)
+            next_seq += 1
+
     # -------------------------------------------------------------------------
     # CONSTRAINT METHODS
     # -------------------------------------------------------------------------
@@ -108,6 +142,7 @@ class StockMoveLineC(models.Model):
     tt_motor_number = fields.Char(string="Número de motor")
     tt_color = fields.Char(string="Color")
     tt_inventory_number = fields.Char(string="Número de inventario")
+    tt_inventory_number_seq = fields.Integer(string="Secuencia")
 
 
 class StockProductionLotTt(models.Model):
