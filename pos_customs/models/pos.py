@@ -146,7 +146,7 @@ class PosOrder(models.Model):
             if notacred.l10n_mx_edi_origin:
                 _log.info(notacred.l10n_mx_edi_origin)
                 invoice_data['l10n_mx_edi_origin'] = f'07|{notacred.l10n_mx_edi_origin}'
-                
+
         # Get payment methods with bank commission.
         payment_bc_used_ids = order.payment_ids.filtered(lambda pa: pa.payment_method_id.bank_commission_method != False)
         ori_invoice_lines = invoice_data['invoice_line_ids']
@@ -155,6 +155,7 @@ class PosOrder(models.Model):
             return invoice_data
         if not payment_bc_used_ids and not quit_commissions:
             return False
+        _log.info("Continua")
         product_bc_ids = payment_bc_used_ids.mapped('payment_method_id').mapped('bank_commission_product_id')
         new_invoice_line_ids = []
         for ori_line in ori_invoice_lines:
@@ -166,7 +167,7 @@ class PosOrder(models.Model):
                 new_invoice_line_ids.append(ori_line)
         if len(new_invoice_line_ids) > 0:
             invoice_data['invoice_line_ids'] = new_invoice_line_ids
-        
+        _log.info("Finaliza")
         return invoice_data
 
     def _apply_invoice_payments_bc(self, invoice, order):
