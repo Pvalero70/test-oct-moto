@@ -34,14 +34,15 @@ class ResPartnertInherit(models.Model):
 
     @api.model
     def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
-
+        return super(ResPartnertInherit, self)._name_search(name=name, args=args, operator=operator,
+                                                            limit=limit, name_get_uid=name_get_uid)
         args = args or []
         domain = []
         if name:
             domain = ['|','|', ('sequencial_code_prov', operator, name), ('sequencial_code_client', operator, name),('name',operator,name)]
 
         #return self._search(domain + args, limit=limit, access_rights_uid=name_get_uid)
-        return super(ResPartnertInherit, self)._name_search(name=name,args=domain+args,operator=operator,limit=limit,name_get_uid=name_get_uid)
+
 
     def seq_code_prov(self):
         if self.company_id and self.supplier_rank > 0:
