@@ -92,8 +92,8 @@ var rpc = require('web.rpc');
 
             async _finalizeValidation() {
                 
-                // console.log("Sobre escribe finalize validation")
-                // console.log(this.currentOrder)
+                console.log("Sobre escribe finalize validation")
+                console.log(this.selectedCreditNoteId)
 
                 if ((this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) && this.env.pos.config.iface_cashdrawer) {
                     this.env.pos.proxy.printer.open_cashbox();
