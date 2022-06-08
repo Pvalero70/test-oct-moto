@@ -107,17 +107,21 @@ var rpc = require('web.rpc');
                 let syncedOrderBackendIds = [];
 
                 try {
+                    if (this.selectedCreditNoteId){
+                        const creditNoteId = null;
+                    }
+                    else{
+                        const creditNoteId = this.selectedCreditNoteId.id;
+                    }
+
                     if (this.currentOrder.is_to_invoice()) {
-                        const creditNoteId = null
-                        if (this.selectedCreditNoteId)
-                            creditNoteId = this.selectedCreditNoteId.id
                         this.currentOrder.to_invoice = [$("#cfdi_usage_sel").val(),$("#payment_termss_selection").val(), creditNoteId];
-                            // this.currentOrder.cfdi_usage = $("#cfdi_usage_sel").val();
-                            console.log("para facturar ... CURRENT ORDER... ");
-                            console.log(this.currentOrder.to_invoice);
-                            syncedOrderBackendIds = await this.env.pos.push_and_invoice_order(
-                                this.currentOrder
-                            );
+                        // this.currentOrder.cfdi_usage = $("#cfdi_usage_sel").val();
+                        console.log("para facturar ... CURRENT ORDER... ");
+                        console.log(this.currentOrder.to_invoice);
+                        syncedOrderBackendIds = await this.env.pos.push_and_invoice_order(
+                            this.currentOrder
+                        );
                     } else {
                         // Isn't original
                         if (this.currentOrder.is_payment_invoice){
