@@ -156,6 +156,13 @@ class PosOrder(models.Model):
                 new_invoice_line_ids.append(ori_line)
         if len(new_invoice_line_ids) > 0:
             invoice_data['invoice_line_ids'] = new_invoice_line_ids
+        
+        if invoice_data.get('credit_note_id'):
+            credit_note_id = int(invoice_data.get('credit_note_id'))
+            notacred = self.env['account.move'].browse(credit_note_id)            
+            if notacred.l10n_mx_edi_origin:
+                invoice_data['l10n_mx_edi_origin'] = f'07|{notacred.l10n_mx_edi_origin}'
+        
         return invoice_data
 
     def _apply_invoice_payments_bc(self, invoice, order):
@@ -178,11 +185,12 @@ class PosOrder(models.Model):
             if not order.partner_id:
                 raise UserError(_('Please provide a partner for the sale.'))
             move_vals = order._prepare_invoice_vals()
-            _log.info(move_vals)
-            return
             move_vals_commissions = move_vals.copy()
             move_vals_commissions = self._split_invoice_vals_bk(move_vals_commissions, quit_commissions=False, order=order)
             move_vals = self._split_invoice_vals_bk(move_vals, quit_commissions=True, order=order)
+            
+            _log.info(move_vals)
+            return
 # Comentado por pruebas.
             new_move = order._create_invoice(move_vals)
             new_move_bc = None
