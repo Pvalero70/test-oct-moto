@@ -40,8 +40,8 @@ class ResPartnertInherit(models.Model):
         if name:
             domain = ['|','|', ('sequencial_code_prov', operator, name), ('sequencial_code_client', operator, name),('name',operator,name)]
 
-        return self._search(domain + args, limit=limit, access_rights_uid=name_get_uid).name_get()
-
+        return self._search(domain + args, limit=limit, access_rights_uid=name_get_uid)
+ 
 
     def seq_code_prov(self):
         if self.company_id and self.supplier_rank > 0:
