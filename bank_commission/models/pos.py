@@ -18,6 +18,7 @@ class PosPaymentMethodBc(models.Model):
     bank_commission_amount = fields.Float(string="Monto de comisión")
     bank_commission_product_id = fields.Many2one('product.product', string="Concepto comisión")
     bc_journal_id = fields.Many2one("account.journal", string="Diario de comisiones")
+    product_cate_commission_ids = fields.Many2many('product.category', string="Categorías de producto para comisión")
 
 
 class PosOrderBc(models.Model):
