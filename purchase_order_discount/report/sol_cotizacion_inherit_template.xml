@@ -21,11 +21,12 @@
                             <th name="th_quantity" class="text-right">
                                 <strong>Cantidad</strong>
                             </th>
-                            <th name="th_discount" class="text-right">
-                                <strong>Descuento</strong>
-                            </th>
+
                             <th name="th_price_unit" class="text-right">
                                 <strong>Precio Unitario</strong>
+                            </th>
+                            <th name="th_discount" class="text-right">
+                                <strong>Descuento</strong>
                             </th>
                             <th name="th_taxes">
                                 <strong>Impuestos</strong>
@@ -57,11 +58,12 @@
                                         <span t-field="line.product_qty"/>
                                         <span t-field="line.product_uom.name" groups="uom.group_uom"/>
                                     </td>
-                                    <td class="text-right">
-                                        <span t-esc="str(line.discount) +' %'"/>
-                                    </td>
+
                                     <td class="text-right">
                                         <span t-field="line.price_unit"/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-esc="str(line.discount) +' %'"/>
                                     </td>
                                     <td name="td_taxes">
                                         <span t-esc="', '.join(map(lambda x: x.name, line.taxes_id))"/>
