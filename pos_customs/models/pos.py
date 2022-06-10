@@ -257,25 +257,7 @@ class PosOrder(models.Model):
 
             _log.info("Factura Creada")
             _log.info(new_move)
-
-            if credit_note_id:
-                try:
-                    new_move.action_process_edi_web_services()
-                except Exception as e:
-                    _log.error("Error al timbrar la factura")
-                    _log.error(e)
-                else:
-                    if not new_move.l10n_mx_edi_cfdi_uuid:
-                        _log.info("La factura de la venta no se pudo timbrar")
-                    else:
-                        try:
-                            self._create_credit_note(new_move, credit_note_id, order)
-                        except Exception as e:
-                            _log.error("Error al generar la NC")
-                            _log.error(e)
-                        else:
-                            _log.info("La NC se creo exitosamente")
-                            # TODO Conciliar NC con factura
+            
             new_move_bc = None
             if move_vals_commissions:
                 new_move_bc = order._create_invoice(move_vals_commissions)
@@ -293,6 +275,28 @@ class PosOrder(models.Model):
                 new_move._compute_l10n_mx_edi_payment_policy()
             if new_move_bc is not None:
                 self._apply_invoice_payments_bc(new_move_bc, order=order)
+
+            if credit_note_id:
+                try:
+                    _log.info("Factura status")
+                    _log.info(new_move.state)
+                    # self.env['account.edi.document']._cron_process_documents_web_services(job_count=20)
+                    new_move.action_process_edi_web_services()
+                except Exception as e:
+                    _log.error("Error al timbrar la factura")
+                    _log.error(e)
+                else:
+                    if not new_move.l10n_mx_edi_cfdi_uuid:
+                        _log.info("La factura de la venta no se pudo timbrar")
+                    else:
+                        try:
+                            self._create_credit_note(new_move, credit_note_id, order)
+                        except Exception as e:
+                            _log.error("Error al generar la NC")
+                            _log.error(e)
+                        else:
+                            _log.info("La NC se creo exitosamente")
+                            # TODO Conciliar NC con factura
 
         if not moves:
             return {}
