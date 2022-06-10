@@ -206,7 +206,7 @@ class PosOrder(models.Model):
             "l10n_mx_edi_payment_policy" : l10n_mx_edi_payment_policy,
             "l10n_mx_edi_usage" : l10n_mx_edi_usage,
             "journal_id" : journal_id.id,
-            "l10n_mx_edi_origin" : l10n_mx_edi_origin            
+            "l10n_mx_edi_origin" : f'07|{l10n_mx_edi_origin}'            
         }
 
         invoice_lines = []
