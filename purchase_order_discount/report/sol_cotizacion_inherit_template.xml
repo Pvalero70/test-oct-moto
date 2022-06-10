@@ -14,14 +14,12 @@
                             <th name="th_description">
                                 <strong>Descripcion</strong>
                             </th>
-                            <th name="th_taxes">
-                                <strong>Impuestos</strong>
-                            </th>
+
                             <th name="th_date_req" class="text-center">
                                 <strong>Fecha Esperada.</strong>
                             </th>
                             <th name="th_quantity" class="text-right">
-                                <strong>Importe</strong>
+                                <strong>Cantidad</strong>
                             </th>
                             <th name="th_discount" class="text-right">
                                 <strong>Descuento</strong>
@@ -29,9 +27,12 @@
                             <th name="th_price_unit" class="text-right">
                                 <strong>Precio Unitario</strong>
                             </th>
+                            <th name="th_taxes">
+                                <strong>Impuestos</strong>
+                            </th>
 
                             <th name="th_amount" class="text-right">
-                                <strong>Cantidad</strong>
+                                <strong>Importe</strong>
                             </th>
                         </tr>
                     </thead>
@@ -48,9 +49,7 @@
                                     <td id="product">
                                         <span t-field="line.name"/>
                                     </td>
-                                    <td name="td_taxes">
-                                        <span t-esc="', '.join(map(lambda x: x.name, line.taxes_id))"/>
-                                    </td>
+
                                     <td class="text-center">
                                         <span t-field="line.date_planned"/>
                                     </td>
@@ -83,6 +82,9 @@
                                     </td>
                                 </t>
                             </tr>
+                            <td name="td_taxes">
+                                <span t-esc="', '.join(map(lambda x: x.name, line.taxes_id))"/>
+                            </td>
                             <t t-if="current_section and (line_last or o.order_line[line_index+1].display_type == 'line_section')">
                                 <tr class="is-subtotal text-right">
                                     <td colspan="99" id="subtotal">
