@@ -58,6 +58,14 @@ var rpc = require('web.rpc');
 
                 this.to_credit_note = !this.to_credit_note;
                 this.render();
+
+                const paylaterPaymentMethod = this.env.pos.payment_methods.filter(
+                    (method) =>
+                        this.env.pos.config.payment_method_ids.includes(method.id) && method.type == 'pay_later'
+                )[0];
+
+                const paylaterPayment = order.add_paymentline(paylaterPaymentMethod);
+                paylaterPayment.set_amount(selectedInvoice.amount);
             }
 
             async setInvoiceInfo(){
