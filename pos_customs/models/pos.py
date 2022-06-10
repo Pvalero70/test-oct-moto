@@ -24,7 +24,7 @@ class PosOrder(models.Model):
             _log.info("\n\n VALS CUSTOM POS FOR INVOICE:: %s " % vals_pos)
             vals['l10n_mx_edi_usage'] = vals_pos[0]
             vals['cfdi_payment_term_id'] = vals_pos[1]
-            if len(vals_pos) == 3:
+            if len(vals_pos) == 3 and vals_pos[2]:
                 vals['credit_note_id'] = vals_pos[2]
         vals['to_invoice'] = True if ui_order.get('to_invoice') else False
         return vals
@@ -200,7 +200,7 @@ class PosOrder(models.Model):
 
             _log.info("Factura Creada")
             _log.info(new_move)
-            
+
             new_move_bc = None
             if move_vals_commissions:
                 new_move_bc = order._create_invoice(move_vals_commissions)
