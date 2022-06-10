@@ -180,6 +180,56 @@ class PosOrder(models.Model):
             payment_receivables = payment_moves.mapped('line_ids').filtered(lambda line: line.account_id == receivable_account)
             (invoice_receivable | payment_receivables).reconcile()
 
+    def _create_credit_note(self, account_move, anticipo_id, order):
+
+        factura_anticipo = self.env['account.move'].browse(int(anticipo_id))
+        total_anticipo = factura_anticipo.amount_total
+        partner = account_move.partner_id
+        session = order.session_id
+        config = session.config_id
+        l10n_mx_edi_payment_method_id = config.forma_pago_anticipo
+        move_type = 'out_refund'
+        l10n_mx_edi_payment_policy = account_move.l10n_mx_edi_payment_policy
+        # l10n_mx_edi_payment_policy = 'PUE'
+        l10n_mx_edi_usage = account_move.l10n_mx_edi_usage
+        # l10n_mx_edi_usage = 'G03'
+        l10n_mx_edi_origin = account_move.l10n_mx_edi_cfdi_uuid
+        journal_id = account_move.journal_id
+        product_id = config.credit_note_product_id
+
+
+        nc_obj = self.env['account.move']
+        nc_data = {
+            "partner_id" : partner.id,
+            "l10n_mx_edi_payment_method_id" : l10n_mx_edi_payment_method_id.id,
+            "move_type" : move_type,
+            "l10n_mx_edi_payment_policy" : l10n_mx_edi_payment_policy,
+            "l10n_mx_edi_usage" : l10n_mx_edi_usage,
+            "journal_id" : journal_id.id,
+            "l10n_mx_edi_origin" : l10n_mx_edi_origin            
+        }
+
+        invoice_lines = []
+        for line in factura_anticipo.invoice_line_ids:
+            new_line = {
+                "product_id" : product_id.id,
+                "quantity" : 1,
+                "price_unit" : float(total_anticipo),
+                "product_uom_id" : line.product_uom_id.id,
+                "tax_ids" : line.tax_ids.ids
+            }
+            invoice_lines.append((0, 0, new_line))
+        
+        if invoice_lines:
+            nc_data.update({
+                "invoice_line_ids" : invoice_lines
+            })
+        
+        nc_id = nc_obj.create(nc_data)
+
+        _log.info("Nota de credito creada")
+        _log.info(nc_id)
+
     def _generate_pos_order_invoice(self):
         _log.info("INTENTA GENERAR FACTURA")
         moves = self.env['account.move']
@@ -192,6 +242,11 @@ class PosOrder(models.Model):
             if not order.partner_id:
                 raise UserError(_('Please provide a partner for the sale.'))
             move_vals = order._prepare_invoice_vals()
+
+            credit_note_id = False
+            if 'credit_note_id' in move_vals:
+                credit_note_id = move_vals.get('credit_note_id') 
+
             move_vals_commissions = move_vals.copy()
             move_vals_commissions = self._split_invoice_vals_bk(move_vals_commissions, quit_commissions=False, order=order)
             _log.info("Split invoice vals")
@@ -203,6 +258,24 @@ class PosOrder(models.Model):
             _log.info("Factura Creada")
             _log.info(new_move)
 
+            if credit_note_id:
+                try:
+                    new_move.action_process_edi_web_services()
+                except Exception as e:
+                    _log.error("Error al timbrar la factura")
+                    _log.error(e)
+                else:
+                    if not new_move.l10n_mx_edi_cfdi_uuid:
+                        _log.info("La factura de la venta no se pudo timbrar")
+                    else:
+                        try:
+                            self._create_credit_note(new_move, credit_note_id, order)
+                        except Exception as e:
+                            _log.error("Error al generar la NC")
+                            _log.error(e)
+                        else:
+                            _log.info("La NC se creo exitosamente")
+                            # TODO Conciliar NC con factura
             new_move_bc = None
             if move_vals_commissions:
                 new_move_bc = order._create_invoice(move_vals_commissions)
@@ -252,5 +325,6 @@ class PosOrder(models.Model):
 class PosConfig(models.Model):
     _inherit = 'pos.config'
 
+    forma_pago_anticipo = fields.Many2one('l10n_mx_edi.payment.method', 'Forma pago anticipo')
     credit_note_product_id = fields.Many2one('product.product', 'Producto para nota de credito')
 
