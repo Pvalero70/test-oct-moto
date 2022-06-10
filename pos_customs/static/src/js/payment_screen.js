@@ -65,7 +65,8 @@ var rpc = require('web.rpc');
                 )[0];
 
                 const paylaterPayment = this.currentOrder.add_paymentline(paylaterPaymentMethod);
-                paylaterPayment.set_amount(selectedInvoice.amount);
+                console.log(selectedInvoice.total)
+                paylaterPayment.set_amount(selectedInvoice.total);
             }
 
             async setInvoiceInfo(){
