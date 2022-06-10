@@ -64,7 +64,7 @@ var rpc = require('web.rpc');
                         this.env.pos.config.payment_method_ids.includes(method.id) && method.type == 'pay_later'
                 )[0];
 
-                const paylaterPayment = order.add_paymentline(paylaterPaymentMethod);
+                const paylaterPayment = this.currentOrder.add_paymentline(paylaterPaymentMethod);
                 paylaterPayment.set_amount(selectedInvoice.amount);
             }
 
