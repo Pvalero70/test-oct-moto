@@ -123,23 +123,23 @@
                                         />
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                        <span>Total de descuento</span>
-                                    </td>
 
-                                    <td class="text-right">
-                                        <span
-                                                t-att-class="oe_subtotal_footer_separator"
-                                                t-esc="'$ ' + str(discount_total)"
-                                        />
-                                    </td>
-                                </tr>
 
                                 <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
                                 <t t-call="account.tax_groups_totals"/>
                             </t>
+                            <tr>
+                                <td>
+                                    <span>Total de descuento</span>
+                                </td>
 
+                                <td class="text-right">
+                                    <span
+                                            t-att-class="oe_subtotal_footer_separator"
+                                            t-esc="'$ ' + str(discount_total)"
+                                    />
+                                </td>
+                            </tr>
 
                             <!--Total amount with all taxes-->
                             <tr class="border-black o_total">
