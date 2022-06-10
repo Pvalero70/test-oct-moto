@@ -230,6 +230,30 @@ class PosOrder(models.Model):
         _log.info("Nota de credito creada")
         _log.info(nc_id)
 
+        return nc_id
+
+    def concilia_factura_notacred(self, factura, notacred):
+        credit_line_id = None
+        for line in notacred.line_ids:
+            if line.credit > 0:
+                credit_line_id = line.id
+
+        if credit_line_id:
+            lines = self.env['account.move.line'].browse(credit_line_id)
+            invoice_lines = factura.line_ids.filtered(lambda line: line.account_id == lines[0].account_id and not line.reconciled)
+
+            if invoice_lines:
+                lines += invoice_lines
+                _log.info(lines)
+                try:
+                    _log.info("Intenta conciliar la factura con la NC")
+                    rec = lines.reconcile()
+                except Exception as e:
+                    _log.error(f'Ocurrio un error al conciliar : {e}')
+                else:
+                    _log.info("Reconciled")
+                    _log.info(rec)
+                
     def _generate_pos_order_invoice(self):
         _log.info("INTENTA GENERAR FACTURA")
         moves = self.env['account.move']
@@ -290,13 +314,13 @@ class PosOrder(models.Model):
                         _log.info("La factura de la venta no se pudo timbrar")
                     else:
                         try:
-                            self._create_credit_note(new_move, credit_note_id, order)
+                            creditnote = self._create_credit_note(new_move, credit_note_id, order)
                         except Exception as e:
                             _log.error("Error al generar la NC")
                             _log.error(e)
                         else:
                             _log.info("La NC se creo exitosamente")
-                            # TODO Conciliar NC con factura
+                            self.concilia_factura_notacred(new_move, creditnote)
 
         if not moves:
             return {}
