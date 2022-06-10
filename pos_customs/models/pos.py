@@ -139,8 +139,9 @@ class PosOrder(models.Model):
 
         """
         if invoice_data.get('credit_note_id'):
+            credit_note_id = invoice_data.pop('credit_note_id')
             _log.info("Tiene nota de credito")
-            credit_note_id = int(invoice_data.get('credit_note_id'))
+            credit_note_id = int(credit_note_id)
             _log.info(credit_note_id)
             notacred = self.env['account.move'].browse(credit_note_id)            
             if notacred.l10n_mx_edi_cfdi_uuid:
