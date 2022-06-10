@@ -320,6 +320,9 @@ class PosOrder(models.Model):
                             _log.error(e)
                         else:
                             _log.info("La NC se creo exitosamente")
+                            _log.info("Se intenta publicar")
+                            creditnote.sudo().with_company(order.company_id)._post()
+                            _log.info("Nota credito publicada")
                             self.concilia_factura_notacred(new_move, creditnote)
 
         if not moves:
