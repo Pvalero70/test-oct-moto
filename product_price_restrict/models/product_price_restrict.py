@@ -26,6 +26,7 @@ class PosOrderC(models.Model):
             _log.info("Aqui 1 True")
             self.list_price_permited = True
         else:
+            _log.info("Aqui 1 False")
             self.list_price_permited = False
 
     @api.depends('standard_price_permited')
@@ -36,6 +37,7 @@ class PosOrderC(models.Model):
             _log.info("Aqui 2 True")
             self.standard_price_permited = True
         else:
+            _log.info("Aqui 2 False")
             self.standard_price_permited = False
 
 
