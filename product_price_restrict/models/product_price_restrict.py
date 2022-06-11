@@ -14,6 +14,26 @@ class PosOrderC(models.Model):
 
     # edit_price_sale = fields.Boolean("Editar precio de venta", compute='_compute_group_edit_sale_price', store=False)
 
+    list_price_permited = fields.Boolean(string="Readonly para el campo discount", compute='get_user_list_price')
+    standard_price_permited = fields.Boolean(string="Readonly para el campo discount", compute='get_user_standard_price')
+
+    @api.depends('list_price_permited')
+    def get_user_list_price(self):
+
+        res_user = self.env.user
+        if res_user.has_group('product_price_restrict.product_sale_price_group'):
+            self.list_price_permited = True
+        else:
+            self.list_price_permited = False
+
+    @api.depends('standard_price_permited')
+    def get_user_list_price(self):
+        res_user = self.env.user
+        if res_user.has_group('product_price_restrict.product_price_group'):
+            self.standard_price_permited = True
+        else:
+            self.standard_price_permited = False
+
 
     @api.onchange("list_price")
     def _onchangeprice(self):
