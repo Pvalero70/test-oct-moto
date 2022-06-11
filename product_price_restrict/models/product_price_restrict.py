@@ -21,7 +21,7 @@ class ProductProductInherit(models.Model):
 
     @api.depends('list_price_permited')
     def get_user_list_price(self):
-        _log.info("Aqui 1")
+
         res_user = self.env.user
         if res_user.has_group('product_price_restrict.product_sale_price_group'):
             self.list_price_permited = True
@@ -47,7 +47,7 @@ class ProductTemplateInherit(models.Model):
 
     @api.depends('list_price_permited')
     def get_user_list_price(self):
-        _log.info("Aqui 1")
+
         res_user = self.env.user
         if res_user.has_group('product_price_restrict.product_sale_price_group'):
             self.list_price_permited = True
