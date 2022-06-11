@@ -12,6 +12,7 @@
                 <field name="supplier_rank" invisible="1"/>
                 <field name="customer_rank" invisible="1"/>
                 <field name="is_partner_user" invisible="1"/>
+                <field name="is_partner_company" invisible="1"/>
                 <field name="sequencial_code_prov" string="Numero de Proveedor" force_save="1" readonly="1"
                        attrs="{'invisible': [('supplier_rank','=', 0)]}"/>
                 <field name="sequencial_code_client" string="Numero de Cliente" force_save="1" readonly="1"
