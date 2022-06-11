@@ -8,6 +8,7 @@ from lxml import etree
 _logger = logging.getLogger(__name__)
 
 
+
 class PurchaseOrderLineDiscount(models.Model):
     _inherit = 'purchase.order.line'
 
@@ -24,7 +25,7 @@ class PurchaseOrderLineDiscount(models.Model):
             res.discount_permited = True
         return res
 
-    @api.onchange('order_line')
+    @api.onchange('product_id')
     def _compute_discount_permited_create(self):
         _logger.info("Onchange order Line")
         if not self.id:
