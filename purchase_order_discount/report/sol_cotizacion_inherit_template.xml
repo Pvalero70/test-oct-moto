@@ -63,7 +63,7 @@
                                         <span t-field="line.price_unit"/>
                                     </td>
                                     <td class="text-right">
-                                        <span t-esc="str(line.discount) +' %'"/>
+                                        <span t-esc="str(round(line.discount,2)) +' %'"/>
                                     </td>
                                     <td name="td_taxes">
                                         <span t-esc="', '.join(map(lambda x: x.name, line.taxes_id))"/>
@@ -138,7 +138,7 @@
                                 <td class="text-right">
                                     <span
                                             t-att-class="oe_subtotal_footer_separator"
-                                            t-esc="'$ ' + str(discount_total)"
+                                            t-esc="'$ ' + str(round(discount_total,2))"
                                     />
                                 </td>
                             </tr>
