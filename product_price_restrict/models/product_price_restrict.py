@@ -15,8 +15,8 @@ class PosOrderC(models.Model):
 
     # edit_price_sale = fields.Boolean("Editar precio de venta", compute='_compute_group_edit_sale_price', store=False)
 
-    list_price_permited = fields.Boolean(string="Readonly para el campo discount", compute='get_user_list_price')
-    standard_price_permited = fields.Boolean(string="Readonly para el campo discount", compute='get_user_standard_price')
+    list_price_permited = fields.Boolean(string="Readonly para el campo discount",readonly=False, compute='get_user_list_price')
+    standard_price_permited = fields.Boolean(string="Readonly para el campo discount",readonly=False, compute='get_user_standard_price')
 
     @api.depends('list_price_permited')
     def get_user_list_price(self):
