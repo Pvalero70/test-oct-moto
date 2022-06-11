@@ -22,8 +22,14 @@ class PurchaseOrderLineDiscount(models.Model):
 
     @api.depends('discount_permited')
     def get_user(self):
-
+        _logger.info("Usuario Calculamos")
         res_user = self.env['res.users'].search([('id', '=', self._uid)])
+        _logger.info("Usuario %s",res_user.name)
+        _logger.info("Tiene grupo %s",res_user.has_group('purchase_order_discount.user_discount_purchase_group'))
+
+        _logger.info("Usuario en self %s", self.env.user.name)
+        _logger.info("Tiene grupo en self %s", self.env.user.has_group('purchase_order_discount.user_discount_purchase_group'))
+
         if res_user.has_group('purchase_order_discount.user_discount_purchase_group'):
             self.discount_permited = True
         else:
