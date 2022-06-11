@@ -7,6 +7,16 @@ from lxml import etree
 
 _logger = logging.getLogger(__name__)
 
+class ResCompanyInherit(models.Model):
+    _inherit = 'res.company'
+
+    @api.model_create_multi
+    def create(self, vals):
+        user = super(ResCompanyInherit, self).create(vals)
+        if user.partner_id:
+            user.partner_id.is_partner_company = True
+        return user
+
 
 class ResUsersInherit(models.Model):
     _inherit = 'res.users'
@@ -23,13 +33,15 @@ class ResPartnertInherit(models.Model):
     _inherit = 'res.partner'
 
     @api.model
-    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
+    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
 
         args = args or []
+        domain = []
+        if name:
+            domain = ['|','|', ('sequencial_code_prov', operator, name), ('sequencial_code_client', operator, name),('name',operator,name)]
 
-        if not (name == '' and operator == 'ilike'):
-            args += ['|', ('sequencial_code_prov', 'ilike', name), ('sequencial_code_client', 'ilike', name)]
-        return self._search(args, limit=limit, access_rights_uid=name_get_uid)
+        return self._search(domain + args, limit=limit, access_rights_uid=name_get_uid)
+
 
     def seq_code_prov(self):
         if self.company_id and self.supplier_rank > 0:
@@ -74,6 +86,7 @@ class ResPartnertInherit(models.Model):
             rec.seq_code_client()
 
     is_partner_user = fields.Boolean(string="Es partner de un usuario", compute='_get_user_partner', store=True)
+    is_partner_company = fields.Boolean(string="Es partner de una company", compute='_get_company_partner', store=True)
 
     @api.depends('is_partner_user')
     def _get_user_partner(self):
@@ -84,6 +97,14 @@ class ResPartnertInherit(models.Model):
             else:
                 rec.is_partner_user = False
 
+    @api.depends('is_partner_company')
+    def _get_company_partner(self):
+        for rec in self:
+            company_part = rec.env['res.company'].search([('partner_id', '=', rec.id)], limit=1)
+            if len(company_part) == 1:
+                rec.is_partner_company = True
+            else:
+                rec.is_partner_company = False
 
     sequencial_code_prov = fields.Char(string="Numero de Cliente", compute='_default_seq_code_prov', store=True)
     sequencial_code_client = fields.Char(string="Numero de Proveedor", compute='_default_seq_code_client', store=True)
