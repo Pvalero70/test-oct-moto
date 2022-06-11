@@ -23,32 +23,18 @@ class PosOrderC(models.Model):
         _log.info("Aqui 1")
         res_user = self.env.user
         if res_user.has_group('product_price_restrict.product_sale_price_group'):
-            _log.info("Aqui 1 True")
             self.list_price_permited = True
         else:
-            _log.info("Aqui 1 False")
             self.list_price_permited = False
 
     @api.depends('standard_price_permited')
-    def get_user_list_price(self):
+    def get_user_standard_price(self):
         res_user = self.env.user
-        _log.info("Aqui 2")
         if res_user.has_group('product_price_restrict.product_price_group'):
-            _log.info("Aqui 2 True")
             self.standard_price_permited = True
         else:
-            _log.info("Aqui 2 False")
             self.standard_price_permited = False
 
 
-    @api.onchange("list_price")
-    def _onchangeprice(self):
-        if self.env.user.has_group('product_price_restrict.product_sale_price_group') == False:
-            raise ValidationError(_("Advertencia, no puedes modificar el precio de venta"))
-
-    @api.onchange("standard_price")
-    def _onchangestandarprice(self):
-        if self.env.user.has_group('product_price_restrict.product_price_group') == False:
-            raise ValidationError(_("Advertencia, no puedes modificar el coste"))
 
 
