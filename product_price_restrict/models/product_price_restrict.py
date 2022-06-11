@@ -8,7 +8,31 @@ _log = logging.getLogger("___name: %s" % __name__)
 
 from lxml import etree
 
+class ProductProductC(models.Model):
+    _inherit = "product.product"
 
+    list_price_permited = fields.Boolean(string="Readonly para el campo discount", compute='get_user_list_price')
+    standard_price_permited = fields.Boolean(string="Readonly para el campo discount",
+                                             compute='get_user_standard_price')
+
+    @api.depends('list_price_permited')
+    def get_user_list_price(self):
+
+        res_user = self.env.user
+        if res_user.has_group('product_price_restrict.product_sale_price_group'):
+            self.list_price_permited = True
+        else:
+            self.list_price_permited = False
+
+    @api.depends('standard_price_permited')
+    def get_user_list_price(self):
+        res_user = self.env.user
+        if res_user.has_group('product_price_restrict.product_price_group'):
+            self.standard_price_permited = True
+        else:
+            self.standard_price_permited = False
+
+            
 class PosOrderC(models.Model):
     _inherit = "product.template"
 
