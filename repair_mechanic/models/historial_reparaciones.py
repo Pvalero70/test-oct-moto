@@ -16,7 +16,7 @@ class RepairMechanic(models.Model):
 
     #        domain="[('type', 'in', ['product', 'consu']), '|', ('company_id', '=', company_id), ('company_id', '=', False)]",
 
-    @api.model
+
     def _domain_package_type(self):
 
         product = self.env['product.product'].search([('type', 'in', ['product', 'consu']), ('company_id', 'in', [self.env.company.id, False])], limit=3)
