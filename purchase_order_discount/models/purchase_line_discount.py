@@ -8,11 +8,35 @@ from lxml import etree
 _logger = logging.getLogger(__name__)
 
 
+
 class PurchaseOrderLineDiscount(models.Model):
     _inherit = 'purchase.order.line'
 
     discount = fields.Float('Descuento %')
     discount_permited = fields.Boolean(string="Readonly para el campo discount", compute='get_user')
+
+    @api.model_create_multi
+    def create(self, vals):
+
+        res = super(PurchaseOrderLineDiscount, self).create(vals)
+        if not self.env.user.has_group('purchase_order_discount.user_discount_purchase_group'):
+            res.discount_permited = False
+        else:
+            res.discount_permited = True
+        return res
+
+    @api.onchange('product_id')
+    def _compute_discount_permited_create(self):
+        _logger.info("Onchange order Line")
+        if not self.id:
+            if self.env.user.has_group('purchase_order_discount.user_discount_purchase_create_group'):
+
+                self.discount_permited = True
+                return
+
+        self.discount_permited = False
+
+
 
     @api.onchange('discount')
     def _compute_discount_permited(self):
@@ -24,6 +48,7 @@ class PurchaseOrderLineDiscount(models.Model):
     def get_user(self):
 
         res_user = self.env['res.users'].search([('id', '=', self._uid)])
+
         if res_user.has_group('purchase_order_discount.user_discount_purchase_group'):
             self.discount_permited = True
         else:

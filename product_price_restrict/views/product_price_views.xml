@@ -58,6 +58,62 @@
         </field>
     </record>
 
+    <record id="product_template_discount_price_form" model="ir.ui.view">
+        <field name="name">product.template.inherit.price.form</field>
+        <field name="model">product.template</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='list_price']" position="after">
+                <field name="list_price_permited" invisible="1"/>
+                <field name="standard_price_permited" invisible="1"/>
+
+            </xpath>
+
+            <xpath expr="//field[@name='list_price']" position="attributes">
+                <attribute name="attrs">{'readonly':[('list_price_permited', '=', False)]}
+                </attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+                <attribute name="attrs">{'readonly':[('standard_price_permited', '=', False)]}
+                </attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+     <record id="product_product_discount_price_form" model="ir.ui.view">
+        <field name="name">product.product.inherit.price.form</field>
+        <field name="model">product.product</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='lst_price']" position="after">
+                <field name="list_price_permited" invisible="1"/>
+                <field name="standard_price_permited" invisible="1"/>
+
+            </xpath>
+
+            <xpath expr="//field[@name='lst_price']" position="attributes">
+                <attribute name="attrs">{'readonly':[('list_price_permited', '=', False)]}
+                </attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='list_price']" position="attributes">
+                <attribute name="attrs">{'readonly':[('list_price_permited', '=', False)]}
+                </attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+                <attribute name="attrs">{'readonly':[('standard_price_permited', '=', False)]}
+                </attribute>
+            </xpath>
+
+        </field>
+    </record>
 
 
 

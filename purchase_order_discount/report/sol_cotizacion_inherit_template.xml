@@ -14,23 +14,26 @@
                             <th name="th_description">
                                 <strong>Descripcion</strong>
                             </th>
-                            <th name="th_taxes">
-                                <strong>Impuestos</strong>
-                            </th>
+
                             <th name="th_date_req" class="text-center">
                                 <strong>Fecha Esperada.</strong>
                             </th>
                             <th name="th_quantity" class="text-right">
                                 <strong>Cantidad</strong>
                             </th>
+
                             <th name="th_price_unit" class="text-right">
                                 <strong>Precio Unitario</strong>
                             </th>
                             <th name="th_discount" class="text-right">
                                 <strong>Descuento</strong>
                             </th>
+                            <th name="th_taxes">
+                                <strong>Impuestos</strong>
+                            </th>
+
                             <th name="th_amount" class="text-right">
-                                <strong>Cantidad</strong>
+                                <strong>Importe</strong>
                             </th>
                         </tr>
                     </thead>
@@ -47,9 +50,7 @@
                                     <td id="product">
                                         <span t-field="line.name"/>
                                     </td>
-                                    <td name="td_taxes">
-                                        <span t-esc="', '.join(map(lambda x: x.name, line.taxes_id))"/>
-                                    </td>
+
                                     <td class="text-center">
                                         <span t-field="line.date_planned"/>
                                     </td>
@@ -57,12 +58,17 @@
                                         <span t-field="line.product_qty"/>
                                         <span t-field="line.product_uom.name" groups="uom.group_uom"/>
                                     </td>
+
                                     <td class="text-right">
                                         <span t-field="line.price_unit"/>
                                     </td>
                                     <td class="text-right">
                                         <span t-esc="str(line.discount) +' %'"/>
                                     </td>
+                                    <td name="td_taxes">
+                                        <span t-esc="', '.join(map(lambda x: x.name, line.taxes_id))"/>
+                                    </td>
+
                                     <td class="text-right">
                                         <span t-field="line.price_subtotal"
                                               t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
@@ -81,6 +87,7 @@
                                     </td>
                                 </t>
                             </tr>
+
                             <t t-if="current_section and (line_last or o.order_line[line_index+1].display_type == 'line_section')">
                                 <tr class="is-subtotal text-right">
                                     <td colspan="99" id="subtotal">
@@ -100,7 +107,51 @@
                     <div class="col-4">
                         <table class="table table-sm">
                             <t t-set="tax_totals" t-value="json.loads(o.tax_totals_json)"/>
-                            <t t-call="account.document_tax_totals"/>
+                            <t t-set="discount_total" t-value="0"/>
+                            <t t-foreach="o.order_line" t-as="line">
+                                <t t-set="discount_total"
+                                   t-value="discount_total + (line.price_unit * line.product_qty * (line.discount/100))"/>
+                            </t>
+                            <t t-foreach="tax_totals['subtotals']" t-as="subtotal">
+                                <tr class="border-black o_subtotal">
+                                    <td>
+                                        <strong t-esc="subtotal['name']"/>
+                                    </td>
+
+                                    <td class="text-right">
+                                        <span
+                                                t-att-class="oe_subtotal_footer_separator"
+                                                t-esc="subtotal['formatted_amount']"
+                                        />
+                                    </td>
+                                </tr>
+
+
+                                <t t-set="subtotal_to_show" t-value="subtotal['name']"/>
+                                <t t-call="account.tax_groups_totals"/>
+                            </t>
+                            <tr>
+                                <td>
+                                    <span>Total de descuento</span>
+                                </td>
+
+                                <td class="text-right">
+                                    <span
+                                            t-att-class="oe_subtotal_footer_separator"
+                                            t-esc="'$ ' + str(discount_total)"
+                                    />
+                                </td>
+                            </tr>
+
+                            <!--Total amount with all taxes-->
+                            <tr class="border-black o_total">
+                                <td>
+                                    <strong>Total</strong>
+                                </td>
+                                <td class="text-right">
+                                    <span t-esc="tax_totals['formatted_amount_total']"/>
+                                </td>
+                            </tr>
                         </table>
                     </div>
                 </div>
