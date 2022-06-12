@@ -26,7 +26,6 @@ class ProductSuplierInherit(models.Model):
 class ProductProductInherit(models.Model):
     _inherit = "product.product"
 
-    # edit_price_sale = fields.Boolean("Editar precio de venta", compute='_compute_group_edit_sale_price', store=False)
 
     list_price_permited = fields.Boolean(string="Readonly para el campo discount", readonly=False,
                                          compute='get_user_list_price')
@@ -53,7 +52,6 @@ class ProductProductInherit(models.Model):
 class ProductTemplateInherit(models.Model):
     _inherit = "product.template"
 
-    # edit_price_sale = fields.Boolean("Editar precio de venta", compute='_compute_group_edit_sale_price', store=False)
 
     list_price_permited = fields.Boolean(string="Readonly para el campo discount",readonly=False, compute='get_user_list_price')
     standard_price_permited = fields.Boolean(string="Readonly para el campo discount",readonly=False, compute='get_user_standard_price')
