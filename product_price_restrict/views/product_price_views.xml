@@ -99,7 +99,6 @@
             <xpath expr="//field[@name='lst_price']" position="after">
                 <field name="list_price_permited" invisible="1"/>
                 <field name="standard_price_permited" invisible="1"/>
-                <field name="price_compra_proveedor" invisible="1"/>
 
             </xpath>
 
