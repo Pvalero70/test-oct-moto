@@ -8,6 +8,7 @@ _logger = logging.getLogger(__name__)
 
 class ProductProductRepair(models.Model):
     _inherit = 'product.product'
+    _order = 'orden_repairs'
 
     orden_repairs = fields.Integer('Orden en Reparaciones',default=0)
 
