@@ -1,7 +1,10 @@
 import logging
 
-from odoo import api, fields, models, _
-from odoo.exceptions import ValidationError, UserError, Warning
+
+from odoo import _, api, fields, models
+from odoo.exceptions import UserError, ValidationError
+
+from odoo.tools.float_utils import float_compare, float_is_zero
 
 _logger = logging.getLogger(__name__)
 
@@ -59,5 +62,25 @@ class RepairMechanic(models.Model):
                 self.lot_id.write({'product_qty':0})
         return res
 
+class StockQuantInherit(models.Model):
+    _inherit = 'stock.quant'
+
+    @api.constrains('quantity')
+    def check_quantity(self):
+        for quant in self:
+            if quant.location_id.usage != 'inventory' and quant.lot_id and quant.product_id.tracking == 'serial' \
+                    and float_compare(abs(quant.quantity), 1, precision_rounding=quant.product_uom_id.rounding) > 0:
+                if quant.lot_id.product_id:
+                    product = quant.lot_id.product_id
+                    categoria = product.categ_id
+                    if categoria.name == 'Motos':
+                        return
+                    while categoria.parent_id:
+                        categoria = categoria.parent_id
+                        if categoria.name == 'Motos':
+                            return 
+                raise ValidationError(
+                    _('The serial number has already been assigned: \n Product: %s, Serial Number: %s') % (
+                    quant.product_id.display_name, quant.lot_id.name))
 
 
