@@ -18,6 +18,11 @@
         <field name="name">Crear descuentos en compras</field>
     </record>
 
+    <record id="user_price_purchase_group" model="res.groups">
+        <field name="category_id" ref="purchase_discount"/>
+        <field name="name">Precio unitario en compras</field>
+    </record>
+
 
 
 </odoo>
