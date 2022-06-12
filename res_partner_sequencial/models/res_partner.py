@@ -88,7 +88,7 @@ class ResPartnertInherit(models.Model):
 
     is_partner_user = fields.Boolean(string="Es partner de un usuario", compute='_get_user_partner', store=True)
     is_partner_company = fields.Boolean(string="Es partner de una company", compute='_get_company_partner', store=True)
-    is_partner_company_child = fields.Boolean(string="Es contacto o direccion de una company", compute='_get_company_partner', store=True)
+    is_partner_company_child = fields.Boolean(string="Es contacto o direccion de una company", compute='_get_company_partner_dir', store=True)
 
     @api.depends('is_partner_user')
     def _get_user_partner(self):
