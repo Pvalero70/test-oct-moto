@@ -19,7 +19,7 @@ class RepairMechanic(models.Model):
     def _products_order(self):
         _logger.info("En onchange partner")
         products = self.env['product.product'].search([('type', 'in', ['product', 'consu']),('company_id', 'in', [self.env.company.id,'',None,False])])
-        ordenes_ventas = self.env['pos.order'].search([('partner_id','=',self.partner_id.id),('state','in',['done','invoiced'])])
+        ordenes_ventas = self.env['pos.order'].search([('partner_id','=',self.partner_id.id),('state','in',['done','invoiced','paid'])])
         productos_ventas = [product for orden in ordenes_ventas for line in orden.lines for product in line.product_id ]
         _logger.info("Domain %s",products)
         _logger.info("Ventas %s",productos_ventas)
