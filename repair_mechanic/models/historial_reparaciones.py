@@ -56,6 +56,7 @@ class RepairMechanic(models.Model):
             if self.product_id.orden_repairs == 1 and self.lot_id.product_qty == 1:
                 _logger.info("En mi Descontamos 1")
                 self.lot_id.product_qty = 0
+                self.lot_id.write({'product_qty':0})
         return res
 
 
