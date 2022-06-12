@@ -78,7 +78,7 @@ class StockQuantInherit(models.Model):
                     while categoria.parent_id:
                         categoria = categoria.parent_id
                         if categoria.name == 'Motos':
-                            return 
+                            return
                 raise ValidationError(
                     _('The serial number has already been assigned: \n Product: %s, Serial Number: %s') % (
                     quant.product_id.display_name, quant.lot_id.name))
