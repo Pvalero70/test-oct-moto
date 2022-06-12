@@ -8,6 +8,20 @@ _log = logging.getLogger("___name: %s" % __name__)
 
 from lxml import etree
 
+class ProductSuplierInherit(models.Model):
+    _inherit = "product.suplierinfo"
+
+    price_compra_proveedor = fields.Boolean(string="Readonly para el campo precio en proveedores", readonly=False,
+                                            compute='get_user_price_proveedor')
+
+    @api.depends('price_compra_proveedor')
+    def get_user_price_proveedor(self):
+        res_user = self.env.user
+        if res_user.has_group('product_price_restrict.product_price_proveedores_group'):
+            self.price_compra_proveedor = True
+        else:
+            self.price_compra_proveedor = False
+
 
 class ProductProductInherit(models.Model):
     _inherit = "product.product"
@@ -21,7 +35,6 @@ class ProductProductInherit(models.Model):
 
     @api.depends('list_price_permited')
     def get_user_list_price(self):
-
         res_user = self.env.user
         if res_user.has_group('product_price_restrict.product_sale_price_group'):
             self.list_price_permited = True
