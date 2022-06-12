@@ -20,6 +20,7 @@
         'security/repair_security.xml',
         'security/ir.model.access.csv',
         'views/repair_mechanic_views.xml',
+        'views/historial_repair_views.xml',
     ],
     'demo': [],
     'external_dependencies': {
