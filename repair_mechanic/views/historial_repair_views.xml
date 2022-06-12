@@ -12,9 +12,6 @@
                 <attribute name="context">{'order_display': 'orden_repairs desc' }</attribute>
             </xpath>
 
-            <xpath expr="//button[@data-hotkey='k']" position="attributes">
-
-            </xpath>
 
 
         </field>
