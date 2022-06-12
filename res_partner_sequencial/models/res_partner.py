@@ -111,11 +111,12 @@ class ResPartnertInherit(models.Model):
     @api.depends('is_partner_company_child')
     def _get_company_partner_dir(self):
         for rec in self:
-            company_part = rec.env['res.company'].search([('partner_id', '=', rec.parent_id)], limit=1)
-            if len(company_part) == 1:
-                rec.is_partner_company_child = True
-            else:
-                rec.is_partner_company_child = False
+            if rec.parent_id:
+                company_part = rec.env['res.company'].search([('partner_id', '=', rec.parent_id.id)], limit=1)
+                if len(company_part) == 1:
+                    rec.is_partner_company_child = True
+                else:
+                    rec.is_partner_company_child = False
 
     sequencial_code_prov = fields.Char(string="Numero de Cliente", compute='_default_seq_code_prov', store=True)
     sequencial_code_client = fields.Char(string="Numero de Proveedor", compute='_default_seq_code_client', store=True)
