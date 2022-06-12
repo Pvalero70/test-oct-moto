@@ -6,6 +6,7 @@ from odoo.exceptions import ValidationError, UserError, Warning
 _logger = logging.getLogger(__name__)
 
 
+
 class ProductProductRepair(models.Model):
     _inherit = 'product.product'
     _order = 'orden_repairs desc'
@@ -45,3 +46,17 @@ class RepairMechanic(models.Model):
             if not product_encontrado:
                 product.orden_repairs = 0
         _logger.info("Productos Encontrados motos %s",[p for p in products if p.orden_repairs == 1])
+
+    def action_incoming(self):
+        _logger.info("En mi boton")
+
+        res = super(RepairMechanic, self).action_incoming()
+
+        if self.product_id and self.lot_id:
+            if self.product_id.orden_repairs == 1 and self.lot_id.product_qty == 1:
+                _logger.info("En mi Descontamos 1")
+                self.lot_id.product_qty = 0
+        return res
+
+
+
