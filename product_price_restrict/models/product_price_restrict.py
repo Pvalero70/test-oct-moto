@@ -9,7 +9,7 @@ _log = logging.getLogger("___name: %s" % __name__)
 from lxml import etree
 
 class ProductSuplierInherit(models.Model):
-    _inherit = "product.suplierinfo"
+    _inherit = "product.supplierinfo"
 
     price_compra_proveedor = fields.Boolean(string="Readonly para el campo precio en proveedores", readonly=False,
                                             compute='get_user_price_proveedor')
