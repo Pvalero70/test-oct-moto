@@ -73,13 +73,13 @@ class StockPickingInherit(models.Model):
         ctx = dict(self.env.context)
         ctx.pop('default_immediate_transfer', None)
         self = self.with_context(ctx)
-        _logger.info("Punto 1")
+
         # Sanity checks.
         pickings_without_moves = self.browse()
         pickings_without_quantities = self.browse()
         pickings_without_lots = self.browse()
         products_without_lots = self.env['product.product']
-        _logger.info("Punto 2")
+
         for picking in self:
             if not picking.move_lines and not picking.move_line_ids:
                 pickings_without_moves |= picking
@@ -102,7 +102,7 @@ class StockPickingInherit(models.Model):
                         if not line.lot_name and not line.lot_id:
                             pickings_without_lots |= picking
                             products_without_lots |= product
-        _logger.info("Punto 3")
+
         if not self._should_show_transfers():
             if pickings_without_moves:
                 raise UserError(_('Please add some items to move.'))
@@ -120,13 +120,18 @@ class StockPickingInherit(models.Model):
                 message += _('\n\nTransfers %s: You need to supply a Lot/Serial number for products %s.') % (', '.join(pickings_without_lots.mapped('name')), ', '.join(products_without_lots.mapped('display_name')))
             if message:
                 raise UserError(message.lstrip())
-        _logger.info("Punto 4")
+        _logger.info("Punto 1")
         # Run the pre-validation wizards. Processing a pre-validation wizard should work on the
         # moves and/or the context and never call `_action_done`.
+        _logger.info("Punto 1.1")
         if not self.env.context.get('button_validate_picking_ids'):
+            _logger.info("Punto 1.2")
             self = self.with_context(button_validate_picking_ids=self.ids)
+        _logger.info("Punto 1.3")
         res = self._pre_action_done_hook()
+        _logger.info("Punto 1.4")
         if res is not True:
+            _logger.info("Punto 1.5")
             return res
         _logger.info("Punto 5")
         # Call `_action_done`.
@@ -158,7 +163,7 @@ class StockPickingInherit(models.Model):
                     return action
         return True
 
-    
+
 '''
 class StockQuantInherit(models.Model):
     _inherit = 'stock.quant'
