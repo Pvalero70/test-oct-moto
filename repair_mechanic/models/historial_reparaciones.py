@@ -7,13 +7,17 @@ from odoo.exceptions import UserError
 
 from odoo.tools.float_utils import float_compare, float_is_zero, float_round
 from odoo.tools.misc import clean_context, OrderedSet
+from odoo.exceptions import ValidationError
 
 PROCUREMENT_PRIORITIES = [('0', 'Normal'), ('1', 'Urgent')]
 
 
 _logger = logging.getLogger(__name__)
 
+class StockProductionLotRepair(models.Model):
+    _inherit = 'stock.production.lot'
 
+    is_repair_moto_action = fields.Boolean("Esta operacion proviene de una reparacion de una moto ?",default=False)
 
 class ProductProductRepair(models.Model):
     _inherit = 'product.product'
@@ -433,7 +437,7 @@ class StockMoveLineInherit(models.Model):
             'date': fields.Datetime.now(),
         })
 
-'''
+
 class StockQuantInherit(models.Model):
     _inherit = 'stock.quant'
 
@@ -445,14 +449,15 @@ class StockQuantInherit(models.Model):
                 if quant.lot_id.product_id:
                     product = quant.lot_id.product_id
                     categoria = product.categ_id
-                    if categoria.name == 'Motos':
-                        return
-                    while categoria.parent_id:
-                        categoria = categoria.parent_id
+                    if quant.lot_id.is_repair_moto_action:
                         if categoria.name == 'Motos':
                             return
+                        while categoria.parent_id:
+                            categoria = categoria.parent_id
+                            if categoria.name == 'Motos':
+                                return
                 raise ValidationError(
                     _('The serial number has already been assigned: \n Product: %s, Serial Number: %s') % (
                     quant.product_id.display_name, quant.lot_id.name))
 
-'''
+
