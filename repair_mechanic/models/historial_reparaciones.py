@@ -261,7 +261,10 @@ class StockMoveInherit(models.Model):
         backorder_moves.with_context(bypass_entire_pack=True)._action_confirm(merge=False)
         _logger.info("Done stock.move:: 8")
         if cancel_backorder:
+            _logger.info("Done stock.move:: 8.1")
             backorder_moves.with_context(moves_todo=moves_todo)._action_cancel()
+            _logger.info("Done stock.move:: 8.2")
+        _logger.info("Done stock.move:: 8.3")
         moves_todo.mapped('move_line_ids').sorted()._action_done()
         _logger.info("Done stock.move:: 9")
         # Check the consistency of the result packages; there should be an unique location across
