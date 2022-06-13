@@ -171,6 +171,46 @@ class StockPickingInherit(models.Model):
                     return action
         return True
 
+    def _action_done(self):
+        """Call `_action_done` on the `stock.move` of the `stock.picking` in `self`.
+        This method makes sure every `stock.move.line` is linked to a `stock.move` by either
+        linking them to an existing one or a newly created one.
+
+        If the context key `cancel_backorder` is present, backorders won't be created.
+
+        :return: True
+        :rtype: bool
+        """
+        _logger.info("Done Action:: 1")
+        self._check_company()
+        _logger.info("Done Action:: 2")
+        todo_moves = self.mapped('move_lines').filtered(lambda self: self.state in ['draft', 'waiting', 'partially_available', 'assigned', 'confirmed'])
+        _logger.info("Done Action:: 3")
+        for picking in self:
+            _logger.info("Done Action:: 4 %s",picking.name)
+            if picking.owner_id:
+                _logger.info("Done Action:: 5")
+                picking.move_lines.write({'restrict_partner_id': picking.owner_id.id})
+                _logger.info("Done Action:: 6")
+                picking.move_line_ids.write({'owner_id': picking.owner_id.id})
+                _logger.info("Done Action:: 7")
+        _logger.info("Done Action:: 8")
+        todo_moves._action_done(cancel_backorder=self.env.context.get('cancel_backorder'))
+        _logger.info("Done Action:: 9")
+        self.write({'date_done': fields.Datetime.now(), 'priority': '0'})
+        _logger.info("Done Action:: 10")
+
+        # if incoming moves make other confirmed/partially_available moves available, assign them
+        _logger.info("Done Action:: 11")
+        done_incoming_moves = self.filtered(lambda p: p.picking_type_id.code == 'incoming').move_lines.filtered(lambda m: m.state == 'done')
+        _logger.info("Done Action:: 12")
+        done_incoming_moves._trigger_assign()
+        _logger.info("Done Action:: 13")
+
+        self._send_confirmation_email()
+        _logger.info("Done Action:: 14")
+        return True
+
 
 '''
 class StockQuantInherit(models.Model):
