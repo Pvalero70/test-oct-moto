@@ -136,12 +136,20 @@ class StockPickingInherit(models.Model):
         _logger.info("Punto 5")
         # Call `_action_done`.
         if self.env.context.get('picking_ids_not_to_backorder'):
+            _logger.info("Punto 5.1")
             pickings_not_to_backorder = self.browse(self.env.context['picking_ids_not_to_backorder'])
+            _logger.info("Punto 5.2")
             pickings_to_backorder = self - pickings_not_to_backorder
+            _logger.info("Punto 5.3")
         else:
+            _logger.info("Punto 5.4")
             pickings_not_to_backorder = self.env['stock.picking']
+            _logger.info("Punto 5.5")
             pickings_to_backorder = self
+            _logger.info("Punto 5.6")
+        _logger.info("Punto 5.7")
         pickings_not_to_backorder.with_context(cancel_backorder=True)._action_done()
+        _logger.info("Punto 5.8")
         pickings_to_backorder.with_context(cancel_backorder=False)._action_done()
         _logger.info("Punto 6")
         if self.user_has_groups('stock.group_reception_report') \
