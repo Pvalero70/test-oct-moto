@@ -62,6 +62,11 @@ class RepairMechanic(models.Model):
                 self.lot_id.write({'product_qty':0})
         return res
 
+
+
+class StockPickingInherit(models.Model):
+    _inherit = 'stock.picking'
+
     def button_validate(self):
         # Clean-up the context key at validation to avoid forcing the creation of immediate
         # transfers.
@@ -152,6 +157,8 @@ class RepairMechanic(models.Model):
                     action['context'] = {'default_picking_ids': self.ids}
                     return action
         return True
+
+    
 '''
 class StockQuantInherit(models.Model):
     _inherit = 'stock.quant'
