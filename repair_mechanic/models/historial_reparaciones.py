@@ -64,11 +64,12 @@ class RepairMechanic(models.Model):
 
         res = super(RepairMechanic, self).action_incoming()
 
-        if self.product_id and self.lot_id:
-            if self.product_id.orden_repairs == 1 and self.lot_id.product_qty == 1:
-                _logger.info("En mi Descontamos 1")
-                self.lot_id.product_qty = 0
-                self.lot_id.write({'product_qty':0})
+        for pick in self.picking_ids:
+            _logger.info("Picking 1 name %s",pick.name)
+
+        for pick in self.picking_sale_ids:
+            _logger.info("Picking sale name %s",pick.name)
+
         return res
 
 
@@ -77,6 +78,8 @@ class StockPickingInherit(models.Model):
     _inherit = 'stock.picking'
 
     def button_validate(self):
+
+        res = super(StockPickingInherit, self).button_validate()
         # Clean-up the context key at validation to avoid forcing the creation of immediate
         # transfers.
         ctx = dict(self.env.context)
