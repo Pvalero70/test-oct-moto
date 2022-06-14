@@ -26,7 +26,6 @@ class ProductProductRepair(models.Model):
     def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None, order=None):
         ctx = self._context
         if 'order_display' in ctx:
-            _logger.info("Orden %s", ctx['order_display'])
             order = ctx['order_display']
         return self._search(args, limit=limit, access_rights_uid=name_get_uid, order=order)
 
@@ -42,8 +41,7 @@ class RepairMechanic(models.Model):
         products = self.env['product.product'].search([('type', 'in', ['product', 'consu']),('company_id', 'in', [self.env.company.id,'',None,False])])
         ordenes_ventas = self.env['pos.order'].search([('partner_id','=',self.partner_id.id),('state','in',['done','invoiced','paid'])])
         productos_ventas = [product for orden in ordenes_ventas for line in orden.lines for product in line.product_id ]
-        _logger.info("Domain %s",products)
-        _logger.info("Ventas %s",productos_ventas)
+
         for product in products:
             product_encontrado = False
             for product_venta in productos_ventas:
@@ -64,18 +62,12 @@ class RepairMechanic(models.Model):
                             break
             if not product_encontrado:
                 product.orden_repairs = 0
-        _logger.info("Productos Encontrados motos %s",[p for p in products if p.orden_repairs == 1])
+
 
     def action_incoming(self):
-        _logger.info("En mi boton")
-
         res = super(RepairMechanic, self).action_incoming()
-
         for pick in self.picking_ids:
-            _logger.info("Picking 1 name %s",pick.name)
             pick.lot_id_product = self.lot_id
-            _logger.info("Pickiong Lot %s", pick.lot_id_product)
-
         return res
 
 
@@ -89,7 +81,6 @@ class StockPickingInherit(models.Model):
         if self.lot_id_product:
             #Si existe este campo es que proviene de una reparacion
             self.lot_id_product.is_repair_moto_action = True
-            _logger.info("Asignamos Lote %s",self.lot_id_product.is_repair_moto_action)
 
         res = super(StockPickingInherit, self).button_validate()
 
