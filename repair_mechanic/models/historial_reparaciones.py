@@ -22,18 +22,14 @@ class StockProductionLotRepair(models.Model):
 class ProductProductRepair(models.Model):
     _inherit = 'product.product'
 
-
     @api.model
-    def search(self, args, offset=0, limit=None, order=None, count=False):
+    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None, order=None):
         ctx = self._context
         if 'order_display' in ctx:
-            _logger.info("Orden %s",ctx['order_display'])
+            _logger.info("Orden %s", ctx['order_display'])
             order = ctx['order_display']
-        res = super(ProductProductRepair, self).search(
-            args, offset=offset, limit=limit, order=order, count=count)
-        return res
+        return self._search(args, limit=limit, access_rights_uid=name_get_uid, order=order)
 
-    orden_repairs = fields.Integer('Orden en Reparaciones',default=0)
 
 
 class RepairMechanic(models.Model):
