@@ -32,14 +32,15 @@ class ResUsersInherit(models.Model):
 class ResPartnertInherit(models.Model):
     _inherit = 'res.partner'
 
-    def name_get(self):
-        result = []
-        for record in self:
+    @api.model
+    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
 
-            result.append((record.id, "{} {} {}".format(record.name, record.sequencial_code_prov , record.sequencial_code_client)))
+        args = args or []
+        domain = []
+        if name:
+            domain = ['|','|', ('sequencial_code_prov', operator, name), ('sequencial_code_client', operator, name),('name',operator,name)]
 
-        return result
-
+        return self._search(domain + args, limit=limit, access_rights_uid=name_get_uid)
 
     @api.constrains('supplier_rank')
     def seq_code_prov(self):
