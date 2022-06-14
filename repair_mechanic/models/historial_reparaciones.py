@@ -30,6 +30,7 @@ class ProductProductRepair(models.Model):
             order = ctx['order_display']
         return self._search(args, limit=limit, access_rights_uid=name_get_uid, order=order)
 
+    orden_repairs = fields.Integer('Orden que se mostarara el Many2one en Reparaciones',default=0)
 
 
 class RepairMechanic(models.Model):
