@@ -88,7 +88,7 @@ class StockPickingInherit(models.Model):
 
         # Ponemos en False para que el codigo ya no afecte a otras recepciones de motos y sigan las validaciones normales de odoo
         self.lot_id_product.is_repair_moto_action = False
-        
+
         return res
 
 
