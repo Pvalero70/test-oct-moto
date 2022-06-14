@@ -21,12 +21,13 @@ class StockProductionLotRepair(models.Model):
 
 class ProductProductRepair(models.Model):
     _inherit = 'product.product'
-    _order = 'orden_repairs desc'
+
 
     @api.model
     def search(self, args, offset=0, limit=None, order=None, count=False):
         ctx = self._context
         if 'order_display' in ctx:
+            _logger.info("Orden %s",ctx['order_display'])
             order = ctx['order_display']
         res = super(ProductProductRepair, self).search(
             args, offset=offset, limit=limit, order=order, count=count)
