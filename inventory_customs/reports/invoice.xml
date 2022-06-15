@@ -6,16 +6,16 @@
                 <span t-field="line.name" t-options="{'widget': 'text'}"/>
                 <t t-if="o._print_moto_details()">
                     <br/>
-                    <ul>
-                       <!-- <li><b>Número de pedimento: </b> <t t-esc="line.l10n_mx_edi_customs_number"/></li>-->
-                        <li><b>Marca: </b> <t t-esc="line.product_id.brand_id.name"/></li>
-                        <li><b>Linea: </b> <t t-esc="line.product_id.categ_id.name"/></li>
-                        <li><b>Clave: </b> <t t-esc="line.product_id.default_code"/></li>
-                        <li><b>Modelo: </b> <t t-esc="line.product_id.moto_model"/></li>
-                        <li><b>Cilindros: </b> <t t-esc="line.product_id.moto_cilindros"/></li>
-                        <li><b>Desplazamiento: </b> <t t-esc="line.product_id.moto_despl"/></li>
-                        <li><b>Motor: </b> <t t-esc="line.product_id.moto_motor"/></li>
-                    </ul>
+
+                   <!-- <li><b>Número de pedimento: </b> <t t-esc="line.l10n_mx_edi_customs_number"/></li>-->
+                    <b>Marca: </b> <t t-esc="line.product_id.brand_id.name"/><br/>
+                    <b>Linea: </b> <t t-esc="line.product_id.categ_id.name"/><br/>
+                    <b>Clave: </b> <t t-esc="line.product_id.default_code"/><br/>
+                    <b>Modelo: </b> <t t-esc="line.product_id.moto_model"/><br/>
+                    <b>Cilindros: </b> <t t-esc="line.product_id.moto_cilindros"/><br/>
+                    <b>Desplazamiento: </b> <t t-esc="line.product_id.moto_despl"/><br/>
+                    <b>Motor: </b> <t t-esc="line.product_id.moto_motor"/><br/>
+
                 </t>
             </td>
         </xpath>

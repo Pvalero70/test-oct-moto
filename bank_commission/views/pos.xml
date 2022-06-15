@@ -22,6 +22,11 @@
                     attrs="{
                     'invisible': [('bank_commission_method', '==', False)],
                     'required':[('bank_commission_method', '!=', False)]}"/>
+                <field name="product_cate_commission_ids"
+                       widget="many2many_tags"
+                    attrs="{
+                    'invisible': [('bank_commission_method', '==', False)],
+                    'required':[('bank_commission_method', '!=', False)]}"/>
             </field>
         </field>
     </record>
