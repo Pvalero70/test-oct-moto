@@ -17,6 +17,11 @@
         <field name="name">Coste en productos</field>
     </record>
 
+    <record id="product_price_proveedores_group" model="res.groups">
+        <field name="category_id" ref="product_price_restrict_category"/>
+        <field name="name">Precio compra proveedores</field>
+    </record>
+
 
 
 </odoo>
