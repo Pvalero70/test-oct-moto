@@ -113,27 +113,38 @@ var rpc = require('web.rpc');
                 console.log("Config")
                 console.log(this.env.pos.config)
 
+                let monto_efectivo_max = this.env.pos.config.monto_efectivo_max || 0;
+                let monto_pago_max = this.env.pos.config.monto_pago_max || 0;
+
                 console.log("Payment Lines")
                 // console.log(this.currentOrder.paymentlines.models)
 
                 let payments = this.currentOrder.paymentlines.models
+                let monto_efectivo = 0;
+                let monto_total = 0;
 
                 for (let i = 0; i < payments.length; i++) {
                     
                     if (payments[i]['name'].toLowerCase().search('efectivo') >= 0){
                         console.log("Efectivo")
                         console.log(payments[i])
+                        monto_efectivo += payments[i].amount;
                     }
                     else{
                         console.log("Otros")
                         console.log(payments[i])
                     }
+                    monto_total += payments[i].amount
                 }
 
-                await this.showPopup('ErrorPopup', {
-                    title: "Valida Pago",
-                    body: "Mensaje",
-                });
+                if (monto_efectivo > monto_efectivo_max){
+
+                        await this.showPopup('ErrorPopup', {
+                            title: "Valida Pago",
+                            body: "Reportar al SAT que el cliente ha rebasado el límite permitido de compra."
+                        });
+                }
+
 
                 return
 
