@@ -361,4 +361,7 @@ class PosConfig(models.Model):
 
     forma_pago_anticipo = fields.Many2one('l10n_mx_edi.payment.method', 'Forma pago anticipo')
     credit_note_product_id = fields.Many2one('product.product', 'Producto para nota de credito')
+    monto_efectivo_max = fields.Float('Monto maximo en efectivo por transaccion')
+    monto_pago_max = fields.Float('Monto maximo en pagos ultimos 6 meses')
+    email_notificacion_sat = fields.Char('Email de notificacion para montos de pago superados')
 
