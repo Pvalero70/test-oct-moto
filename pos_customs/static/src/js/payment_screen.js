@@ -113,7 +113,7 @@ var rpc = require('web.rpc');
                 console.log("Payment Lines")
                 // console.log(this.currentOrder.paymentlines.models)
 
-                payments = this.currentOrder.paymentlines.models
+                let payments = this.currentOrder.paymentlines.models
 
                 for (let i = 0; i < payments.length; i++) {
                     
