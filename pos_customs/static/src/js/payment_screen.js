@@ -29,12 +29,6 @@ var rpc = require('web.rpc');
                 console.log(this.env.pos.get_client())
                 console.log(this.currentOrder)
 
-                await this.showPopup('ErrorPopup', {
-                    title: "Valida Pago",
-                    body: "Mensaje",
-                });
-
-
                 const config_id = this.env.pos.config_id
                 const partner = this.env.pos.get_client()
                 
@@ -112,6 +106,33 @@ var rpc = require('web.rpc');
                 
                 console.log("Sobre escribe finalize validation")
                 console.log(this.selectedCreditNoteId)
+
+                console.log("Is paid with cash")
+                console.log(this.currentOrder.is_paid_with_cash())
+
+                console.log("Payment Lines")
+                // console.log(this.currentOrder.paymentlines.models)
+
+                payments = this.currentOrder.paymentlines.models
+
+                for (let i = 0; i < payments.length; i++) {
+                    
+                    if (payments[i].search('efectivo') >= 0){
+                        console.log("Efectivo")
+                        console.log(payments[i])
+                    }
+                    else{
+                        console.log("Otros")
+                        console.log(payments[i])
+                    }
+                }
+
+                await this.showPopup('ErrorPopup', {
+                    title: "Valida Pago",
+                    body: "Mensaje",
+                });
+
+                return
 
                 if ((this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) && this.env.pos.config.iface_cashdrawer) {
                     this.env.pos.proxy.printer.open_cashbox();
