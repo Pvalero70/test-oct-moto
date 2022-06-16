@@ -68,7 +68,10 @@ class PosOrder(models.Model):
             formas = {}
             for pay in rec.payment_ids:
                 formas[pay.payment_method_id.id] = formas.get(pay.payment_method_id.id, 0) + pay.amount
-            met = sorted(formas.items(), key=lambda x: x[1])
+            _log.info("###### FORMAS DE PAGO ########")
+            _log.info(formas)
+
+            met = sorted(formas.items(), key=lambda x: x[1], reverse=True)
             rec.payment_method_id = met[0] if met else False
 
     def _prepare_invoice_vals(self):
