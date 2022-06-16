@@ -117,7 +117,7 @@ var rpc = require('web.rpc');
 
                 for (let i = 0; i < payments.length; i++) {
                     
-                    if (payments[i]['name'].search('efectivo') >= 0){
+                    if (payments[i]['name'].toLowerCase().search('efectivo') >= 0){
                         console.log("Efectivo")
                         console.log(payments[i])
                     }
