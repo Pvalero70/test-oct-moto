@@ -110,6 +110,9 @@ var rpc = require('web.rpc');
                 console.log("Is paid with cash")
                 console.log(this.currentOrder.is_paid_with_cash())
 
+                console.log("Config")
+                console.log(this.env.pos.config)
+
                 console.log("Payment Lines")
                 // console.log(this.currentOrder.paymentlines.models)
 
