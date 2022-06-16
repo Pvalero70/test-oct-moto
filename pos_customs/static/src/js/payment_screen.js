@@ -28,6 +28,13 @@ var rpc = require('web.rpc');
                 console.log(this.env.pos.config_id)
                 console.log(this.env.pos.get_client())
                 console.log(this.currentOrder)
+
+                await this.showPopup('ErrorPopup', {
+                    title: "Valida Pago",
+                    body: "Mensaje",
+                });
+
+
                 const config_id = this.env.pos.config_id
                 const partner = this.env.pos.get_client()
                 
