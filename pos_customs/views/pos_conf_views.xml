@@ -50,9 +50,9 @@
                         <field name="is_header_or_footer"/>
                     </div> -->
                     <div class="o_setting_right_pane">
-                        <label for="credit_note_product_id"/>
+                        <label for="monto_efectivo_max"/>
                         <div class="text-muted">
-                            Monto maximo permitido en efectivo por transaccion
+                            Ingresa el monto maximo permitido para transacciones en efectivo
                         </div>
                         <div class="content-group mt16">
                             <field name="monto_efectivo_max" />
@@ -65,9 +65,9 @@
                         <field name="is_header_or_footer"/>
                     </div> -->
                     <div class="o_setting_right_pane">
-                        <label for="credit_note_product_id"/>
+                        <label for="monto_pago_max"/>
                         <div class="text-muted">
-                            Monto maximo en pagos de los ultimos 6 meses
+                            Ingresa el monto maximo permitido para pagos de los ultimos 6 meses
                         </div>
                         <div class="content-group mt16">
                             <field name="monto_pago_max" />
@@ -80,9 +80,9 @@
                         <field name="is_header_or_footer"/>
                     </div> -->
                     <div class="o_setting_right_pane">
-                        <label for="credit_note_product_id"/>
+                        <label for="email_notificacion_sat"/>
                         <div class="text-muted">
-                            Email de notificacion para pagos
+                            Configura el email de notificacion para pagos, cuando se hayan superado los montos permitidos
                         </div>
                         <div class="content-group mt16">
                             <field name="email_notificacion_sat" />
