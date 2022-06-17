@@ -37,8 +37,10 @@ class AccountMove(models.Model):
         monto_pagado = 0
         if facturas:
             for f in facturas:
+                _log.info(f.name)
                 pagado = float(f.amount_total) - float(f.amount_residual)
                 if pagado > 0:
+                    _log.info(pagado)
                     monto_pagado += pagado
 
         return monto_pagado
