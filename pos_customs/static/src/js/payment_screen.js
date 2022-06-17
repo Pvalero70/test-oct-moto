@@ -137,8 +137,6 @@ var rpc = require('web.rpc');
                 console.log("Saldo pagado ultimos 6 meses")
                 console.log(saldo_pagado)
 
-                return
-
                 for (let i = 0; i < payments.length; i++) {
                     
                     if (payments[i]['name'].toLowerCase().search('efectivo') >= 0){
@@ -155,15 +153,19 @@ var rpc = require('web.rpc');
 
                 if (monto_efectivo > monto_efectivo_max){
 
-                        await this.showPopup('ErrorPopup', {
+                        const { confirmed } = await this.showPopup('ConfirmPopup', {
                             title: "Valida Pago",
                             body: "Reportar al SAT que el cliente ha rebasado el límite permitido de compra."
                         });
+                        console.log("Confirmacion")
+                        console.log(confirmed);                        
                 }
 
                 if ((this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) && this.env.pos.config.iface_cashdrawer) {
                     this.env.pos.proxy.printer.open_cashbox();
                 }
+
+                console.log("Continua...")
 
                 this.currentOrder.initialize_validation_date();
                 this.currentOrder.finalized = true;
