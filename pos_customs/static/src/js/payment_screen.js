@@ -151,14 +151,36 @@ var rpc = require('web.rpc');
                     monto_total += payments[i].amount
                 }
 
+                let emails = this.env.pos.config.email_notificacion_sat
+                let sucursal = this.env.pos.config.name
+                let cliente = partner.name
+                let monto = monto_pagado_total
+                let venta = this.currentOrder.name
+
                 if (monto_efectivo > monto_efectivo_max){
 
                         const { confirmed } = await this.showPopup('ConfirmPopup', {
                             title: "Valida Pago",
                             body: "Reportar al SAT que el cliente ha rebasado el límite permitido de pago en efectivo."
                         });
-                        console.log("Confirmacion")
-                        console.log(confirmed);                        
+                        if(confirmed){
+
+                            console.log("Confirmacion")
+                            console.log(confirmed);      
+                            monto = monto_efectivo
+
+                            console.log(emails)
+                            console.log(sucursal)
+                            console.log(cliente)
+                            console.log(monto)
+                            console.log(venta)
+
+                            await this.rpc({
+                                model: 'account.move',
+                                method: 'enviar_mail_advertencia_pago_permitido',
+                                args: [{vals : {emails : emails, sucursal : sucursal, cliente: cliente, monto: monto, venta: venta}}],
+                            });
+                        }
                 }
 
                 let monto_pagado_total = parseFloat(monto_total) + parseFloat(saldo_pagado)
@@ -172,15 +194,20 @@ var rpc = require('web.rpc');
                     if(confirmed){
                         console.log("Confirmacion")
                         console.log(confirmed);  
-                        console.log(this.env.pos.config.name)
-                        console.log(partner.name)
-                        console.log(monto_pagado_total)
-                        console.log(this.currentOrder)
-                        // await this.rpc({
-                        //     model: 'account.move',
-                        //     method: 'enviar_mail_advertencia_pago_permitido',
-                        //     args: [{vals : {partner : partner}}],
-                        // });
+                        
+                        monto = monto_pagado_total
+                        
+                        console.log(emails)
+                        console.log(sucursal)
+                        console.log(cliente)
+                        console.log(monto)
+                        console.log(venta)
+
+                        await this.rpc({
+                            model: 'account.move',
+                            method: 'enviar_mail_advertencia_pago_permitido',
+                            args: [{vals : {emails : emails, sucursal : sucursal, cliente: cliente, monto: monto, venta: venta}}],
+                        });
 
                     }
                 }
