@@ -32,7 +32,7 @@ class AccountMove(models.Model):
         fecha_6_months = fecha_hoy - timedelta(days=180)
         fecha_6_months_str = fecha_6_months.strftime('%Y-%m%d %H:%M:%S')
 
-        facturas = self.search([('type', '=', 'out_invoice'), ('partner_id', '=', partner_id), ('payment_state', 'in', ['partial', 'in_payment', 'paid']), ('invoice_date', '>=', fecha_6_months_str)])
+        facturas = self.search([('move_type', '=', 'out_invoice'), ('partner_id', '=', partner_id), ('payment_state', 'in', ['partial', 'in_payment', 'paid']), ('invoice_date', '>=', fecha_6_months_str)])
 
         monto_pagado = 0
         if facturas:
