@@ -212,8 +212,6 @@ var rpc = require('web.rpc');
                     }
                 }
 
-                return
-
                 if ((this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) && this.env.pos.config.iface_cashdrawer) {
                     this.env.pos.proxy.printer.open_cashbox();
                 }
