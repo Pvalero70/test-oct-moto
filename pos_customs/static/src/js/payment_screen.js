@@ -155,11 +155,25 @@ var rpc = require('web.rpc');
 
                         const { confirmed } = await this.showPopup('ConfirmPopup', {
                             title: "Valida Pago",
-                            body: "Reportar al SAT que el cliente ha rebasado el límite permitido de compra."
+                            body: "Reportar al SAT que el cliente ha rebasado el límite permitido de pago en efectivo."
                         });
                         console.log("Confirmacion")
                         console.log(confirmed);                        
                 }
+
+                let monto_pagado_total = parseFloat(monto_total) + parseFloat(saldo_pagado)
+                
+                if (monto_pagado_total > monto_pago_max){
+
+                    const { confirmed } = await this.showPopup('ConfirmPopup', {
+                        title: "Valida Pago",
+                        body: "Reportar al SAT que el cliente ha rebasado el límite permitido de compra."
+                    });
+                    console.log("Confirmacion")
+                    console.log(confirmed);                        
+                }
+
+                return
 
                 if ((this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) && this.env.pos.config.iface_cashdrawer) {
                     this.env.pos.proxy.printer.open_cashbox();
