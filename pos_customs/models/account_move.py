@@ -25,14 +25,14 @@ class AccountMove(models.Model):
         _log.info("## VALIDAR SALDO PAGADO ##")
         values = values.get('vals', {})
         _log.info(values)
-        customer = values.get('customer')
+        customer = values.get('partner')
         partner_id = customer.get('id')
 
         fecha_hoy = datetime.now()
         fecha_6_months = fecha_hoy - timedelta(days=180)
         fecha_6_months_str = fecha_6_months.strftime('%Y-%m%d %H:%M:%S')
 
-        facturas = self.search([('partner_id', '=', partner_id), ('payment_state', 'in', ['partial', 'in_payment', 'paid']), ('invoice_date', '>=', fecha_6_months_str)])
+        facturas = self.search([('type', '=', 'out_invoice'), ('partner_id', '=', partner_id), ('payment_state', 'in', ['partial', 'in_payment', 'paid']), ('invoice_date', '>=', fecha_6_months_str)])
 
         monto_pagado = 0
         if facturas:
