@@ -154,7 +154,7 @@ var rpc = require('web.rpc');
                 let emails = this.env.pos.config.email_notificacion_sat
                 let sucursal = this.env.pos.config.name
                 let cliente = partner.name
-                let monto = monto_pagado_total
+                let monto = 0
                 let venta = this.currentOrder.name
 
                 if (monto_efectivo > monto_efectivo_max){
