@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 _log = logging.getLogger("___name: %s" % __name__)
 
@@ -20,5 +20,25 @@ class AccountMove(models.Model):
 
         return super(AccountMove, self).js_assign_outstanding_line(line_id)
     
-    # def create_credit_note_pos(self, data):
-        # move_type = 'out_refund'
+    @api.model
+    def validar_saldo_permitido(self, values):
+        _log.info("## VALIDAR SALDO PAGADO ##")
+        values = values.get('vals', {})
+        _log.info(values)
+        customer = values.get('customer')
+        partner_id = customer.get('id')
+
+        fecha_hoy = datetime.now()
+        fecha_6_months = fecha_hoy - timedelta(days=180)
+        fecha_6_months_str = fecha_6_months.strftime('%Y-%m%d %H:%M:%S')
+
+        facturas = self.search([('partner_id', '=', partner_id), ('payment_state', 'in', ['partial', 'in_payment', 'paid']), ('invoice_date', '>=', fecha_6_months_str)])
+
+        monto_pagado = 0
+        if facturas:
+            for f in facturas:
+                pagado = float(f.amount_total) - float(f.amount_residual)
+                if pagado > 0:
+                    monto_pagado += pagado
+
+        return monto_pagado

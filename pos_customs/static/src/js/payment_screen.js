@@ -123,6 +123,22 @@ var rpc = require('web.rpc');
                 let monto_efectivo = 0;
                 let monto_total = 0;
 
+                let partner = this.currentOrder.attributes.client
+                console.log("Cliente")
+                console.log(partner)
+                
+
+                const saldo_pagado = await this.rpc({
+                    model: 'account.move',
+                    method: 'validar_saldo_permitido',
+                    args: [{vals : {partner : partner}}],
+                });
+
+                console.log("Saldo pagado ultimos 6 meses")
+                console.log(saldo_pagado)
+
+                return
+
                 for (let i = 0; i < payments.length; i++) {
                     
                     if (payments[i]['name'].toLowerCase().search('efectivo') >= 0){
@@ -144,9 +160,6 @@ var rpc = require('web.rpc');
                             body: "Reportar al SAT que el cliente ha rebasado el límite permitido de compra."
                         });
                 }
-
-
-                return
 
                 if ((this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) && this.env.pos.config.iface_cashdrawer) {
                     this.env.pos.proxy.printer.open_cashbox();
