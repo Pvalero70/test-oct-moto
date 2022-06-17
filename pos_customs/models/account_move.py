@@ -19,7 +19,41 @@ class AccountMove(models.Model):
         _log.info(move_line.credit)
 
         return super(AccountMove, self).js_assign_outstanding_line(line_id)
-    
+
+    @api.model
+    def enviar_mail_advertencia_pago_permitido(self, values):
+        _log.info("## ENVIAR EMAIL ##")
+
+        params = values.get('vals')
+        emails = params.get('emails', '')
+        cliente = params.get('cliente', '')
+        venta = params.get('venta', '')
+        sucursal = params.get('sucursal', '')
+        monto = params.get('monto', 0)
+        
+        body = "Reportar al SAT que el cliente ha rebasado el límite permitido de compra.<br>"
+        body += "<br>"
+        body += f"Nombre del Cliente: {cliente}" 
+        body += "<br>"
+        body += f"Orden de venta: {venta}" 
+        body += "<br>"
+        body += f"Sucursal: {sucursal}" 
+        body += "<br>"
+        body += f"Monto: ${monto}" 
+        body += "<br>"
+       
+        template_obj = self.env['mail.mail']
+        for email in emails.split(','):
+            template_data = {
+                'subject': 'Advertencia de pago permitido',
+                'body_html': body,
+                'email_from': self.env.user.company_id.email,
+                'email_to': email
+            }
+            _log.info("EMAIL ORDER: Enviamos email con %s", template_data)
+            template_id = template_obj.sudo().create(template_data)
+            template_id.send()
+
     @api.model
     def validar_saldo_permitido(self, values):
         _log.info("## VALIDAR SALDO PAGADO ##")

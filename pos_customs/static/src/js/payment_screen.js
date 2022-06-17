@@ -169,8 +169,20 @@ var rpc = require('web.rpc');
                         title: "Valida Pago",
                         body: "Reportar al SAT que el cliente ha rebasado el límite permitido de compra."
                     });
-                    console.log("Confirmacion")
-                    console.log(confirmed);                        
+                    if(confirmed){
+                        console.log("Confirmacion")
+                        console.log(confirmed);  
+                        console.log(this.env.pos.config.name)
+                        console.log(partner.name)
+                        console.log(monto_pagado_total)
+                        console.log(this.currentOrder)
+                        // await this.rpc({
+                        //     model: 'account.move',
+                        //     method: 'enviar_mail_advertencia_pago_permitido',
+                        //     args: [{vals : {partner : partner}}],
+                        // });
+
+                    }
                 }
 
                 return
