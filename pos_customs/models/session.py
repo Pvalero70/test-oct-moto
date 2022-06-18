@@ -44,6 +44,7 @@ class PosSession(models.Model):
         move_line_ids = []
         payments_rel = self.env['account.payment'].search([('pos_session_id', '=', self.id)])
         monto_payment_pos = 0
+        pago_pos_close_list = []
         pago_pos_close = None
         payment_partner_list = []
         payment_partner_move_list = []
@@ -67,7 +68,8 @@ class PosSession(models.Model):
                 payment_partner_move_list.append(payment.move_id)
             else:
                 _logger.info("Pago de PDV")
-                pago_pos_close = payment
+                # pago_pos_close = payment
+                pago_pos_close_list.append(payment)
 
             # _logger.info(payment.date)
             # _logger.info(payment.journal_id.name)
@@ -79,22 +81,22 @@ class PosSession(models.Model):
                 if payment.partner_id:
                     move_line_ids.append(move_line.id)
 
-        if pago_pos_close:
-            _logger.info("## PAGO POS CLOSE ##")
-            _logger.info(pago_pos_close.name)
-            _logger.info(pago_pos_close.amount)
-            _logger.info(monto_payment_pos)
+        if pago_pos_close_list:
+            for pago_pos_close in pago_pos_close_list:
+                _logger.info("## PAGO POS CLOSE ##")
+                _logger.info(pago_pos_close.name)
+                _logger.info(pago_pos_close.amount)
+                _logger.info(monto_payment_pos)
 
-            if monto_payment_pos > 0:
-
-                pago_pos_close.action_draft()
-                # _logger.info("## Se cambia a borrador ##")
-                # _logger.info(pago_pos_close.amount)
-                pago_pos_close.amount = pago_pos_close.amount - monto_payment_pos
-                # _logger.info("## Se actualiza monto ##")
-                # _logger.info(pago_pos_close.amount)
-                pago_pos_close.action_post()
-                # _logger.info("## Se vuelve a confirmar ##")
+                if monto_payment_pos > 0 and pago_pos_close.amount >= monto_payment_pos:
+                    pago_pos_close.action_draft()
+                    # _logger.info("## Se cambia a borrador ##")
+                    # _logger.info(pago_pos_close.amount)
+                    pago_pos_close.amount = pago_pos_close.amount - monto_payment_pos
+                    # _logger.info("## Se actualiza monto ##")
+                    # _logger.info(pago_pos_close.amount)
+                    pago_pos_close.action_post()
+                    # _logger.info("## Se vuelve a confirmar ##")
 
         lines = self.env['account.move.line']
         # all_related_moves = self._get_related_account_moves()
