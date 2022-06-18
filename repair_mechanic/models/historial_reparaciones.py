@@ -27,7 +27,11 @@ class ProductProductRepair(models.Model):
         ctx = self._context
         if 'order_display' in ctx:
             order = ctx['order_display']
-        return self._search(args, limit=limit, access_rights_uid=name_get_uid, order=order)
+            return self._search(args, limit=limit, access_rights_uid=name_get_uid, order=order)
+        _logger.info("Name search")
+        return self._search(args, limit=limit, access_rights_uid=name_get_uid)
+
+
 
     orden_repairs = fields.Integer('Orden que se mostarara el Many2one en Reparaciones',default=0)
 

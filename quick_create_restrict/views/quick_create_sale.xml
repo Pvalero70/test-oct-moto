@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="repair_order_inherit_form" model="ir.ui.view">
+        <field name="name">repair.order.inherit.form</field>
+        <field name="model">repair.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form"/>
+        <field name="arch" type="xml">
+
+
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="mechanic_id"  widget='selection' domain="[('company_id','=',company_id),('location_id','=',location_id)]"/>
+            </xpath>
+            <xpath expr="//sheet/group/group/field[@name='product_id']" position="attributes">
+                <attribute name="context">{'order_display': 'orden_repairs desc' }
+
+                </attribute>
+            </xpath>
+
+
+
+        </field>
+    </record>
+
+    <record id="repair_order_search_inherit" model="ir.ui.view">
+        <field name="name">	repair.order.inherit.search</field>
+        <field name="model">repair.order</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='sale_order_id']" position="after">
+                <field name="mechanic_id" string="Mecanico" filter_domain="[('mechanic_id.name_computed', 'ilike', self)]"/>
+            </xpath>
+
+            <xpath expr="//group/filter[@name='company']" position="after">
+                <field name="mechanic_id" string="Mecanico" context="{'group_by': 'mechanic_id'}"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>
