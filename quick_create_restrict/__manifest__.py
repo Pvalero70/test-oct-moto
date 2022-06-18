@@ -20,7 +20,7 @@
         'sale_stock',
     ],
     'data': [
-
+        'views/quick_create_sale.xml'
     ],
     'demo': [],
     'external_dependencies': {
