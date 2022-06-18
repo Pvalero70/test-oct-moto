@@ -22,7 +22,8 @@
         'account',
     ],
     'data': [
-        'views/quick_create_sale.xml'
+        'views/quick_create_sale.xml',
+        'views/quick_create_partner.xml'
     ],
     'demo': [],
     'external_dependencies': {
