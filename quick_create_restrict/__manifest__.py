@@ -18,6 +18,8 @@
         'sale_management',
         'sale',
         'sale_stock',
+        'base',
+        'account',
     ],
     'data': [
         'views/quick_create_sale.xml'
