@@ -57,8 +57,8 @@ class RepairOrderInherit(models.Model):
                 raise ValidationError(_("It is necessary to fill the field 'partner_id' "))
             if not record.location_id:
                 raise ValidationError(_("It is necessary to fill the field 'location_id' "))
-            # if not record.operations:
-            #     raise ValidationError(_("It is necessary to fill the field 'operations' "))
+            if not record.operations:
+                raise ValidationError(_("It is necessary to fill the field 'operations' "))
             if not record.operation_id:
                 raise ValidationError(_("It is necessary to fill the field 'operation_id' "))
             
