@@ -33,7 +33,6 @@ class ProductProductRepair(models.Model):
         if 'order_display' in ctx:
             order = ctx['order_display']
 
-        _logger.info("Name search")
         return self._search(args + domain, limit=limit, access_rights_uid=name_get_uid, order=order)
 
 

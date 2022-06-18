@@ -14,7 +14,10 @@
     'summary': 'mechanical contacts for repairs',
 
     'depends': [
-        'repair'
+        'repair',
+        'sale_management',
+        'sale',
+        'sale_stock',
     ],
     'data': [
 
