@@ -101,6 +101,8 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
       
                       for (var i = 0; i < lines.length; i++) {
                           let line = lines[i];
+                          console.log("## Debug line ##")
+                          console.log(line)
                           if (!this.env.pos.db.get_product_by_id(line.product_id[0])){
                               continue;
                           }
@@ -109,7 +111,8 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
                               order: this.env.pos.get_order(),
                               product: this.env.pos.db.get_product_by_id(line.product_id[0]),
                               description: line.name,
-                              price: line.price_total,
+                              qty: line.product_uom_qty,
+                              price: line.price_unit,
                               tax_ids: orderFiscalPos ? undefined : line.tax_id,
                               price_manually_set: true,
                               ref_repair: this.ref_repair,
@@ -142,7 +145,7 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
                                   });
                               }
                           }
-                          new_line.set_unit_price(line.price_total);
+                          new_line.set_unit_price(line.price_unit);
                           new_line.set_discount(line.discount);
                           this.env.pos.get_order().add_orderline(new_line);
                       }
