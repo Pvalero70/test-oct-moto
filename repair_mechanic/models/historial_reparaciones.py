@@ -23,13 +23,18 @@ class ProductProductRepair(models.Model):
     _inherit = 'product.product'
 
     @api.model
-    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None):
+    def _name_search(self, name, args=None, operator='ilike', limit=100, name_get_uid=None,order=None):
         ctx = self._context
+        args = args or []
+        domain = []
+        if name and operator == 'ilike':
+            domain = ['|',
+                      ('name', operator, name)]
         if 'order_display' in ctx:
             order = ctx['order_display']
-            return self._search(args, limit=limit, access_rights_uid=name_get_uid, order=order)
+
         _logger.info("Name search")
-        return super(ProductProductRepair, self)._name_search(name=name, args=args, operator=operator, limit=limit, name_get_uid=name_get_uid)
+        return self._search(args + domain, limit=limit, access_rights_uid=name_get_uid, order=order)
 
 
 
