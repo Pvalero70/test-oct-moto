@@ -29,7 +29,7 @@ class ProductProductRepair(models.Model):
             order = ctx['order_display']
             return self._search(args, limit=limit, access_rights_uid=name_get_uid, order=order)
         _logger.info("Name search")
-        return self._search(args, limit=limit, access_rights_uid=name_get_uid)
+        return super(ProductProductRepair, self)._name_search(name=name, args=args, operator=operator, limit=limit, name_get_uid=name_get_uid)
 
 
 
