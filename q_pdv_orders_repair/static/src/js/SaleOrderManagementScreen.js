@@ -145,8 +145,11 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
                                   });
                               }
                           }
+                          new_line.set_quantity(line.product_uom_qty);
                           new_line.set_unit_price(line.price_unit);
                           new_line.set_discount(line.discount);
+                          console.log("## Debug new line ##")
+                          console.log(new_line)
                           this.env.pos.get_order().add_orderline(new_line);
                       }
                     }
