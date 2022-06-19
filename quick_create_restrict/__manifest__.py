@@ -22,6 +22,7 @@
         'account',
         'stock',
         'product',
+        'purchase',
     ],
     'data': [
         'views/quick_create_sale.xml',
@@ -29,6 +30,7 @@
         'views/quick_create_product.xml',
         'views/quick_create_category.xml',
         'views/quick_create_repair.xml',
+        'views/quick_create_purchase.xml',
     ],
     'demo': [],
     'external_dependencies': {
