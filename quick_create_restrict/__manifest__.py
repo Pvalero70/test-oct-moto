@@ -5,13 +5,13 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.html).
 
 {
-    'name': 'Restriccion Creado Rapido Odoo 15',
+    'name': 'Restricciones Creado Rapido Odoo 15',
     'version': '15.0.1.0.1',
     'category': 'sale',
     'author': 'Ing. Alejandro Garcia Magaña',
     'website': '',
     'license': 'LGPL-3',
-    'summary': 'mechanical contacts for repairs',
+    'summary': 'Restricciones de creado rapido en Compras, Ventas, Inventario, Partners ',
 
     'depends': [
         'repair',
