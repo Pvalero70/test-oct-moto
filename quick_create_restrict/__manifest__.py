@@ -23,7 +23,8 @@
     ],
     'data': [
         'views/quick_create_sale.xml',
-        'views/quick_create_partner.xml'
+        'views/quick_create_partner.xml',
+        'views/quick_create_product.xml',
     ],
     'demo': [],
     'external_dependencies': {
