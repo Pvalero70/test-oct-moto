@@ -20,11 +20,14 @@
         'sale_stock',
         'base',
         'account',
+        'stock',
+        'product',
     ],
     'data': [
         'views/quick_create_sale.xml',
         'views/quick_create_partner.xml',
         'views/quick_create_product.xml',
+        'views/quick_create_category.xml',
     ],
     'demo': [],
     'external_dependencies': {
