@@ -15,9 +15,7 @@
             <xpath expr="//notebook/page[@name='general_information']/group/group[@name='group_standard_price']/field[@name='categ_id']" position="attributes">
                 <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
             </xpath>
-            <xpath expr="//notebook/page[@name='purchase']/group/group[@name='group_standard_price']/field[@name='categ_id']" position="attributes">
-                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
-            </xpath>
+
 
 
         </field>
