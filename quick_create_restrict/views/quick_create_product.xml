@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="product_template_inherit_quickcreate_form" model="ir.ui.view">
+        <field name="name">product.template.quickcreate.form</field>
+        <field name="model">product.template</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//notebook/page[@name='general_information']/group/group[@name='group_standard_price']/field[@name='company_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+
+            <xpath expr="//notebook/page[@name='general_information']/group/group[@name='group_standard_price']/field[@name='categ_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+            <xpath expr="//notebook/page[@name='purchase']/group/group[@name='group_standard_price']/field[@name='categ_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+
+
+        </field>
+    </record>
+
+    <record id="product_template_inherit_quickcreatet1_form" model="ir.ui.view">
+        <field name="name">product.template.quickcreatet1.form</field>
+        <field name="model">product.template</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="account.product_template_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='taxes_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='supplier_taxes_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='property_account_income_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='property_account_expense_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='property_account_creditor_price_difference']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="product_template_inherit_quickcreatet2_form" model="ir.ui.view">
+        <field name="name">product.template.quickcreatet2.form</field>
+        <field name="model">product.template</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="point_of_sale.product_template_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="///field[@name='pos_categ_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="product_template_inherit_quickcreatet3_form" model="ir.ui.view">
+        <field name="name">product.template.quickcreatet3.form</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="///field[@name='product_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
