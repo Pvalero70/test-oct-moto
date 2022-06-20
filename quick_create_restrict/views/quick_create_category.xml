@@ -36,6 +36,9 @@
             <xpath expr="//field[@name='property_stock_account_output_categ_id']" position="attributes">
                 <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
             </xpath>
+            <xpath expr="//field[@name='property_stock_valuation_account_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
 
 
 
