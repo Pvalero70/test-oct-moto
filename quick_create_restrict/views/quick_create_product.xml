@@ -16,6 +16,16 @@
                 <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
             </xpath>
 
+            <xpath expr="//group[@name='group_general']/field[@name='uom_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+            <xpath expr="//group[@name='group_general']/field[@name='uom_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+            <xpath expr="//group[@name='group_general']/field[@name='uom_po_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+
 
 
         </field>
@@ -31,6 +41,7 @@
             <xpath expr="//field[@name='taxes_id']" position="attributes">
                 <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
             </xpath>
+
 
             <xpath expr="//group[@name='bill']/field[@name='supplier_taxes_id']" position="attributes">
                 <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>

@@ -5,10 +5,10 @@
         <field name="name">res.partner.quickcreate.form</field>
         <field name="model">res.partner</field>
         <field name="type">form</field>
-        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="inherit_id" ref="purchase.view_partner_property_form"/>
         <field name="arch" type="xml">
 
-            <xpath expr="//group[1]/group/div/field[@name='state_id']" position="attributes">
+            <xpath expr="//field[@name='state_id'][1]" position="attributes">
                 <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
             </xpath>
 
