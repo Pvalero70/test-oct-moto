@@ -24,6 +24,6 @@ class ResPartnerState(models.Model):
             node.set('options', "{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}")
 
         res['arch'] = etree.tostring(doc)
-        _logger.info("Etree field state_id")
+
         return res
 
