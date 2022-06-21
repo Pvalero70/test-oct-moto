@@ -5,7 +5,7 @@
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl-3.0.html).
 
 {
-    'name': 'Mechanic for repair ',
+    'name': 'Mecanicos en Reparaciones',
     'version': '15.0.1.0.1',
     'category': 'Repair',
     'author': 'Ing. Alejandro Garcia Magaña',

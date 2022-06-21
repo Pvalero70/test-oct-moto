@@ -14,6 +14,7 @@ class PurchaseOrderLineDiscount(models.Model):
 
     discount = fields.Float('Descuento %')
     discount_permited = fields.Boolean(string="Readonly para el campo discount", compute='get_user')
+    price_unit_permited = fields.Boolean(string="Readonly para el campo price_unit", compute='get_user_price_unit')
 
     @api.model_create_multi
     def create(self, vals):
@@ -27,14 +28,20 @@ class PurchaseOrderLineDiscount(models.Model):
 
     @api.onchange('product_id')
     def _compute_discount_permited_create(self):
-        _logger.info("Onchange order Line")
+
         if not self.id:
             if self.env.user.has_group('purchase_order_discount.user_discount_purchase_create_group'):
 
                 self.discount_permited = True
-                return
+            else:
+                self.discount_permited = False
 
-        self.discount_permited = False
+            if self.env.user.has_group('purchase_order_discount.user_price_purchase_group'):
+                self.price_unit_permited = True
+            else:
+                self.price_unit_permited = False
+
+
 
 
 
@@ -54,6 +61,14 @@ class PurchaseOrderLineDiscount(models.Model):
         else:
             self.discount_permited = False
 
+    @api.depends('price_unit_permited')
+    def get_user_price_unit(self):
+        res_user = self.env['res.users'].search([('id', '=', self._uid)])
+
+        if res_user.has_group('purchase_order_discount.user_price_purchase_group'):
+            self.price_unit_permited = True
+        else:
+            self.price_unit_permited = False
 
     @api.depends('product_qty', 'price_unit', 'taxes_id','discount')
     def _compute_amount(self):

@@ -9,7 +9,14 @@
 
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
                 <field name="discount_permited" invisible="1"/>
+                <field name="price_unit_permited" invisible="1"/>
                 <field name="discount" string="Desc %" attrs="{'readonly':[('discount_permited', '=', False)]}"/>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+               <attribute name="attrs">{'readonly': [('price_unit_permited','=',False)]}
+
+                </attribute>
             </xpath>
 
         </field>
