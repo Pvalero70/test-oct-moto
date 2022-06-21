@@ -48,7 +48,7 @@ msgstr "Es necesario rellenar el campo 'Tipo de operación' "
 #: code:addons/q_repair_extend/models/repair_order.py:0
 #, python-format
 msgid "It is necessary to fill the field 'operations' "
-msgstr "Es necesario rellenar el campo 'Operaciones' "
+msgstr "Es necesario rellenar el campo 'Piezas' "
 
 #. module: q_repair_extend
 #: code:addons/q_repair_extend/models/repair_order.py:0
