@@ -18,7 +18,7 @@ const PaymentScreenBc = (PaymentScreen) =>
 
         addNewPaymentLine({ detail: paymentMethod }) {
             if (paymentMethod.bank_commission_method){
-
+                console.log("AÑADIENDO UNA NUEVA LINEA DE PAGO... ");
                 // Decide if add commission or not.
                 /* Solo debe afectar a los productos motos de Vehículos TT y en las demás compañias debe afectar al resto si afecta a otros productos. */
                 /*

@@ -69,6 +69,7 @@ class PosOrder(models.Model):
             rec.payment_method_id = met[0] if met else False
 
     def _prepare_invoice_vals(self):
+        # OJO, despues de ésta linea dice que ando intentando conciliar asientos ya conciliados.
         _log.info("\n\n2) Preparando los valores del uso del CFDI:::  %s " % self.l10n_mx_edi_usage)
         vals = super(PosOrder, self)._prepare_invoice_vals()
         vals['l10n_mx_edi_payment_method_id'] = self.payment_method_id.payment_method_c.id
@@ -86,52 +87,6 @@ class PosOrder(models.Model):
         :param quit_commissions: to decide which lines must be removed. By default quit the bank commission lines.
         :param order: pos order object.
         :return: invoice data set without some lines, depends of  quit_commissions
-
-        Ejemplo de invoice data:
-                    {
-                    'invoice_origin': 'Lopez Mateos/0011',
-                    'journal_id': 32,
-                    'move_type': 'out_invoice',
-                    'ref': 'Lopez Mateos/0011',
-                    'partner_id': 11,
-                    'partner_bank_id': False,
-                    'currency_id': 33,
-                    'invoice_user_id': 2,
-                    'invoice_date': datetime.date(2022, 5, 18),
-                    'fiscal_position_id': False,
-                    'invoice_line_ids':
-                        [
-                        (0, None, {
-                            'product_id': 210,
-                            'quantity': 1.0,
-                            'discount': 0.0,
-                            'price_unit': 500.0,
-                            'name': 'BALATA',
-                            'tax_ids': [(6, 0, [14])],
-                            'product_uom_id': 1,
-                            'pos_order_line_id': 21
-                            }),
-                        (0, None, {
-                            'product_id': 219,
-                            'quantity': 1.0,
-                            'discount': 0.0,
-                            'price_unit': 35.0,
-                            'name': 'Comisión por uso de tarjeta',
-                            'tax_ids': [(6, 0, [])],
-                            'product_uom_id': 1,
-                            'pos_order_line_id': 22
-                            })
-                        ],
-
-                    'invoice_cash_rounding_id': False,
-                    'team_id': crm.team(5,),
-                    'partner_shipping_id': 11,
-                    'l10n_mx_edi_payment_method_id': 18,
-                    'l10n_mx_edi_usage': 'P01',
-                    'invoice_payment_term_id': '1'
-
-                    }
-
         """
         # Get payment methods with bank commission.
         payment_bc_used_ids = order.payment_ids.filtered(lambda pa: pa.payment_method_id.bank_commission_method != False)
