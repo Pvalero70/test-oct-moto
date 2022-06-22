@@ -94,6 +94,7 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                     let  commprice = 0;
                     if(selectedPaymentMethod.bank_commission_method == "percentage"){
                         // Calculo de la comisión en base al monto a pagar.
+                        // CALCULAAAAAARRRR AQUI
                         commprice = 1000;
                     }
                     if (selectedPaymentMethod.bank_commission_method == "fixed"){

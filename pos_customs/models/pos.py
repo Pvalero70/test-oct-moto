@@ -88,6 +88,7 @@ class PosOrder(models.Model):
         :param order: pos order object.
         :return: invoice data set without some lines, depends of  quit_commissions
         """
+        _log.info(" DIVIDIENDO FACTURA.. invoice data:: %s" % invoice_data)
         # Get payment methods with bank commission.
         payment_bc_used_ids = order.payment_ids.filtered(lambda pa: pa.payment_method_id.bank_commission_method != False)
         ori_invoice_lines = invoice_data['invoice_line_ids']
@@ -110,11 +111,18 @@ class PosOrder(models.Model):
         return invoice_data
 
     def _apply_invoice_payments_bc(self, invoice, order):
+        _log.info(" APPLY PAYMENTS ...    for order and invoices xD. ")
+        _log.info(" APLICANDO PAGOUS.. ")
         receivable_account = self.env["res.partner"]._find_accounting_partner(self.partner_id).property_account_receivable_id
         payment_moves = order.payment_ids.mapped('account_move_id')
+        for pay in payment_moves:
+            _log.info("payment :: %s " % pay)
         invoice_receivable = invoice.line_ids.filtered(lambda line: line.account_id == receivable_account)
         if not invoice_receivable.reconciled and receivable_account.reconcile:
-            payment_receivables = payment_moves.mapped('line_ids').filtered(lambda line: line.account_id == receivable_account)
+            payment_receivables = payment_moves.mapped('line_ids').filtered(lambda line: line.account_id == receivable_account and line.reconciled is False)
+            for pa in payment_receivables:
+                _log.info("PAGOS ::: %s  account move: %s reconcilied::: %s " % (pa, pa.move_id, pa.reconciled))
+
             (invoice_receivable | payment_receivables).reconcile()
 
     def _generate_pos_order_invoice(self):
@@ -132,7 +140,9 @@ class PosOrder(models.Model):
             move_vals_commissions = self._split_invoice_vals_bk(move_vals_commissions, quit_commissions=False, order=order)
             move_vals = self._split_invoice_vals_bk(move_vals, quit_commissions=True, order=order)
 # Comentado por pruebas.
+            _log.info(" Try to create invoice")
             new_move = order._create_invoice(move_vals)
+            _log.info("The invoice has been created")
             new_move_bc = None
             if move_vals_commissions:
                 new_move_bc = order._create_invoice(move_vals_commissions)
@@ -149,6 +159,7 @@ class PosOrder(models.Model):
                 new_move.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
                 new_move._compute_l10n_mx_edi_payment_policy()
             if new_move_bc is not None:
+                _log.info(" APLICANDO PAGOS PARA :: %s " % new_move_bc)
                 self._apply_invoice_payments_bc(new_move_bc, order=order)
 
         if not moves:
