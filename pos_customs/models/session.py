@@ -224,7 +224,7 @@ class PosSession(models.Model):
         #             update_lines.append((1, line.id, {"debit" : new_debit}))
 
         if update_lines and session_move:
-            _logger.info("Se intenta actualizar lineas")
+            _logger.info("Se intenta actualizar lineas.")
             _logger.info(update_lines)
             try:
                 session_move.write({"line_ids" : update_lines})
