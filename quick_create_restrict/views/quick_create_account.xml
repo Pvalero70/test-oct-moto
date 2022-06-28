@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
+    <!--Facturas de clientes,Proveedores, Reembolsos !-->
     <record id="account_move_inherit_quickcreate_form" model="ir.ui.view">
         <field name="name">account.move.quickcreate.form</field>
         <field name="model">account.move</field>
@@ -74,9 +75,11 @@
             <xpath expr="//field[@name='partner_id'][1]" position="attributes">
                 <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
             </xpath>
+
             <xpath expr="//field[@name='partner_id'][2]" position="attributes">
                 <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
             </xpath>
+
             <xpath expr="//field[@name='journal_id']" position="attributes">
                 <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
             </xpath>
