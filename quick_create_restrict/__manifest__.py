@@ -31,6 +31,8 @@
         'views/quick_create_category.xml',
         'views/quick_create_repair.xml',
         'views/quick_create_purchase.xml',
+        'views/quick_create_account.xml',
+        'views/quick_create_inventory.xml',
     ],
     'demo': [],
     'external_dependencies': {
