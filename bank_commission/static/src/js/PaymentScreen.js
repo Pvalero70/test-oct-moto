@@ -55,6 +55,8 @@ const PaymentScreenBc = (PaymentScreen) =>
                     if (paymentMethod.bank_commission_method == "percentage"){
                         let total_due = this.currentOrder.get_total_with_tax()-current_com-this.currentOrder.get_total_paid()+ this.currentOrder.get_rounding_applied();
                         price = total_due * (paymentMethod.bank_commission_amount/100);
+                        // Revisar las lineas que van a generar una comision. si la comisión es igual a cero
+                        // no se agregará.
                         //price = this.currentOrder.get_due() * (paymentMethod.bank_commission_amount/100);
                     }
                     if (paymentMethod.bank_commission_method == "fixed"){
