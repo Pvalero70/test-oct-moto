@@ -92,14 +92,40 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                     console.log(selectedCommissionPaymentMethod)
                     // Calculamos el monto de la comisión
                     let  commprice = 0;
-                    if(selectedPaymentMethod.bank_commission_method == "percentage"){
-                        // Calculo de la comisión en base al monto a pagar.
-                        // CALCULAAAAAARRRR AQUI
-                        // validar cuales son las lineas que van a generar una comision deacuerdo a la categ del producto.
-                        commprice = 1000;
-                    }
-                    if (selectedPaymentMethod.bank_commission_method == "fixed"){
-                        commprice = selectedPaymentMethod.bank_commission_amount;
+
+                    let product_categ_id_list = [];
+                    // let product_categ_parents_id_list = [];
+                    this.currentOrder.get_orderlines().forEach(element => {
+                        if(product_categ_id_list.includes(element.product.categ.id) == false){
+                            product_categ_id_list.push(element.product.categ.id);
+                        }
+                        if(product_categ_id_list.includes(element.product.categ.parent_id[0]) == false){
+                            product_categ_id_list.push(element.product.categ.parent_id[0]);
+                        }
+
+                    });
+                    let intersection = selectedPaymentMethod.product_cate_commission_ids.filter(element => product_categ_id_list.includes(element));
+                    console.log("complemento de pago Coincidencias de categorias de prod:: ");
+                    console.log(intersection);
+                    if(intersection.length >= 1){
+                        let product_id = selectedPaymentMethod.bank_commission_product_id[0];
+                        let product_byid = this.env.pos.db.get_product_by_id(product_id);
+                        let oline = this.currentOrder.get_orderlines().find(line => line.product.id === product_id);
+                        let current_com = 0;
+                        if (oline && this.currentOrder.get_due() > 0){
+                            current_com = oline.price;
+                        }
+
+                        if(selectedPaymentMethod.bank_commission_method == "percentage"){
+                            // Calculo de la comisión en base al monto a pagar.
+                            // CALCULAAAAAARRRR AQUI
+                            // validar cuales son las lineas que van a generar una comision deacuerdo a la categ del producto.
+                            let total_due = this.currentOrder.get_total_with_tax()-current_com-this.currentOrder.get_total_paid()+ this.currentOrder.get_rounding_applied();
+                            commprice = total_due * (selectedPaymentMethod.bank_commission_amount/100);
+                        }
+                        if (selectedPaymentMethod.bank_commission_method == "fixed"){
+                            commprice = selectedPaymentMethod.bank_commission_amount;
+                        }
                     }
                     // Creamos una nueva orden para pagar únicamente la comisión.
                     if(commprice > 0){
