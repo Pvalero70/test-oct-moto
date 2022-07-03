@@ -18,6 +18,9 @@
                     attrs="{
                     'invisible': [('bank_commission_method', '==', False)],
                     'required':[('bank_commission_method', '!=', False)]}"/>
+                <div>
+                    <b>Ayuda: </b> Si no se encuentra un diario para la ubicación(pdv) - categoría del producto, éste diario será asignado por defauult.
+                </div>
                 <field name="bc_journal_id"
                     attrs="{
                     'invisible': [('bank_commission_method', '==', False)],

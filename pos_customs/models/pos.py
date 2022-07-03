@@ -99,15 +99,41 @@ class PosOrder(models.Model):
             return False
         product_bc_ids = payment_bc_used_ids.mapped('payment_method_id').mapped('bank_commission_product_id')
         new_invoice_line_ids = []
+        is_commission_invoice = False
         for ori_line in ori_invoice_lines:
             line_product_id = ori_line[2]['product_id']
             is_bc = True if line_product_id in product_bc_ids.ids else False
             if is_bc and not quit_commissions:
                 new_invoice_line_ids.append(ori_line)
+                is_commission_invoice = True
             if not is_bc and quit_commissions:
                 new_invoice_line_ids.append(ori_line)
         if len(new_invoice_line_ids) > 0:
             invoice_data['invoice_line_ids'] = new_invoice_line_ids
+        if is_commission_invoice:
+            _log.info("ES COMISSION...  =P ")
+            first_product_category = product_bc_ids[0].categ_id
+            pc_loc_src_id = order.config_id.picking_type_id.default_location_src_id
+            domain = [('company_id', '=', self.company_id.id),
+                      ('c_location_id', '=', pc_loc_src_id.id)
+                      ]
+            journal_ids = self.env['account.journal'].search(domain)
+            journal_id = journal_ids.filtered(lambda jo: first_product_category.id in jo.c_product_category_ids.ids)
+            # Como el diario se escogería en base a la caterogía del producto y el punto de venta (ubicación) no
+            # importa el método que usen; basta con que alguno de los productos asiciados como comisión al metodo de pago
+            # pueda relacionar un diario y a ese se asigna la comisión.
+            # La catagoría del producto puede ser la padre.
+            if journal_id:
+                invoice_data['journal_id'] = journal_id[:1].id
+            elif first_product_category.parent_id:
+                journal_id = journal_ids.filtered(
+                    lambda jo: first_product_category.parent_id.id in jo.c_product_category_ids.ids)
+                if journal_id:
+                    vals['journal_id'] = journal_id[:1].id
+            else:
+                # Por defauilt dejamos el diario que tiene el método de
+                payment_method_com_id = payment_bc_used_ids.mapped('payment_method_id')[0]
+                vals['journal_id'] = payment_method_com_id.bc_journal_id.id
         return invoice_data
 
     def _apply_invoice_payments_bc(self, invoice, order):
