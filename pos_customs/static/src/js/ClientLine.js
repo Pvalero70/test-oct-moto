@@ -49,7 +49,7 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                     list: selectionInvoiceList,
                 });
                 
-                // console.log("Factura seleccionada")
+                // console.log("Factura seleccionada") 219 942
                 // console.log(selectedInvoice)
                 // console.log(confirmedInvoice)
 
@@ -75,6 +75,10 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
 
                 // Aquí revisamos si se debe o no aplicar la comisión del banco
                 if (selectedPaymentMethod.bank_commission_method){
+                    console.log(" CURRENT ORDER BY POS ::: ");
+                    console.log(this.env.pos.changed.selectedOrder);
+                    console.log("SELECTED PAIMENT :::::: ");
+                    console.log(selectedPaymentMethod);
                     // Seleccionamos el método de pago de la comisión
                     const { confirmed2, payload: selectedCommissionPaymentMethod } = await this.showPopup('SelectionPopup', {
                         title: this.env._t('Selecciona el metodo de pago de comisión'),
@@ -95,7 +99,7 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
 
                     let product_categ_id_list = [];
                     // let product_categ_parents_id_list = [];
-                    this.currentOrder.get_orderlines().forEach(element => {
+                    this.env.pos.get_order().get_orderlines().forEach(element => {
                         if(product_categ_id_list.includes(element.product.categ.id) == false){
                             product_categ_id_list.push(element.product.categ.id);
                         }
