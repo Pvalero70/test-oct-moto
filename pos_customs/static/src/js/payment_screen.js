@@ -26,6 +26,7 @@ var rpc = require('web.rpc');
 
             async send_payment(order_id, invoice_data, payments, customer){
                 invoice_data['pos_session_id'] = this.currentOrder.pos_session_id
+                invoice_data['order_id'] = this.currentOrder.id
 
                 let mispagos = []
                 payments.forEach(element => {

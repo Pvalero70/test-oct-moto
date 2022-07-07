@@ -18,8 +18,27 @@ class AccountPayment(models.Model):
     @api.model
     def crear_pago_pos(self, values):
         _log.info("## Intenta crear pago from pos##")
-        _log.info(values)
         values = values.get('vals', {})
+        _log.info(values)
+        invoice = values.get('invoice')
+        # QUITAR PAGOS DE COMISION AQUÍ.
+        ''
+        amount_invoice_ori_total = float(values.get('invoice').get('amount_total'))
+        new_payments = []
+        # ori_payment = None
+        _log.info("\n Invoice amount ::: %s " % amount_invoice_ori_total)
+        for pay in values.get('payments', []):
+
+            if float(pay['amount']) == amount_invoice_ori_total:
+                _log.info("\n payment amount:: %s " % float(pay['amount']))
+                new_payments.append(pay)
+                # ori_payment = pay
+
+        # self.create_commission_invoice(invoice['id'], values.get('pos_session_id'), ori_payment)
+        values['payments'] = new_payments
+        # _log.info("\n Nuevo VALUES ::: %s " % values)
+        # Finalizamos quitar pagos de comision aquí.
+
         customer = values.get('customer')
         pos_method_id = None
         amount = 0
@@ -27,7 +46,7 @@ class AccountPayment(models.Model):
             if pay.get('method', {}).get('type') != 'pay_later':
                 pos_method_id = pay.get('method', {}).get('id')
                 amount = pay.get('amount')
-        invoice = values.get('invoice')
+
         pos_session_id = invoice.get('pos_session_id')
         # _log.info(pos_session_id)
 
@@ -113,5 +132,12 @@ class AccountPayment(models.Model):
                 # _log.info("### Facturas ###")
                 # _log.info(factura)
                 # factura.payment_id = payment_id
-
+    # @api.model
+    # def create_commission_invoice(self, ori_inv_id, pos_session_id, payment_info):
+    #     inv = self.env['account.move']
+    #     original_invoice = inv.browse(ori_inv_id)
+    #     _log.info("\n Factura original para comisión de banco... %s" % original_invoice)
+    #     posses = self.env['pos.session'].browse(pos_session_id)
+    #     _log.info("\n Sesión ::: %s " % posses)
+    #     _log.info("\n EL PAGOOOOOOOOOOOOOO ::: %s " % payment_info)
 

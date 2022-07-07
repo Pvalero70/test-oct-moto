@@ -129,12 +129,25 @@ class PosOrder(models.Model):
                 journal_id = journal_ids.filtered(
                     lambda jo: first_product_category.parent_id.id in jo.c_product_category_ids.ids)
                 if journal_id:
-                    vals['journal_id'] = journal_id[:1].id
+                    invoice_data['journal_id'] = journal_id[:1].id
             else:
                 # Por defauilt dejamos el diario que tiene el método de
                 payment_method_com_id = payment_bc_used_ids.mapped('payment_method_id')[0]
-                vals['journal_id'] = payment_method_com_id.bc_journal_id.id
+                invoice_data['journal_id'] = payment_method_com_id.bc_journal_id.id
         return invoice_data
+
+    def commission_line_exists(self, invoice_data, order=None):
+        ori_invoice_lines = invoice_data['invoice_line_ids']
+        payment_bc_used_ids = order.payment_ids.filtered(
+            lambda pa: pa.payment_method_id.bank_commission_method != False)
+        product_bc_ids = payment_bc_used_ids.mapped('payment_method_id').mapped('bank_commission_product_id')
+        is_commission_invoice = False
+        for ori_line in ori_invoice_lines:
+            line_product_id = ori_line[2]['product_id']
+            is_bc = True if line_product_id in product_bc_ids.ids else False
+            if is_bc:
+                is_commission_invoice = True
+        return is_commission_invoice
 
     def _apply_invoice_payments_bc(self, invoice, order):
         _log.info(" APPLY PAYMENTS ...    for order and invoices xD. ")
@@ -162,18 +175,25 @@ class PosOrder(models.Model):
             if not order.partner_id:
                 raise UserError(_('Please provide a partner for the sale.'))
             move_vals = order._prepare_invoice_vals()
-            move_vals_commissions = move_vals.copy()
-            move_vals_commissions = self._split_invoice_vals_bk(move_vals_commissions, quit_commissions=False, order=order)
-            move_vals = self._split_invoice_vals_bk(move_vals, quit_commissions=True, order=order)
+            _log.info("MOVE VALSSSS 1 :: %s " % move_vals)
+
+            comm_line_exists = self.commission_line_exists(move_vals, order=order)
+            if comm_line_exists:
+                move_vals_commissions = move_vals.copy()
+                move_vals_commissions = self._split_invoice_vals_bk(move_vals_commissions, quit_commissions=False, order=order)
+                move_vals = self._split_invoice_vals_bk(move_vals, quit_commissions=True, order=order)
+                _log.info("MOVE VALSSSS 2 :: %s" % move_vals)
+                _log.info(" MOVE VALS COMMM ::: %s " % move_vals_commissions)
+                new_move_bc = None
+                if move_vals_commissions:
+                    new_move_bc = order._create_invoice(move_vals_commissions)
+                    _log.info(" FACTURA POR COMISION ::::: %s " % new_move_bc)
+                    new_move_bc.sudo().with_company(order.company_id)._post()
+                    moves += new_move_bc
 # Comentado por pruebas.
             _log.info(" Try to create invoice")
             new_move = order._create_invoice(move_vals)
-            _log.info("The invoice has been created")
-            new_move_bc = None
-            if move_vals_commissions:
-                new_move_bc = order._create_invoice(move_vals_commissions)
-                new_move_bc.sudo().with_company(order.company_id)._post()
-                moves += new_move_bc
+            _log.info(" LA FACTURA NORMAL ::: %s " % new_move)
             order.write({'account_move': new_move.id, 'state': 'invoiced'})
             new_move.sudo().with_company(order.company_id)._post()
             moves += new_move
@@ -184,7 +204,7 @@ class PosOrder(models.Model):
                 delta_days = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.days > 0 and x.option == "day_after_invoice_date")[:1].days
                 new_move.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
                 new_move._compute_l10n_mx_edi_payment_policy()
-            if new_move_bc is not None:
+            if comm_line_exists and new_move_bc is not None:
                 _log.info(" APLICANDO PAGOS PARA :: %s " % new_move_bc)
                 self._apply_invoice_payments_bc(new_move_bc, order=order)
 

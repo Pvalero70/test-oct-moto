@@ -3,6 +3,7 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
 
     const ClientLine = require('point_of_sale.ClientLine');
     const Registries = require('point_of_sale.Registries');
+    var rpc = require('web.rpc');
 
     const POSSettleDueClientLineCustom = (ClientLine) =>
         class extends ClientLine {
@@ -10,7 +11,6 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                 return `/web#model=res.partner&id=${this.props.partner.id}`;
             }
             async settleCustomerInvoiceDue(event) {
-                console.log("2");
                 if (this.props.selectedClient == this.props.partner) {
                     event.stopPropagation();
                 }
@@ -49,7 +49,7 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                     list: selectionInvoiceList,
                 });
                 
-                // console.log("Factura seleccionada") 219 942
+                // console.log("Factura seleccionada")
                 // console.log(selectedInvoice)
                 // console.log(confirmedInvoice)
 
@@ -59,94 +59,56 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                     (method) => this.env.pos.config.payment_method_ids.includes(method.id) && method.type != 'pay_later'
                 );
                 // console.log(paymentMethods)
+
                 const selectionList = paymentMethods.map((paymentMethod) => ({
                     id: paymentMethod.id,
                     label: paymentMethod.name,
                     item: paymentMethod,
                 }));
+                
                 // console.log(selectionList)
+
                 const { confirmed, payload: selectedPaymentMethod } = await this.showPopup('SelectionPopup', {
                     title: this.env._t('Selecciona el metodo de pago para la factura'),
                     list: selectionList,
                 });
                 // console.log(confirmed)
-                if (!confirmed) return;
-                // console.log("Pasa")
 
-                // Aquí revisamos si se debe o no aplicar la comisión del banco
-                if (selectedPaymentMethod.bank_commission_method){
-                    console.log(" CURRENT ORDER BY POS ::: ");
-                    console.log(this.env.pos.changed.selectedOrder);
-                    console.log("SELECTED PAIMENT :::::: ");
-                    console.log(selectedPaymentMethod);
-                    // Seleccionamos el método de pago de la comisión
+                if (!confirmed) return;
+
+                // Necesitamos saber si es necesario calcular comisión para esa factura.
+                //console.log("Buscar posconfig en:: ");
+                //console.log(this.env.pos);
+
+                let con_comision = await this.rpc({
+                    model: "account.move",
+                    method: "calc_commission_amount",
+                    args: [selectedInvoice.id, selectedPaymentMethod.id]
+                });
+
+                console.log(con_comision);
+                console.log(con_comision['apply_commission']);
+
+                if(con_comision['apply_commission']==true){
                     const { confirmed2, payload: selectedCommissionPaymentMethod } = await this.showPopup('SelectionPopup', {
                         title: this.env._t('Selecciona el metodo de pago de comisión'),
                         list: selectionList,
                     });
-                    console.log("1 CONFIRMED 2 :: "+confirmed2);
-                    // if (!confirmed2) return;
-                    this.trigger('discard'); // make sure the ClientListScreen resolves and properly closed.
 
+                    let product_id = selectedPaymentMethod.bank_commission_product_id[0];
+                    let product_byid = this.env.pos.db.get_product_by_id(product_id);
+                    this.trigger('discard');
+
+                    // agregamos la comisión calculada.
                     const newOrder = this.env.pos.add_new_order();
-
-                    console.log("This")
-                    console.log(this)
-                    console.log("payment method Commission: ");
-                    console.log(selectedCommissionPaymentMethod)
-                    // Calculamos el monto de la comisión
-                    let  commprice = 0;
-
-                    let product_categ_id_list = [];
-                    // let product_categ_parents_id_list = [];
-                    this.env.pos.get_order().get_orderlines().forEach(element => {
-                        if(product_categ_id_list.includes(element.product.categ.id) == false){
-                            product_categ_id_list.push(element.product.categ.id);
-                        }
-                        if(product_categ_id_list.includes(element.product.categ.parent_id[0]) == false){
-                            product_categ_id_list.push(element.product.categ.parent_id[0]);
-                        }
-
+                    newOrder.add_product(product_byid, {
+                        quantity: 1,
+                        price: con_comision['commission_amount'],
+                        lst_price: con_comision['commission_amount'],
+                        extras: {price_manually_set: true,paymentMethod:selectedCommissionPaymentMethod.id},
                     });
-                    let intersection = selectedPaymentMethod.product_cate_commission_ids.filter(element => product_categ_id_list.includes(element));
-                    console.log("complemento de pago Coincidencias de categorias de prod:: ");
-                    console.log(intersection);
-                    if(intersection.length >= 1){
-                        let product_id = selectedPaymentMethod.bank_commission_product_id[0];
-                        let product_byid = this.env.pos.db.get_product_by_id(product_id);
-                        let oline = this.currentOrder.get_orderlines().find(line => line.product.id === product_id);
-                        let current_com = 0;
-                        if (oline && this.currentOrder.get_due() > 0){
-                            current_com = oline.price;
-                        }
-
-                        if(selectedPaymentMethod.bank_commission_method == "percentage"){
-                            // Calculo de la comisión en base al monto a pagar.
-                            // CALCULAAAAAARRRR AQUI
-                            // validar cuales son las lineas que van a generar una comision deacuerdo a la categ del producto.
-                            let total_due = this.currentOrder.get_total_with_tax()-current_com-this.currentOrder.get_total_paid()+ this.currentOrder.get_rounding_applied();
-                            commprice = total_due * (selectedPaymentMethod.bank_commission_amount/100);
-                        }
-                        if (selectedPaymentMethod.bank_commission_method == "fixed"){
-                            commprice = selectedPaymentMethod.bank_commission_amount;
-                        }
-                    }
-                    // Creamos una nueva orden para pagar únicamente la comisión.
-                    if(commprice > 0){
-                        console.log("1");
-                        let product_id = selectedPaymentMethod.bank_commission_product_id[0];
-                        let product_byid = this.env.pos.db.get_product_by_id(product_id);
-                        // this.trigger('discard');
-                        // let newCommOrder = this.env.pos.add_new_order();
-                        newOrder.add_product(product_byid, {
-                            quantity: 1,
-                            price: commprice,
-                            lst_price: commprice,
-                            extras: {price_manually_set: true,paymentMethod:selectedCommissionPaymentMethod.id},
-                        });
-                        const payment_com = newOrder.add_paymentline(selectedCommissionPaymentMethod);
-                        payment_com.set_amount(commprice);
-                    }
+                    const payment_com = newOrder.add_paymentline(selectedCommissionPaymentMethod);
+                    payment_com.set_amount(con_comision['commission_amount']);
 
                     const payment = newOrder.add_paymentline(selectedPaymentMethod);
                     payment.set_amount(selectedInvoice.amount_residual_signed);
@@ -155,8 +117,16 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                     newOrder.selected_invoice = selectedInvoice;
                     this.showScreen('PaymentScreen');
                 }
-
-
+                else{
+                    this.trigger('discard'); // make sure the ClientListScreen resolves and properly closed.
+                    const newOrder = this.env.pos.add_new_order();
+                    const payment = newOrder.add_paymentline(selectedPaymentMethod);
+                    payment.set_amount(selectedInvoice.amount_residual_signed);
+                    newOrder.set_client(this.props.partner);
+                    newOrder.is_payment_invoice = true;
+                    newOrder.selected_invoice = selectedInvoice;
+                    this.showScreen('PaymentScreen');
+                }
             }
         };
 
