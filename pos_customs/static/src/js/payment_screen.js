@@ -24,7 +24,8 @@ var rpc = require('web.rpc');
                 this.render();
             }
 
-            async send_payment(order_id, invoice_data, payments, customer){
+            async send_payment(order, invoice_data, payments, customer){
+                order_id = order.uid;
                 invoice_data['pos_session_id'] = this.currentOrder.pos_session_id
                 invoice_data['order_id'] = this.currentOrder.id
 
@@ -74,7 +75,7 @@ var rpc = require('web.rpc');
                         // Isn't original
                         if (this.currentOrder.is_payment_invoice){
                             const myorder = this.currentOrder
-                            this.send_payment(myorder.uid, myorder.selected_invoice, myorder.paymentlines.models, myorder.attributes.client)
+                            this.send_payment(myorder, myorder.selected_invoice, myorder.paymentlines.models, myorder.attributes.client)
                         }
                         // console.log("Push single order")
                         syncedOrderBackendIds = await this.env.pos.push_single_order(this.currentOrder);
