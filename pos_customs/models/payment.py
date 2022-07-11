@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api
 from datetime import datetime
+import json
 import logging
 _log = logging.getLogger("___name: %s" % __name__)
 
@@ -19,17 +20,20 @@ class AccountPayment(models.Model):
     def crear_pago_pos(self, values):
         _log.info("## Intenta crear pago from pos##")
         values = values.get('vals', {})
-        _log.info(values)
+        _log.info("\n VALORES CREAR PAGO ORIGINALES :: %s" % json.dumps(values))
         invoice = values.get('invoice')
-        # QUITAR PAGOS DE COMISION AQUÍ.
+        # QUITAR PAGOS DE COMISION AQUÍ. (Buscamos la comisión deacuerdo al monto de comisión que tiene el pos order.. )
         ''
-        amount_invoice_ori_total = float(values.get('invoice').get('amount_total'))
+        order_name = values.get('order_name')
+        order_id = self.env['pos.order'].search([('pos_reference', '=ilike', order_name)])
+        order_amount = sum(order_id.lines.mapped('price_subtotal_incl'))
+        # total_commission_amount = self.get_total_commission()
+        # amount_invoice_ori_total = float(values.get('invoice').get('amount_total'))
         new_payments = []
-        # ori_payment = None
-        _log.info("\n Invoice amount ::: %s " % amount_invoice_ori_total)
         for pay in values.get('payments', []):
 
-            if float(pay['amount']) == amount_invoice_ori_total:
+            # diferir entre el pago hecho a comisión.
+            if float(pay['amount']) != order_amount:
                 _log.info("\n payment amount:: %s " % float(pay['amount']))
                 new_payments.append(pay)
                 # ori_payment = pay
@@ -132,12 +136,7 @@ class AccountPayment(models.Model):
                 # _log.info("### Facturas ###")
                 # _log.info(factura)
                 # factura.payment_id = payment_id
-    # @api.model
-    # def create_commission_invoice(self, ori_inv_id, pos_session_id, payment_info):
-    #     inv = self.env['account.move']
-    #     original_invoice = inv.browse(ori_inv_id)
-    #     _log.info("\n Factura original para comisión de banco... %s" % original_invoice)
-    #     posses = self.env['pos.session'].browse(pos_session_id)
-    #     _log.info("\n Sesión ::: %s " % posses)
-    #     _log.info("\n EL PAGOOOOOOOOOOOOOO ::: %s " % payment_info)
+
+        poso_inv = order_id.action_pos_order_invoice()
+        _log.info("\n La factura de la comision es ::: %s " % poso_inv)
 

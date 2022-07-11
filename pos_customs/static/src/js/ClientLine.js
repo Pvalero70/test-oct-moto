@@ -101,14 +101,18 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
 
                     // agregamos la comisión calculada.
                     const newOrder = this.env.pos.add_new_order();
+                    // El precio del producto es antes de impuestos y el pago es después de impuestos.
                     newOrder.add_product(product_byid, {
                         quantity: 1,
-                        price: con_comision['commission_amount'],
-                        lst_price: con_comision['commission_amount'],
+                        price: con_comision['product_commission_amount'],
+                        lst_price: con_comision['product_commission_amount'],
                         extras: {price_manually_set: true,paymentMethod:selectedCommissionPaymentMethod.id},
                     });
                     const payment_com = newOrder.add_paymentline(selectedCommissionPaymentMethod);
-                    payment_com.set_amount(con_comision['commission_amount']);
+                    payment_com.set_amount(con_comision['payment_commission_amount']);
+                    console.log("EL PAGO DE COMISIONES ES :: %");
+                    console.log(payment_com);
+                    payment_com.is_commission = true;
 
                     const payment = newOrder.add_paymentline(selectedPaymentMethod);
                     payment.set_amount(selectedInvoice.amount_residual_signed);

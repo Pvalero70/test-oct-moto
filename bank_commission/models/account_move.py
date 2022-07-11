@@ -29,6 +29,8 @@ class AccountMoveBc(models.Model):
         Selected payment method
         pos config
         Método que calcula las comisiones que deben pagarse, dado un método de pago y las lineas de la factura.
+        calcula el precio del producto comisión (antes de impuestos)
+        y calcula el monto a pagar (despuúes de impuestos)
         :return: regresa un diccionario que nos dice
         """
         _log.info("\n ID FACTRA:: %s \n ID METODO DE PAGO SELECCIONADO :: %s \n POS CONF:: %s" % (inv_id, spm_id, posconfigid))
@@ -43,20 +45,25 @@ class AccountMoveBc(models.Model):
             # Buscar las lineas de la factura que tengan un producto con la categoría seteada en el método de pago.
             lines_with_commission = invoice.invoice_line_ids.filtered(lambda li: li.product_id.categ_id.id in categs)
             apply_commission = True if len(lines_with_commission) > 0 else False
-            commission_amount = 0
+            product_commission_amount = 0
+            payment_commission_amount = 0
 
             # En este punto sabemos que hay lineas a las que se les va a calcular la comision.
             if not selected_payment_method.bank_commission_method:
                 apply_commission = False
             elif selected_payment_method.bank_commission_method == "fixed":
+                # mapear los impuestos que faltan para poder poner ambas cantidades...
+                # por lo general aplican solo el IVA pero no vaya a ser mejor hay que hacerlo dinamico.. xD
                 commission_amount = selected_payment_method.bank_commission_amount
             elif selected_payment_method.bank_commission_method == "percentage":
-                total_amount_lines = sum(lines_with_commission.mapped('price_subtotal'))
-                _log.info("\n Total de las lineas a las que se debe afectar la comisión ::: %s" % total_amount_lines)
-                commission_amount = total_amount_lines * (selected_payment_method.bank_commission_amount/100)
+                subtotal_amount_lines = sum(lines_with_commission.mapped('price_subtotal'))
+                total_amount_lines = sum(lines_with_commission.mapped('price_total'))
+                product_commission_amount = subtotal_amount_lines * (selected_payment_method.bank_commission_amount/100)
+                payment_commission_amount = total_amount_lines * (selected_payment_method.bank_commission_amount/100)
             return {
                 "apply_commission": apply_commission,
-                "commission_amount": commission_amount
+                "product_commission_amount": product_commission_amount,
+                "payment_commission_amount": payment_commission_amount
             }
         return {"apply_commission": False}
 
