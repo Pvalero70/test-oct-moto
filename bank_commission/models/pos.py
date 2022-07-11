@@ -22,7 +22,7 @@ class PosPaymentMethodBc(models.Model):
 
 
 class PosPaymentBc(models.Model):
-    _inherit = "pos.payment.method"
+    _inherit = "pos.payment"
 
     is_commission = fields.Boolean(string="Es pago de comision", default=False)
 

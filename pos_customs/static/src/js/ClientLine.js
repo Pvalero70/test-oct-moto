@@ -110,12 +110,11 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                     });
                     const payment_com = newOrder.add_paymentline(selectedCommissionPaymentMethod);
                     payment_com.set_amount(con_comision['payment_commission_amount']);
-                    console.log("EL PAGO DE COMISIONES ES :: %");
-                    console.log(payment_com);
                     payment_com.is_commission = true;
 
                     const payment = newOrder.add_paymentline(selectedPaymentMethod);
                     payment.set_amount(selectedInvoice.amount_residual_signed);
+                    payment.is_commission = false;
                     newOrder.set_client(this.props.partner);
                     newOrder.is_payment_invoice = true;
                     newOrder.selected_invoice = selectedInvoice;
@@ -126,6 +125,7 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                     const newOrder = this.env.pos.add_new_order();
                     const payment = newOrder.add_paymentline(selectedPaymentMethod);
                     payment.set_amount(selectedInvoice.amount_residual_signed);
+                    payment.is_commission = false;
                     newOrder.set_client(this.props.partner);
                     newOrder.is_payment_invoice = true;
                     newOrder.selected_invoice = selectedInvoice;
