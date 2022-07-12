@@ -77,8 +77,6 @@ exports.load_fields('pos.payment', ["is_commission"])
                     if (this.currentOrder.is_to_invoice()) {
                         this.currentOrder.to_invoice = [$("#cfdi_usage_sel").val(),$("#payment_termss_selection").val()];
                             // this.currentOrder.cfdi_usage = $("#cfdi_usage_sel").val();
-                            console.log("para facturar ... CURRENT ORDER... ");
-                            console.log(this.currentOrder.to_invoice);
                             syncedOrderBackendIds = await this.env.pos.push_and_invoice_order(
                                 this.currentOrder
                             );
