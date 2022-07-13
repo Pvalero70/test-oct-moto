@@ -9,7 +9,7 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@id='individual']" position="attributes">
-                <attribute name="attrs">{'required' : [('type', '=', 'contact'), ('is_company', '=', False)], 'invisible': [('company_type','=','person')('is_company','=', True)]}</attribute>
+                <attribute name="attrs">{'required' : [('type', '=', 'contact'), ('is_company', '=', False)], 'invisible': [('company_type','=','person'),('is_company','=', True)]}</attribute>
             </xpath>
 
             <xpath expr="//field[@id='individual']" position="before">
