@@ -20,6 +20,23 @@
                 <field name="second_ap" attrs="{'required' : [('company_type', '=', 'person')], 'invisible': [('company_type', '!=', 'person')]}"/>
             </xpath>
 
+            <xpath expr="//field[@name='email'][1]" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='phone'][1]" position="attributes">
+                <attribute name="required">1</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='vat'][1]" position="before">
+                <field name="type_rfc" attrs="{'required' : [('company_type', '=', 'person')], 'invisible': [('company_type', '!=', 'person')]}"/>
+                <field name="rfc_general" placeholder="e.g. BE0477472701" attrs="{'readonly': [('parent_id','!=',False)], 'invisible': [('type_rfc', '!=', 'general')]}"/>
+
+            </xpath>
+
+            <xpath expr="//field[@name='vat'][1]" position="attributes">
+                <attribute name="attrs">{'readonly': [('parent_id','!=',False)], 'invisible': [('type_rfc', '=', 'general')]}</attribute>
+            </xpath>
+
         </field>
     </record>
 

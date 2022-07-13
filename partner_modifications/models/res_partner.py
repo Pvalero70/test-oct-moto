@@ -17,6 +17,21 @@ class ResPartnerName(models.Model):
     second_name = fields.Char(string="Segundo nombre")
     first_ap = fields.Char(string="Primer Apellido")
     second_ap = fields.Char(string="Segundo Apellido")
+    type_rfc = fields.Selection([
+        ("general", "Publico General"),
+        ("fiscal", "Cliente Fiscal")
+    ], string="Tipo de RFC")
+    rfc_general = fields.Selection([
+        ("XAXX010101000", "XAXX010101000"),
+    ], string="RFC")
+
+    @api.onchange('rfc_general')
+    def _vat_general(self):
+        if self.rfc_general:
+            self.vat = self.rfc_general
+        else:
+            self.vat = ''
+
 
     @api.onchange('first_name', 'second_name','first_ap','second_ap')
     def _compute_name_person(self):
