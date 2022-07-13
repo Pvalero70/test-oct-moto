@@ -26,6 +26,17 @@ exports.load_fields('pos.payment', ["is_commission"])
                 this.payment_termss = vals;
                 this.render();
             }
+            async create_commission_invoice(order){
+                let invoice_data = {
+                    model: 'pos.order',
+                    method: 'create_comm_inv_pos',
+                    args: [order.name],
+                };
+                console.log(" DATOS PARA EL QUERY::: ");
+                console.log(invoice_data);
+                const comm_invoice = await this.rpc(invoice_data);
+                return comm_invoice;
+            }
 
             async send_payment(order, invoice_data, payments, customer){
 
@@ -143,6 +154,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                         this.env.pos.push_orders();
                     }
                 }
+                this.create_commission_invoice(this.currentOrder);
             }
 
 

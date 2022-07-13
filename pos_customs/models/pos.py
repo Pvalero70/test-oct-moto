@@ -235,3 +235,21 @@ class PosOrder(models.Model):
             else:
                 posord.salesman_id = False
 
+    @api.model
+    def create_comm_inv_pos(self, pon=None):
+        if pon is None:
+            return {}
+        poso_domain = [('pos_reference', '=ilike', pon)]
+        poso = self.env['pos.order'].search(poso_domain, limit=1)
+        if len(poso.lines) != 1:
+            return {}
+        product_comm_payment_method = poso.payment_ids.mapped('payment_method_id').filtered(lambda pm: pm.bank_commission_method != False and pm.bank_commission_product_id != False)
+        if not product_comm_payment_method:
+            return {}
+        comm_product_id = product_comm_payment_method.bank_commission_product_id
+        if poso.lines[0].product_id.id != comm_product_id.id:
+            return {}
+        poso_inv = poso.action_pos_order_invoice()
+        if poso_inv:
+            return poso_inv
+        return {}

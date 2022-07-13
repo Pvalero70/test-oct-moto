@@ -18,14 +18,16 @@ class AccountPayment(models.Model):
 
     @api.model
     def crear_pago_pos(self, values):
-        _log.info("## Intenta crear pago from pos##")
         values = values.get('vals', {})
-        _log.info("\n VALORES CREAR PAGO ORIGINALES :: %s" % json.dumps(values))
+        # _log.info("\n VALORES CREAR PAGO ORIGINALES :: %s" % json.dumps(values))
         invoice = values.get('invoice')
         # QUITAR PAGOS DE COMISION AQUÍ. (Buscamos la comisión deacuerdo al monto de comisión que tiene el pos order.. )
         ''
         order_name = values.get('order_name')
-        order_id = self.env['pos.order'].search([('pos_reference', '=ilike', order_name)])
+        poso_domain = [('pos_reference', '=ilike', order_name)]
+        # _log.info("\n Pos order search domain :: %s " % poso_domain)
+        order_id = self.env['pos.order'].sudo().search(poso_domain)
+        # _log.info("\n EL POS ORDER ES :: %s " % order_id)
         order_amount = sum(order_id.lines.mapped('price_subtotal_incl'))
         # total_commission_amount = self.get_total_commission()
         # amount_invoice_ori_total = float(values.get('invoice').get('amount_total'))
@@ -137,6 +139,6 @@ class AccountPayment(models.Model):
                 # _log.info(factura)
                 # factura.payment_id = payment_id
 
-        poso_inv = order_id.action_pos_order_invoice()
-        _log.info("\n La factura de la comision es ::: %s " % poso_inv)
+        # poso_inv = order_id.action_pos_order_invoice()
+        # _log.info("\n La factura de la comision es ::: %s " % poso_inv)
 
