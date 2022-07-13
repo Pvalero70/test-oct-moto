@@ -21,6 +21,7 @@
         'base',
         'account',
         'stock',
+        'stock_landed_costs',
         'product',
         'purchase',
     ],
