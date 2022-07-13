@@ -21,9 +21,9 @@ class ResPartnerName(models.Model):
     #    ("general", "Publico General"),
     #    ("fiscal", "Cliente Fiscal")
     #], string="Tipo de RFC")
-    rfc_general = fields.Selection([
-        ("XAXX010101000", "XAXX010101000"),
-    ], string="RFC")
+    #rfc_general = fields.Selection([
+    #    ("XAXX010101000", "XAXX010101000"),
+    #], string="RFC")
 
     @api.onchange('rfc_general')
     def _vat_general(self):
