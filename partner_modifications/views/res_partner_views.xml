@@ -9,10 +9,11 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@id='individual']" position="attributes">
-                <attribute name="attrs">{'required' : [('type', '=', 'contact'), ('is_company', '=', False)], 'invisible': [('company_type','=','person'),('is_company','=', True)]}</attribute>
+                <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
             </xpath>
 
-            <xpath expr="//field[@id='individual']" position="before">
+            <xpath expr="//div[hasclass('o_address_format')][1]" position="before">
                 <field name="first_name" attrs="{'required' : [('company_type', '=', 'person')], 'invisible': [('company_type', '!=', 'person')]}"/>
                 <field name="second_name" attrs="{'invisible': [('company_type', '!=', 'person')]}"/>
                 <field name="first_ap" attrs="{'required' : [('company_type', '=', 'person')], 'invisible': [('company_type', '!=', 'person')]}"/>
