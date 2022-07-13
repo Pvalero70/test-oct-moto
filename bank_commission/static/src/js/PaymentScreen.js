@@ -17,9 +17,6 @@ const PaymentScreenBc = (PaymentScreen) =>
         }
 
         addNewPaymentLine({ detail: paymentMethod }) {
-            console.log(" AGREGANDO NUEVA LINEA... ");
-            console.log(this.currentOrder.selected_invoice);
-
             if (paymentMethod.bank_commission_method){
                 console.log("AÑADIENDO UNA NUEVA LINEA DE PAGO... ");
                 // Decide if add commission or not.
@@ -96,19 +93,55 @@ const PaymentScreenBc = (PaymentScreen) =>
         _updateSelectedPaymentline(){
             super._updateSelectedPaymentline(...arguments);
             // Actualizar el precio de la comisión
-            console.log(" ACTUALIZANDO EL PRECIO DE .. ");
-            console.log(this);
             let pline = this.selectedPaymentLine;
             let order = this.currentOrder;
-
-            // Actualizando el precio de la comisión normal
-            let oline = order.get_orderlines().find(line => line.paymentMethod === pline.payment_method.id && line.product.id === pline.payment_method.bank_commission_product_id[0]);
-            if (oline) {
-                let com_total = pline.amount * (pline.payment_method.bank_commission_amount/100);
-                oline.set_unit_price(com_total);
-                // Obtenemos el total de la compra y le restamos la comisión actual.
-                // reecalculamos la comisión
+            console.log(" ORDER ::: ");
+            console.log(order);
+            // Actualizando el precio de la comisión normal, unicamente cuando no se tenga una factura seleccionada.
+            if (!order.selected_invoice){
+                console.log(" ESTA NO TIENE FACTURA RELACIONADA.. ");
+                let oline = order.get_orderlines().find(line => line.paymentMethod === pline.payment_method.id && line.product.id === pline.payment_method.bank_commission_product_id[0]);
+                if (oline) {
+                    let com_total = pline.amount * (pline.payment_method.bank_commission_amount/100);
+                    oline.set_unit_price(com_total);
+                }
             }
+            else{
+
+                let or_com = this.currentOrder.get_orderlines()[0]
+                let product_com_id = or_com.product.id;
+
+
+                let commission_total_amount = 0;
+                let commission_total_amount_taxed = 0;
+                order.paymentlines.filter(e => !e.is_commission).forEach(line =>{
+                    let pm = line.payment_method;
+                    if(pm.bank_commission_amount > 0 && pm.bank_commission_method != false){
+                        if(pm.bank_commission_method == "fixed"){
+                            commission_total_amount_taxed = pm.bank_commission_amount;
+                        }
+                        if(pm.bank_commission_method == "percentage"){
+                            commission_total_amount_taxed += (pm.bank_commission_amount/100)*line.amount;
+                        }
+                    }
+                });
+                let comm_paymentline = order.paymentlines.filter(e => e.is_commission == true);
+                this.rpc({
+                    model: "pos.payment",
+                    method: "get_comm_product_tax",
+                    args: [product_com_id]
+                }).then(function (tax_factor_comm){
+                    console.log("Factor de impuestos:: :");
+                    console.log(tax_factor_comm);
+                    or_com.set_unit_price(commission_total_amount_taxed/tax_factor_comm);
+                    comm_paymentline[0].set_amount(commission_total_amount_taxed);
+                });
+
+
+
+
+            }
+
         }
     };
 
