@@ -4,7 +4,10 @@ odoo.define('pos_customs.PaymentScreenC', function (require) {
 var models = require('point_of_sale.models');
 const PaymentScreen = require('point_of_sale.PaymentScreen');
 const Registries = require('point_of_sale.Registries');
+var exports = require("point_of_sale.models");
 var rpc = require('web.rpc');
+
+exports.load_fields('pos.payment', ["is_commission"])
 
     const IIPaymentScreen = (PaymentScreen) =>
         class extends PaymentScreen{
@@ -24,8 +27,10 @@ var rpc = require('web.rpc');
                 this.render();
             }
 
-            async send_payment(order_id, invoice_data, payments, customer){
+            async send_payment(order, invoice_data, payments, customer){
+
                 invoice_data['pos_session_id'] = this.currentOrder.pos_session_id
+                invoice_data['order_id'] = this.currentOrder.id
 
                 let mispagos = []
                 payments.forEach(element => {
@@ -35,12 +40,20 @@ var rpc = require('web.rpc');
                     } 
                     mispagos.push(pay)
                 });
-
-                const createPayment = await this.rpc({
+                let createpayment_data = {
                     model: 'account.payment',
                     method: 'crear_pago_pos',
-                    args: [{vals : {invoice : invoice_data, uid : order_id, payments : mispagos, customer : customer}}],
-                });
+                    args: [{vals : {
+                            invoice : invoice_data,
+                            uid : order.uid,
+                            order_name: order.name,
+                            payments : mispagos,
+                            customer : customer
+                        }}],
+                };
+                console.log(" DATOS PARA EL QUERY::: ");
+                console.log(createpayment_data);
+                const createPayment = await this.rpc(createpayment_data);
 
                 // console.log(createPayment)
                 return createPayment
@@ -64,8 +77,6 @@ var rpc = require('web.rpc');
                     if (this.currentOrder.is_to_invoice()) {
                         this.currentOrder.to_invoice = [$("#cfdi_usage_sel").val(),$("#payment_termss_selection").val()];
                             // this.currentOrder.cfdi_usage = $("#cfdi_usage_sel").val();
-                            console.log("para facturar ... CURRENT ORDER... ");
-                            console.log(this.currentOrder.to_invoice);
                             syncedOrderBackendIds = await this.env.pos.push_and_invoice_order(
                                 this.currentOrder
                             );
@@ -73,7 +84,7 @@ var rpc = require('web.rpc');
                         // Isn't original
                         if (this.currentOrder.is_payment_invoice){
                             const myorder = this.currentOrder
-                            this.send_payment(myorder.uid, myorder.selected_invoice, myorder.paymentlines.models, myorder.attributes.client)
+                            this.send_payment(myorder, myorder.selected_invoice, myorder.paymentlines.models, myorder.attributes.client)
                         }
                         // console.log("Push single order")
                         syncedOrderBackendIds = await this.env.pos.push_single_order(this.currentOrder);

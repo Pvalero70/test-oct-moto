@@ -20,3 +20,9 @@ class PosPaymentMethodBc(models.Model):
     bc_journal_id = fields.Many2one("account.journal", string="Diario de comisiones")
     product_cate_commission_ids = fields.Many2many('product.category', string="Categorías de producto para comisión")
 
+
+class PosPaymentBc(models.Model):
+    _inherit = "pos.payment"
+
+    is_commission = fields.Boolean(string="Es pago de comision", default=False)
+

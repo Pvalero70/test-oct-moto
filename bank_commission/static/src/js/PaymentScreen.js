@@ -17,6 +17,9 @@ const PaymentScreenBc = (PaymentScreen) =>
         }
 
         addNewPaymentLine({ detail: paymentMethod }) {
+            console.log(" AGREGANDO NUEVA LINEA... ");
+            console.log(this.currentOrder.selected_invoice);
+
             if (paymentMethod.bank_commission_method){
                 console.log("AÑADIENDO UNA NUEVA LINEA DE PAGO... ");
                 // Decide if add commission or not.
@@ -55,6 +58,8 @@ const PaymentScreenBc = (PaymentScreen) =>
                     if (paymentMethod.bank_commission_method == "percentage"){
                         let total_due = this.currentOrder.get_total_with_tax()-current_com-this.currentOrder.get_total_paid()+ this.currentOrder.get_rounding_applied();
                         price = total_due * (paymentMethod.bank_commission_amount/100);
+                        // Revisar las lineas que van a generar una comision. si la comisión es igual a cero
+                        // no se agregará.
                         //price = this.currentOrder.get_due() * (paymentMethod.bank_commission_amount/100);
                     }
                     if (paymentMethod.bank_commission_method == "fixed"){
@@ -90,8 +95,13 @@ const PaymentScreenBc = (PaymentScreen) =>
 
         _updateSelectedPaymentline(){
             super._updateSelectedPaymentline(...arguments);
+            // Actualizar el precio de la comisión
+            console.log(" ACTUALIZANDO EL PRECIO DE .. ");
+            console.log(this);
             let pline = this.selectedPaymentLine;
             let order = this.currentOrder;
+
+            // Actualizando el precio de la comisión normal
             let oline = order.get_orderlines().find(line => line.paymentMethod === pline.payment_method.id && line.product.id === pline.payment_method.bank_commission_product_id[0]);
             if (oline) {
                 let com_total = pline.amount * (pline.payment_method.bank_commission_amount/100);

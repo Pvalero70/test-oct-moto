@@ -1,4 +1,4 @@
-odoo.define("pos_pay_control.ProductScreenCustom", function (require) {
+odoo.define("bank_commission.ProductScreenCustom", function (require) {
     "use strict";
 
     const NumberBuffer = require('point_of_sale.NumberBuffer');

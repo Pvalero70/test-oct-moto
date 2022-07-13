@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api
 from datetime import datetime
+import json
 import logging
 _log = logging.getLogger("___name: %s" % __name__)
 
@@ -18,8 +19,30 @@ class AccountPayment(models.Model):
     @api.model
     def crear_pago_pos(self, values):
         _log.info("## Intenta crear pago from pos##")
-        _log.info(values)
         values = values.get('vals', {})
+        _log.info("\n VALORES CREAR PAGO ORIGINALES :: %s" % json.dumps(values))
+        invoice = values.get('invoice')
+        # QUITAR PAGOS DE COMISION AQUÍ. (Buscamos la comisión deacuerdo al monto de comisión que tiene el pos order.. )
+        ''
+        order_name = values.get('order_name')
+        order_id = self.env['pos.order'].search([('pos_reference', '=ilike', order_name)])
+        order_amount = sum(order_id.lines.mapped('price_subtotal_incl'))
+        # total_commission_amount = self.get_total_commission()
+        # amount_invoice_ori_total = float(values.get('invoice').get('amount_total'))
+        new_payments = []
+        for pay in values.get('payments', []):
+
+            # diferir entre el pago hecho a comisión.
+            if float(pay['amount']) != order_amount:
+                _log.info("\n payment amount:: %s " % float(pay['amount']))
+                new_payments.append(pay)
+                # ori_payment = pay
+
+        # self.create_commission_invoice(invoice['id'], values.get('pos_session_id'), ori_payment)
+        values['payments'] = new_payments
+        # _log.info("\n Nuevo VALUES ::: %s " % values)
+        # Finalizamos quitar pagos de comision aquí.
+
         customer = values.get('customer')
         pos_method_id = None
         amount = 0
@@ -27,7 +50,7 @@ class AccountPayment(models.Model):
             if pay.get('method', {}).get('type') != 'pay_later':
                 pos_method_id = pay.get('method', {}).get('id')
                 amount = pay.get('amount')
-        invoice = values.get('invoice')
+
         pos_session_id = invoice.get('pos_session_id')
         # _log.info(pos_session_id)
 
@@ -114,4 +137,6 @@ class AccountPayment(models.Model):
                 # _log.info(factura)
                 # factura.payment_id = payment_id
 
+        poso_inv = order_id.action_pos_order_invoice()
+        _log.info("\n La factura de la comision es ::: %s " % poso_inv)
 

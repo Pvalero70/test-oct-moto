@@ -15,9 +15,11 @@
         'point_of_sale.assets': [
             'bank_commission/static/src/js/PaymentScreen.js',
             'bank_commission/static/src/js/PaymentScreenStatusBc.js',
-            'bank_commission/static/src/js/ProductScreen.js'
+            'bank_commission/static/src/js/ProductScreen.js',
+            'bank_commission/static/src/js/PaymentScreenPaymentBc.js'
         ],
         'web.assets_qweb': [
+            'bank_commission/static/src/xml/PaymentScreenPaymentLineBc.xml',
         ],
     },
     'application': True,
