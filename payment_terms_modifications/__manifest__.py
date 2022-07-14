@@ -18,7 +18,7 @@
 
     ],
     'data': [
-        'payment_terms_modifications/security/payment_term_security.xml',
+        'security/payment_term_security.xml',
         'views/res_partner_views.xml',
 
 
