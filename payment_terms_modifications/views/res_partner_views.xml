@@ -8,11 +8,11 @@
         <field name="inherit_id" ref="account.view_partner_property_form"/>
         <field name="arch" type="xml">
 
-            <xpath expr="//field[@id='property_payment_term_id']" position="before">
+            <xpath expr="//field[@name='property_payment_term_id']" position="before">
                 <field name="payment_terms_permission" invisible="1"/>
             </xpath>
 
-            <xpath expr="//field[@id='property_payment_term_id']" position="attributes">
+            <xpath expr="//field[@name='property_payment_term_id']" position="attributes">
                 <attribute name="attrs">{'readonly':[('payment_terms_permission', '=', False)]}
                 </attribute>
             </xpath>
