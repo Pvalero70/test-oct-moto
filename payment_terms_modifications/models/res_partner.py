@@ -13,7 +13,7 @@ class ResPartnerPaymentPerm(models.Model):
 
 
     payment_terms_permission = fields.Boolean(string="Readonly para el campo terminos de pago", readonly=False,
-                                        compute='get_user_price_proveedor')
+                                        compute='get_user_payment_term')
 
 
     @api.depends('payment_terms_permission')
