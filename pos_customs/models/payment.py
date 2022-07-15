@@ -19,30 +19,30 @@ class AccountPayment(models.Model):
     @api.model
     def crear_pago_pos(self, values):
         values = values.get('vals', {})
-        # _log.info("\n VALORES CREAR PAGO ORIGINALES :: %s" % json.dumps(values))
+
+        _log.info("\n VALORES CREAR PAGO ORIGINALES :: %s" % json.dumps(values))
         invoice = values.get('invoice')
         # QUITAR PAGOS DE COMISION AQUÍ. (Buscamos la comisión deacuerdo al monto de comisión que tiene el pos order.. )
         ''
-        order_name = values.get('order_name')
-        poso_domain = [('pos_reference', '=ilike', order_name)]
-        # _log.info("\n Pos order search domain :: %s " % poso_domain)
-        order_id = self.env['pos.order'].sudo().search(poso_domain)
-        # _log.info("\n EL POS ORDER ES :: %s " % order_id)
-        order_amount = sum(order_id.lines.mapped('price_subtotal_incl'))
-        # total_commission_amount = self.get_total_commission()
-        # amount_invoice_ori_total = float(values.get('invoice').get('amount_total'))
         new_payments = []
+        _log.info("\n Order lines ::: %s " % values.get('order_lines_data'))
+        pold = values.get('order_lines_data')[0]
+        order_line_amount = pold['amount']
+        _log.info("\n ORDER LINE AMOUNT :: %s " % order_line_amount)
+        tax_factor = self.env['pos.payment'].get_comm_product_tax(commission_product_id=pold['product_id'])
+        line_comm_amount = round(tax_factor*order_line_amount, 2)
+        _log.info("\n Factor:: %s TOTAAAALL::: %s " % (tax_factor, line_comm_amount))
+
         for pay in values.get('payments', []):
 
             # diferir entre el pago hecho a comisión.
-            if float(pay['amount']) != order_amount:
-                _log.info("\n payment amount:: %s " % float(pay['amount']))
+            if float(pay['amount']) != line_comm_amount:
+                # _log.info("\n payment amount:: %s " % float(pay['amount']))
                 new_payments.append(pay)
                 # ori_payment = pay
 
-        # self.create_commission_invoice(invoice['id'], values.get('pos_session_id'), ori_payment)
         values['payments'] = new_payments
-        # _log.info("\n Nuevo VALUES ::: %s " % values)
+        _log.info("\n Nuevo VALUES ::: %s " % json.dumps(values))
         # Finalizamos quitar pagos de comision aquí.
 
         customer = values.get('customer')

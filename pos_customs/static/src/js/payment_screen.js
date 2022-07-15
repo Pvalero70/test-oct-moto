@@ -32,8 +32,6 @@ exports.load_fields('pos.payment', ["is_commission"])
                     method: 'create_comm_inv_pos',
                     args: [order.name],
                 };
-                console.log(" DATOS PARA EL QUERY::: ");
-                console.log(invoice_data);
                 const comm_invoice = await this.rpc(invoice_data);
                 return comm_invoice;
             }
@@ -43,6 +41,8 @@ exports.load_fields('pos.payment', ["is_commission"])
                 invoice_data['pos_session_id'] = this.currentOrder.pos_session_id
                 invoice_data['order_id'] = this.currentOrder.id
 
+                console.log(" EL POS ORDER :: ");
+                console.log(order);
                 let mispagos = []
                 payments.forEach(element => {
                     var pay = {
@@ -51,21 +51,28 @@ exports.load_fields('pos.payment', ["is_commission"])
                     } 
                     mispagos.push(pay)
                 });
+                let pos_order_lines = []
+                order.orderlines.models.forEach(el=>{
+                    var line = {
+                        amount: el.price,
+                        product_id: el.product.id
+                    }
+                    pos_order_lines.push(line);
+                });
+                console.log("Order lines ... ");
+                console.log(pos_order_lines);
                 let createpayment_data = {
                     model: 'account.payment',
                     method: 'crear_pago_pos',
                     args: [{vals : {
                             invoice : invoice_data,
                             uid : order.uid,
-                            order_name: order.name,
+                            order_lines_data: pos_order_lines,
                             payments : mispagos,
                             customer : customer
                         }}],
                 };
-                console.log(" DATOS PARA EL QUERY::: ");
-                console.log(createpayment_data);
                 const createPayment = await this.rpc(createpayment_data);
-
                 // console.log(createPayment)
                 return createPayment
             }

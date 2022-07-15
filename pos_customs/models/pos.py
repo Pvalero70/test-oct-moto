@@ -176,9 +176,10 @@ class PosOrder(models.Model):
                 raise UserError(_('Please provide a partner for the sale.'))
             move_vals = order._prepare_invoice_vals()
             _log.info("MOVE VALSSSS 1 :: %s " % move_vals)
-
+            comm_alone = self.has_only_comm_lines(move_vals, order=order)
             comm_line_exists = self.commission_line_exists(move_vals, order=order)
             if comm_line_exists:
+                # Si tiene linea con comision, le quita la comisión al dic original y hace una copia con la linea de comisión.
                 move_vals_commissions = move_vals.copy()
                 move_vals_commissions = self._split_invoice_vals_bk(move_vals_commissions, quit_commissions=False, order=order)
                 move_vals = self._split_invoice_vals_bk(move_vals, quit_commissions=True, order=order)
@@ -191,12 +192,20 @@ class PosOrder(models.Model):
                     new_move_bc.sudo().with_company(order.company_id)._post()
                     moves += new_move_bc
 # Comentado por pruebas.
-            _log.info(" Try to create invoice")
-            new_move = order._create_invoice(move_vals)
-            _log.info(" LA FACTURA NORMAL ::: %s " % new_move)
-            order.write({'account_move': new_move.id, 'state': 'invoiced'})
-            new_move.sudo().with_company(order.company_id)._post()
-            moves += new_move
+            if comm_line_exists and comm_alone:
+                # Solo está la factura por comision.
+                _log.info(" LA FACTURA NORMAL ::: %s " % new_move_bc)
+                order.write({'account_move': new_move_bc.id, 'state': 'invoiced'})
+                new_move_bc.sudo().with_company(order.company_id)._post()
+
+            else:
+                new_move = order._create_invoice(move_vals)
+                _log.info(" LA FACTURA NORMAL ::: %s " % new_move)
+                order.write({'account_move': new_move.id, 'state': 'invoiced'})
+                new_move.sudo().with_company(order.company_id)._post()
+                moves += new_move
+
+
             line_zerodays = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.value_amount == 0 and x.days == 0 and x.option == "day_after_invoice_date")
             if line_zerodays:
                 order._apply_invoice_payments()

@@ -92,7 +92,7 @@ const PaymentScreenBc = (PaymentScreen) =>
 
         _updateSelectedPaymentline(){
             super._updateSelectedPaymentline(...arguments);
-            // Actualizar el precio de la comisión
+            // Actualizar el precio de la comisión 1837160.23
             let pline = this.selectedPaymentLine;
             let order = this.currentOrder;
             console.log(" ORDER ::: ");
