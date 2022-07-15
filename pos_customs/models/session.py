@@ -217,7 +217,12 @@ class PosSession(models.Model):
                     if line.debit == 0 and line.credit == 0:
                         line.unlink()
                 _logger.info("Se ha actualizado correctamente.")
-                session_move.action_post()
+                _logger.info(session_move.line_ids)
+                if not session_move.line_ids:
+                    _logger.info("No tiene lineas")
+                    session_move.button_cancel()
+                else:
+                    session_move.action_post()
                 # Descomentar para borrar el asiento
                 # for line in debit_move_id.line_ids:
                 #     if line.debit == 0 and line.credit == 0:
