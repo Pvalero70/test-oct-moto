@@ -126,6 +126,8 @@ class StockQuantTti(models.Model):
     _inherit = "stock.quant"
 
     inv_number = fields.Char(string="Número de inventario.", related="lot_id.tt_inventory_number")
+    tt_number_motor = fields.Char(string="Número de motor.", related="lot_id.tt_number_motor")
+    tt_color = fields.Char(string="Color", related="lot_id.tt_color")
 
     # def _hide_snf(self):
     #     self.hide_snf_fields = self.env.company.restrict_inv_sn_flow
