@@ -28,8 +28,7 @@ class ProductProductRepair(models.Model):
         args = args or []
         domain = []
         if name and operator == 'ilike':
-            domain = [
-                      ('name', operator, name)]
+            domain = ['|',('name', operator, name),('default_code',operator,name)]
         if 'order_display' in ctx:
             order = ctx['order_display']
 
