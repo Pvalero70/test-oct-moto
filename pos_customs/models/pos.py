@@ -70,7 +70,6 @@ class PosOrder(models.Model):
 
     def _prepare_invoice_vals(self):
         # OJO, despues de ésta linea dice que ando intentando conciliar asientos ya conciliados.
-        _log.info("\n\n2) Preparando los valores del uso del CFDI:::  %s " % self.l10n_mx_edi_usage)
         vals = super(PosOrder, self)._prepare_invoice_vals()
         vals['l10n_mx_edi_payment_method_id'] = self.payment_method_id.payment_method_c.id
         vals['l10n_mx_edi_usage'] = self.l10n_mx_edi_usage
@@ -154,72 +153,135 @@ class PosOrder(models.Model):
         _log.info(" APLICANDO PAGOUS.. ")
         receivable_account = self.env["res.partner"]._find_accounting_partner(self.partner_id).property_account_receivable_id
         payment_moves = order.payment_ids.mapped('account_move_id')
-        for pay in payment_moves:
-            _log.info("payment :: %s " % pay)
+
+        if not payment_moves:
+            payment_moves = order.payment_ids._create_payment_moves()
+
         invoice_receivable = invoice.line_ids.filtered(lambda line: line.account_id == receivable_account)
         if not invoice_receivable.reconciled and receivable_account.reconcile:
             payment_receivables = payment_moves.mapped('line_ids').filtered(lambda line: line.account_id == receivable_account and line.reconciled is False)
-            for pa in payment_receivables:
-                _log.info("PAGOS ::: %s  account move: %s reconcilied::: %s " % (pa, pa.move_id, pa.reconciled))
-
+            #payment_receivables = payment_moves.mapped('line_ids').filtered(lambda line: line.account_id == receivable_account)
             (invoice_receivable | payment_receivables).reconcile()
+
+    def kind_order_lines(self, order):
+        """
+            Si contiene ambos tipos de linea o no, las respuestas posibles pueden ser: 
+            a) commission_only = Solo contiene una linea a facturar, la comision
+            b) without_commission = Sin factura por comisión. 
+            c) both_lines = Contiene lineas de productos normales y una de comisión. 
+            d) False = algún error, ninguno de los casos anteriores. 
+        """
+        # Tomamos un pago que haya generado comision. 
+        if len(order.lines.ids) < 1 and len(order.payment_ids.ids) < 1:
+            _log.info("\n No contiene lineas.")
+            return False
+        payment_bc_used_ids = order.payment_ids.filtered(
+            lambda pa: pa.payment_method_id.bank_commission_method != False)
+        # Take first
+        if not payment_bc_used_ids:
+            return "without_commission"
+        comm_product_id = payment_bc_used_ids.payment_method_id.bank_commission_product_id if len(payment_bc_used_ids) == 1 else payment_bc_used_ids[0].payment_method_id.bank_commission_product_id
+        _log.info("\n Producto comision del order:: %s " % comm_product_id)
+
+        lines_with_comm = order.lines.filtered(lambda l: l.product_id.id == comm_product_id.id)
+        lines_without_comm = order.lines.filtered(lambda l: l.product_id.id != comm_product_id.id)
+
+        if len(lines_with_comm) >= 1 and len(lines_without_comm) >= 1:
+            # Contiene ambas. 
+            return "both_lines"
+        elif not lines_with_comm or len(lines_with_comm) < 1:
+            # Order sin comisión. 
+            return "without_commission"
+        elif not lines_without_comm or len(lines_without_comm) < 1:
+            # No contiene lineas comunes. 
+            return "commission_only"
+        else: 
+            return False
 
     def _generate_pos_order_invoice(self):
         moves = self.env['account.move']
         for order in self:
-            # Force company for all SUPERUSER_ID action
-            if order.account_move:
-                moves += order.account_move
-                continue
-
             if not order.partner_id:
                 raise UserError(_('Please provide a partner for the sale.'))
-            move_vals = order._prepare_invoice_vals()
-            _log.info("MOVE VALSSSS 1 :: %s " % move_vals)
-            comm_alone = self.has_only_comm_lines(move_vals, order=order)
-            comm_line_exists = self.commission_line_exists(move_vals, order=order)
-            if comm_line_exists:
-                # Si tiene linea con comision, le quita la comisión al dic original y hace una copia con la linea de comisión.
-                move_vals_commissions = move_vals.copy()
-                move_vals_commissions = self._split_invoice_vals_bk(move_vals_commissions, quit_commissions=False, order=order)
-                move_vals = self._split_invoice_vals_bk(move_vals, quit_commissions=True, order=order)
-                _log.info("MOVE VALSSSS 2 :: %s" % move_vals)
-                _log.info(" MOVE VALS COMMM ::: %s " % move_vals_commissions)
-                new_move_bc = None
-                if move_vals_commissions:
-                    new_move_bc = order._create_invoice(move_vals_commissions)
-                    _log.info(" FACTURA POR COMISION ::::: %s " % new_move_bc)
-                    new_move_bc.sudo().with_company(order.company_id)._post()
-                    moves += new_move_bc
-# Comentado por pruebas.
-            if comm_line_exists and comm_alone:
-                # Solo está la factura por comision.
-                _log.info(" LA FACTURA NORMAL ::: %s " % new_move_bc)
-                order.write({'account_move': new_move_bc.id, 'state': 'invoiced'})
-                new_move_bc.sudo().with_company(order.company_id)._post()
+            # Si contiene ambios tipos.
+            lines_type = self.kind_order_lines(order)
+            if lines_type == "both_lines":
+                _log.info("\nContiene ambos tipos de lineas, se hacen dos facturas.")
+                # Prepara valres. 
+                normal_inv_vals = order._prepare_invoice_vals()
+                commis_inv_vals = normal_inv_vals.copy()
+                normal_inv_vals = self._split_invoice_vals_bk(normal_inv_vals, quit_commissions=True, order=order)
+                commis_inv_vals = self._split_invoice_vals_bk(commis_inv_vals, quit_commissions=False, order=order)
+                # Crea facturas
+                normal_inv = order._create_invoice(normal_inv_vals)
+                commis_inv = order._create_invoice(commis_inv_vals)
+                # Relaciona el order con la factura. 
+                order.write({'account_move': normal_inv.id, 'state': 'invoiced'})
+                # Confirma las facturas. 
+                normal_inv.sudo().with_company(order.company_id)._post()
+                commis_inv.sudo().with_company(order.company_id)._post()
 
+                # Revisa terminos de pago para poder relacionar un pago. 
+                line_zerodays_ni = normal_inv.invoice_payment_term_id.line_ids.filtered(lambda x: x.value_amount == 0 and x.days == 0 and x.option == "day_after_invoice_date")
+                line_zerodays_ci = commis_inv.invoice_payment_term_id.line_ids.filtered(lambda x: x.value_amount == 0 and x.days == 0 and x.option == "day_after_invoice_date")
+
+                if line_zerodays_ni:
+                    self._apply_invoice_payments_bc(normal_inv, order=order)
+                else:
+                    delta_days = normal_inv.invoice_payment_term_id.line_ids.filtered(lambda x: x.days > 0 and x.option == "day_after_invoice_date")[:1].days
+                    normal_inv.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
+                    normal_inv._compute_l10n_mx_edi_payment_policy()
+                    self._apply_invoice_payments_bc(normal_inv, order=order)
+                
+                if line_zerodays_ci:
+                    self._apply_invoice_payments_bc(commis_inv, order=order)
+                else:
+                    delta_days = commis_inv.invoice_payment_term_id.line_ids.filtered(lambda x: x.days > 0 and x.option == "day_after_invoice_date")[:1].days
+                    commis_inv.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
+                    commis_inv._compute_l10n_mx_edi_payment_policy()
+                    self._apply_invoice_payments_bc(commis_inv, order=order)
+                moves += normal_inv
+                moves += commis_inv
+
+            elif lines_type == "without_commission":
+                _log.info("\nContiene lineas normales. ")
+                normal_inv_vals = order._prepare_invoice_vals()
+                normal_inv = order._create_invoice(normal_inv_vals)
+                order.write({'account_move': normal_inv.id, 'state': 'invoiced'})
+                normal_inv.sudo().with_company(order.company_id)._post()
+                line_zerodays_ni = normal_inv.invoice_payment_term_id.line_ids.filtered(lambda x: x.value_amount == 0 and x.days == 0 and x.option == "day_after_invoice_date")
+                if line_zerodays_ni:
+                    self._apply_invoice_payments_bc(normal_inv, order=order)
+                else:
+                    delta_days = normal_inv.invoice_payment_term_id.line_ids.filtered(lambda x: x.days > 0 and x.option == "day_after_invoice_date")[:1].days
+                    normal_inv.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
+                    normal_inv._compute_l10n_mx_edi_payment_policy()
+                    self._apply_invoice_payments_bc(normal_inv, order=order)
+                moves += normal_inv              
+
+            elif lines_type == "commission_only":
+                _log.info("\n Contiene solo lineas de comision. (complemento de pago) ")
+                _log.info("\nContiene lineas normales. ")
+                commis_inv_vals = order._prepare_invoice_vals()
+                commis_inv_vals = self._split_invoice_vals_bk(commis_inv_vals, quit_commissions=False, order=order)
+                commis_inv = order._create_invoice(commis_inv_vals)
+                order.write({'account_move': commis_inv.id, 'state': 'invoiced'})
+                commis_inv.sudo().with_company(order.company_id)._post()
+                line_zerodays_ci = commis_inv.invoice_payment_term_id.line_ids.filtered(lambda x: x.value_amount == 0 and x.days == 0 and x.option == "day_after_invoice_date")
+                if line_zerodays_ci:
+                    self._apply_invoice_payments_bc(commis_inv, order=order)
+                else:
+                    delta_days = commis_inv.invoice_payment_term_id.line_ids.filtered(lambda x: x.days > 0 and x.option == "day_after_invoice_date")[:1].days
+                    commis_inv.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
+                    commis_inv._compute_l10n_mx_edi_payment_policy()
+                    self._apply_invoice_payments_bc(commis_inv, order=order)
+                moves += commis_inv
+            
             else:
-                new_move = order._create_invoice(move_vals)
-                _log.info(" LA FACTURA NORMAL ::: %s " % new_move)
-                order.write({'account_move': new_move.id, 'state': 'invoiced'})
-                new_move.sudo().with_company(order.company_id)._post()
-                moves += new_move
-
-
-            line_zerodays = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.value_amount == 0 and x.days == 0 and x.option == "day_after_invoice_date")
-            if line_zerodays:
-                order._apply_invoice_payments()
-            else:
-                delta_days = new_move.invoice_payment_term_id.line_ids.filtered(lambda x: x.days > 0 and x.option == "day_after_invoice_date")[:1].days
-                new_move.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
-                new_move._compute_l10n_mx_edi_payment_policy()
-            if comm_line_exists and new_move_bc is not None:
-                _log.info(" APLICANDO PAGOS PARA :: %s " % new_move_bc)
-                self._apply_invoice_payments_bc(new_move_bc, order=order)
-
+                return {}
         if not moves:
             return {}
-
+        _log.info("\n Facturas creadas ::: :%s " % moves)
         return {
             'name': _('Customer Invoice'),
             'view_mode': 'form',
@@ -231,7 +293,6 @@ class PosOrder(models.Model):
             'target': 'current',
             'res_id': moves and moves.ids[0] or False,
         }
-
     @api.depends('lines.sale_order_origin_id')
     def _compute_salesman(self):
         for posord in self:
