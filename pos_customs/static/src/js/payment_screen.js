@@ -42,8 +42,8 @@ exports.load_fields('pos.payment', ["is_commission"])
                 console.log("PRECIONAMOS A FACTURAR");
                 this.currentOrder.set_to_invoice(!this.currentOrder.is_to_invoice());
                 this.render();
-                if(this.currentOrder.is_to_invoice()){
-                console.log("Is to invoice == true")
+                if(this.currentOrder.is_to_invoice() == true){
+                    console.log("Is to invoice == true");
                     var selectedOrderline = this.currentOrder.get_selected_orderline();
                     if(selectedOrderline && selectedOrderline.sale_order_origin_id){
                         let sale_order = await this.rpc({
