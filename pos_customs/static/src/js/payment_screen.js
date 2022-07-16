@@ -21,12 +21,12 @@ exports.load_fields('pos.payment', ["is_commission"])
             }
 
             async setInvoiceInfo(){
-                let vals = await this.rpc({
+                var vals = await this.rpc({
                             model: 'account.payment.term',
                             method: 'get_all_terms',
                             args: [],
                         });
-                this.payment_termss = vals;
+
 
                 console.log("## current order ##");
                 //console.log(this.highlightedOrder());
@@ -41,12 +41,22 @@ exports.load_fields('pos.payment', ["is_commission"])
                     console.log("Resp sale_order");
                     console.log(sale_order);
                     this.sale_terms = sale_order;
+                    console.log("Render")
+                    if(Array.isArray(sale_order)){
+                        console.log("Es un Array");
+                        for (let value of vals) {
+                          if(value[0] == sale_order[0]){
+                            console.log("True in ");
+                            console.log(value[1]);
+                            value[2] = true;
+                          }
+
+                        }
+                    }
 
                 }
-                else{
-                    this.sale_terms = false
-                }
-
+                console.log(vals);
+                this.payment_termss = vals;
                 this.render();
 
 
@@ -59,18 +69,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                 this.currentOrder.set_to_invoice(!this.currentOrder.is_to_invoice());
                 this.render();
 
-                console.log("Render")
-                if(Array.isArray(this.sale_order)){
-                        console.log("Es un Array");
-                        $('document').ready(function(){
-                            var select = document.getElementById('payment_termss_selection');
-                            select.value = this.sale_order[0];
 
-
-                            });
-                        $("#payment_termss_selection").val(this.sale_order[0]);
-                        console.log($("#payment_termss_selection").val());
-                    }
 
             }
 
