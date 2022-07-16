@@ -4,7 +4,6 @@ odoo.define('pos_customs.PaymentScreenC', function (require) {
 const { useState } = owl.hooks;
 var models = require('point_of_sale.models');
 const PaymentScreen = require('point_of_sale.PaymentScreen');
-const saleor = require('q_pdv_orders_repair.SaleOrderFetcher');
 const Registries = require('point_of_sale.Registries');
 var exports = require("point_of_sale.models");
 var rpc = require('web.rpc');
@@ -38,7 +37,6 @@ exports.load_fields('pos.payment', ["is_commission"])
                             args: [{'id':selectedOrderline.sale_order_origin_id.id}],
                         });
                     this.sale_terms = sale_order;
-                    console.log("Render")
                     if(Array.isArray(sale_order)){
                         for (let value of vals) {
                           if(value[0] == sale_order[0]){
