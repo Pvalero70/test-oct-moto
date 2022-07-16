@@ -30,6 +30,16 @@ exports.load_fields('pos.payment', ["is_commission"])
                 console.log("## current order ##");
                 //console.log(this.highlightedOrder());
 
+
+
+
+
+            }
+
+            toggleIsToInvoice() {
+                // click_invoice
+                console.log("Para facturar")
+                this.currentOrder.set_to_invoice(!this.currentOrder.is_to_invoice());
                 var selectedOrderline = this.currentOrder.get_selected_orderline();
                 if(selectedOrderline && selectedOrderline.sale_order_origin_id){
                     let sale_order = await this.rpc({
@@ -45,9 +55,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                         console.log($("#payment_termss_selection").val())
                     }
                 }
-
-
-
+                this.render();
             }
 
             async send_payment(order, invoice_data, payments, customer){
