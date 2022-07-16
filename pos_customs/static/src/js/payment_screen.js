@@ -29,10 +29,18 @@ exports.load_fields('pos.payment', ["is_commission"])
                 this.render();
                 console.log("## current order ##");
                 //console.log(this.highlightedOrder());
-                console.log(this.currentOrder.get_selected_orderline().id);
-                console.log(this.currentOrder.get_selected_orderline().sale_order_origin_id);
-                console.log(this.currentOrder.get_selected_orderline());
-                console.log(this.currentOrder.id);
+                console.log(.id);
+                var selectedOrderline = this.currentOrder.get_selected_orderline();
+                if(selectedOrderline && selectedOrderline.sale_order_origin_id){
+                    let sale_order = await this.rpc({
+                            model: 'sale.order',
+                            method: 'get_sale_order',
+                            args: [{'id':selectedOrderline.sale_order_origin_id.id}],
+                        });
+                    console.log("Resp sale_order");
+                    console.log(sale_order);
+                }
+
 
             }
 
