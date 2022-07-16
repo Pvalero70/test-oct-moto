@@ -26,7 +26,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                             args: [],
                         });
                 this.payment_termss = vals;
-
+                this.render();
                 console.log("## current order ##");
                 //console.log(this.highlightedOrder());
 
@@ -42,9 +42,10 @@ exports.load_fields('pos.payment', ["is_commission"])
                     if(Array.isArray(sale_order)){
                         console.log("Es un Array");
                         $("#payment_termss_selection").val(sale_order[0])
+                        console.log($("#payment_termss_selection").val())
                     }
                 }
-                this.render();
+
 
 
             }
