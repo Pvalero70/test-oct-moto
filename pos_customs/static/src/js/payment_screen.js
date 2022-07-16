@@ -59,6 +59,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                 this.currentOrder.set_to_invoice(!this.currentOrder.is_to_invoice());
                 this.render();
 
+                console.log("Render")
                 if(Array.isArray(this.sale_order)){
                         console.log("Es un Array");
                         $('document').ready(function(){
