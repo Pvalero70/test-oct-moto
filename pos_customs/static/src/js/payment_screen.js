@@ -16,6 +16,7 @@ exports.load_fields('pos.payment', ["is_commission"])
             constructor() {
                 super(...arguments);
                 this.payment_termss;
+                this.sale_terms;
                 this.setInvoiceInfo();
             }
 
@@ -30,6 +31,21 @@ exports.load_fields('pos.payment', ["is_commission"])
                 console.log("## current order ##");
                 //console.log(this.highlightedOrder());
 
+                var selectedOrderline = this.currentOrder.get_selected_orderline();
+                if(selectedOrderline && selectedOrderline.sale_order_origin_id){
+                    let sale_order = await this.rpc({
+                            model: 'sale.order',
+                            method: 'get_sale_order',
+                            args: [{'id':selectedOrderline.sale_order_origin_id.id}],
+                        });
+                    console.log("Resp sale_order");
+                    console.log(sale_order);
+                    this.sale_terms = sale_order;
+
+                }
+                else{
+                    this.sale_terms = false
+                }
 
                 this.render();
 
@@ -43,16 +59,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                 this.currentOrder.set_to_invoice(!this.currentOrder.is_to_invoice());
                 this.render();
 
-                var selectedOrderline = this.currentOrder.get_selected_orderline();
-                if(selectedOrderline && selectedOrderline.sale_order_origin_id){
-                    let sale_order = await this.rpc({
-                            model: 'sale.order',
-                            method: 'get_sale_order',
-                            args: [{'id':selectedOrderline.sale_order_origin_id.id}],
-                        });
-                    console.log("Resp sale_order");
-                    console.log(sale_order);
-                    if(Array.isArray(sale_order)){
+                if(Array.isArray(sale_order)){
                         console.log("Es un Array");
                         $('document').ready(function(){
                             var select = document.getElementById('payment_termss_selection');
@@ -63,7 +70,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                         $("#payment_termss_selection").val(sale_order[0]);
                         console.log($("#payment_termss_selection").val());
                     }
-                }
+
             }
 
             async send_payment(order, invoice_data, payments, customer){
