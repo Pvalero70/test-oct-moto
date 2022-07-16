@@ -42,31 +42,28 @@ exports.load_fields('pos.payment', ["is_commission"])
                 console.log("PRECIONAMOS A FACTURAR");
                 this.currentOrder.set_to_invoice(!this.currentOrder.is_to_invoice());
                 this.render();
-                if(this.currentOrder.is_to_invoice() == true){
-                    console.log("Is to invoice == true");
-                    var selectedOrderline = this.currentOrder.get_selected_orderline();
-                    if(selectedOrderline && selectedOrderline.sale_order_origin_id){
-                        let sale_order = await this.rpc({
-                                model: 'sale.order',
-                                method: 'get_sale_order',
-                                args: [{'id':selectedOrderline.sale_order_origin_id.id}],
+
+                var selectedOrderline = this.currentOrder.get_selected_orderline();
+                if(selectedOrderline && selectedOrderline.sale_order_origin_id){
+                    let sale_order = await this.rpc({
+                            model: 'sale.order',
+                            method: 'get_sale_order',
+                            args: [{'id':selectedOrderline.sale_order_origin_id.id}],
+                        });
+                    console.log("Resp sale_order");
+                    console.log(sale_order);
+                    if(Array.isArray(sale_order)){
+                        console.log("Es un Array");
+                        $('document').ready(function(){
+                            var select = document.getElementById('payment_termss_selection');
+                            select.value = sale_order[0];
+
+
                             });
-                        console.log("Resp sale_order");
-                        console.log(sale_order);
-                        if(Array.isArray(sale_order)){
-                            console.log("Es un Array");
-                            $('document').ready(function(){
-                                var select = document.getElementById('payment_termss_selection');
-                                select.value = sale_order[0];
-
-
-                                });
-                            $("#payment_termss_selection").val(sale_order[0]);
-                            console.log($("#payment_termss_selection").val());
-                        }
+                        $("#payment_termss_selection").val(sale_order[0]);
+                        console.log($("#payment_termss_selection").val());
                     }
                 }
-
             }
 
             async send_payment(order, invoice_data, payments, customer){
