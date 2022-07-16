@@ -30,6 +30,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                 console.log("## current order ##");
                 //console.log(this.highlightedOrder());
                 console.log(this.currentOrder.get_selected_orderline().id);
+                console.log(this.currentOrder.get_selected_orderline().sale_order_origin_id);
                 console.log(this.currentOrder.get_selected_orderline());
                 console.log(this.currentOrder.id);
 
