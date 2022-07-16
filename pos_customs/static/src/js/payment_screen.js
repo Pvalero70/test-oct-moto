@@ -27,7 +27,8 @@ exports.load_fields('pos.payment', ["is_commission"])
                 this.payment_termss = vals;
                 this.render();
                 console.log("## current order ##");
-                console.log(this.currentOrder.id);
+                console.log(this.highlightedOrder());
+                console.log(this.currentOrder);
             }
 
             async send_payment(order, invoice_data, payments, customer){
