@@ -26,7 +26,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                             args: [],
                         });
                 this.payment_termss = vals;
-                this.render();
+
                 console.log("## current order ##");
                 //console.log(this.highlightedOrder());
 
@@ -43,14 +43,15 @@ exports.load_fields('pos.payment', ["is_commission"])
                         console.log("Es un Array");
                         $('document').ready(function(){
                             var select = document.getElementById('payment_termss_selection');
-                            select.value = sale_order[0]
-                            
+                            select.value = sale_order[0];
+
 
                             });
-                        $("#payment_termss_selection").val(sale_order[0])
-                        console.log($("#payment_termss_selection").val())
+                        $("#payment_termss_selection").val(sale_order[0]);
+                        console.log($("#payment_termss_selection").val());
                     }
                 }
+                this.render();
 
 
 
@@ -58,6 +59,7 @@ exports.load_fields('pos.payment', ["is_commission"])
 
             toggleIsToInvoice() {
                 // click_invoice
+                console.log("PRECIONAMOS A FACTURAR");
                 this.currentOrder.set_to_invoice(!this.currentOrder.is_to_invoice());
                 this.render();
             }
