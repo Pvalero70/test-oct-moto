@@ -20,30 +20,20 @@ class AccountPayment(models.Model):
     def crear_pago_pos(self, values):
         values = values.get('vals', {})
 
-        _log.info("\n VALORES CREAR PAGO ORIGINALES :: %s" % json.dumps(values))
         invoice = values.get('invoice')
         # QUITAR PAGOS DE COMISION AQUÍ. (Buscamos la comisión deacuerdo al monto de comisión que tiene el pos order.. )
         ''
         new_payments = []
-        _log.info("\n Order lines ::: %s " % values.get('order_lines_data'))
         pold = values.get('order_lines_data')[0]
         order_line_amount = pold['amount']
-        _log.info("\n ORDER LINE AMOUNT :: %s " % order_line_amount)
         tax_factor = self.env['pos.payment'].get_comm_product_tax(commission_product_id=pold['product_id'])
         line_comm_amount = round(tax_factor*order_line_amount, 2)
-        _log.info("\n Factor:: %s TOTAAAALL::: %s " % (tax_factor, line_comm_amount))
 
         for pay in values.get('payments', []):
-
-            # diferir entre el pago hecho a comisión.
             if float(pay['amount']) != line_comm_amount:
-                # _log.info("\n payment amount:: %s " % float(pay['amount']))
                 new_payments.append(pay)
-                # ori_payment = pay
 
         values['payments'] = new_payments
-        _log.info("\n Nuevo VALUES ::: %s " % json.dumps(values))
-        # Finalizamos quitar pagos de comision aquí.
 
         customer = values.get('customer')
         pos_method_id = None
@@ -54,27 +44,12 @@ class AccountPayment(models.Model):
                 amount = pay.get('amount')
 
         pos_session_id = invoice.get('pos_session_id')
-        # _log.info(pos_session_id)
-
         pos_method = self.env['pos.payment.method'].browse(pos_method_id)
-        # _log.info(pos_method)
-        # _log.info(pos_method.journal_id)
 
         journal = pos_method.journal_id
         forma_pago = pos_method.payment_method_c
-        # _log.info("Obtuvo Journal")
 
         metodos = self.env['account.payment.method.line'].search([('payment_type', '=', 'inbound')], limit=1)
-        
-        # _log.info(metodos)
-
-        # _log.info(customer)
-        # _log.info(journal.id)
-        # _log.info("Metodos ids")
-        # _log.info(metodos.id)
-
-        # payment_method_id = journal.l10n_mx_edi_payment_method_id.id
-
         try:
             payment_id = self.create({
                 "partner_id" : customer.get('id'),
@@ -89,11 +64,6 @@ class AccountPayment(models.Model):
         except Exception as e:
             _log.error(e)
         else:
-            # _log.info("Pago creado")
-            # _log.info(payment_id)
-            # _log.info(payment_id.move_id.id)
-            # _log.info(payment_id.line_ids)
-            
             credit_line_id = None
             for line in payment_id.line_ids:
                 # _log.info(line.name)
@@ -111,7 +81,7 @@ class AccountPayment(models.Model):
 
                 payment_id.action_post()
                 invoice_id = invoice.get('id')
-                factura = self.env['account.move'].browse(invoice_id)
+                factura = self.env['account.move'].browse(z)
                 if credit_line_id:
                     lines = self.env['account.move.line'].browse(credit_line_id)
                     # _log.info("debug")
@@ -122,11 +92,11 @@ class AccountPayment(models.Model):
                     #     _log.info(iline.credit)
                     #     _log.info(iline.debit)
                     #     _log.info("#####")
-                    # invoice_lines = 
+                    # invoice_lines =
                     invoice_lines = factura.line_ids.filtered(lambda line: line.account_id == lines[0].account_id and not line.reconciled)
                     # _log.info("### invoice lines ###")
                     # _log.info(invoice_lines)
-                    
+
                     if invoice_lines:
                         lines += invoice_lines
                         # _log.info(lines)

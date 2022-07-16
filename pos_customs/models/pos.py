@@ -3,6 +3,7 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
 from dateutil.relativedelta import relativedelta
+from datetime import datetime
 import logging
 _log = logging.getLogger("___name: %s" % __name__)
 
@@ -148,10 +149,44 @@ class PosOrder(models.Model):
                 is_commission_invoice = True
         return is_commission_invoice
 
+    def _apply_invoice_payment_commission(self, invoice, order):
+        metodos = self.env['account.payment.method.line'].search([('payment_type', '=', 'inbound')], limit=1)
+        journal_id = order.payment_ids.mapped('payment_method_id').mapped('journal_id')[0]
+        ppayment_type_id = order.payment_ids.mapped('payment_method_id').mapped('payment_method_c')[0]
+        try:
+            payment_id = self.env['account.payment'].create({
+                "partner_id": order.partner_id.id,
+                "date": datetime.now().strftime("%Y-%m-%d"),
+                "journal_id": journal_id.id,
+                "payment_method_line_id": metodos.id,
+                "amount": invoice.amount_total,
+                "pos_session_id": order.session_id.id,
+                "payment_type": "inbound",
+                "ref": invoice.name
+            })
+        except Exception as e:
+            _log.error(e)
+        else:
+            credit_line_id = None
+            for line in payment_id.line_ids:
+                if line.credit > 0:
+                    credit_line_id = line.id
+            if payment_id:
+                if ppayment_type_id:
+                    payment_id.write({"l10n_mx_edi_payment_method_id": ppayment_type_id.id})
+                payment_id.action_post()
+                if credit_line_id:
+                    lines = self.env['account.move.line'].browse(credit_line_id)
+                    invoice_lines = invoice.line_ids.filtered(
+                        lambda line: line.account_id == lines[0].account_id and not line.reconciled)
+                    if invoice_lines:
+                        lines += invoice_lines
+                        rec = lines.reconcile()
+
     def _apply_invoice_payments_bc(self, invoice, order):
         _log.info(" APPLY PAYMENTS ...    for order and invoices xD. ")
         _log.info(" APLICANDO PAGOUS.. ")
-        receivable_account = self.env["res.partner"]._find_accounting_partner(self.partner_id).property_account_receivable_id
+        receivable_account = self.env["res.partner"]._find_accounting_partner(order.partner_id).property_account_receivable_id
         payment_moves = order.payment_ids.mapped('account_move_id')
 
         if not payment_moves:
@@ -234,12 +269,12 @@ class PosOrder(models.Model):
                     self._apply_invoice_payments_bc(normal_inv, order=order)
                 
                 if line_zerodays_ci:
-                    self._apply_invoice_payments_bc(commis_inv, order=order)
+                    self._apply_invoice_payment_commission(commis_inv, order=order)
                 else:
                     delta_days = commis_inv.invoice_payment_term_id.line_ids.filtered(lambda x: x.days > 0 and x.option == "day_after_invoice_date")[:1].days
                     commis_inv.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
                     commis_inv._compute_l10n_mx_edi_payment_policy()
-                    self._apply_invoice_payments_bc(commis_inv, order=order)
+                    self._apply_invoice_payment_commission(commis_inv, order=order)
                 moves += normal_inv
                 moves += commis_inv
 
