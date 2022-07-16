@@ -26,7 +26,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                             args: [],
                         });
                 this.payment_termss = vals;
-                this.render();
+
                 console.log("## current order ##");
                 //console.log(this.highlightedOrder());
 
@@ -44,6 +44,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                         $("#payment_termss_selection").val(sale_order[0])
                     }
                 }
+                this.render();
 
 
             }
