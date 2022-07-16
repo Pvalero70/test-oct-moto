@@ -43,4 +43,3 @@ class SaleOrder(models.Model):
             payment_term = sale_order.payment_term_id
             return [payment_term.id, payment_term.name]
         return False
-        

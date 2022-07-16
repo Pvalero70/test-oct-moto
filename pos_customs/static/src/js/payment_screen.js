@@ -39,6 +39,9 @@ exports.load_fields('pos.payment', ["is_commission"])
                         });
                     console.log("Resp sale_order");
                     console.log(sale_order);
+                    if(sale_order != false){
+                        $("#payment_termss_selection").val(sale_order[0])
+                    }
                 }
 
 
