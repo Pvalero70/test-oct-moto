@@ -23,17 +23,16 @@ class AccountPayment(models.Model):
         invoice = values.get('invoice')
         # QUITAR PAGOS DE COMISION AQUÍ. (Buscamos la comisión deacuerdo al monto de comisión que tiene el pos order.. )
         ''
-        new_payments = []
-        pold = values.get('order_lines_data')[0]
-        order_line_amount = pold['amount']
-        tax_factor = self.env['pos.payment'].get_comm_product_tax(commission_product_id=pold['product_id'])
-        line_comm_amount = round(tax_factor*order_line_amount, 2)
-
-        for pay in values.get('payments', []):
-            if float(pay['amount']) != line_comm_amount:
-                new_payments.append(pay)
-
-        values['payments'] = new_payments
+        if 'order_lines_data' in values and len(values.get('order_lines_data')) > 0:
+            new_payments = []
+            pold = values.get('order_lines_data')[0]
+            order_line_amount = pold['amount']
+            tax_factor = self.env['pos.payment'].get_comm_product_tax(commission_product_id=pold['product_id'])
+            line_comm_amount = round(tax_factor*order_line_amount, 2)
+            for pay in values.get('payments', []):
+                if float(pay['amount']) != line_comm_amount:
+                    new_payments.append(pay)
+            values['payments'] = new_payments
 
         customer = values.get('customer')
         pos_method_id = None
@@ -81,7 +80,7 @@ class AccountPayment(models.Model):
 
                 payment_id.action_post()
                 invoice_id = invoice.get('id')
-                factura = self.env['account.move'].browse(z)
+                factura = self.env['account.move'].browse(invoice_id)
                 if credit_line_id:
                     lines = self.env['account.move.line'].browse(credit_line_id)
                     # _log.info("debug")
