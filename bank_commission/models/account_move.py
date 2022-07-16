@@ -54,7 +54,11 @@ class AccountMoveBc(models.Model):
             elif selected_payment_method.bank_commission_method == "fixed":
                 # mapear los impuestos que faltan para poder poner ambas cantidades...
                 # por lo general aplican solo el IVA pero no vaya a ser mejor hay que hacerlo dinamico.. xD
-                commission_amount = selected_payment_method.bank_commission_amount
+                product_commission_amount = selected_payment_method.bank_commission_amount
+                factor = 1
+                for tax in selected_payment_method.bank_commission_product_id.taxes_id:
+                    factor = factor * (1 + tax.amount / 100)
+                payment_commission_amount = factor * product_commission_amount
             elif selected_payment_method.bank_commission_method == "percentage":
                 subtotal_amount_lines = sum(lines_with_commission.mapped('price_subtotal'))
                 total_amount_lines = sum(lines_with_commission.mapped('price_total'))

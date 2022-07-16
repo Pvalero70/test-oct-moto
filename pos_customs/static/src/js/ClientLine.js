@@ -118,6 +118,8 @@ odoo.define('pos_custom_settle_due.ClientLine', function (require) {
                     newOrder.set_client(this.props.partner);
                     newOrder.is_payment_invoice = true;
                     newOrder.selected_invoice = selectedInvoice;
+                    console.log(" THIIIIS :::: ");
+                    console.log(this);
                     this.showScreen('PaymentScreen');
                 }
                 else{

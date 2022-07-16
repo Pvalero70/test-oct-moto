@@ -18,12 +18,6 @@ odoo.define("bank_commission.ProductScreenCustom", function (require) {
 
                 const options = await this._getAddProductOptions(product);
 
-                console.log("PRODUCT DETAIL ");
-                console.log(product);
-                console.log("PRODUCT OPCIONS: ");
-                console.log(options);
-
-
                 // Do not add product if options is undefined.
                 if (!options) return;
                 // Add the product after having the extra information.

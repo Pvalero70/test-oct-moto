@@ -26,3 +26,15 @@ class PosPaymentBc(models.Model):
 
     is_commission = fields.Boolean(string="Es pago de comision", default=False)
 
+    @api.model
+    def get_comm_product_tax(self, commission_product_id=None):
+        _log.info("Obteniendo impuestos de ::: %s " % commission_product_id)
+        if commission_product_id is not None:
+
+            product_id = self.env['product.product'].browse(commission_product_id)
+            factor = 1
+            for tax in product_id.taxes_id:
+                factor = factor*(1+tax.amount/100)
+            return factor
+        return 0
+
