@@ -29,7 +29,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                 this.render();
                 console.log("## current order ##");
                 //console.log(this.highlightedOrder());
-                console.log(.id);
+                
                 var selectedOrderline = this.currentOrder.get_selected_orderline();
                 if(selectedOrderline && selectedOrderline.sale_order_origin_id){
                     let sale_order = await this.rpc({
