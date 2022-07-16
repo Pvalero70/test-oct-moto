@@ -29,7 +29,6 @@ exports.load_fields('pos.payment', ["is_commission"])
 
 
                 console.log("## current order ##");
-                //console.log(this.highlightedOrder());
 
                 var selectedOrderline = this.currentOrder.get_selected_orderline();
                 if(selectedOrderline && selectedOrderline.sale_order_origin_id){
@@ -43,30 +42,17 @@ exports.load_fields('pos.payment', ["is_commission"])
                     this.sale_terms = sale_order;
                     console.log("Render")
                     if(Array.isArray(sale_order)){
-                        console.log("Es un Array");
                         for (let value of vals) {
                           if(value[0] == sale_order[0]){
-                            console.log("True in ");
                             console.log(value[1]);
                             value[2] = true;
                           }
-
                         }
                     }
 
                 }
                 console.log(vals);
                 this.payment_termss = vals;
-                this.render();
-
-
-
-            }
-
-            toggleIsToInvoice() {
-                // click_invoice
-                console.log("PRECIONAMOS A FACTURAR");
-                this.currentOrder.set_to_invoice(!this.currentOrder.is_to_invoice());
                 this.render();
 
 
