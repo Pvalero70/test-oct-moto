@@ -29,7 +29,8 @@ exports.load_fields('pos.payment', ["is_commission"])
                 this.render();
                 console.log("## current order ##");
                 //console.log(this.highlightedOrder());
-                console.log(this.currentOrder);
+                console.log(this.currentOrder.get_selected_orderline().id);
+                console.log(this.currentOrder.get_selected_orderline());
                 console.log(this.currentOrder.id);
 
             }
