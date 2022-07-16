@@ -28,7 +28,7 @@
             </xpath>
 
             <xpath expr="//field[@name='vat'][1]" position="before">
-                <field name="type_rfc" attrs="{'required' : [('company_type', '=', 'person')], 'invisible': [('company_type', '!=', 'person')]}"/>
+                <field name="type_rfc" attrs="{'readonly': [('parent_id','!=',False)], 'invisible': [('company_type', '!=', 'person')]}"/>
                 <field name="rfc_general" attrs="{'readonly': [('parent_id','!=',False)], 'invisible': [('type_rfc', '!=', 'general')]}"/>
 
             </xpath>
