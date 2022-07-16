@@ -27,7 +27,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                 this.payment_termss = vals;
                 this.render();
                 console.log("## current order ##");
-                console.log(this.highlightedOrder());
+                //console.log(this.highlightedOrder());
                 console.log(this.currentOrder);
             }
 
