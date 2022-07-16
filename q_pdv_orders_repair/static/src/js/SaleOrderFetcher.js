@@ -3,6 +3,7 @@ odoo.define('q_pdv_orders_repair.SaleOrderFetcher', function (require) {
 
     const { patch } = require('web.utils');
     const SaleOrderFetcher = require('pos_sale.SaleOrderFetcher');
+    var mivar;
 
     patch(SaleOrderFetcher, "static patch", {
 
@@ -70,7 +71,7 @@ odoo.define('q_pdv_orders_repair.SaleOrderFetcher', function (require) {
 
         async _fetch(limit, offset) {
             console.log("## Fetch ##")
-            
+
             var tipo_orden_filtro = $('.tipo_orden_filtro').val();
             console.log("Tipo Filtro: ")
             console.log(tipo_orden_filtro)
@@ -104,6 +105,7 @@ odoo.define('q_pdv_orders_repair.SaleOrderFetcher', function (require) {
             console.log(sale_orders_real)
             this.totalCount = sale_orders_real.length;
             console.log( this.totalCount)
+            mivar = this.totalCount
             return sale_orders_real;
         }
 
