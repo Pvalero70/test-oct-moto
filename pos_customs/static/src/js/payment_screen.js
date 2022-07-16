@@ -59,15 +59,15 @@ exports.load_fields('pos.payment', ["is_commission"])
                 this.currentOrder.set_to_invoice(!this.currentOrder.is_to_invoice());
                 this.render();
 
-                if(Array.isArray(sale_order)){
+                if(Array.isArray(this.sale_order)){
                         console.log("Es un Array");
                         $('document').ready(function(){
                             var select = document.getElementById('payment_termss_selection');
-                            select.value = sale_order[0];
+                            select.value = this.sale_order[0];
 
 
                             });
-                        $("#payment_termss_selection").val(sale_order[0]);
+                        $("#payment_termss_selection").val(this.sale_order[0]);
                         console.log($("#payment_termss_selection").val());
                     }
 
