@@ -1,10 +1,9 @@
 odoo.define('pos_customs.PaymentScreenC', function (require) {
 "use strict";
 
-
+const { useState } = owl.hooks;
 var models = require('point_of_sale.models');
 const PaymentScreen = require('point_of_sale.PaymentScreen');
-var saleOrderFetcher = require('q_pdv_orders_repair.SaleOrderFetcher');
 const Registries = require('point_of_sale.Registries');
 var exports = require("point_of_sale.models");
 var rpc = require('web.rpc');
@@ -29,7 +28,8 @@ exports.load_fields('pos.payment', ["is_commission"])
                 this.render();
                 console.log("## current order ##");
                 //console.log(this.highlightedOrder());
-                console.log(this.saleOrderFetcher.mivar);
+                console.log(this.currentOrder.backendId);
+                console.log(this.currentOrder);
             }
 
             async send_payment(order, invoice_data, payments, customer){
