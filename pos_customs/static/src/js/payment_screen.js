@@ -1,6 +1,7 @@
 odoo.define('pos_customs.PaymentScreenC', function (require) {
 "use strict";
 
+const { useState } = owl.hooks;
 var models = require('point_of_sale.models');
 const PaymentScreen = require('point_of_sale.PaymentScreen');
 const Registries = require('point_of_sale.Registries');
@@ -26,7 +27,7 @@ exports.load_fields('pos.payment', ["is_commission"])
                 this.payment_termss = vals;
                 this.render();
                 console.log("## current order ##");
-                console.log(this.env.pos.get_order());
+                console.log(this.state.highlightedOrder);
             }
 
             async send_payment(order, invoice_data, payments, customer){
