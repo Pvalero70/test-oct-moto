@@ -39,7 +39,8 @@ exports.load_fields('pos.payment', ["is_commission"])
                         });
                     console.log("Resp sale_order");
                     console.log(sale_order);
-                    if(sale_order != false){
+                    if(Array.isArray(sale_order)){
+                        console.log("Es un Array");
                         $("#payment_termss_selection").val(sale_order[0])
                     }
                 }
