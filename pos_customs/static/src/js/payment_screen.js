@@ -37,21 +37,18 @@ exports.load_fields('pos.payment', ["is_commission"])
                             method: 'get_sale_order',
                             args: [{'id':selectedOrderline.sale_order_origin_id.id}],
                         });
-                    console.log("Resp sale_order");
-                    console.log(sale_order);
                     this.sale_terms = sale_order;
                     console.log("Render")
                     if(Array.isArray(sale_order)){
                         for (let value of vals) {
                           if(value[0] == sale_order[0]){
-                            console.log(value[1]);
                             value[2] = true;
                           }
                         }
                     }
 
                 }
-                console.log(vals);
+
                 this.payment_termss = vals;
                 this.render();
 
