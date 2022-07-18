@@ -25,6 +25,7 @@ class ResPartnerState(models.Model):
 
         for node in nodes2:
             _logger.info("Nodo email")
+            node.set('attrs', "{}")
             node.set('required', "true")
         res['arch'] = etree.tostring(doc)
 
