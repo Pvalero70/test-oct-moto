@@ -15,7 +15,8 @@
 
     'depends': [
         'base',
-        'account'
+        'account',
+        'sale',
 
     ],
     'data': [
