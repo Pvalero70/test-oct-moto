@@ -18,11 +18,13 @@ class ResPartnerState(models.Model):
 
         doc = etree.XML(res['arch'])
         nodes = doc.xpath("//field[@name='state_id']")
-
+        nodes2 = doc.xpath("//field[@name='email']")
 
         for node in nodes:
             node.set('options', "{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}")
 
+        for node in nodes2:
+            node.set('required', "1")
         res['arch'] = etree.tostring(doc)
 
         return res
