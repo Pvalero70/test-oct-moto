@@ -22,6 +22,8 @@
 
             <xpath expr="//field[@name='email']" position="attributes">
                 <attribute name="required">1</attribute>
+                <attribute name="attrs">{}</attribute>
+
             </xpath>
             <xpath expr="//field[@name='phone'][1]" position="attributes">
                 <attribute name="required">1</attribute>
