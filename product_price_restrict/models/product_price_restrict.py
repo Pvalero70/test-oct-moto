@@ -27,9 +27,9 @@ class ProductProductInherit(models.Model):
     _inherit = "product.product"
 
 
-    list_price_permited = fields.Boolean(string="Readonly para el campo discount", readonly=False,
+    list_price_permited = fields.Boolean(string="Readonly para el campo precio lista", readonly=False,
                                          compute='get_user_list_price')
-    standard_price_permited = fields.Boolean(string="Readonly para el campo discount", readonly=False,
+    standard_price_permited = fields.Boolean(string="Readonly para el campo precio ", readonly=False,
                                              compute='get_user_standard_price')
     sale_description_permission = fields.Boolean(string="Readonly para el campo descripcion de ventas", readonly=False,
                                                  compute='get_user_sale_description')
