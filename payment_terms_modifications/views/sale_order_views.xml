@@ -10,8 +10,8 @@
 
 
             <xpath expr="//field[@name='payment_term_id']" position="attributes">
-                <attribute name="readonly">1
-                </attribute>
+                <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
             </xpath>
 
 
