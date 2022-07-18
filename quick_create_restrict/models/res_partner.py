@@ -24,7 +24,8 @@ class ResPartnerState(models.Model):
             node.set('options', "{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}")
 
         for node in nodes2:
-            node.set('required', "1")
+            _logger.info("Nodo email")
+            node.set('required', "true")
         res['arch'] = etree.tostring(doc)
 
         return res
