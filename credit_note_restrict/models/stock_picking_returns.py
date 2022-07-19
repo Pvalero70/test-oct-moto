@@ -13,7 +13,7 @@ class StockPickingReturn(models.Model):
     _inherit = 'stock.picking'
 
     permiso_devolucion = fields.Boolean(string="Permiso devolucion", compute="_compute_devolucion_permiso", store=False)
-    es_devolucion = fields.Boolean(string="Permiso devolucion", compute="_compute_es_devolucion", store=False)
+    es_devolucion = fields.Boolean(string="Es una devolucion", compute="_compute_es_devolucion", store=False)
 
 
     @api.onchange('picking_type_id')

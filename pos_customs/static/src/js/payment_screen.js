@@ -1,6 +1,7 @@
 odoo.define('pos_customs.PaymentScreenC', function (require) {
 "use strict";
 
+const { useState } = owl.hooks;
 var models = require('point_of_sale.models');
 const PaymentScreen = require('point_of_sale.PaymentScreen');
 const Registries = require('point_of_sale.Registries');
@@ -14,17 +15,43 @@ exports.load_fields('pos.payment', ["is_commission"])
             constructor() {
                 super(...arguments);
                 this.payment_termss;
+                this.sale_terms;
                 this.setInvoiceInfo();
             }
 
             async setInvoiceInfo(){
-                let vals = await this.rpc({
+                var vals = await this.rpc({
                             model: 'account.payment.term',
                             method: 'get_all_terms',
                             args: [],
                         });
+
+
+                console.log("## current order ##");
+
+                var selectedOrderline = this.currentOrder.get_selected_orderline();
+                if(selectedOrderline && selectedOrderline.sale_order_origin_id){
+                    let sale_order = await this.rpc({
+                            model: 'sale.order',
+                            method: 'get_sale_order',
+                            args: [{'id':selectedOrderline.sale_order_origin_id.id}],
+                        });
+                    this.sale_terms = sale_order;
+                    if(Array.isArray(sale_order)){
+                        for (let value of vals) {
+                          if(value[0] == sale_order[0]){
+                            value[2] = true;
+                          }
+                        }
+                    }
+
+                }
+
                 this.payment_termss = vals;
                 this.render();
+
+
+
             }
             async create_commission_invoice(order){
                 let invoice_data = {

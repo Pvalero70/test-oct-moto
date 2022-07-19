@@ -27,10 +27,12 @@ class ProductProductInherit(models.Model):
     _inherit = "product.product"
 
 
-    list_price_permited = fields.Boolean(string="Readonly para el campo discount", readonly=False,
+    list_price_permited = fields.Boolean(string="Readonly para el campo precio lista", readonly=False,
                                          compute='get_user_list_price')
-    standard_price_permited = fields.Boolean(string="Readonly para el campo discount", readonly=False,
+    standard_price_permited = fields.Boolean(string="Readonly para el campo precio ", readonly=False,
                                              compute='get_user_standard_price')
+    sale_description_permission = fields.Boolean(string="Readonly para el campo descripcion de ventas", readonly=False,
+                                                 compute='get_user_sale_description')
 
     @api.depends('list_price_permited')
     def get_user_list_price(self):
@@ -47,6 +49,14 @@ class ProductProductInherit(models.Model):
             self.standard_price_permited = True
         else:
             self.standard_price_permited = False
+
+    @api.depends('sale_description_permission')
+    def get_user_sale_description(self):
+        res_user = self.env.user
+        if res_user.has_group('product_price_restrict.product_price_group'):
+            self.sale_description_permission = True
+        else:
+            self.sale_description_permission = False
 
 
 class ProductTemplateInherit(models.Model):
@@ -55,6 +65,8 @@ class ProductTemplateInherit(models.Model):
 
     list_price_permited = fields.Boolean(string="Readonly para el campo discount",readonly=False, compute='get_user_list_price')
     standard_price_permited = fields.Boolean(string="Readonly para el campo discount",readonly=False, compute='get_user_standard_price')
+    sale_description_permission = fields.Boolean(string="Readonly para el campo descripcion de ventas", readonly=False,
+                                                 compute='get_user_sale_description')
 
     @api.depends('list_price_permited')
     def get_user_list_price(self):
@@ -75,4 +87,25 @@ class ProductTemplateInherit(models.Model):
 
 
 
+    @api.depends('sale_description_permission')
+    def get_user_sale_description(self):
+        res_user = self.env.user
+        if res_user.has_group('product_price_restrict.descripcion_ventas_group'):
+            self.sale_description_permission = True
+        else:
+            self.sale_description_permission = False
 
+class ProductAttribute(models.Model):
+    _inherit = "product.template.attribute.value"
+
+
+    price_permission = fields.Boolean(string="Readonly para el campo precio extra",readonly=False, compute='get_user_price_extra')
+
+    @api.depends('price_permission')
+    def get_user_price_extra(self):
+
+        res_user = self.env.user
+        if res_user.has_group('product_price_restrict.price_extra_variant_group'):
+            self.price_permission = True
+        else:
+            self.price_permission = False

@@ -14,7 +14,7 @@ class PaymentTermUi(models.Model):
         if result:
             fres = []
             for res in result:
-                te = [res.id, res.name]
+                te = [res.id, res.name, False]
                 fres.append(te)
             return fres
         else:

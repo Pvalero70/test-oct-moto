@@ -31,9 +31,19 @@
                 </div>
                  <div class="text-center" style="margin-top:10px;">
                     <select id="payment_termss_selection" style="width:270px;height:50px">
-                        <option t-foreach="payment_termss" t-as="pt" t-att-value="pt[0]">
-                            <t t-esc="pt[1]"/>
-                        </option>
+                        <t t-foreach="payment_termss" t-as="pt">
+                            <t t-if="pt[2]">
+                                <option t-att-value="pt[0]" selected="selected">
+                                    <t t-esc="pt[1]"/>
+                                </option>
+                            </t>
+                            <t t-else="">
+                                <option t-att-value="pt[0]">
+                                    <t t-esc="pt[1]"/>
+                                </option>
+                            </t>
+                        </t>
+
                     </select>
                  </div>
             </t>

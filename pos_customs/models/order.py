@@ -29,3 +29,17 @@ class PosOrder(models.Model):
         # res = super(PosOrder, self).create_from_ui(orders, draft)
         # _logger.info(res)
         # return res
+
+class SaleOrder(models.Model):
+    _inherit = "sale.order"
+
+    @api.model
+    def get_sale_order(self, order):
+        _logger.info("orders %s",order)
+        _logger.info(order)
+        sale_order = self.env['sale.order'].search([('id', '=', order['id'])])
+        _logger.info("Sale order encontrada %s",sale_order)
+        if sale_order.payment_term_id:
+            payment_term = sale_order.payment_term_id
+            return [payment_term.id, payment_term.name]
+        return False
