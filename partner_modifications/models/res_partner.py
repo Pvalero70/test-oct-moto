@@ -19,20 +19,26 @@ class ResPartnerName(models.Model):
     first_ap = fields.Char(string="Primer Apellido")
     second_ap = fields.Char(string="Segundo Apellido")
 
-    @api.onchange('company_type')
     def _compute_nombres(self):
-        _logger.info("En computar Nombres")
+        for rec in self:
+            rec._split_nombres()
+
+    @api.onchange('company_type')
+    def _split_nombres(self):
+        _logger.info("En computar Nombres :%s",self.name)
         if self.name and self.company_type == 'person':
             palabras = str(self.name).split()
             if len(palabras) == 3:
                 self.first_name = palabras[0]
                 self.first_ap = palabras[1]
                 self.second_ap = palabras[2]
+                _logger.info("3 Nombres :%s, %s, %s", self.first_name,self.first_ap,self.second_ap)
             elif len(palabras) == 4:
                 self.first_name = palabras[0]
                 self.second_name = palabras[1]
                 self.first_ap = palabras[2]
                 self.second_ap = palabras[3]
+                _logger.info("4 Nombres :%s, %s, %s, %s", self.first_name, self.second_ap, self.first_ap, self.second_ap)
 
 
     type_rfc = fields.Selection([
