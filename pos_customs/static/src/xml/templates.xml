@@ -7,6 +7,7 @@
                 <i class="fa fa-external-link"></i>
             </td>
         </xpath>
+        
     </t>
 
     <t t-name="ClientListScreen" t-inherit="point_of_sale.ClientListScreen" t-inherit-mode="extension" owl="1">
