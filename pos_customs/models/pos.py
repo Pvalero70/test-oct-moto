@@ -25,9 +25,12 @@ class PosOrder(models.Model):
             _log.info("\n\n VALS CUSTOM POS FOR INVOICE:: %s " % vals_pos)
             vals['l10n_mx_edi_usage'] = vals_pos[0]
             vals['cfdi_payment_term_id'] = vals_pos[1]
+            if len(vals_pos) == 3 and vals_pos[2]:
+                vals['credit_note_id'] = vals_pos[2]
         vals['to_invoice'] = True if ui_order.get('to_invoice') else False
         return vals
 
+    credit_note_id = fields.Many2one('account.move', string='Nota de credito')
     salesman_id = fields.Many2one('res.users', string="Ejecutivo", compute="_compute_salesman", store=True)
     cfdi_payment_term_id = fields.Many2one('account.payment.term', 'Terminos de pago')
     payment_method_id = fields.Many2one('pos.payment.method', "Metodo de Pago", compute="get_payment_method",
@@ -66,7 +69,10 @@ class PosOrder(models.Model):
             formas = {}
             for pay in rec.payment_ids:
                 formas[pay.payment_method_id.id] = formas.get(pay.payment_method_id.id, 0) + pay.amount
-            met = sorted(formas.items(), key=lambda x: x[1])
+            _log.info("###### FORMAS DE PAGO ########")
+            _log.info(formas)
+
+            met = sorted(formas.items(), key=lambda x: x[1], reverse=True)
             rec.payment_method_id = met[0] if met else False
 
     def _prepare_invoice_vals(self):
@@ -75,11 +81,13 @@ class PosOrder(models.Model):
         vals['l10n_mx_edi_payment_method_id'] = self.payment_method_id.payment_method_c.id
         vals['l10n_mx_edi_usage'] = self.l10n_mx_edi_usage
         vals['invoice_payment_term_id'] = self.cfdi_payment_term_id.id
+        vals['credit_note_id'] = self.credit_note_id.id
 
         return vals
 
     @api.model
     def _split_invoice_vals_bk(self, invoice_data, quit_commissions=True, order=None):
+        _log.info("#OVERRIDE SPLIT INVOICE#")
         """
         This method process invoice data to generate two different sets; one for common lines and other for
         lines that have bank commission products.
@@ -89,6 +97,17 @@ class PosOrder(models.Model):
         :return: invoice data set without some lines, depends of  quit_commissions
         """
         _log.info(" DIVIDIENDO FACTURA.. invoice data:: %s" % invoice_data)
+        if 'credit_note_id' in invoice_data:
+            credit_note_id = invoice_data.pop('credit_note_id')
+            _log.info("Tiene nota de credito")
+            if credit_note_id:
+                credit_note_id = int(credit_note_id)
+                _log.info(credit_note_id)
+                notacred = self.env['account.move'].browse(credit_note_id)            
+                if notacred.l10n_mx_edi_cfdi_uuid:
+                    _log.info(notacred.l10n_mx_edi_cfdi_uuid)
+                    invoice_data['l10n_mx_edi_origin'] = f'07|{notacred.l10n_mx_edi_cfdi_uuid}'
+
         # Get payment methods with bank commission.
         payment_bc_used_ids = order.payment_ids.filtered(lambda pa: pa.payment_method_id.bank_commission_method != False)
         ori_invoice_lines = invoice_data['invoice_line_ids']
@@ -97,6 +116,7 @@ class PosOrder(models.Model):
             return invoice_data
         if not payment_bc_used_ids and not quit_commissions:
             return False
+        _log.info("Continua")
         product_bc_ids = payment_bc_used_ids.mapped('payment_method_id').mapped('bank_commission_product_id')
         new_invoice_line_ids = []
         is_commission_invoice = False
@@ -134,6 +154,7 @@ class PosOrder(models.Model):
                 # Por defauilt dejamos el diario que tiene el método de
                 payment_method_com_id = payment_bc_used_ids.mapped('payment_method_id')[0]
                 invoice_data['journal_id'] = payment_method_com_id.bc_journal_id.id
+        _log.info("Finaliza")
         return invoice_data
 
     def commission_line_exists(self, invoice_data, order=None):
@@ -233,7 +254,82 @@ class PosOrder(models.Model):
         else: 
             return False
 
+    def _create_credit_note(self, account_move, anticipo_id, order):
+
+        factura_anticipo = self.env['account.move'].browse(int(anticipo_id))
+        total_anticipo = factura_anticipo.amount_total
+        partner = account_move.partner_id
+        session = order.session_id
+        config = session.config_id
+        l10n_mx_edi_payment_method_id = config.forma_pago_anticipo
+        move_type = 'out_refund'
+        l10n_mx_edi_payment_policy = account_move.l10n_mx_edi_payment_policy
+        # l10n_mx_edi_payment_policy = 'PUE'
+        l10n_mx_edi_usage = account_move.l10n_mx_edi_usage
+        # l10n_mx_edi_usage = 'G03'
+        l10n_mx_edi_origin = account_move.l10n_mx_edi_cfdi_uuid
+        journal_id = account_move.journal_id
+        product_id = config.credit_note_product_id
+
+
+        nc_obj = self.env['account.move']
+        nc_data = {
+            "partner_id" : partner.id,
+            "l10n_mx_edi_payment_method_id" : l10n_mx_edi_payment_method_id.id,
+            "move_type" : move_type,
+            "l10n_mx_edi_payment_policy" : l10n_mx_edi_payment_policy,
+            "l10n_mx_edi_usage" : l10n_mx_edi_usage,
+            "journal_id" : journal_id.id,
+            "l10n_mx_edi_origin" : f'07|{l10n_mx_edi_origin}'            
+        }
+
+        invoice_lines = []
+        for line in factura_anticipo.invoice_line_ids:
+            new_line = {
+                "product_id" : product_id.id,
+                "quantity" : 1,
+                "price_unit" : float(total_anticipo),
+                "product_uom_id" : line.product_uom_id.id,
+                "tax_ids" : line.tax_ids.ids
+            }
+            invoice_lines.append((0, 0, new_line))
+        
+        if invoice_lines:
+            nc_data.update({
+                "invoice_line_ids" : invoice_lines
+            })
+        
+        nc_id = nc_obj.create(nc_data)
+
+        _log.info("Nota de credito creada")
+        _log.info(nc_id)
+
+        return nc_id
+
+    def concilia_factura_notacred(self, factura, notacred):
+        credit_line_id = None
+        for line in notacred.line_ids:
+            if line.credit > 0:
+                credit_line_id = line.id
+
+        if credit_line_id:
+            lines = self.env['account.move.line'].browse(credit_line_id)
+            invoice_lines = factura.line_ids.filtered(lambda line: line.account_id == lines[0].account_id and not line.reconciled)
+
+            if invoice_lines:
+                lines += invoice_lines
+                _log.info(lines)
+                try:
+                    _log.info("Intenta conciliar la factura con la NC")
+                    rec = lines.reconcile()
+                except Exception as e:
+                    _log.error(f'Ocurrio un error al conciliar : {e}')
+                else:
+                    _log.info("Reconciled")
+                    _log.info(rec)
+                
     def _generate_pos_order_invoice(self):
+        _log.info("INTENTA GENERAR FACTURA")
         moves = self.env['account.move']
         for order in self:
             if not order.partner_id:
@@ -281,6 +377,11 @@ class PosOrder(models.Model):
             elif lines_type == "without_commission":
                 _log.info("\nContiene lineas normales. ")
                 normal_inv_vals = order._prepare_invoice_vals()
+                
+                credit_note_id = False
+                if 'credit_note_id' in normal_inv_vals:
+                    credit_note_id = normal_inv_vals.get('credit_note_id')
+
                 normal_inv = order._create_invoice(normal_inv_vals)
                 order.write({'account_move': normal_inv.id, 'state': 'invoiced'})
                 normal_inv.sudo().with_company(order.company_id)._post()
@@ -292,7 +393,32 @@ class PosOrder(models.Model):
                     normal_inv.invoice_date_due = fields.Date.today() + relativedelta(days=delta_days)
                     normal_inv._compute_l10n_mx_edi_payment_policy()
                     self._apply_invoice_payments_bc(normal_inv, order=order)
-                moves += normal_inv              
+                moves += normal_inv 
+
+                if credit_note_id:
+                    try:
+                        _log.info("Factura status")
+                        _log.info(normal_inv.state)
+                        # self.env['account.edi.document']._cron_process_documents_web_services(job_count=20)
+                        normal_inv.action_process_edi_web_services()
+                    except Exception as e:
+                        _log.error("Error al timbrar la factura")
+                        _log.error(e)
+                    else:
+                        if not normal_inv.l10n_mx_edi_cfdi_uuid:
+                            _log.info("La factura de la venta no se pudo timbrar")
+                        else:
+                            try:
+                                creditnote = self._create_credit_note(normal_inv, credit_note_id, order)
+                            except Exception as e:
+                                _log.error("Error al generar la NC")
+                                _log.error(e)
+                            else:
+                                _log.info("La NC se creo exitosamente")
+                                _log.info("Se intenta publicar")
+                                creditnote.sudo().with_company(order.company_id)._post()
+                                _log.info("Nota credito publicada")
+                                self.concilia_factura_notacred(normal_inv, creditnote)             
 
             elif lines_type == "commission_only":
                 _log.info("\n Contiene solo lineas de comision. (complemento de pago) ")
@@ -358,3 +484,13 @@ class PosOrder(models.Model):
         if poso_inv:
             return poso_inv
         return {}
+
+class PosConfig(models.Model):
+    _inherit = 'pos.config'
+
+    forma_pago_anticipo = fields.Many2one('l10n_mx_edi.payment.method', 'Forma pago anticipo')
+    credit_note_product_id = fields.Many2one('product.product', 'Producto para nota de credito')
+    monto_efectivo_max = fields.Float('Monto maximo en efectivo por transaccion')
+    monto_pago_max = fields.Float('Monto maximo en pagos ultimos 6 meses')
+    email_notificacion_sat = fields.Char('Email de notificacion para montos de pago superados')
+

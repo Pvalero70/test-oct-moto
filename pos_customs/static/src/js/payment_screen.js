@@ -6,17 +6,73 @@ var models = require('point_of_sale.models');
 const PaymentScreen = require('point_of_sale.PaymentScreen');
 const Registries = require('point_of_sale.Registries');
 var exports = require("point_of_sale.models");
+const { isConnectionError } = require('point_of_sale.utils');
+
 var rpc = require('web.rpc');
 
 exports.load_fields('pos.payment', ["is_commission"])
 
     const IIPaymentScreen = (PaymentScreen) =>
-        class extends PaymentScreen{
+        class extends PaymentScreen{            
+
             constructor() {
                 super(...arguments);
                 this.payment_termss;
                 this.sale_terms;
+                this.to_credit_note = false
                 this.setInvoiceInfo();
+            }
+
+            isCreditNote(){
+                return this.to_credit_note
+            }
+
+            async clickNotaCredito(){
+                console.log("Click en nota de credito")
+                console.log(this)
+                console.log(this.env.pos.config_id)
+                console.log(this.env.pos.get_client())
+                console.log(this.currentOrder)
+
+                const config_id = this.env.pos.config_id
+                const partner = this.env.pos.get_client()
+                
+                const partnerInvoices = await this.rpc({
+                    model: 'pos.session',
+                    method: 'obtener_facturas_anticipo',
+                    args: [partner.id, config_id],
+                });
+                
+                
+                const selectionInvoiceList = partnerInvoices.map((invoice) => ({
+                    id: invoice.id,
+                    label: invoice.name + ' $' + invoice.total,
+                    item: invoice,
+                }));
+
+
+                const { confirmedInvoice, payload: selectedInvoice } = await this.showPopup('SelectionPopup', {
+                    title: this.env._t('Selecciona la factura de anticipo a pagar'),
+                    list: selectionInvoiceList,
+                });
+
+                if (!selectedInvoice) {
+                    return;
+                }
+                this.selectedCreditNoteId = selectedInvoice
+                console.log(this.selectedCreditNoteId)
+
+                this.to_credit_note = !this.to_credit_note;
+                this.render();
+
+                const paylaterPaymentMethod = this.env.pos.payment_methods.filter(
+                    (method) =>
+                        this.env.pos.config.payment_method_ids.includes(method.id) && method.type == 'pay_later'
+                )[0];
+
+                const paylaterPayment = this.currentOrder.add_paymentline(paylaterPaymentMethod);
+                console.log(selectedInvoice.total)
+                paylaterPayment.set_amount(selectedInvoice.total);
             }
 
             async setInvoiceInfo(){
@@ -106,12 +162,119 @@ exports.load_fields('pos.payment', ["is_commission"])
 
             async _finalizeValidation() {
                 
-                // console.log("Sobre escribe finalize validation")
-                // console.log(this.currentOrder)
+                console.log("Sobre escribe finalize validation")
+                console.log(this.selectedCreditNoteId)
+
+                console.log("Is paid with cash")
+                console.log(this.currentOrder.is_paid_with_cash())
+
+                console.log("Config")
+                console.log(this.env.pos.config)
+
+                let monto_efectivo_max = this.env.pos.config.monto_efectivo_max || 0;
+                let monto_pago_max = this.env.pos.config.monto_pago_max || 0;
+
+                console.log("Payment Lines")
+                // console.log(this.currentOrder.paymentlines.models)
+
+                let payments = this.currentOrder.paymentlines.models
+                let monto_efectivo = 0;
+                let monto_total = 0;
+
+                let partner = this.currentOrder.attributes.client
+                console.log("Cliente")
+                console.log(partner)
+                
+
+                const saldo_pagado = await this.rpc({
+                    model: 'account.move',
+                    method: 'validar_saldo_permitido',
+                    args: [{vals : {partner : partner}}],
+                });
+
+                console.log("Saldo pagado ultimos 6 meses")
+                console.log(saldo_pagado)
+
+                for (let i = 0; i < payments.length; i++) {
+                    
+                    if (payments[i]['name'].toLowerCase().search('efectivo') >= 0){
+                        console.log("Efectivo")
+                        console.log(payments[i])
+                        monto_efectivo += payments[i].amount;
+                    }
+                    else{
+                        console.log("Otros")
+                        console.log(payments[i])
+                    }
+                    monto_total += payments[i].amount
+                }
+
+                let emails = this.env.pos.config.email_notificacion_sat
+                let sucursal = this.env.pos.config.name
+                let cliente = partner.name
+                let monto = 0
+                let venta = this.currentOrder.name
+
+                if (monto_efectivo > monto_efectivo_max){
+
+                        const { confirmed } = await this.showPopup('ConfirmPopup', {
+                            title: "Valida Pago",
+                            body: "Reportar al SAT que el cliente ha rebasado el límite permitido de pago en efectivo."
+                        });
+                        if(confirmed){
+
+                            console.log("Confirmacion")
+                            console.log(confirmed);      
+                            monto = monto_efectivo
+
+                            console.log(emails)
+                            console.log(sucursal)
+                            console.log(cliente)
+                            console.log(monto)
+                            console.log(venta)
+
+                            await this.rpc({
+                                model: 'account.move',
+                                method: 'enviar_mail_advertencia_pago_permitido',
+                                args: [{vals : {emails : emails, sucursal : sucursal, cliente: cliente, monto: monto, venta: venta}}],
+                            });
+                        }
+                }
+
+                let monto_pagado_total = parseFloat(monto_total) + parseFloat(saldo_pagado)
+                
+                if (monto_pagado_total > monto_pago_max){
+
+                    const { confirmed } = await this.showPopup('ConfirmPopup', {
+                        title: "Valida Pago",
+                        body: "Reportar al SAT que el cliente ha rebasado el límite permitido de compra."
+                    });
+                    if(confirmed){
+                        console.log("Confirmacion")
+                        console.log(confirmed);  
+                        
+                        monto = monto_pagado_total
+                        
+                        console.log(emails)
+                        console.log(sucursal)
+                        console.log(cliente)
+                        console.log(monto)
+                        console.log(venta)
+
+                        await this.rpc({
+                            model: 'account.move',
+                            method: 'enviar_mail_advertencia_pago_permitido',
+                            args: [{vals : {emails : emails, sucursal : sucursal, cliente: cliente, monto: monto, venta: venta}}],
+                        });
+
+                    }
+                }
 
                 if ((this.currentOrder.is_paid_with_cash() || this.currentOrder.get_change()) && this.env.pos.config.iface_cashdrawer) {
                     this.env.pos.proxy.printer.open_cashbox();
                 }
+
+                console.log("Continua...")
 
                 this.currentOrder.initialize_validation_date();
                 this.currentOrder.finalized = true;
@@ -119,12 +282,20 @@ exports.load_fields('pos.payment', ["is_commission"])
                 let syncedOrderBackendIds = [];
 
                 try {
+
+                    
                     if (this.currentOrder.is_to_invoice()) {
-                        this.currentOrder.to_invoice = [$("#cfdi_usage_sel").val(),$("#payment_termss_selection").val()];
-                            // this.currentOrder.cfdi_usage = $("#cfdi_usage_sel").val();
-                            syncedOrderBackendIds = await this.env.pos.push_and_invoice_order(
-                                this.currentOrder
-                            );
+                        if (this.selectedCreditNoteId){
+                            this.currentOrder.to_invoice = [$("#cfdi_usage_sel").val(), $("#payment_termss_selection").val(), this.selectedCreditNoteId.id];                            
+                        }
+                        else{
+                            this.currentOrder.to_invoice = [$("#cfdi_usage_sel").val(), $("#payment_termss_selection").val(), null];
+                        }
+                        console.log("para facturar ... CURRENT ORDER... ");
+                        console.log(this.currentOrder.to_invoice);
+                        syncedOrderBackendIds = await this.env.pos.push_and_invoice_order(
+                            this.currentOrder
+                        );
                     } else {
                         // Isn't original
                         if (this.currentOrder.is_payment_invoice){

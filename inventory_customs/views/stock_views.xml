@@ -25,6 +25,19 @@
         </field>
     </record>
 
+    <record id="view_production_lot_tt_tree" model="ir.ui.view">
+        <field name="name">view.stock.lot.tt.tree</field>
+        <field name="model">stock.production.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="tt_number_motor"/>
+                <field name="tt_color"/>
+                <field name="tt_inventory_number" />
+            </field>
+        </field>
+    </record>
+
     <record id="view_stock_lot_tt_form" model="ir.ui.view">
         <field name="name">view.stock.lot.tt.form</field>
         <field name="model">stock.production.lot</field>
@@ -63,6 +76,8 @@
         <field name="arch" type="xml">
             <field name="lot_id" position="after">
                 <field name="inv_number" groups="stock.group_production_lot"/>
+                <field name="tt_number_motor" groups="stock.group_production_lot"/>
+                <field name="tt_color" groups="stock.group_production_lot"/>
             </field>
         </field>
     </record>
@@ -74,6 +89,8 @@
         <field name="arch" type="xml">
             <field name="lot_id" position="after">
                 <field name="inv_number" groups="stock.group_production_lot"/>
+                <field name="tt_number_motor" groups="stock.group_production_lot"/>
+                <field name="tt_color" groups="stock.group_production_lot"/>
             </field>
         </field>
     </record>
