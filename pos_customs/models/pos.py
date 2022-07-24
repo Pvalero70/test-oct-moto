@@ -380,7 +380,7 @@ class PosOrder(models.Model):
                 
                 credit_note_id = False
                 if 'credit_note_id' in normal_inv_vals:
-                    credit_note_id = normal_inv_vals.get('credit_note_id')
+                    credit_note_id = normal_inv_vals.pop('credit_note_id')
 
                 normal_inv = order._create_invoice(normal_inv_vals)
                 order.write({'account_move': normal_inv.id, 'state': 'invoiced'})
