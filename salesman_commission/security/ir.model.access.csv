@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-read_salesman_commission,read_salesman_commission,model_salesman_commission,,1,0,0,0
-read_salesman_commission_line,read_salesman_commission_line,model_salesman_commission_line,,1,0,0,0
-admin_salesman_commission,admin_salesman_commission, model_salesman_commission,salesman_commission.group_salesman_commission_admin,1,1,1,1
-admin_salesman_commission_line,admin_salesman_commission_line, model_salesman_commission_line,salesman_commission.group_salesman_commission_admin,1,1,1,1

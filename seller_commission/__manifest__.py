@@ -1,13 +1,17 @@
 # -*- coding: utf-8 -*-
 {
-    "name": "Salesman commissions",
+    "name": "Sellers commissions",
     'version': '0.01b',
     'author': 'Ing. Isaac Chávez Arroyo',
     'website': 'https://isaaccv.ml',
     "depends": [
-        "base", "point_of_sale", "pos_customs"
+        "base",
+        "sale",
     ],
     "data": [
+        "security/groups.xml",
+        "security/ir.model.access.csv",
+        "views/seller_commission.xml"
     ],
     'assets': {
         'point_of_sale.assets': [
