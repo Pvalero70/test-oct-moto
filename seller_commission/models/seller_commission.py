@@ -44,5 +44,16 @@ class SellerCommissionLine(models.Model):
     amount = fields.Float(string="Total de comisión")
     invoice_id = fields.Many2one('account.move', string="Factura")
     commission_date = fields.Datetime(string="Hora de comisión")
+    comm_method = fields.Many2one('seller.commission.rule', string="Método de calculo")
     
+
+class SellerCommissionRule(models.Model):
+    _name = "seller.commission.rule"
+
+    calc_method = fields.Selection([('fixed', 'Monto fijo'),
+                                    ('percent_utility', '% Utilidad'),
+                                    ('percent_sale', '% Venta')], string="Método", required=True)
+    company_id = fields.Many2one('res.company', string="Compañía")
+    product_categ_ids = fields.Many2many('', string="Categorías de productos", required=True)
+    amount_start = fields.Float(string="A partir de ($)", help="A Partir de esta cantidad entra esta regla. Si se configura como cero se considera monto libre.")
 

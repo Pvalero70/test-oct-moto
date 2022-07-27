@@ -94,7 +94,7 @@
     />
     <menuitem
         name="Comisiones de vendedores"
-        id="own_commissions_menu"
+        id="all_commissions_menu"
         parent="sale.sale_order_menu"
         sequence="20"
         action="action_all_seller_commission"
