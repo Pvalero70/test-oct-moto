@@ -65,7 +65,6 @@ class SellerCommissionRule(models.Model):
 
     # @api.onchange('calc_method', 'amount_factor')
     def _compute_rule_name(self):
-        _log.info("Calculando nombre de regla.")
         if not self.calc_method or not self._origin:
             return
         method = {
@@ -73,6 +72,5 @@ class SellerCommissionRule(models.Model):
             'percent_utility': '% Utilidad',
             'percent_sale': '% Venta',
         }
-        rule_name = "[%s]  %s %s" % (self.id, method[self.calc_method], self.amount_factor)
-        _log.info("Nombre regla:: %s " % rule_name)
+        rule_name = "%s %s - %s" % (method[self.calc_method], self.amount_factor, self.id)
         self.name = rule_name
