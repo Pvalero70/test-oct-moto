@@ -21,8 +21,20 @@ class PosSession(models.Model):
         _logger.info(partner_id)
         _logger.info(pos_config_id)
         pos_config = self.env['pos.config'].search([('id', '=', pos_config_id)])
+        pos_name = pos_config.name
+        crm_team = self.env['crm.team'].search([('name', '=', pos_name)], limit=1)
         product_credit = pos_config.credit_note_product_id
-        invoice_ids = self.env['account.move'].search([('invoice_line_ids.product_id', 'ilike', product_credit.id), ('partner_id', '=', partner_id), ('move_type', '=', 'out_invoice')])
+        domain = [
+            ('invoice_line_ids.product_id', 'ilike', product_credit.id), 
+            ('partner_id', '=', partner_id), 
+            ('move_type', '=', 'out_invoice')]
+        
+        if crm_team:
+            _logger.info("Filtra por punto de venta")
+            domain.append(('team_id', '=', crm_team.id))
+            _logger.info(domain)
+
+        invoice_ids = self.env['account.move'].search(domain)
         # invoice_ids = self.env['account.move'].search([('invoice_line_ids.product_id', 'ilike', product_credit.id), ('partner_id', '=', partner_id), ('move_type', '=', 'out_invoice'), ('state', '=', 'not_paid')])
         _logger.info('## Facturas de anticipo ##')
         _logger.info(invoice_ids.ids)
