@@ -32,14 +32,45 @@ class PosSession(models.Model):
         if crm_team:
             _logger.info("Filtra por punto de venta")
             domain.append(('team_id', '=', crm_team.id))
-            _logger.info(domain)
+        
+        _logger.info(domain)
 
-        invoice_ids = self.env['account.move'].search(domain)
+        facturas = self.env['account.move']
+        invoices = facturas.search(domain)
+
+        anticipo_ids = []
+        for invoice in invoices:
+            cfdi_uuid = invoice.l10n_mx_edi_cfdi_uuid
+            new_domain = [
+                ('partner_id', '=', partner_id), 
+                ('move_type', '=', 'out_invoice'),
+                ('l10n_mx_edi_origin', 'like', cfdi_uuid),
+                ('id', 'not in', invoices.ids)
+            ]
+            _logger.info("## New domain ##")
+            _logger.info(new_domain)
+            res = facturas.search(new_domain, limit=1)
+            if not res:
+                anticipo_ids.append(res.id)
+        
+        _logger.info("## Anticipo Ids ##")
+        _logger.info(anticipo_ids)
+
+        invoice_ids = []
+        if anticipo_ids:
+            invoice_ids = self.env['account.move'].search(
+                [
+                    ('id', 'in', anticipo_ids)
+                ]
+            )
         # invoice_ids = self.env['account.move'].search([('invoice_line_ids.product_id', 'ilike', product_credit.id), ('partner_id', '=', partner_id), ('move_type', '=', 'out_invoice'), ('state', '=', 'not_paid')])
-        _logger.info('## Facturas de anticipo ##')
-        _logger.info(invoice_ids.ids)
+        
         invoice_list = []
         if invoice_ids:
+            
+            _logger.info('## Facturas de anticipo ##')
+            _logger.info(invoice_ids.ids)
+
             for inv in invoice_ids:
                 invoice_list.append({
                     "id" : inv.id,

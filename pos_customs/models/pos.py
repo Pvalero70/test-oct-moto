@@ -96,19 +96,7 @@ class PosOrder(models.Model):
         :param order: pos order object.
         :return: invoice data set without some lines, depends of  quit_commissions
         """
-        _log.info(" DIVIDIENDO FACTURA.. invoice data:: %s" % invoice_data)
-
-        if 'credit_note_id' in invoice_data:
-            credit_note_id = invoice_data.pop('credit_note_id')
-            _log.info("Tiene nota de credito")
-            if credit_note_id:
-                credit_note_id = int(credit_note_id)
-                _log.info(credit_note_id)
-                notacred = self.env['account.move'].browse(credit_note_id)            
-                if notacred.l10n_mx_edi_cfdi_uuid:
-                    _log.info(notacred.l10n_mx_edi_cfdi_uuid)
-                    invoice_data['l10n_mx_edi_origin'] = f'07|{notacred.l10n_mx_edi_cfdi_uuid}'
-                    
+        _log.info(" DIVIDIENDO FACTURA.. invoice data:: %s" % invoice_data)                      
         # Get payment methods with bank commission.
         payment_bc_used_ids = order.payment_ids.filtered(lambda pa: pa.payment_method_id.bank_commission_method != False)
         ori_invoice_lines = invoice_data['invoice_line_ids']
@@ -331,6 +319,31 @@ class PosOrder(models.Model):
                 else:
                     _log.info("Reconciled")
                     _log.info(rec)
+
+    def _prepare_credit_note(self, normal_inv, credit_note_id, order):
+        try:
+            _log.info("Factura status")
+            _log.info(normal_inv.state)
+            # self.env['account.edi.document']._cron_process_documents_web_services(job_count=20)
+            normal_inv.action_process_edi_web_services()
+        except Exception as e:
+            _log.error("Error al timbrar la factura")
+            _log.error(e)
+        else:
+            if not normal_inv.l10n_mx_edi_cfdi_uuid:
+                _log.info("La factura de la venta no se pudo timbrar")
+            else:
+                try:
+                    creditnote = self._create_credit_note(normal_inv, credit_note_id, order)
+                except Exception as e:
+                    _log.error("Error al generar la NC")
+                    _log.error(e)
+                else:
+                    _log.info("La NC se creo exitosamente")
+                    _log.info("Se intenta publicar")
+                    creditnote.sudo().with_company(order.company_id)._post()
+                    _log.info("Nota credito publicada")
+                    self.concilia_factura_notacred(normal_inv, creditnote) 
                 
     def _generate_pos_order_invoice(self):
         _log.info("INTENTA GENERAR FACTURA")
@@ -339,17 +352,30 @@ class PosOrder(models.Model):
             if not order.partner_id:
                 raise UserError(_('Please provide a partner for the sale.'))
             # Si contiene ambios tipos.
+            credit_note_id = False
             lines_type = self.kind_order_lines(order)
+
             if lines_type == "both_lines":
                 _log.info("\nContiene ambos tipos de lineas, se hacen dos facturas.")
                 # Prepara valres. 
                 normal_inv_vals = order._prepare_invoice_vals()
                 commis_inv_vals = normal_inv_vals.copy()
+
+                if 'credit_note_id' in normal_inv_vals:
+                    credit_note_id = normal_inv_vals.pop('credit_note_id')
+
                 normal_inv_vals = self._split_invoice_vals_bk(normal_inv_vals, quit_commissions=True, order=order)
                 commis_inv_vals = self._split_invoice_vals_bk(commis_inv_vals, quit_commissions=False, order=order)
                 # Crea facturas
                 normal_inv = order._create_invoice(normal_inv_vals)
                 commis_inv = order._create_invoice(commis_inv_vals)
+                
+                if credit_note_id:
+                    factura_anticipo = self.env['account.move'].browse(int(credit_note_id))
+                    normal_inv.write({
+                        "l10n_mx_edi_origin" : f'07|{factura_anticipo.l10n_mx_edi_cfdi_uuid}'
+                    })
+
                 # Relaciona el order con la factura. 
                 order.write({'account_move': normal_inv.id, 'state': 'invoiced'})
                 # Confirma las facturas. 
@@ -378,11 +404,13 @@ class PosOrder(models.Model):
                 moves += normal_inv
                 moves += commis_inv
 
+                if credit_note_id:
+                    self._prepare_credit_note(normal_inv, credit_note_id, order)
+
             elif lines_type == "without_commission":
                 _log.info("\nContiene lineas normales. ")
                 normal_inv_vals = order._prepare_invoice_vals()
                 
-                credit_note_id = False
                 if 'credit_note_id' in normal_inv_vals:
                     credit_note_id = normal_inv_vals.pop('credit_note_id')
 
@@ -407,29 +435,7 @@ class PosOrder(models.Model):
                 moves += normal_inv 
 
                 if credit_note_id:
-                    try:
-                        _log.info("Factura status")
-                        _log.info(normal_inv.state)
-                        # self.env['account.edi.document']._cron_process_documents_web_services(job_count=20)
-                        normal_inv.action_process_edi_web_services()
-                    except Exception as e:
-                        _log.error("Error al timbrar la factura")
-                        _log.error(e)
-                    else:
-                        if not normal_inv.l10n_mx_edi_cfdi_uuid:
-                            _log.info("La factura de la venta no se pudo timbrar")
-                        else:
-                            try:
-                                creditnote = self._create_credit_note(normal_inv, credit_note_id, order)
-                            except Exception as e:
-                                _log.error("Error al generar la NC")
-                                _log.error(e)
-                            else:
-                                _log.info("La NC se creo exitosamente")
-                                _log.info("Se intenta publicar")
-                                creditnote.sudo().with_company(order.company_id)._post()
-                                _log.info("Nota credito publicada")
-                                self.concilia_factura_notacred(normal_inv, creditnote)             
+                    self._prepare_credit_note(normal_inv, credit_note_id, order)                                
 
             elif lines_type == "commission_only":
                 _log.info("\n Contiene solo lineas de comision. (complemento de pago) ")
