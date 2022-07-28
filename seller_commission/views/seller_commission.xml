@@ -55,6 +55,22 @@
         </field>
     </record>
 
+    <record id="view_seller_commission_rules_tree" model="ir.ui.view">
+        <field name="name">view.seller_commission_rule.tree</field>
+        <field name="model">seller.commission.rule</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <tree string="Reglas para el calculo de comisiones por ventas">
+                <field name="seller_id"/>
+                <field name="amount_total"/>
+                <field name="current_month"/>
+                <field name="state"/>
+                <field name="company_id"/>
+                <field name="commission_quantity_lines"/>
+            </tree>
+        </field>
+    </record>
+
 
     <!-- ACTIONS -->
     <record id="action_own_seller_commission" model="ir.actions.act_window">
