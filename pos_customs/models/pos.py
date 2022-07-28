@@ -359,10 +359,11 @@ class PosOrder(models.Model):
                 _log.info("\nContiene ambos tipos de lineas, se hacen dos facturas.")
                 # Prepara valres. 
                 normal_inv_vals = order._prepare_invoice_vals()
-                commis_inv_vals = normal_inv_vals.copy()
 
                 if 'credit_note_id' in normal_inv_vals:
                     credit_note_id = normal_inv_vals.pop('credit_note_id')
+                
+                commis_inv_vals = normal_inv_vals.copy()
 
                 normal_inv_vals = self._split_invoice_vals_bk(normal_inv_vals, quit_commissions=True, order=order)
                 commis_inv_vals = self._split_invoice_vals_bk(commis_inv_vals, quit_commissions=False, order=order)
