@@ -36,6 +36,10 @@ exports.load_fields('pos.payment', ["is_commission"])
 
                 const config_id = this.env.pos.config_id
                 const partner = this.env.pos.get_client()
+
+                if(!partner){
+                    return;
+                }
                 
                 const partnerInvoices = await this.rpc({
                     model: 'pos.session',

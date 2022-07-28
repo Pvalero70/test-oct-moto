@@ -97,17 +97,6 @@ class PosOrder(models.Model):
         :return: invoice data set without some lines, depends of  quit_commissions
         """
         _log.info(" DIVIDIENDO FACTURA.. invoice data:: %s" % invoice_data)
-        if 'credit_note_id' in invoice_data:
-            credit_note_id = invoice_data.pop('credit_note_id')
-            _log.info("Tiene nota de credito")
-            if credit_note_id:
-                credit_note_id = int(credit_note_id)
-                _log.info(credit_note_id)
-                notacred = self.env['account.move'].browse(credit_note_id)            
-                if notacred.l10n_mx_edi_cfdi_uuid:
-                    _log.info(notacred.l10n_mx_edi_cfdi_uuid)
-                    invoice_data['l10n_mx_edi_origin'] = f'07|{notacred.l10n_mx_edi_cfdi_uuid}'
-
         # Get payment methods with bank commission.
         payment_bc_used_ids = order.payment_ids.filtered(lambda pa: pa.payment_method_id.bank_commission_method != False)
         ori_invoice_lines = invoice_data['invoice_line_ids']
@@ -282,13 +271,16 @@ class PosOrder(models.Model):
             "journal_id" : journal_id.id,
             "l10n_mx_edi_origin" : f'07|{l10n_mx_edi_origin}'            
         }
+        
+        # Quitar IVA
+        anticipo_untaxed = float(total_anticipo) / 1.16
 
         invoice_lines = []
         for line in factura_anticipo.invoice_line_ids:
             new_line = {
                 "product_id" : product_id.id,
                 "quantity" : 1,
-                "price_unit" : float(total_anticipo),
+                "price_unit" : anticipo_untaxed,
                 "product_uom_id" : line.product_uom_id.id,
                 "tax_ids" : line.tax_ids.ids
             }
@@ -383,6 +375,13 @@ class PosOrder(models.Model):
                     credit_note_id = normal_inv_vals.pop('credit_note_id')
 
                 normal_inv = order._create_invoice(normal_inv_vals)
+                
+                if credit_note_id:
+                    factura_anticipo = self.env['account.move'].browse(int(credit_note_id))
+                    normal_inv.write({
+                        "l10n_mx_edi_origin" : f'07|{factura_anticipo.l10n_mx_edi_cfdi_uuid}'
+                    })
+                
                 order.write({'account_move': normal_inv.id, 'state': 'invoiced'})
                 normal_inv.sudo().with_company(order.company_id)._post()
                 line_zerodays_ni = normal_inv.invoice_payment_term_id.line_ids.filtered(lambda x: x.value_amount == 0 and x.days == 0 and x.option == "day_after_invoice_date")
