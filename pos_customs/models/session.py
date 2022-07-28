@@ -51,7 +51,7 @@ class PosSession(models.Model):
             _logger.info(new_domain)
             res = facturas.search(new_domain, limit=1)
             if not res:
-                anticipo_ids.append(res.id)
+                anticipo_ids.append(invoice.id)
         
         _logger.info("## Anticipo Ids ##")
         _logger.info(anticipo_ids)
