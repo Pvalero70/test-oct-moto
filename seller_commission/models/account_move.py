@@ -40,5 +40,9 @@ class AccountMoveSc(models.Model):
         pos_order = self.env['pos.order'].search([('account_move', '=', invoice_id.id)])
         if pos_order:
             _log.info(" PEDIDO TPV :: %s " % pos_order)
-
+            for line in pos_order.lines:
+                # Buscar la regla que mejor se ajuste.
+                # Calcular en base a la regla
+                
+            return
         # for line in invoice_id.invoice_line_ids:
