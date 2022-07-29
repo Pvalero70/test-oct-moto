@@ -15,6 +15,71 @@ _logger = logging.getLogger(__name__)
 class PosSession(models.Model):
     _inherit = 'pos.session'
 
+    @api.model
+    def obtener_facturas_anticipo(self, partner_id, pos_config_id):
+        _logger.info(self)
+        _logger.info(partner_id)
+        _logger.info(pos_config_id)
+        pos_config = self.env['pos.config'].search([('id', '=', pos_config_id)])
+        pos_name = pos_config.name
+        crm_team = self.env['crm.team'].search([('name', '=', pos_name)], limit=1)
+        product_credit = pos_config.credit_note_product_id
+        domain = [
+            ('invoice_line_ids.product_id', 'ilike', product_credit.id), 
+            ('partner_id', '=', partner_id), 
+            ('move_type', '=', 'out_invoice')]
+        
+        if crm_team:
+            _logger.info("Filtra por punto de venta")
+            domain.append(('team_id', '=', crm_team.id))
+        
+        _logger.info(domain)
+
+        facturas = self.env['account.move']
+        invoices = facturas.search(domain)
+
+        anticipo_ids = []
+        for invoice in invoices:
+            cfdi_uuid = invoice.l10n_mx_edi_cfdi_uuid
+            new_domain = [
+                ('partner_id', '=', partner_id), 
+                ('move_type', '=', 'out_invoice'),
+                ('l10n_mx_edi_origin', 'like', cfdi_uuid),
+                ('id', 'not in', invoices.ids)
+            ]
+            _logger.info("## New domain ##")
+            _logger.info(new_domain)
+            res = facturas.search(new_domain, limit=1)
+            if not res:
+                anticipo_ids.append(invoice.id)
+        
+        _logger.info("## Anticipo Ids ##")
+        _logger.info(anticipo_ids)
+
+        invoice_ids = []
+        if anticipo_ids:
+            invoice_ids = self.env['account.move'].search(
+                [
+                    ('id', 'in', anticipo_ids)
+                ]
+            )
+        # invoice_ids = self.env['account.move'].search([('invoice_line_ids.product_id', 'ilike', product_credit.id), ('partner_id', '=', partner_id), ('move_type', '=', 'out_invoice'), ('state', '=', 'not_paid')])
+        
+        invoice_list = []
+        if invoice_ids:
+            
+            _logger.info('## Facturas de anticipo ##')
+            _logger.info(invoice_ids.ids)
+
+            for inv in invoice_ids:
+                invoice_list.append({
+                    "id" : inv.id,
+                    "name" : inv.name,
+                    "total" : inv.amount_total,
+                    "residual" : inv.amount_residual,
+                })
+        return invoice_list            
+
     def _validate_session(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
         
         _logger.info("## SOBRE ESCRIBE VALIDATE SESION ###")
@@ -202,7 +267,7 @@ class PosSession(models.Model):
         #             update_lines.append((1, line.id, {"debit" : new_debit}))
 
         if update_lines and session_move:
-            _logger.info("Se intenta actualizar lineas")
+            _logger.info("Se intenta actualizar lineas.")
             _logger.info(update_lines)
             try:
                 session_move.write({"line_ids" : update_lines})
@@ -223,12 +288,3 @@ class PosSession(models.Model):
                     session_move.button_cancel()
                 else:
                     session_move.action_post()
-                # Descomentar para borrar el asiento
-                # for line in debit_move_id.line_ids:
-                #     if line.debit == 0 and line.credit == 0:
-                #         line.unlink()
-                # if not debit_move_id.line_ids:
-                #     _logger.info("Se elimina move porque no tiene lineas")
-                #     debit_move_id.unlink()
-                # else:
-                #     debit_move_id.action_post()
