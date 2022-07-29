@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import api, models, fields, _
+from odoo.exceptions import AccessError, UserError, ValidationError
 import logging
 
 _log = logging.getLogger("\n\n---___---___--__-···>> Seller Commission:: ")
@@ -11,9 +12,25 @@ class SellerCommission(models.Model):
     _description = "Concentrado de comisiones comisiones de vendedores"
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
+    """
+    1 millón de ventas en motocicletas = 4%
+    4 millones de ventas en motocicletas = 8%
+    Se paga una comisión por moto que está liquidada, siempre y cuando el pedido esté facturado y pagada
+    
+    En general es necesario agrupar las lineas por categoría, de tal forma que se tenga una linea por categoría y por ende una suma; 
+    la regla deberá ir cambiando cuando la linea vaya cambiando su total; 
+    
+    Por lo anterior, Se debe establecer un constrain en las reglas para que cuando una categoría sea establecida con un método de calculo,
+    no pueda ser establecida otra regla con la misma categoría pero con diferente método; es decir: una categoría siempre tendrá un mismo método. 
+    """
+
     seller_id = fields.Many2one('res.partner', string="Vendedor", check_company=True)
     company_id = fields.Many2one('res.company', string="Compañía", default=lambda self: self.env.company)
-    line_ids = fields.One2many('seller.commission.line', 'monthly_commission_id', string="Comisiones", tracking=True)
+    line_ids = fields.One2many('seller.commission.line',
+                               'monthly_commission_id',
+                               string="Comisiones", tracking=True,
+                               help="Lineas de concentrado de sumas, agrupado por categorías. ")
+
     amount_total = fields.Float(string="Total de comision", tracking=True)
     state = fields.Selection([
         ('to_pay', "Por pagar"),
@@ -65,12 +82,35 @@ class SellerCommissionRule(models.Model):
 
     # @api.onchange('calc_method', 'amount_factor')
     def _compute_rule_name(self):
-        if not self.calc_method or not self._origin:
-            return
-        method = {
-            'fixed': 'Monto fijo',
-            'percent_utility': '% Utilidad',
-            'percent_sale': '% Venta',
-        }
-        rule_name = "%s %s - %s" % (method[self.calc_method], self.amount_factor, self.id)
-        self.name = rule_name
+        for reg in self:
+            if not reg.calc_method or not reg._origin:
+                continue
+            method = {
+                'fixed': 'Monto fijo',
+                'percent_utility': '% Utilidad',
+                'percent_sale': '% Venta',
+            }
+            rule_name = "%s %s - %s" % (method[reg.calc_method], reg.amount_factor, reg.id)
+            reg.name = rule_name
+
+    @api.constrains('calc_method', 'product_categ_ids')
+    def check_commission_rules_categ(self):
+        """
+        Método que revisa que las categorías establecidas en dicho registro no sean
+        encontradas en otras reglas con un método de calculo diferente;
+        :return:
+        """
+        def sublista(l1, l2):
+            # Regresa los elementos de la primer lista que están en la segunda.
+            return [x for x in l1 if x in l2]
+        other_rules = self.env['seller.commission.rule'].search([
+            ('company_id', '=', self.company_id.id),
+            ('calc_method', '!=', self.calc_method),
+        ]).filtered(lambda r: len(sublista(self.product_categ_ids, r.product_categ_ids)) > 0)
+        if other_rules:
+            raise ValidationError(_("Las reglas %s entran en conflicto con la regla que está intentando crear o editar,"
+                                    " ya que algunas de sus categorías de productos que intenta poner en la regla que"
+                                    " está editando o creando se encuentran en dichas reglas con conflicto pero con"
+                                    " diferente método de calculo." % other_rules.mapped('name')))
+
+
