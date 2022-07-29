@@ -443,6 +443,10 @@ class PosOrder(models.Model):
                 _log.info("\nContiene lineas normales. ")
                 commis_inv_vals = order._prepare_invoice_vals()
                 commis_inv_vals = self._split_invoice_vals_bk(commis_inv_vals, quit_commissions=False, order=order)
+                
+                if 'credit_note_id' in commis_inv_vals:
+                    commis_inv_vals.pop('credit_note_id')
+
                 commis_inv = order._create_invoice(commis_inv_vals)
                 order.write({'account_move': commis_inv.id, 'state': 'invoiced'})
                 commis_inv.sudo().with_company(order.company_id)._post()
