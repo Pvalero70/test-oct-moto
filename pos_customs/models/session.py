@@ -78,8 +78,10 @@ class PosSession(models.Model):
                     "total" : inv.amount_total,
                     "residual" : inv.amount_residual,
                 })
-        return invoice_list            
+        return invoice_list
 
+
+    '''
     def _validate_session(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
         
         _logger.info("## SOBRE ESCRIBE VALIDATE SESION ###")
@@ -92,6 +94,7 @@ class PosSession(models.Model):
         self.clear_session_close_moves_payments()
 
         return res
+    '''
 
     def _check_invoices_are_posted(self):
         unposted_invoices = self.order_ids.account_move.filtered(lambda x: x.state != 'posted' and x.state != 'cancel')
