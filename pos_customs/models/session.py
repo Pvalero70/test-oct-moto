@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 
 class PosSession(models.Model):
     _inherit = 'pos.session'
-    '''
+
     def _validate_session(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
         
         _logger.info("## SOBRE ESCRIBE VALIDATE SESION ###")
@@ -28,7 +28,7 @@ class PosSession(models.Model):
 
         return res
     
-    '''
+    
 
     def _check_invoices_are_posted(self):
         unposted_invoices = self.order_ids.account_move.filtered(lambda x: x.state != 'posted' and x.state != 'cancel')
