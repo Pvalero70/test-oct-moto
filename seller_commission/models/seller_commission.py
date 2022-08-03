@@ -30,7 +30,7 @@ class SellerCommission(models.Model):
                                'monthly_commission_id',
                                string="Comisiones", tracking=True,
                                help="Lineas de concentrado de sumas, agrupado por categorías. ")
-
+    preline_ids = fields.One2many('seller.commission.preline', string="Lineas de precalculo", compute="compute_prelines", strore =False)                               
     amount_total = fields.Float(string="Total de comision", tracking=True)
     state = fields.Selection([
         ('to_pay', "Por pagar"),
@@ -57,15 +57,34 @@ class SellerCommission(models.Model):
 class SellerCommissionLine(models.Model):
     _name = "seller.commission.line"
     _description = "Comisiones de vendedor por mes"
+    """
+    Tabla de acumulados, es calculada en base en la información en la tabla de concentrados, en donde se suman por categoría. 
+
+    Esta tabla concentra la sumatoria del total de varias lineas de varias facturas; siempre que sean de la misma categoría; para cada comisión de cada vendedor.
+    Por lo tanto la información de las facturas consideradas no podrían ser aquí. 
+    """
 
     monthly_commission_id = fields.Many2one('seller.commission', string="Comision mensual", help="Acumulado mensual")
    
     seller_id = fields.Many2one('res.partner', related="monthly_commission_id.seller_id")
     amount = fields.Float(string="Total de comisión")
-    invoice_id = fields.Many2one('account.move', string="Factura")
     commission_date = fields.Datetime(string="Hora de comisión")
     comm_method = fields.Many2one('seller.commission.rule', string="Método de calculo")
-    
+
+
+class SellerCommissionPreline(models.Model):
+    _name = "seller.commission.preline"
+    _description = "Lineas que serán consideradas para crear los acumulados"
+    """
+    A partir de ésta tabla se generan las lineas de comisión, aquí será el acumulado; cada que se modifique o se cree un registro aquí 
+    """
+
+    amount = fields.Float(string="Total a comisionar")
+    categ_id = fields.Many2one('product.category', string="Categoria de producto")
+    invoice_id = fields.Many2one('account.move', string="Factura")
+    commission_id = fields.Many2one('seller.commission', string="Comisión relacionada")
+    commission_line_id = fields.Many2one('seller.commission.line', string="linea de comisión", help="Linea de la comisión en la que se sumó.")
+
 
 class SellerCommissionRule(models.Model):
     _name = "seller.commission.rule"

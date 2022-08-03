@@ -21,12 +21,19 @@
                             <field name="current_month"/>
                             <field name="amount_total"/>
                         </group>
-                        <field name="line_ids">
+                        <field name="preline_ids" string="Precalculo">
+                            <tree>
+                                <field name="amount"/>
+                                <field name="categ_id"/>
+                                <field name="invoice_id"/>
+                                <field name="commission_line_id"/>
+                            </tree>
+                        </field>
+                        <field name="line_ids" string="Calculo">
                             <tree editable="botttom">
                                 <field name="comm_method"/>
                                 <field name="commission_date"/>
                                 <field name="amount"/>
-                                <field name="invoice_id"/>
                             </tree>
                         </field>
                     </group>
