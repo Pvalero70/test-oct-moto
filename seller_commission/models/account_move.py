@@ -74,7 +74,7 @@ class AccountMoveSc(models.Model):
 
             commission = self.env['seller.commission']
             commission_id = commission.search([
-                ('seller_id', '=', ),
+                ('seller_id', '=', False),
                 ('current_month', '=', fields.Date().today().month)])
             return
         # for line in invoice_id.invoice_line_ids:
