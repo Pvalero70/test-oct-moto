@@ -205,10 +205,6 @@ class StockMoveTt(models.Model):
         try:
             with self.env.cr.savepoint():
                 if not float_is_zero(taken_quantity, precision_rounding=self.product_id.uom_id.rounding):
-
-                    # Esto asigna los QUANTS que se van a reservar, de los QUANTS se toma lot_id ¬¬
-                    _log.info("\n El CONTEXTO CHIDO ::::::: %s " % self._context)
-                    _log.info("\n IC SALE ORDER ??? %s " % self.picking_id.ic_sale_order)
                     if  self.picking_id.ic_sale_order:
                         quants = self.env['stock.quant']._update_reserved_quantity(
                             self.product_id, location_id, taken_quantity, lot_id=lot_id,
@@ -225,7 +221,6 @@ class StockMoveTt(models.Model):
 
         # Find a candidate move line to update or create a new one.
         for reserved_quant, quantity in quants:
-            _log.info(" RESERVED QUANT ::: %s  " % reserved_quant)
             to_update = next((line for line in self.move_line_ids if line._reservation_is_updatable(quantity, reserved_quant)), False)
             if to_update:
                 uom_quantity = self.product_id.uom_id._compute_quantity(quantity, to_update.product_uom_id, rounding_method='HALF-UP')
@@ -320,36 +315,23 @@ class StockQuantTti(models.Model):
         else:
             return reserved_quants
 
-        # Aqui se escoje que Quant será el selecto; aquí debemos llenar la demanda primero con los quants que queremos,
-        # Luego con los que se deje...
-        """
-        Quizá podría ejecutarse un ciclo antes de éste; siempre que el producto tenga seguimiento por número de serie 
-        y que pueda obtenerse una lista de los lot_ids -> quants  desde el sale order (contexto) 
-        """
+      
         if ic_order is not None:
-            _log.info(" NO ES NONE, EL ORDER ES: %s" % ic_order) 
-            # Filtremos los QUANTS para que solo quede los que puede usar según el producto de la linea que se vaya a usar .. 
-            # Los cuants que llegan aquí tienen existencias así que no hay problema si conservamos la lista original de números de serie. 
-            _log.info(" PRODUCTO A FILTRAR ::: %s " % product_id)
             lots = ic_order.order_line.filtered(lambda l: l.lot_id != False).mapped('lot_id')
-            _log.info(" LOS LOTES DEL SALE ORDER SON ::: %s " % lots)
-            quants = quants.filtered(lambda q: q.lot_id.id in lots.ids)
-            _log.info("\n LOS CUANTS FILTRADOS SON ::: %s " % quants)
+            if lots:
+                quants = quants.filtered(lambda q: q.lot_id.id in lots.ids)
         
         for quant in quants:
             if float_compare(quantity, 0, precision_rounding=rounding) > 0:
-                _log.info("  RESERVANDO ... ")
-                max_quantity_on_quant = quant.quantity - quant.reserved_quantity # Máximo disponible en el quant.
+                max_quantity_on_quant = quant.quantity - quant.reserved_quantity 
                 if float_compare(max_quantity_on_quant, 0, precision_rounding=rounding) <= 0:
-                    # Si no tiene lo suficiente ese quant..
                     continue
                 max_quantity_on_quant = min(max_quantity_on_quant, quantity)
-                quant.reserved_quantity += max_quantity_on_quant # Suma más cantidad reservada para dicho quant.
-                reserved_quants.append((quant, max_quantity_on_quant)) # # Añade el quant a la lista de los quant de los que se reservó.
-                quantity -= max_quantity_on_quant                       # descontamos la cantidad reservada del quantity, que es lo que necesitamos.
-                available_quantity -= max_quantity_on_quant             # También disminuimos el disponible para reservar.
+                quant.reserved_quantity += max_quantity_on_quant 
+                reserved_quants.append((quant, max_quantity_on_quant)) 
+                quantity -= max_quantity_on_quant                      
+                available_quantity -= max_quantity_on_quant             
             else:
-                _log.info(" DESSSS RESERVANDO ... ")
                 max_quantity_on_quant = min(quant.reserved_quantity, abs(quantity))
                 quant.reserved_quantity -= max_quantity_on_quant
                 reserved_quants.append((quant, -max_quantity_on_quant))
