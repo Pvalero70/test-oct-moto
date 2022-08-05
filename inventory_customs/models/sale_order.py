@@ -7,6 +7,15 @@ import logging
 _log = logging.getLogger("___name: %s" % __name__)
 
 
+class SaleOrderIc(models.Model):
+    _inherit = "sale.order"
+
+    def action_confirm(self):
+        self = self.with_context(ic_sale_id=self.id)
+        res = super(SaleOrderIc, self).action_confirm()
+        return res
+
+
 class SaleOrderLinePev(models.Model):
     _inherit = "sale.order.line"
 

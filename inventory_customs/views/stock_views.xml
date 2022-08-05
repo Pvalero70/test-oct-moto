@@ -58,6 +58,7 @@
                 <field name="tt_num_pedimento" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
                 <field name="tt_aduana" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
                 <field name="tt_aduana_date_in" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
+                <field name="ic_sale_order" invisible="0"/>
             </field>
         </field>
     </record>
