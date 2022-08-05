@@ -11,10 +11,12 @@ class SaleOrderLinePev(models.Model):
     _inherit = "sale.order.line"
 
     lot_domain_ids = fields.Many2many('stock.production.lot', string="Dominio lot_id", compute="_compute_lot_id_domain", store=False)
-    lot_id = fields.Many2one('stock.production.lot', string="Series")
+    lot_id = fields.Many2one('stock.production.lot', string="#Serie")
 
     def _compute_lot_id_domain(self):
-        # Obtener la ubicación del sale order...
+        if self.product_uom_qty != 1:
+            self.lot_domain_ids = False
+            return
         order_location = self.order_id.warehouse_id.lot_stock_id
         # Obtenemos el quant
         quant_domain = [('location_id', '=', order_location.id),

@@ -11,6 +11,11 @@
                 <field name="tt_color" attrs="{'column_invisible': [('parent.tt_with_moto', '=', False)], 'required': [('parent.tt_with_moto', '!=', False)]}"/>
                 <field name="tt_inventory_number" attrs="{'column_invisible': [('parent.tt_with_moto', '=', False)]}"/>
             </field>
+            <field name="product_uom_id" position="after">
+                <field name="tt_company_currency_id" invisible="1"/>
+                <field name="tt_free_optional" attrs="{'column_invisible': [('parent.tt_with_moto', '=', False)]}"/>
+                <field name="tt_adc_costs" attrs="{'column_invisible': [('parent.tt_with_moto', '=', False)]}"/>
+            </field>
         </field>
     </record>
 
@@ -35,6 +40,10 @@
                 <field name="tt_number_motor" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
                 <field name="tt_color" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
                 <field name="tt_inventory_number" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
+                <field name="tt_company_currency_id" invisible="1"/>
+                <!-- Los siguientes campos editables bajo permisos. -->
+                <field name="tt_free_optional" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
+                <field name="tt_adc_costs" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
             </field>
         </field>
     </record>

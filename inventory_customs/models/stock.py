@@ -71,6 +71,8 @@ class StockMoveTt(models.Model):
                         ml.lot_id.tt_number_motor = ml.tt_motor_number
                         ml.lot_id.tt_color = ml.tt_color
                         ml.lot_id.tt_inventory_number = ml.tt_inventory_number
+                        ml.lot_id.tt_free_optional = ml.tt_free_optional
+                        ml.lot_id.tt_adc_costs = ml.tt_adc_costs
         return res
 
     @api.onchange("move_line_nosuggest_ids")
@@ -143,6 +145,12 @@ class StockMoveLineC(models.Model):
     tt_color = fields.Char(string="Color")
     tt_inventory_number = fields.Char(string="Número de inventario")
     tt_inventory_number_seq = fields.Integer(string="Secuencia")
+    tt_free_optional = fields.Char(string="Opcionales libres")
+    tt_company_currency_id = fields.Many2one('res.currency', default=lambda self: self._default_currency_id())
+    tt_adc_costs = fields.Monetary(currency_field="tt_company_currency_id", string="Costos adicionales")
+
+    def _default_currency_id(self):
+        return self.env.user.company_id.currency_id
 
 
 class StockProductionLotTt(models.Model):
@@ -151,6 +159,13 @@ class StockProductionLotTt(models.Model):
     tt_number_motor = fields.Char(string="Número de motor")
     tt_color = fields.Char(string="Color")
     tt_inventory_number = fields.Char(string="Número de inventario")
+
+    tt_free_optional = fields.Char(string="Opcionales libres")
+    tt_company_currency_id = fields.Many2one('res.currency', default=lambda self: self._default_currency_id())
+    tt_adc_costs = fields.Monetary(currency_field="tt_company_currency_id", string="Costos adicionales")
+
+    def _default_currency_id(self):
+        return self.env.user.company_id.currency_id
 
     def _hide_snf(self):
         self.hide_snf_fields = self.env.company.restrict_inv_sn_flow
