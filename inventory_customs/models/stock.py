@@ -207,11 +207,18 @@ class StockMoveTt(models.Model):
                 if not float_is_zero(taken_quantity, precision_rounding=self.product_id.uom_id.rounding):
 
                     # Esto asigna los QUANTS que se van a reservar, de los QUANTS se toma lot_id ¬¬
-
-                    quants = self.env['stock.quant']._update_reserved_quantity(
-                        self.product_id, location_id, taken_quantity, lot_id=lot_id,
-                        package_id=package_id, owner_id=owner_id, strict=strict
-                    )
+                    _log.info("\n El CONTEXTO CHIDO ::::::: %s " % self._context)
+                    _log.info("\n IC SALE ORDER ??? %s " % self.picking_id.ic_sale_order)
+                    if  self.picking_id.ic_sale_order:
+                        quants = self.env['stock.quant']._update_reserved_quantity(
+                            self.product_id, location_id, taken_quantity, lot_id=lot_id,
+                            package_id=package_id, owner_id=owner_id, strict=strict, ic_order=self.picking_id.ic_sale_order
+                        )
+                    else:
+                        quants = self.env['stock.quant']._update_reserved_quantity(
+                            self.product_id, location_id, taken_quantity, lot_id=lot_id,
+                            package_id=package_id, owner_id=owner_id, strict=strict
+                        )
                     _log.info(" QUANTS desde stock move ::: %s " % quants)
         except UserError:
             taken_quantity = 0
@@ -234,38 +241,7 @@ class StockMoveTt(models.Model):
                     self.env['stock.move.line'].create(self._prepare_move_line_vals(quantity=quantity, reserved_quant=reserved_quant))
         return taken_quantity
 
-    def _prepare_move_line_vals(self, quantity=None, reserved_quant=None):
-        self.ensure_one()
-        vals = {
-            'move_id': self.id,
-            'product_id': self.product_id.id,
-            'product_uom_id': self.product_uom.id,
-            'location_id': self.location_id.id,
-            'location_dest_id': self.location_dest_id.id,
-            'picking_id': self.picking_id.id,
-            'company_id': self.company_id.id,
-        }
-        if quantity:
-            rounding = self.env['decimal.precision'].precision_get('Product Unit of Measure')
-            uom_quantity = self.product_id.uom_id._compute_quantity(quantity, self.product_uom, rounding_method='HALF-UP')
-            uom_quantity = float_round(uom_quantity, precision_digits=rounding)
-            uom_quantity_back_to_product_uom = self.product_uom._compute_quantity(uom_quantity, self.product_id.uom_id, rounding_method='HALF-UP')
-            if float_compare(quantity, uom_quantity_back_to_product_uom, precision_digits=rounding) == 0:
-                vals = dict(vals, product_uom_qty=uom_quantity)
-            else:
-                vals = dict(vals, product_uom_qty=quantity, product_uom_id=self.product_id.uom_id.id)
-        package = None
-        if reserved_quant:
-            package = reserved_quant.package_id
-            vals = dict(
-                vals,
-                location_id=reserved_quant.location_id.id,
-                lot_id=reserved_quant.lot_id.id or False,
-                package_id=package.id or False,
-                owner_id =reserved_quant.owner_id.id or False,
-            )
-        return vals
-
+    
 class StockMoveLineC(models.Model):
     _inherit = "stock.move.line"
 
@@ -280,19 +256,6 @@ class StockMoveLineC(models.Model):
     def _default_currency_id(self):
         return self.env.user.company_id.currency_id
 
-    # @api.model_create_multi
-    # def create(self, vals_list):
-    #
-    #     for vals in vals_list:
-    #         if vals['lot_id']:
-    #             _log.info("CREATE SML ::: %s " % vals_list)
-    #             # x = 1/0
-    #     res = super(StockMoveLineC, self).create(vals_list)
-    #     return res
-
-    # def write(self, vals):
-    #     _log.info(" WRITE VALS :: %s " % vals)
-    #     return super(StockMoveLineC, self).write(vals)
 
 class StockProductionLotTt(models.Model):
     _inherit = "stock.production.lot"
@@ -323,7 +286,7 @@ class StockQuantTti(models.Model):
     #
     # hide_snf_fields = fields.Boolean('Ocultar campos tt', compute="_hide_snf", store=False)
 
-    def _update_reserved_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None, strict=False):
+    def _update_reserved_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None, strict=False, ic_order=None):
         """ Increase the reserved quantity, i.e. increase `reserved_quantity` for the set of quants
         sharing the combination of `product_id, location_id` if `strict` is set to False or sharing
         the *exact same characteristics* otherwise. Typically, this method is called when reserving
@@ -363,6 +326,16 @@ class StockQuantTti(models.Model):
         Quizá podría ejecutarse un ciclo antes de éste; siempre que el producto tenga seguimiento por número de serie 
         y que pueda obtenerse una lista de los lot_ids -> quants  desde el sale order (contexto) 
         """
+        if ic_order is not None:
+            _log.info(" NO ES NONE, EL ORDER ES: %s" % ic_order) 
+            # Filtremos los QUANTS para que solo quede los que puede usar según el producto de la linea que se vaya a usar .. 
+            # Los cuants que llegan aquí tienen existencias así que no hay problema si conservamos la lista original de números de serie. 
+            _log.info(" PRODUCTO A FILTRAR ::: %s " % product_id)
+            lots = ic_order.order_line.filtered(lambda l: l.lot_id != False).mapped('lot_id')
+            _log.info(" LOS LOTES DEL SALE ORDER SON ::: %s " % lots)
+            quants = quants.filtered(lambda q: q.lot_id.id in lots.ids)
+            _log.info("\n LOS CUANTS FILTRADOS SON ::: %s " % quants)
+        
         for quant in quants:
             if float_compare(quantity, 0, precision_rounding=rounding) > 0:
                 _log.info("  RESERVANDO ... ")
@@ -387,25 +360,4 @@ class StockQuantTti(models.Model):
                 break
         return reserved_quants
 
-    def _gather(self, product_id, location_id, lot_id=None, package_id=None, owner_id=None, strict=False, lot_list=None):
-        removal_strategy = self._get_removal_strategy(product_id, location_id)
-        removal_strategy_order = self._get_removal_strategy_order(removal_strategy)
-
-        domain = [('product_id', '=', product_id.id)]
-        if not strict:
-            if lot_id:
-                domain = expression.AND([['|', ('lot_id', '=', lot_id.id), ('lot_id', '=', False)], domain])
-            if package_id:
-                domain = expression.AND([[('package_id', '=', package_id.id)], domain])
-            if owner_id:
-                domain = expression.AND([[('owner_id', '=', owner_id.id)], domain])
-            domain = expression.AND([[('location_id', 'child_of', location_id.id)], domain])
-        else:
-            domain = expression.AND([['|', ('lot_id', '=', lot_id.id), ('lot_id', '=', False)] if lot_id else [('lot_id', '=', False)], domain])
-            domain = expression.AND([[('package_id', '=', package_id and package_id.id or False)], domain])
-            domain = expression.AND([[('owner_id', '=', owner_id and owner_id.id or False)], domain])
-            domain = expression.AND([[('location_id', '=', location_id.id)], domain])
-
-        result_quants = self.search(domain, order=removal_strategy_order).sorted(lambda q: not q.lot_id)
-        _log.info(" RESULT QUANTS ::: %s " % result_quants)
-        return result_quants
+    
