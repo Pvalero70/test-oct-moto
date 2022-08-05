@@ -11,6 +11,7 @@
         'views/product_brand.xml',
         'views/stock_views.xml',
         'views/res_company.xml',
+        'views/sale_order.xml',
         'reports/invoice.xml',
     ],
     'assets': {
