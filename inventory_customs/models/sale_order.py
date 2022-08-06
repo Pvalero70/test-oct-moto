@@ -26,21 +26,20 @@ class SaleOrderLinePev(models.Model):
 
     @api.onchange('product_id')
     def _compute_lot_id_domain(self):
-        if self.product_uom_qty != 1:
-            self.lot_domain_ids = False
-            return
-        order_location = self.order_id.warehouse_id.lot_stock_id
-        # Obtenemos el quant
-        quant_domain = [('location_id', '=', order_location.id),
-                        ('product_id', '=', self.product_id.id),
-                        ('quantity', '>', 0)]
-        quant_ids = self.env['stock.quant'].search(quant_domain)
-        available_lots = quant_ids.mapped('lot_id')
-        if not available_lots:
-            return
-        self.lot_domain_ids = [(6, 0, available_lots.ids)]
-
-    # usa self.name_get()  para obtener el nombre original
+        for line in self:
+            if line.product_uom_qty != 1:
+                line.lot_domain_ids = False
+                return
+            order_location = line.order_id.warehouse_id.lot_stock_id
+            # Obtenemos el quant
+            quant_domain = [('location_id', '=', order_location.id),
+                            ('product_id', '=', line.product_id.id),
+                            ('quantity', '>', 0)]
+            quant_ids = self.env['stock.quant'].search(quant_domain)
+            available_lots = quant_ids.mapped('lot_id')
+            if not available_lots:
+                return
+            line.lot_domain_ids = [(6, 0, available_lots.ids)]
 
     @api.onchange('lot_id')
     def calc_add_costs(self):
