@@ -13,6 +13,9 @@
                 <field name="lot_domain_ids" widget="many2many_tags" invisible="1"/>
                 <field name="lot_id" domain="[('id', 'in', lot_domain_ids)]"/>
             </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+                <attribute name="force_save">1</attribute>
+            </xpath>
         </field>
     </record>
 </odoo>
