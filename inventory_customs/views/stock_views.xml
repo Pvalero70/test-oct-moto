@@ -41,9 +41,11 @@
                 <field name="tt_color" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
                 <field name="tt_inventory_number" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
                 <field name="tt_company_currency_id" invisible="1"/>
-                <!-- Los siguientes campos editables bajo permisos. -->
-                <field name="tt_free_optional" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
-                <field name="tt_adc_costs" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
+
+                <field name="can_edit_free_optional" invisible="1"/>
+                <field name="can_edit_adc_costs" invisible="1"/>
+                <field name="tt_free_optional" attrs="{'invisible':[('hide_snf_fields', '=', True)], 'readonly':[('can_edit_free_optional', '=', False)]}"/>
+                <field name="tt_adc_costs" attrs="{'invisible':[('hide_snf_fields', '=', True)], 'readonly':[('can_edit_adc_costs', '=', False)]}"/>
             </field>
         </field>
     </record>

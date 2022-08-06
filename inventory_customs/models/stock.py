@@ -263,6 +263,13 @@ class StockProductionLotTt(models.Model):
     tt_company_currency_id = fields.Many2one('res.currency', default=lambda self: self._default_currency_id())
     tt_adc_costs = fields.Monetary(currency_field="tt_company_currency_id", string="Costos adicionales")
 
+    can_edit_free_optional = fields.Boolean(string="Puede editar opcionales libres. ", compute="_check_if_can_edit")
+    can_edit_adc_costs = fields.Boolean(string="Puede editar opcionales libres. ", compute="_check_if_can_edit")
+
+    def _check_if_can_edit(self):
+        self.can_edit_free_optional = True if self.env.user.has_group('inventory_customs.group_edit_free_optionals') else False
+        self.can_edit_adc_costs = True if self.env.user.has_group('inventory_customs.group_edit_additional_costs') else False
+
     def _default_currency_id(self):
         return self.env.user.company_id.currency_id
 
