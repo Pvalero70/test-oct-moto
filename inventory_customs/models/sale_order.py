@@ -21,7 +21,10 @@ class SaleOrderLinePev(models.Model):
 
     lot_domain_ids = fields.Many2many('stock.production.lot', string="Dominio lot_id", compute="_compute_lot_id_domain", store=False)
     lot_id = fields.Many2one('stock.production.lot', string="#Serie")
+    original_price_unit = fields.Float(string="Precio unitario original")
+    original_name_line = fields.Char(string="Nombre de linea original")
 
+    @api.onchange('product_id')
     def _compute_lot_id_domain(self):
         if self.product_uom_qty != 1:
             self.lot_domain_ids = False
@@ -36,3 +39,17 @@ class SaleOrderLinePev(models.Model):
         if not available_lots:
             return
         self.lot_domain_ids = [(6, 0, available_lots.ids)]
+
+    # usa self.name_get()  para obtener el nombre original
+
+    @api.onchange('lot_id')
+    def calc_add_costs(self):
+        _log.info("Calculando costos adicionales")
+        if not self.lot_id:
+            return
+        if not self.original_price_unit:
+            self.original_price_unit = self.price_unit
+        if not self.original_name_line:
+            self.original_name_line = self.name
+        self.name = "%s \n%s" % (self.original_name_line, self.lot_id.tt_free_optional)
+        self.price_unit = self.original_price_unit + self.lot_id.tt_adc_costs

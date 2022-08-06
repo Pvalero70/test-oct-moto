@@ -8,6 +8,8 @@
         <field name="arch" type="xml">
 
             <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="before">
+                <field name="original_name_line" invisible="1"/>
+                <field name="original_price_unit" invisible="1"/>
                 <field name="lot_domain_ids" widget="many2many_tags" invisible="1"/>
                 <field name="lot_id" domain="[('id', 'in', lot_domain_ids)]"/>
             </xpath>
