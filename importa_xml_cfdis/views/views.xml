@@ -25,100 +25,58 @@
 
   <record  model="ir.ui.view" id="pmg_load_images_import_form">
     <field name="name">pmg.importa.cfdi.form</field>
-    <field name="model">pmg.importa.cfdi</field>            
+    <field name="model">pmg.importa.cfdi.line</field>            
     <field name="arch" type="xml">          
         <form string="Importacion de Cfdis">
-            <header>                        
-                <button name="leer_archivo" type="object" string="Leer Archivo" 
-                    class="oe_highlight" states='draft'/>
-                  
-                <field name="state" widget="statusbar" />
-            </header>
-            <sheet>
+            
+          <header>
+            <button name="leer_archivo" type="object" string="Leer Archivo" 
+              class="oe_highlight" states='draft'/>
+            <field name="cfdi_state" widget="statusbar"/>
+          </header>
+          <sheet>
+            <group>
+              <group>
+                <field name="cfdi_emisor_rfc"/>
+                <field name="cfdi_uuid"/>
+                <field name="cfdi_serie"/>
+                <field name="cfdi_folio"/>
+              </group>
+              <group>
+                <field name="cfdi_fecha"/>
+                <field name="cfdi_moneda"/>
+                <field name="cfdi_subtotal"/>
+                <field name="cfdi_total"/>
+                <field name="purchase_id"/>
+              </group>
+            </group>
+            <notebook>
+              <page string="Conceptos">
+                <field name="cfdi_product_ids">
+                  <tree>
+                    <field name="cfdi_product_id"/>
+                    <field name="cfdi_product_sku"/>
+                    <field name="cfdi_product_description"/>
+                    <field name="cfdi_product_qty"/>
+                    <field name="cfdi_product_price"/>
+                    <field name="cfdi_product_discount"/>
+                    <field name="cfdi_product_tax_code"/>
+                    <field name="cfdi_product_tax_amount"/>
+                    <field name="cfdi_product_amount"/>
+                    <field name="cfdi_product_parte_sku"/>
+                  </tree>
+                </field>
+              </page>
+              <page string="Otros">
                 <group>
-                    <group>                         
-                        <field name="name" readonly="1"/>     
-                        <field name="file_xml" filename="file_name" states="draft"/>     
-                        <field name="file_name" invisible="1"/>     
-                    </group>
+                  <field name="cfdi_errors"/>
+                  <field name="cfdi_data" groups="base.group_no_one"/>
                 </group>
-                <notebook>
-                  <page string="Lineas">                      
-                    <field name="lines">
-                      <tree string="Lineas">
-                        <field name="cfdi_emisor_rfc"/>
-                        <field name="cfdi_uuid"/>
-                        <field name="cfdi_fecha"/>
-                        <field name="cfdi_subtotal"/>
-                        <field name="cfdi_total"/>
-                        <field name="cfdi_state"/>
-                      </tree>
-                      <form>
-                        <header>
-                          <field name="cfdi_state" widget="statusbar"/>
-                        </header>
-                        <sheet>
-                          <group>
-                            <group>
-                              <field name="cfdi_emisor_rfc"/>
-                              <field name="cfdi_uuid"/>
-                              <field name="cfdi_serie"/>
-                              <field name="cfdi_folio"/>
-                            </group>
-                            <group>
-                              <field name="cfdi_fecha"/>
-                              <field name="cfdi_moneda"/>
-                              <field name="cfdi_subtotal"/>
-                              <field name="cfdi_total"/>
-                              <field name="purchase_id"/>
-                            </group>
-                          </group>
-                          <notebook>
-                            <page string="Conceptos">
-                              <field name="cfdi_product_ids">
-                                <tree>
-                                  <field name="cfdi_product_id"/>
-                                  <field name="cfdi_product_sku"/>
-                                  <field name="cfdi_product_description"/>
-                                  <field name="cfdi_product_qty"/>
-                                  <field name="cfdi_product_price"/>
-                                  <field name="cfdi_product_discount"/>
-                                  <field name="cfdi_product_tax_code"/>
-                                  <field name="cfdi_product_tax_amount"/>
-                                  <field name="cfdi_product_amount"/>
-                                  <field name="cfdi_product_parte_sku"/>
-                                </tree>
-                              </field>
-                            </page>
-                            <page string="Otros">
-                              <group>
-                                <field name="cfdi_errors"/>
-                                <field name="cfdi_data" groups="base.group_no_one"/>
-                              </group>
-                            </page>
-                          </notebook>
-                        </sheet>
-                      </form>
-                    </field>
-                  </page>
-                  <page string="Detalle">                      
-                    <field name="lines_detail">
-                      <tree string="Detalle" editable="bottom">
-                        <field name="cfdi_product_id"/>
-                        <field name="cfdi_product_sku"/>
-                        <field name="cfdi_product_description"/>
-                        <field name="cfdi_product_qty"/>
-                        <field name="cfdi_product_price"/>
-                        <field name="cfdi_product_discount"/>
-                        <field name="cfdi_product_amount"/>
-                        <field name="cfdi_product_parte_sku"/>
-                        <field name="line_id"/>
-                      </tree>                        
-                    </field>
-                  </page>
-                </notebook>
-            </sheet>
+              </page>
+            </notebook>
+          </sheet>
         </form>
+                    
     </field>
   </record>       
 

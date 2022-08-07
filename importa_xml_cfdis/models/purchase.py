@@ -11,4 +11,4 @@ class Purchase(models.Model):
 
     _inherit = "purchase.order"
 
-    import_xml_cfdi = fields.Many2one("pmg.importa.cfdi", string="Cfdi")
+    import_xml_cfdi = fields.Many2one("pmg.importa.cfdi.line", string="Cfdi")
