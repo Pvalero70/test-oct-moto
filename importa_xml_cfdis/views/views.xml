@@ -1,6 +1,17 @@
 <odoo>
   <data>
 
+  <record  model="ir.ui.view" id="purchase_importa_cfdi_form">
+      <field name="name">purchase.importa.cfdi.form</field>
+      <field name="model">purchase.order</field>
+      <field name="inherit_id" ref="	purchase.purchase_order_form"/>        
+      <field name="arch" type="xml">
+          <field name="company_id" position="after">
+            <field name="import_xml_cfdi"/>
+          </field>
+      </field>
+  </record>
+
   <record  model="ir.ui.view" id="pmg_importa_cfdi_tree">
       <field name="name">pmg.importa.cfdi.tree</field>
       <field name="model">pmg.importa.cfdi</field>            
