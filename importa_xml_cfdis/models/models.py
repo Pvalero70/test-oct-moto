@@ -6,9 +6,6 @@ from odoo.exceptions import ValidationError
 from datetime import datetime
 from xml.dom import minidom
 
-import zipfile36 as zipfile
-from zipfile36 import ZipFile
-
 import base64
 import logging
 import json
