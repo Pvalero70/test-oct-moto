@@ -11,7 +11,7 @@
           </tree>
       </field>
   </record>
-  
+
   <record  model="ir.ui.view" id="pmg_load_images_import_form">
     <field name="name">pmg.importa.cfdi.form</field>
     <field name="model">pmg.importa.cfdi</field>            
@@ -20,12 +20,6 @@
             <header>                        
                 <button name="leer_archivo" type="object" string="Leer Archivo" 
                     class="oe_highlight" states='draft'/>
-                  
-                <button name="map_info" type="object" string="Mapear Info" 
-                  class="oe_highlight" states='ready'/>
-
-                <button name="create_purchases" type="object" string="Crear Pedidos" 
-                  class="oe_highlight" states='ready'/>
                   
                 <field name="state" widget="statusbar" />
             </header>
