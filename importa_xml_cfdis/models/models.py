@@ -183,7 +183,6 @@ class PmgImportaCfdiLine(models.Model):
 	cfdi_data = fields.Text("CFDI Data")
 	cfdi_uuid = fields.Char('UUID')
 	cfdi_fecha = fields.Char('Fecha')
-	cfdi_emisor_id = fields.Many2one('res.partner', domain="[('supplier', '=', True)]", string='Partner')
 	cfdi_emisor = fields.Char('Emisor')
 	cfdi_emisor_rfc = fields.Char('Emisor RFC')
 	cfdi_serie = fields.Char('Serie')

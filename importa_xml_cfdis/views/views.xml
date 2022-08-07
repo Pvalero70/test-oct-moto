@@ -35,7 +35,6 @@
                   <page string="Lineas">                      
                     <field name="lines">
                       <tree string="Lineas">
-                        <field name="cfdi_emisor_id"/>
                         <field name="cfdi_emisor_rfc"/>
                         <field name="cfdi_uuid"/>
                         <field name="cfdi_fecha"/>
@@ -50,7 +49,6 @@
                         <sheet>
                           <group>
                             <group>
-                              <field name="cfdi_emisor_id"/>
                               <field name="cfdi_emisor_rfc"/>
                               <field name="cfdi_uuid"/>
                               <field name="cfdi_serie"/>
