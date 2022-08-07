@@ -181,7 +181,7 @@ class PmgImportaCfdiLine(models.Model):
 
 	file_xml = fields.Binary(string="Cfdi")
 	file_name = fields.Char('Nombre archivo', default='cfdi_proveedor.xml')
-	cfdi_id = fields.Many2one("pmg.importa.cfdi", "CFDI")
+	# cfdi_id = fields.Many2one("pmg.importa.cfdi", "CFDI")
 	cfdi_data = fields.Text("CFDI Data")
 	cfdi_uuid = fields.Char('UUID')
 	cfdi_fecha = fields.Char('Fecha')
@@ -276,7 +276,7 @@ class PmgImportaCfdiLine(models.Model):
 		cfdi_data = []
 		for record in data:
 			new_cfdi = {
-				"cfdi_id" : rec.id,
+				# "cfdi_id" : rec.id,
 				"cfdi_emisor" : record.get('emisor', {}).get('nombre'),
 				"cfdi_emisor_rfc" : record.get('emisor', {}).get('rfc'),
 				"cfdi_uuid" : record.get('comprobante', {}).get('uuid'),
