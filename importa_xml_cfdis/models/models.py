@@ -20,8 +20,8 @@ class PmgImportaCfdi(models.Model):
 	name = fields.Char(string="Impoprtacion", default=lambda self: "{}".format(datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
 	file_xml = fields.Binary(string="Cfdi")
 	file_name = fields.Char('Nombre archivo', default='cfdi_proveedor.xml')
-	lines = fields.One2many("pmg.importa.cfdi.line", "cfdi_id", "Cfdis Lines")
-	lines_detail = fields.One2many("pmg.importa.cfdi.line.product", "cfdi_id", "Cfdis Products")
+	# lines = fields.One2many("pmg.importa.cfdi.line", "cfdi_id", "Cfdis Lines")
+	# lines_detail = fields.One2many("pmg.importa.cfdi.line.product", "cfdi_id", "Cfdis Products")
 	state = fields.Selection([('draft', 'Pendiente'), ('ready', 'En proceso'), ('done', 'Completado')], string='Estatus', default='draft')
 
 	def _get_xml_data(self, xml_str):
@@ -120,7 +120,7 @@ class PmgImportaCfdi(models.Model):
 			lista_conceptos = []
 			for concepto in record.get('conceptos', []):
 				nuevo_concepto = {
-					"cfdi_id" : rec.id,
+					# "cfdi_id" : rec.id,
 					"cfdi_product_sku" : concepto.get("sku"),
 					"cfdi_product_description" : concepto.get("descripcion"),
 					"cfdi_product_qty" : concepto.get("cantidad"),
@@ -293,7 +293,7 @@ class PmgImportaCfdiLine(models.Model):
 			lista_conceptos = []
 			for concepto in record.get('conceptos', []):
 				nuevo_concepto = {
-					"cfdi_id" : rec.id,
+					# "cfdi_id" : rec.id,
 					"cfdi_product_sku" : concepto.get("sku"),
 					"cfdi_product_description" : concepto.get("descripcion"),
 					"cfdi_product_qty" : concepto.get("cantidad"),
@@ -352,7 +352,7 @@ class PmgImportaCfdiLineProduct(models.Model):
 
 	_rec_name = 'cfdi_product_sku'
 	
-	cfdi_id = fields.Many2one("pmg.importa.cfdi", "CFDI")
+	# cfdi_id = fields.Many2one("pmg.importa.cfdi", "CFDI")
 	line_id = fields.Many2one("pmg.importa.cfdi.line", "CFDI Line")
 	cfdi_product_data = fields.Text("CFDI Product Data")
 	cfdi_product_id = fields.Many2one('product.product', 'Producto')
