@@ -115,7 +115,7 @@
       <field name="name">Carga de Cfdis</field>
       <field name="res_model">pmg.importa.cfdi</field>
       <field name="view_mode">tree,form</field>
-      <field name="view_type">form</field>
+      <!-- <field name="view_type">form</field> -->
       <field name="domain"></field>
       <!-- <field name="view_id" ref="pmg_load_images_import_tree"/> -->
     </record>
