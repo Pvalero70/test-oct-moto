@@ -37,6 +37,12 @@
           <sheet>
             <group>
               <group>
+                <field name="file_xml" filename="file_name" states="draft"/>     
+                <field name="file_name" invisible="1"/>
+              </group>
+            </group>
+            <group states="ready">
+              <group>
                 <field name="cfdi_emisor_rfc"/>
                 <field name="cfdi_uuid"/>
                 <field name="cfdi_serie"/>
