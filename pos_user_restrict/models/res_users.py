@@ -23,7 +23,7 @@ class ResUsers(models.Model):
             self.env['ir.rule'].clear_caches()
 
             try:
-                self.has_group.clear_cache(self)
+                self.clear_caches(self)
             except Exception as e:
                 _logger.error(e)
         return res
