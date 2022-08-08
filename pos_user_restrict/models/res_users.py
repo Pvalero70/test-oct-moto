@@ -22,8 +22,4 @@ class ResUsers(models.Model):
             self.env['ir.model.access'].call_cache_clearing_methods()
             self.env['ir.rule'].clear_caches()
 
-            try:
-                self.clear_caches()
-            except Exception as e:
-                _logger.error(e)
         return res
