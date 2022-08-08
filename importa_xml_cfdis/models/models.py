@@ -194,7 +194,7 @@ class PmgImportaCfdiLine(models.Model):
 	cfdi_total = fields.Char('Total')
 	cfdi_moneda = fields.Char('Moneda')
 	cfdi_product_ids = fields.One2many('pmg.importa.cfdi.line.product', 'line_id', 'Productos')
-	cfdi_state = fields.Selection([('draft', 'Pendiente'),  ('ready', 'En proceso'), ('done', 'Completado')], string='Estatus', default='draft')
+	state = fields.Selection([('draft', 'Pendiente'),  ('ready', 'En proceso'), ('done', 'Completado')], string='Estatus', default='draft')
 	cfdi_errors = fields.Text('Errores de Mapeo')
 
 	def _get_xml_data(self, xml_str):
@@ -345,7 +345,7 @@ class PmgImportaCfdiLine(models.Model):
 		for rec in self:
 			if rec.file_xml:
 				self._leer_xml()
-			rec.cfdi_state = 'ready'		
+			rec.state = 'ready'		
 
 class PmgImportaCfdiLineProduct(models.Model):
 	_name="pmg.importa.cfdi.line.product"

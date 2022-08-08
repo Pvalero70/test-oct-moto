@@ -32,7 +32,7 @@
           <header>
             <button name="leer_archivo" type="object" string="Leer Archivo" 
               class="oe_highlight" states='draft'/>
-            <field name="cfdi_state" widget="statusbar"/>
+            <field name="state" widget="statusbar"/>
           </header>
           <sheet>
             <group>
