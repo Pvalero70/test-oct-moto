@@ -3,6 +3,10 @@
 from odoo import fields, models
 
 
+import logging
+
+_logger = logging.getLogger(__name__)
+
 class ResUsers(models.Model):
     _inherit = 'res.users'
 
@@ -17,5 +21,9 @@ class ResUsers(models.Model):
         if self.ids and 'pos_config_ids' in values:
             self.env['ir.model.access'].call_cache_clearing_methods()
             self.env['ir.rule'].clear_caches()
-            self.has_group.clear_cache(self)
+
+            try:
+                self.has_group.clear_cache(self)
+            except Exception as e:
+                _logger.error(e)
         return res
