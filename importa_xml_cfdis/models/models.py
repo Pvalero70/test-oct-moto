@@ -273,7 +273,6 @@ class PmgImportaCfdiLine(models.Model):
 		return data
 
 	def _save_cfdi_data(self, rec, data):
-		cfdi_data = []
 		for record in data:
 			new_cfdi = {
 				# "cfdi_id" : rec.id,
@@ -312,17 +311,14 @@ class PmgImportaCfdiLine(models.Model):
 
 			new_cfdi['cfdi_product_ids'] = lista_conceptos
 
-			cfdi_data.append((0, 0, new_cfdi))
-
-		if cfdi_data:
 			_logger.info("################")
-			_logger.info(cfdi_data)
+			_logger.info(new_cfdi)
 			# if rec.lines:
 			# 	rec.lines.unlink()
 			# if rec.lines_detail:
 			# 	rec.lines_detail.unlink()
 			try:
-				rec.write(cfdi_data)
+				rec.write(new_cfdi)
 			except Exception as e:
 				_logger.exception(e)
 
