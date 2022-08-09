@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+import logging
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+
+_logger = logging.getLogger(__name__)
 
 class ResUsers(models.Model):
     _inherit = 'res.users'
@@ -46,6 +49,32 @@ class stock_move(models.Model):
                     raise UserError(message % rec.location_dest_id.name)
 
 
+
+class stockQuant(models.Model):
+    _inherit = 'stock.quant'
+
+    @api.onchange('product_id', 'company_id')
+    def _onchange_product_id(self):
+        if self.location_id:
+            return
+        if self.product_id.tracking in ['lot', 'serial']:
+            previous_quants = self.env['stock.quant'].search([
+                ('product_id', '=', self.product_id.id),
+                ('location_id.usage', 'in', ['internal', 'transit'])], limit=1, order='create_date desc')
+            if previous_quants:
+                self.location_id = previous_quants.location_id
+        if not self.location_id:
+            company_id = self.company_id and self.company_id.id or self.env.company.id
+            if self.env.user.has_group('warehouse_stock_restrictions.group_restrict_warehouse'):
+                picking_types = [elem.id for elem in self.env.user.default_picking_type_ids]
+                type_id = self.env['stock.picking.type'].search(
+                    [('company_id', '=', company_id),('id','in',picking_types),('default_location_dest_id','!=',None)], limit=1)
+                if type_id:
+                    self.location_id = type_id.default_location_dest_id
+            else:
+                self.location_id = self.env['stock.warehouse'].search(
+                    [('company_id', '=', company_id)],
+                    limit=1).in_type_id.default_location_dest_id
 
 
 

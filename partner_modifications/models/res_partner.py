@@ -58,7 +58,6 @@ class ResPartnerName(models.Model):
 
     @api.onchange('first_name', 'second_name','first_ap','second_ap')
     def _compute_name_person(self):
-        _logger.info("Ejecutamos on change")
         nombre_completo = ''
         if self.first_name:
             nombre_completo += self.first_name + " "
