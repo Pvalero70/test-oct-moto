@@ -338,8 +338,8 @@ class PmgImportaCfdiLine(models.Model):
 				except Exception as e:
 					_logger.exception(e)
 				else:
-					if not rec.name:
-						rec.name = 'Importacion XML {}'.format(rec.name or datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+					if not rec.file_name:
+						rec.file_name = 'Importacion XML {}'.format(rec.name or datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
 	def leer_archivo(self):
 		for rec in self:
