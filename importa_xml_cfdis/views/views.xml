@@ -71,7 +71,7 @@
                 <field name="cfdi_moneda"/>
                 <field name="cfdi_subtotal"/>
                 <field name="cfdi_total"/>
-                <!-- <field name="purchase_id"/> -->
+                <field name="cfdi_adenda"/>
               </group>
             </group>
             <notebook>
