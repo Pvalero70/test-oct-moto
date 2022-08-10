@@ -36,8 +36,12 @@ class SaleOrderLinePev(models.Model):
                             ('product_id', '=', line.product_id.id),
                             ('quantity', '>', 0)]
             quant_ids = self.env['stock.quant'].search(quant_domain)
+            if not quant_ids:
+                line.lot_domain_ids = [(6, 0,[])]
+                return
             available_lots = quant_ids.mapped('lot_id')
             if not available_lots:
+                line.lot_domain_ids = [(6, 0,[])]
                 return
             line.lot_domain_ids = [(6, 0, available_lots.ids)]
 
