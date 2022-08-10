@@ -22,6 +22,25 @@
       </field>
   </record>
 
+  <record  model="ir.ui.view" id="pmg_cfdi_adenda_form">
+    <field name="name">pmg.importa.cfdi.adenda.form</field>
+    <field name="model">pmg.importa.cfdi.line.adenda</field>            
+    <field name="arch" type="xml">          
+        <form string="Adenda Cfdi">
+
+          <group>
+            <group>
+              <field name="adenda_chasis" /> 
+              <field name="adenda_numero" /> 
+              <field name="adenda_clave_color" /> 
+              <field name="adenda_color" /> 
+            </group>
+          </group>
+
+        </form>
+    </field>
+  </record>
+
   <record  model="ir.ui.view" id="pmg_load_images_import_form">
     <field name="name">pmg.importa.cfdi.form</field>
     <field name="model">pmg.importa.cfdi.line</field>            
@@ -76,6 +95,7 @@
                 <group>
                   <field name="cfdi_errors"/>
                   <field name="cfdi_data" groups="base.group_no_one"/>
+                  <field name="cfdi_adenda"/>
                 </group>
               </page>
             </notebook>
