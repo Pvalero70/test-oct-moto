@@ -33,7 +33,7 @@
               <field name="adenda_chasis" /> 
               <field name="adenda_numero" /> 
               <field name="adenda_clave_color" /> 
-              <field name="adenda_color" /> 
+              <field name="adenda_nombre_color" /> 
             </group>
           </group>
 
