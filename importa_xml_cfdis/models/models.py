@@ -211,7 +211,7 @@ class PmgImportaCfdiLine(models.Model):
 
 	def _leer_xml(self):
 		for rec in self:	
-			xml_str = base64.decodestring(rec.file_xml)
+			xml_str = base64.decodebytes(rec.file_xml)
 			xml_str = xml_str.decode('utf-8')
 			data = self._get_xml_data(xml_str)
 			_logger.info(data)
