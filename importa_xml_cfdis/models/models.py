@@ -70,17 +70,25 @@ class PmgImportaCfdiLine(models.Model):
 		complemento = comprobante.getElementsByTagName('tfd:TimbreFiscalDigital')[0]
 		data['comprobante']['uuid'] = complemento.getAttribute('UUID')
 
-		adenda_chasis = comprobante.getElementsByTagName('ade:CHASIS')[0]
-		chasis = self.getNodeText(adenda_chasis)
+		chasis = ''
+		adenda_chasis = comprobante.getElementsByTagName('ade:CHASIS')
+		if adenda_chasis:
+			chasis = self.getNodeText(adenda_chasis[0])
 
-		adenda_number = comprobante.getElementsByTagName('ade:ENGIENERNUMBER')[0]
-		number = self.getNodeText(adenda_number)
+		number = ''
+		adenda_number = comprobante.getElementsByTagName('ade:ENGIENERNUMBER')
+		if adenda_number:
+			number = self.getNodeText(adenda_number[0])
 
-		adenda_clave_color = comprobante.getElementsByTagName('ade:CVECOLOREXT')[0]
-		clave_color = self.getNodeText(adenda_clave_color)
+		clave_color = ''
+		adenda_clave_color = comprobante.getElementsByTagName('ade:CVECOLOREXT')
+		if adenda_clave_color:
+			clave_color = self.getNodeText(adenda_clave_color)
 
-		adenda_color = comprobante.getElementsByTagName('ade:DESCCOLOREXT')[0]
-		color = self.getNodeText(adenda_color)
+		color = ''
+		adenda_color = comprobante.getElementsByTagName('ade:DESCCOLOREXT')
+		if adenda_color:
+			color = self.getNodeText(adenda_color)
 
 		adenda_data = {
 			'adenda_chasis' : chasis,
