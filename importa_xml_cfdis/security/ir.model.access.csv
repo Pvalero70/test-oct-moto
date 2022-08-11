@@ -1,4 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_pmg_importa_cfdi,pmg_importa_cfdi,model_pmg_importa_cfdi,,1,1,1,1
+access_pmg_importa_cfdi_line_adenda,pmg_importa_cfdi_lne_adenda,model_pmg_importa_cfdi_line_adenda,,1,1,1,1
 access_pmg_importa_cfdi_line,pmg_importa_cfdi_line,model_pmg_importa_cfdi_line,,1,1,1,1
 access_pmg_importa_cfdi_line_product,pmg_importa_cfdi_line_product,model_pmg_importa_cfdi_line_product,,1,1,1,1
