@@ -193,10 +193,10 @@ class PmgImportaCfdiLine(models.Model):
 
 			try:
 				adenda_id = self.env['pmg.importa.cfdi.line.adenda'].create({
-					'adenda_chasis' : record.get('adenda_chasis', ''),
-					'adenda_numero' : record.get('adenda_number', ''),
-					'adenda_clave_color' : record.get('adenda_clave_color', ''),
-					'adenda_nombre_color' : record.get('adenda_nombre_color', '')
+					'adenda_chasis' : record.get('adenda', {}).get('adenda_chasis', ''),
+					'adenda_numero' : record.get('adenda', {}).get('adenda_number', ''),
+					'adenda_clave_color' : record.get('adenda', {}).get('adenda_clave_color', ''),
+					'adenda_nombre_color' : record.get('adenda', {}).get('adenda_nombre_color', '')
 				})
 			except Exception as e:
 				_logger.exception(e)
