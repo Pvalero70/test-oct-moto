@@ -36,7 +36,7 @@ class PmgImportaCfdiLine(models.Model):
 	cfdi_errors = fields.Text('Errores de Mapeo')
 	cfdi_adenda = fields.Many2one('pmg.importa.cfdi.line.adenda', 'Adenda')
 
-	def getNodeText(node):
+	def getNodeText(self, node):
 
 		nodelist = node.childNodes
 		result = []
