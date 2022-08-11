@@ -53,6 +53,43 @@ class SellerCommission(models.Model):
     ], string="Mes", tracking=True, required=True, )
     commission_quantity_lines = fields.Integer(string="Cantidad de conceptos", tracking=True)
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        coms = super(SellerCommission, self).create(vals_list)
+        _log.info("\n CONTEXTO AL CREAR COMISION... %s  " % self.env.context)
+        for com in coms: 
+            _log.info("COMISION:: %s " % com)
+            if not com.company_id:
+                com.company_id = self.env.user.company_id.id
+        return coms
+
+
+    def calc_lines(self):
+        """
+        Hecha para varios registros. 
+        Se crea una linea de comisión en base a la categoría de la pre linea y el hecho de que no tengan una linea asociada, es decir; que no hayan
+        usadas ya con anterioridad. 
+        """
+        _log.info("Calculando lineas con las prelineas")
+        for reg in self: 
+        # iteramos las categorias de las prelineas que no han sido usadas.
+            for categ in reg.preline_ids.filtered(lambda pl: not pl.commission_line_id).mapped('categ_id'):
+                _log.info("Calculando linea para la categoria::: %s (%s) " % (categ, categ.name))
+                # Pre lineas a ser sumadas... 
+                pli = reg.preline_ids.filtered(lambda pl:not pl.commission_line_id and pl.categ_id.id == categ.id)
+                # Hay en donde se sumen? si: suma, no: crea una linea nueva. Se filtra por categoría.  
+                # Método 
+                plines_amount = sum(pli.mapped('amount'))
+                # Calculamos el total de la linea en base a la regla, para ello se tendrá que
+                # calcular que regla exactamente aplica para la categoría y el plines_amount. 
+
+                line_amount_total = 0
+                com_line = reg.line_ids.filtered(lambda li: li.categ_id.id == categ.id)
+                if com_line:
+                    com_line.amount = com_line.amount + line_amount_total
+                else:
+                    # Creamos una linea con el total calculado por la regla especifica. 
+                    pass
 
 class SellerCommissionLine(models.Model):
     _name = "seller.commission.line"
@@ -69,7 +106,8 @@ class SellerCommissionLine(models.Model):
     seller_id = fields.Many2one('res.partner', related="monthly_commission_id.seller_id")
     amount = fields.Float(string="Total de comisión")
     commission_date = fields.Datetime(string="Hora de comisión")
-    comm_method = fields.Many2one('seller.commission.rule', string="Método de calculo")
+    comm_rule = fields.Many2one('seller.commission.rule', string="Regla de calculo")
+    categ_id = fields.Many2one('product.category', string="Categoria de producto")
 
 
 class SellerCommissionPreline(models.Model):
@@ -85,6 +123,13 @@ class SellerCommissionPreline(models.Model):
     commission_id = fields.Many2one('seller.commission', string="Comisión relacionada")
     commission_line_id = fields.Many2one('seller.commission.line', string="linea de comisión", help="Linea de la comisión en la que se sumó. Una linea por factura.")
 
+    # @api.model_create_multi
+    # def create(self, vals_list):
+    #     _log.info("Creando pre line... ")
+    #     res = super(SellerCommissionPreline, self).create(vals_list)
+    #     _log.info(" COMISIONES ")
+    #     res.mapped('commission_id').calc_lines()
+    #     return res
 
 class SellerCommissionRule(models.Model):
     _name = "seller.commission.rule"

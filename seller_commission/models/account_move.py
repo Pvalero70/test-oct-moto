@@ -32,6 +32,9 @@ class AccountMoveSc(models.Model):
                 self.create_seller_preline_commission(move)
         return res
 
+    def commission_test(self):
+        self.create_seller_preline_commission(self)
+
     @api.model
     def create_seller_preline_commission(self, invoice_id):
         _log.info("Creando comision para factura: %s " % invoice_id)

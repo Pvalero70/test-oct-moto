@@ -73,3 +73,4 @@ class SaleOrderSc(models.Model):
             })
             _log.info(" COMISION creada :: %s " % commission_id)
         commission_id.preline_ids = prelines
+        commission_id.calc_lines()

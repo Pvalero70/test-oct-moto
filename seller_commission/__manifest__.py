@@ -11,7 +11,8 @@
     "data": [
         "security/groups.xml",
         "security/ir.model.access.csv",
-        "views/seller_commission.xml"
+        "views/seller_commission.xml",
+        "views/invoice.xml"
     ],
     'assets': {
         'point_of_sale.assets': [

@@ -31,7 +31,8 @@
                         </field>
                         <field name="line_ids" string="Calculo">
                             <tree editable="botttom">
-                                <field name="comm_method"/>
+                                <field name="comm_rule"/>
+                                <field name="categ_id"/>
                                 <field name="commission_date"/>
                                 <field name="amount"/>
                             </tree>
@@ -95,11 +96,11 @@
     </record>
 
     <record id="action_all_seller_commission" model="ir.actions.act_window">
-        <field name="name">All seller commision</field>
+        <field name="name">Todas las comisiones</field>
         <field name="res_model">seller.commission</field>
         <field name="view_mode">tree,form</field>
         <field name="context">{}</field>
-        <field name="domain">[('seller_id.company_id', '=', allowed_company_ids[0])]</field>
+        <field name="domain">[('company_id', '=', allowed_company_ids[0])]</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
             Sin comisiones
