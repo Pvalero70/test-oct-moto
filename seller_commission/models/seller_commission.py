@@ -30,7 +30,7 @@ class SellerCommission(models.Model):
                                'monthly_commission_id',
                                string="Comisiones", tracking=True,
                                help="Lineas de concentrado de sumas, agrupado por categorías. ")
-    preline_ids = fields.One2many('seller.commission.preline', string="Lineas de precalculo", compute="compute_prelines", strore =False)                               
+    preline_ids = fields.One2many('seller.commission.preline', 'commission_id', string="Lineas de precalculo", tracking=True)
     amount_total = fields.Float(string="Total de comision", tracking=True)
     state = fields.Selection([
         ('to_pay', "Por pagar"),
@@ -83,7 +83,7 @@ class SellerCommissionPreline(models.Model):
     categ_id = fields.Many2one('product.category', string="Categoria de producto")
     invoice_id = fields.Many2one('account.move', string="Factura")
     commission_id = fields.Many2one('seller.commission', string="Comisión relacionada")
-    commission_line_id = fields.Many2one('seller.commission.line', string="linea de comisión", help="Linea de la comisión en la que se sumó.")
+    commission_line_id = fields.Many2one('seller.commission.line', string="linea de comisión", help="Linea de la comisión en la que se sumó. Una linea por factura.")
 
 
 class SellerCommissionRule(models.Model):

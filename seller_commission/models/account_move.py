@@ -35,27 +35,31 @@ class AccountMoveSc(models.Model):
     @api.model
     def create_seller_preline_commission(self, invoice_id):
         _log.info("Creando comision para factura: %s " % invoice_id)
-
+        """
+            >>> factura = self.env['account.move'].browse(1345)
+            >>> self.env['account.move'].create_seller_preline_commission(factura)
+        """
         # Buscamos en los POS ORDER, luego SALE ORDER y finalmente REPARATION ORDER.
         pos_order = self.env['pos.order'].search([('account_move', '=', invoice_id.id)])
         if pos_order:
             
             # Revisar si aplica para orden de reparación o para pedido de venta.
             sale_order_ids = pos_order.lines.mapped('sale_order_origin_id')
-            repair_orders_ids = pos_order.repair_ids
-            _log.info(" VENTAS:: %s REPARACIONES:::: %s " % (sale_order_ids, repair_orders_ids))
-            
-            if sale_order_ids and not repair_ids: 
+            # repair_orders_ids = pos_order.repair_ids
+            # _log.info(" VENTAS:: %s REPARACIONES:::: %s " % (sale_order_ids, repair_orders_ids))
+            _log.info(" VENTAS:: %s " % sale_order_ids)
+
+            if sale_order_ids:
                 _log.info("Viene de un pedido de venta.")
                 for so in sale_order_ids:
                      # Iteramos sobre cada una de las ordenes de venta. 
                      if not so.user_id:
                         # Si el sale order no tiene vendedor. 
                         continue
-                     so.create_commission(invoice=invoice_id, order=pos_order)
+                     so.create_commission(invoice=invoice_id)
 
-            elif repair_orders_ids and not sale_order_ids:
-                _log.info("Viene de una orden de reparación")
+            # elif repair_orders_ids and not sale_order_ids:
+            #     _log.info("Viene de una orden de reparación")
             
 
             # # Revisar desde aquí si viene de una orden de reparación, en caso de que el pos order no tenga un ejecutivo.

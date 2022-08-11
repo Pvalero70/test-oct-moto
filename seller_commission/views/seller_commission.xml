@@ -72,7 +72,7 @@
                 <field name="name"/>
                 <field name="calc_method"/>
                 <field name="amount_factor"/>
-                <field name="company_id" invisible="1"/>
+                <field name="company_id" invisible="0"/>
                 <field name="product_categ_ids" widget="many2many_tags" domain="[('parent_id', '=', False)]"/>
                 <field name="amount_start"/>
             </tree>
