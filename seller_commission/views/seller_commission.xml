@@ -24,6 +24,7 @@
                         <field name="preline_ids" string="Precalculo">
                             <tree>
                                 <field name="amount"/>
+                                <field name="quantity"/>
                                 <field name="categ_id"/>
                                 <field name="invoice_id"/>
                                 <field name="commission_line_id"/>

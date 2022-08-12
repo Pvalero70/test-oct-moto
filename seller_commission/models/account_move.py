@@ -44,6 +44,7 @@ class AccountMoveSc(models.Model):
         """
         # Buscamos en los POS ORDER, luego SALE ORDER y finalmente REPARATION ORDER.
         pos_order = self.env['pos.order'].search([('account_move', '=', invoice_id.id)])
+        _log.info(" POS ORDER DE FACTURA::: %s " % pos_order)
         if pos_order:
             
             # Revisar si aplica para orden de reparación o para pedido de venta.
