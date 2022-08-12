@@ -71,6 +71,7 @@ class SellerCommission(models.Model):
         usadas ya con anterioridad. 
         """
         _log.info("Calculando lineas con las prelineas")
+        rules = self.env['seller.commission.rule'].search([('company_id', '=', self.env.company.id)], limit=1)
         for reg in self: 
         # iteramos las categorias de las prelineas que no han sido usadas.
             for categ in reg.preline_ids.filtered(lambda pl: not pl.commission_line_id).mapped('categ_id'):
@@ -78,18 +79,18 @@ class SellerCommission(models.Model):
                 # Pre lineas a ser sumadas... 
                 pli = reg.preline_ids.filtered(lambda pl:not pl.commission_line_id and pl.categ_id.id == categ.id)
                 # Hay en donde se sumen? si: suma, no: crea una linea nueva. Se filtra por categoría.  
-                # Método 
                 plines_amount = sum(pli.mapped('amount'))
-                # Calculamos el total de la linea en base a la regla, para ello se tendrá que
-                # calcular que regla exactamente aplica para la categoría y el plines_amount. 
-
-                line_amount_total = 0
                 com_line = reg.line_ids.filtered(lambda li: li.categ_id.id == categ.id)
+                
+                # Si tenemos calculos ya existentes, tomamos el amount_base para sumarlo con las lineas que aún no se suman y 
+                # filtrar que regla aplicaría para el nuevo monto (recordando que pueden aplicar en rangos)
                 if com_line:
-                    com_line.amount = com_line.amount + line_amount_total
-                else:
-                    # Creamos una linea con el total calculado por la regla especifica. 
-                    pass
+                    plines_amount = plines_amount + com_line.amount
+                
+                rule_id = rules.filtered(lambda ru: categ.id in ru.product_categ_ids.ids)
+
+                
+
 
 class SellerCommissionLine(models.Model):
     _name = "seller.commission.line"
@@ -104,7 +105,8 @@ class SellerCommissionLine(models.Model):
     monthly_commission_id = fields.Many2one('seller.commission', string="Comision mensual", help="Acumulado mensual")
    
     seller_id = fields.Many2one('res.partner', related="monthly_commission_id.seller_id")
-    amount = fields.Float(string="Total de comisión")
+    amount = fields.Float(string="Total de comisión", help="Total a pagar por ésta comisión en determinada categoría de producto.")
+    amount_base = fields.Float(string="Monto base ", help="El monto base del cual se calculará la comisión. ")
     commission_date = fields.Datetime(string="Hora de comisión")
     comm_rule = fields.Many2one('seller.commission.rule', string="Regla de calculo")
     categ_id = fields.Many2one('product.category', string="Categoria de producto")

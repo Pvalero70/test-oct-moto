@@ -34,6 +34,7 @@
                                 <field name="comm_rule"/>
                                 <field name="categ_id"/>
                                 <field name="commission_date"/>
+                                <field name="amount_base"/>
                                 <field name="amount"/>
                             </tree>
                         </field>
