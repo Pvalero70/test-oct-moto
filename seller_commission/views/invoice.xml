@@ -6,6 +6,7 @@
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='button_cancel']" position="replace">
+                <field name="commission_applied_id" invisible="1"/>
                 <button name="commission_test" string="Probar comision" type="object"/>
             </xpath>
         </field>

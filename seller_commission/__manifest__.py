@@ -7,6 +7,7 @@
     "depends": [
         "base",
         "sale",
+        "repair"
     ],
     "data": [
         "security/groups.xml",

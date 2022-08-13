@@ -4,7 +4,7 @@ from odoo import api, models, fields, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 import logging
 
-_log = logging.getLogger("\n\n---___---___--__-···>> SALE Seller Commission:: ")
+_log = logging.getLogger("---___---___--__-···>> SALE Seller Commission:: ")
 
 
 class SaleOrderSc(models.Model):

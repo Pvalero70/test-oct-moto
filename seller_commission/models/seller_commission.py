@@ -25,6 +25,7 @@ class SellerCommission(models.Model):
     """
 
     seller_id = fields.Many2one('res.partner', string="Vendedor", check_company=True)
+    mechanic_id = fields.Many2one('repair.mechanic', string="Mecánico")
     company_id = fields.Many2one('res.company', string="Compañía")
     line_ids = fields.One2many('seller.commission.line',
                                'monthly_commission_id',
@@ -56,7 +57,6 @@ class SellerCommission(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         coms = super(SellerCommission, self).create(vals_list)
-        _log.info("\n CONTEXTO AL CREAR COMISION... %s  " % self.env.context)
         for com in coms: 
             if not com.company_id:
                 com.company_id = self.env.company.id
@@ -83,16 +83,12 @@ class SellerCommission(models.Model):
                 com_line = reg.line_ids.filtered(lambda li: li.categ_id.id == categ.id)
 
                 if com_line:
-                    _log.info("Sumando %s a %s" % (com_line.amount_base, plines_amount))
                     plines_amount = plines_amount + com_line.amount_base
-                _log.info(" AMOUNT BASE CALCULADO :: %s" % plines_amount)
 
                 rule_id = rules.filtered(lambda ru: (categ.id in ru.product_categ_ids.ids) and (plines_amount >= ru.amount_start)).sorted('amount_start', reverse=True)[0]
                 if not rule_id:
                     _log.error("No es posible determinar una regla de calculo de comision para clientes al crear una linea de comision.")
                     return False
-
-                _log.info("CANTIDAD DE VENTAS  ---->><:::: %s " % len(pli))
                 # Calculamos el nuevo monto de comisión según la regla especifica y el monto base nuevo.
                 if rule_id.calc_method in ["percent_utility", "percent_sale"]:
                     # Es un porcentaje de lo que traemos en plines_amount
@@ -105,7 +101,6 @@ class SellerCommission(models.Model):
 
                 if com_line:
                     # Existe una linea para esa categoría. hacemos update.
-                    _log.info("Actualizando la linea::: %s " % com_line)
                     com_line.write({
                         'amount': com_line+line_amount if rule_id.calc_method == "fixed" else line_amount,
                         'amount_base': plines_amount,
@@ -142,7 +137,8 @@ class SellerCommissionLine(models.Model):
 
     monthly_commission_id = fields.Many2one('seller.commission', string="Comision mensual", help="Acumulado mensual")
     name = fields.Char(string="Nombre", compute="_compute_name")
-    seller_id = fields.Many2one('res.partner', related="monthly_commission_id.seller_id")
+    # seller_id = fields.Many2one('res.partner', related="monthly_commission_id.seller_id")
+    # mechanic_id = fields.Many2one('repair.mechanic', related="monthly_commission_id.mechanic_id")
     amount = fields.Float(string="Total de comisión", help="Total a pagar por ésta comisión en determinada categoría de producto.")
     amount_base = fields.Float(string="Monto base ", help="El monto base del cual se calculará la comisión. ")
     commission_date = fields.Datetime(string="Hora de comisión")
