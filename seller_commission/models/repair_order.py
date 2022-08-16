@@ -19,7 +19,6 @@ class RepairOrderSc(models.Model):
 
         if self.fees_lines and len(self.fees_lines) > 0:
             mechanic_commission_id = self.make_prelines_mechanic(invoice)
-        
 
     def make_prelines_seller(self, invoice=None):
         """
@@ -73,7 +72,6 @@ class RepairOrderSc(models.Model):
             _log.info(" COMISION creada :: %s " % commission_id)
         commission_id.preline_ids = prelines
         commission_id.calc_lines()
-
 
     def make_prelines_mechanic(self, invoice=None):
         """

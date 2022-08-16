@@ -13,7 +13,8 @@
         "security/groups.xml",
         "security/ir.model.access.csv",
         "views/seller_commission.xml",
-        "views/invoice.xml"
+        "views/invoice.xml",
+        "wizard/comm_report.xml"
     ],
     'assets': {
         'point_of_sale.assets': [

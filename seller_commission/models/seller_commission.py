@@ -51,7 +51,7 @@ class SellerCommission(models.Model):
         ("10", "Octubre"),
         ("11", "Noviembre"),
         ("12", "Diciembre")
-    ], string="Mes", tracking=True, required=True, )
+    ], string="Mes", tracking=True, required=True)
     commission_quantity_lines = fields.Integer(string="Cantidad de conceptos", tracking=True)
 
     @api.model_create_multi
@@ -77,6 +77,7 @@ class SellerCommission(models.Model):
                 # Pre lineas a ser sumadas.
                 pli = reg.preline_ids.filtered(lambda pl: not pl.commission_line_id and pl.categ_id.id == categ.id)
                 plines_amount = sum(pli.mapped('amount'))
+                plines_pquantity = sum(pli.mapped('quantity'))
                 _log.info("PLINES AMOUNT ::: %s " % plines_amount)
 
                 # Revisamos si tienes una linea previa para esa categoría; si la hay hacemos un update del amount después de
@@ -101,13 +102,12 @@ class SellerCommission(models.Model):
                     line_amount = plines_amount*factor
                 else:
                     # Monto fijo: el monto fijado en la regla es lo que se paga por cada una de las ventas realizadas
-                    sales_qty = len(pli)
-                    line_amount = sales_qty*rule_id.amount_factor
+                    line_amount = rule_id.amount_factor*plines_pquantity
 
                 if com_line:
                     # Existe una linea para esa categoría. hacemos update.
                     com_line.write({
-                        'amount': com_line+line_amount if rule_id.calc_method == "fixed" else line_amount,
+                        'amount': com_line.amount+line_amount if rule_id.calc_method == "fixed" else line_amount,
                         'amount_base': plines_amount,
                         'comm_rule': rule_id.id,
                         'commission_date': fields.Datetime.now()
@@ -151,7 +151,8 @@ class SellerCommissionLine(models.Model):
     categ_id = fields.Many2one('product.category', string="Categoria de producto")
 
     def _compute_name(self):
-        self.name = "%s-%s" % (self.categ_id.name, self.amount)
+        for reg in self:
+            reg.name = "%s-%s" % (reg.categ_id.name, reg.amount)
 
 
 class SellerCommissionPreline(models.Model):
