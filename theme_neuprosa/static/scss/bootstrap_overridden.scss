@@ -1,0 +1,82 @@
+$dropdown-min-width: 200px;
+
+.btn.btn-primary{
+    background-color: $main_color;
+    border-color: $main_color;
+}
+
+.btn.btn-primary:hover{
+    background-color: $third_color;
+    border-color: $third_color;
+}
+
+.btn.btn-outline-primary{
+    color: $main_color;
+    border-color: $main_color;
+}
+
+.btn.btn-outline-primary:hover{
+    background-color: $main_color;
+    border-color: $main_color;
+    color: white;
+}
+
+.btn.btn-secondary{
+    background-color: $secondary_color;
+    border-color: $secondary_color;
+}
+
+.btn.btn-secondary:hover{
+    background-color: $third_color;
+    border-color: $third_color;
+}
+
+.btn.btn-outline-secondary{
+    color: $secondary_color;
+    border-color: $secondary_color;
+}
+
+.btn.btn-outline-secondary:hover{
+    background-color: $secondary_color;
+    border-color: $secondary_color;
+    color: white;
+}
+
+.s_share:not(.no_icon_color) a.s_share_facebook
+{
+    color: white !important;
+}
+
+.s_share:not(.no_icon_color) a.s_share_twitter
+{
+    color: white !important;
+}
+
+.s_share:not(.no_icon_color) a.s_share_linkedin
+{
+    color: white !important;
+}
+
+.s_share:not(.no_icon_color) a.s_share_instagram
+{
+    color: white !important;
+}
+
+.s_share:not(.no_icon_color) a.s_share_mail
+{
+    color: white !important;
+}
+
+.fa.rounded-circle
+{
+    background-color: #ffffff00 !important;
+}
+
+.carousel-indicators li
+{
+    width: 15px !important;
+    height: 15px !important;
+    margin-right: 10px !important;
+    margin-left: 10px !important;
+    border-radius: 50%;
+}

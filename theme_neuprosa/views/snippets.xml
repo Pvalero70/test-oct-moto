@@ -1,0 +1,49 @@
+<odoo>
+    <template id="s_testimonial" name="Testimonial snippet">
+        <section class="s_testimonial">
+            <div class="container">
+                <!-- <div class="row">
+                    <div class="col-lg-4 text-center">
+                        <img alt="client" class="rounded-circle" src="/theme_neuprosa/static/img/LOGO_HOME.png"/>
+                        <h3>Client Name</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <img alt="client" class="rounded-circle" src="/theme_neuprosa/static/img/LOGO_HOME.png"/>
+                        <h3>Client Name</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <img alt="client" class="rounded-circle" src="/theme_neuprosa/static/img/LOGO_HOME.png"/>
+                        <h3>Client Name</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                    </div>
+                </div> -->
+                <div class="d-flex flex-row align-items-stretch">
+                    <div class="p-2 bloque bloque1">
+                        <img alt="client" class="rounded-circle" src="/theme_neuprosa/static/img/LOGO_HOME.png"/>
+                    </div>
+                    <div class="p-2 bloque bloque2">
+                        <img alt="client" class="rounded-circle" src="/theme_neuprosa/static/img/LOGO_HOME.png"/>
+                    </div>
+                    <div class="p-2 bloque bloque3">
+                        <img alt="client" class="rounded-circle" src="/theme_neuprosa/static/img/LOGO_HOME.png"/>
+                    </div>
+                    <div class="p-2 bloque bloque4">
+                        <img alt="client" class="rounded-circle" src="/theme_neuprosa/static/img/LOGO_HOME.png"/>
+                    </div>
+                    <div class="p-2 bloque bloque5">
+                        <img alt="client" class="rounded-circle" src="/theme_neuprosa/static/img/LOGO_HOME.png"/>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template id="place_into_bar" inherit_id="website.snippets" name="Place into bar">
+        <xpath expr="//div[@id='snippet_structure']/div[hasclass('o_panel_body')]" position="inside">
+            <t t-snippet="theme_neuprosa.s_testimonial"
+                    t-thumbnail="/theme_neuprosa/static/img/snippet.jpg"/>
+        </xpath>
+    </template>
+</odoo>
