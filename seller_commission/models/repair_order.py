@@ -42,13 +42,17 @@ class RepairOrderSc(models.Model):
             # line_comm_method = line_rules.mapped('calc_method')
             # Estas lineas no manejan margen de ganancia. No debe considerarse la categoría margen de ganancia para
             # estas piezas. 
-            # Revisando la categoría. 
+            # Revisando la categoría.
+            line_categ = line.product_id.categ_id.parent_id
+            if not line_categ:
+                line_categ = line.product_id.categ_id
             preline = {
                 'amount': line.price_subtotal,
-                'categ_id': line.product_id.categ_id.parent_id.id,
+                'categ_id': line_categ.id,
                 'invoice_id': invoice.id,
                 'quantity': line.product_uom_qty
             }
+            _log.info(" SELLER INFO PRELINEA A CREAR ::: %s " % preline)
             prelines.append((0, 0, preline))
         # Buscamos la última comisión que esté sin pagar para dicho vendedor.
         commission = self.env['seller.commission']
@@ -97,10 +101,11 @@ class RepairOrderSc(models.Model):
             # Revisando la categoría. 
             preline = {
                 'amount': line.price_subtotal,
-                'categ_id': line.product_id.categ_id.parent_id.id,
+                'categ_id': line.product_id.categ_id.id,
                 'invoice_id': invoice.id,
                 'quantity': line.product_uom_qty
             }
+            _log.info(" MECHANIC INFO PRELINEA A CREAR ::: %s " % preline)
             prelines.append((0, 0, preline))
         # Buscamos la última comisión que esté sin pagar para dicho vendedor.
         if len(prelines) > 0:

@@ -4,7 +4,7 @@ from odoo import api, models, fields, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 import logging
 
-_log = logging.getLogger("\n\n---___---___--__-···>> Seller Commission:: ")
+_log = logging.getLogger("__--__-->> Seller Commission:: ")
 
 
 class SellerCommission(models.Model):
@@ -72,11 +72,12 @@ class SellerCommission(models.Model):
         rules = self.env['seller.commission.rule'].search([('company_id', '=', self.env.company.id)])
         for reg in self: 
         # iteramos las categorias de las prelineas que no han sido usadas.
-            for categ in reg.preline_ids.filtered(lambda pl: not pl.commission_line_id).mapped('categ_id'):
+            for categ in reg.preline_ids.filtered(lambda pl: not pl.commission_line_id and pl.categ_id).mapped('categ_id'):
                 _log.info("Calculando linea para la categoria::: %s (%s) " % (categ, categ.name))
                 # Pre lineas a ser sumadas.
                 pli = reg.preline_ids.filtered(lambda pl: not pl.commission_line_id and pl.categ_id.id == categ.id)
                 plines_amount = sum(pli.mapped('amount'))
+                _log.info("PLINES AMOUNT ::: %s " % plines_amount)
 
                 # Revisamos si tienes una linea previa para esa categoría; si la hay hacemos un update del amount después de
                 # sumarle el amount_base y reeconsiderar una nueva regla.
@@ -85,10 +86,14 @@ class SellerCommission(models.Model):
                 if com_line:
                     plines_amount = plines_amount + com_line.amount_base
 
-                rule_id = rules.filtered(lambda ru: (categ.id in ru.product_categ_ids.ids) and (plines_amount >= ru.amount_start)).sorted('amount_start', reverse=True)[0]
-                if not rule_id:
-                    _log.error("No es posible determinar una regla de calculo de comision para clientes al crear una linea de comision.")
-                    return False
+                rule_id = rules.filtered(lambda ru: (categ.id in ru.product_categ_ids.ids) and (plines_amount >= ru.amount_start))
+                _log.info(" CATEGORIAS ESPERADA DE LINEA::: %s   " % rule_id)
+                if rule_id:
+                    rule_id = rule_id.sorted('amount_start', reverse=True)[0]
+                else:
+                    _log.error(
+                        "No es posible determinar una regla de calculo de comision para esta categoría (%s) de producto." % categ.name)
+                    continue
                 # Calculamos el nuevo monto de comisión según la regla especifica y el monto base nuevo.
                 if rule_id.calc_method in ["percent_utility", "percent_sale"]:
                     # Es un porcentaje de lo que traemos en plines_amount

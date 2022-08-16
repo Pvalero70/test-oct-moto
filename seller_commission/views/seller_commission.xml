@@ -8,14 +8,15 @@
         <field name="arch" type="xml">
             <form>
                 <header>
+                    <button name="calc_lines" type="object" string="Actualizar comisión" class="oe_highlight"/>
                     <field name="state" widget="statusbar" statusbar_visible="to_pay,paid"/>
                 </header>
                 <sheet>
                     <h2>Comision de vendedor</h2>
                     <group>
                         <group>
-                            <field name="seller_id" atts="{'invisible':[('seller_id','=', False)]}"/>
-                            <field name="mechanic_id" atts="{'invisible':[('mechanic_id','=', False)]}"/>
+                            <field name="seller_id" atts="{'invisible':[('mechanic_id','!=', False)]}"/>
+                            <field name="mechanic_id" atts="{'invisible':[('seller_id','!=', False)]}"/>
                             <field name="company_id"/>
                         </group>
                         <group>
@@ -58,6 +59,7 @@
         <field name="arch" type="xml">
             <tree string="Comisiones de ejecutivos de ventas">
                 <field name="seller_id"/>
+                <field name="mechanic_id"/>
                 <field name="amount_total"/>
                 <field name="current_month"/>
                 <field name="state"/>
