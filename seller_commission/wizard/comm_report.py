@@ -88,8 +88,84 @@ class CommWizardReport(models.TransientModel):
 
     def mechanic_report(self):
         _log.info(" Regresando reporte de mecánicos.. ")
-
+        # Considerar que seleccionen el mismo mes o bien que seleccionen el primero o bien uno de los dos.
         self.file_name = 'Servicios %s a %s de %s.xlsx' % (NUM_MONTHS[self.month_start], NUM_MONTHS[self.month_final], self.year)
+        fp = io.BytesIO()
+        workbook = xlsxwriter.Workbook(fp, {'in_memory': True})
+        encabezados = workbook.add_format(
+            {'bold': 'True', 'font_size': 12, 'bg_color': '#B7F9B0', 'center_across': True})
+
+        # Buscamos las comisiones de los mecánicos.
+        # Agrupamos comisiones por mecánicos e iteramos las mismas.
+        months = self.create_month_range(self.month_start, self.month_final)
+        domain = [
+            ('current_month', 'in', months)
+        ]
+        if not self.include_paid_comms:
+            domain.append(('state', '=', "to_pay"))
+        comm_ids = self.env['seller.commission'].search(domain)
+        mechanic_ids = comm_ids.mapped('mechanic_id')
+        _log.info(" MECANICOS .... :: :%s " % mechanic_ids)
+        for mechanic in mechanic_ids:
+            sheet = workbook.add_worksheet('%s' % mechanic.display_name)
+            sheet.set_column(0, 0, 15)
+            sheet.set_column(1, 1, 45)
+            sheet.set_column(2, 2, 15)
+            sheet.set_column(3, 5, 12)
+            sheet.set_column(6, 8, 12)
+            sheet.write(0, 0, 'Orden', encabezados)
+            sheet.write(0, 1, 'Fecha', encabezados)
+            sheet.write(0, 2, 'T', encabezados)
+            sheet.write(0, 3, 'Orden', encabezados)
+            sheet.write(0, 4, 'Modelo', encabezados)
+            sheet.write(0, 5, 'Servicio', encabezados)
+            sheet.write(0, 6, 'Cantidad', encabezados)
+            sheet.write(0, 7, 'P. Unitario', encabezados)
+            sheet.write(0, 8, 'Subtotal', encabezados)
+            sheet.write(0, 9, 'Regla comisión', encabezados)
+            sheet.write(0, 10, 'Comisión', encabezados)
+            total_comision = 0
+
+            # Comisiones de mecánico.
+            mechanic_coms = comm_ids.filtered(lambda co: co.mechanic_id and co.mechanic_id.id == mechanic.id)
+            mc_prelines_applied = mechanic_coms.mapped('preline_ids').filtered(lambda pl: pl.commission_line_id is not False)
+            row_pl = 1
+            # Buscar las lineas relacionadas (rec_id) y en el ciclo abajo
+            # las filtramos.
+
+            _log.info("PRELINAS:: %s " % mc_prelines_applied)
+            for mcpl in mc_prelines_applied:
+
+                sheet.write(row_pl, 0, "aaaaaaaaa")
+                sheet.write(row_pl, 1, "bbbbbbb")
+                sheet.write(row_pl, 2, "cccccccccc")
+                sheet.write(row_pl, 3, "dddddddddddd")
+                sheet.write(row_pl, 4, "eeeeeeee")
+                sheet.write(row_pl, 5, "dfff")
+                sheet.write(row_pl, 6, 'sss')
+                sheet.write(row_pl, 7, 'sss')
+                sheet.write(row_pl, 8, mcpl.amount) # Subtotal
+                sheet.write(row_pl, 9, mcpl.commission_line_id.comm_rule.name) # Regla de comision
+                sheet.write(row_pl, 10, 'sss')
+                row_pl += 1
+
+        workbook.close()
+        fp.seek(0)
+        self.excel_file = base64.encodestring(fp.getvalue())
+        fp.close()
+        url = self.env['ir.config_parameter'].get_param('web.base.url')
+        file_url = url + "/web/binary/download_document?model=comm.wizard.report&id=%s&field=excel_file&filename=%s" % (
+            self.id, self.file_name)
+        _log.info(file_url)
+        return {
+            'type': 'ir.actions.act_url',
+            'url': file_url,
+        }
+
+    def motos_report(self):
+        _log.info(" GENERANDO REPORTE DE MOTOS.. ")
+        self.file_name = 'Motocicletas %s a %s de %s.xlsx' % (
+        NUM_MONTHS[self.month_start], NUM_MONTHS[self.month_final], self.year)
         fp = io.BytesIO()
         workbook = xlsxwriter.Workbook(fp, {'in_memory': True})
         encabezados = workbook.add_format(
@@ -129,11 +205,60 @@ class CommWizardReport(models.TransientModel):
             'url': file_url,
         }
 
-    def motos_report(self):
-        _log.info(" GENERANDO REPORTE DE MOTOS.. ")
-        return False
-
     def ref_acc_report(self):
         _log.info("Generando reporte de accesorios y refacciones")
-        return False
+        self.file_name = 'Refacciones y accesorios %s a %s de %s.xlsx' % (
+        NUM_MONTHS[self.month_start], NUM_MONTHS[self.month_final], self.year)
+        fp = io.BytesIO()
+        workbook = xlsxwriter.Workbook(fp, {'in_memory': True})
+        encabezados = workbook.add_format(
+            {'bold': 'True', 'font_size': 12, 'bg_color': '#B7F9B0', 'center_across': True})
+        sheet = workbook.add_worksheet('Libro 1')
+        sheet.set_column(0, 0, 15)
+        sheet.set_column(1, 1, 45)
+        sheet.set_column(2, 2, 15)
+        sheet.set_column(3, 5, 12)
+        sheet.set_column(6, 8, 12)
+        sheet.write(0, 0, 'Codigo', encabezados)
+        sheet.write(0, 1, 'Descripción', encabezados)
+        sheet.write(0, 2, 'Sucursal', encabezados)
+        sheet.write(0, 3, 'Cantidad Teorica', encabezados)
+        sheet.write(0, 4, 'Precio Unitario', encabezados)
+        sheet.write(0, 5, 'Precio Total', encabezados)
+        sheet.write(0, 6, 'Cantidad Real', encabezados)
+        r = 2
+        sheet.write(r, 0, "aaaaaaaaa")
+        sheet.write(r, 1, "bbbbbbb")
+        sheet.write(r, 2, "cccccccccc")
+        sheet.write(r, 3, "dddddddddddd")
+        sheet.write(r, 4, "eeeeeeee")
+        sheet.write(r, 5, "dfff")
+        sheet.write(r, 6, 'sss')
 
+        workbook.close()
+        fp.seek(0)
+        self.excel_file = base64.encodestring(fp.getvalue())
+        fp.close()
+        url = self.env['ir.config_parameter'].get_param('web.base.url')
+        file_url = url + "/web/binary/download_document?model=comm.wizard.report&id=%s&field=excel_file&filename=%s" % (
+            self.id, self.file_name)
+        _log.info(file_url)
+        return {
+            'type': 'ir.actions.act_url',
+            'url': file_url,
+        }
+
+    @api.model
+    def create_month_range(self, ini, fin):
+        """
+        Método que crea un arreglo de numeros como char, dados inicio y fin.
+        :param ini: string mes inicial
+        :param fin: string mes final
+        :return: array de meses (numeros como string)
+        """
+        ini_i = int(ini)
+        fin_i = int(fin)
+        if fin_i < ini_i:
+            raise UserError("El mes final debe ser posterior al mes inicial")
+        months_i = list(range(ini_i, fin_i+1))
+        return list(map(str, months_i))

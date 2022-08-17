@@ -198,6 +198,7 @@ class SellerCommissionPreline(models.Model):
     commission_id = fields.Many2one('seller.commission', string="Comisión relacionada")
     commission_line_id = fields.Many2one('seller.commission.line', string="linea de comisión", help="Linea de la comisión en la que se sumó. Una linea por factura.")
     quantity = fields.Float(string="Cantidad de productos")
+    rec_id = fields.Integer(string="Id registro linea origen")
 
 
 class SellerCommissionRule(models.Model):

@@ -52,7 +52,8 @@ class SaleOrderSc(models.Model):
                 'amount': calc_amount,
                 'categ_id': sline.product_id.categ_id.parent_id.id,
                 'invoice_id': invoice.id,
-                'quantity': sline.product_uom_qty
+                'quantity': sline.product_uom_qty,
+                'rec_id': sline.id
             }
             prelines.append((0, 0, preline))
         # Buscamos la última comisión que esté sin pagar para dicho vendedor.

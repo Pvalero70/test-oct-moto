@@ -49,7 +49,8 @@ class RepairOrderSc(models.Model):
                 'amount': line.price_subtotal,
                 'categ_id': line_categ.id,
                 'invoice_id': invoice.id,
-                'quantity': line.product_uom_qty
+                'quantity': line.product_uom_qty,
+                'rec_id': line.id
             }
             _log.info(" SELLER INFO PRELINEA A CREAR ::: %s " % preline)
             prelines.append((0, 0, preline))
@@ -101,7 +102,8 @@ class RepairOrderSc(models.Model):
                 'amount': line.price_subtotal,
                 'categ_id': line.product_id.categ_id.id,
                 'invoice_id': invoice.id,
-                'quantity': line.product_uom_qty
+                'quantity': line.product_uom_qty,
+                'rec_id': line.id
             }
             _log.info(" MECHANIC INFO PRELINEA A CREAR ::: %s " % preline)
             prelines.append((0, 0, preline))
