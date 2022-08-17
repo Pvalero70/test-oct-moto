@@ -180,16 +180,10 @@ class PosSession(models.Model):
         
         debit_line = None
         for line in debit_lines:
-            _logger.info("#### en logs debit_line ###")
-            _logger.info(line.move_id.name)
-            _logger.info(line.account_id.name)
-            _logger.info(line.name)
-            _logger.info(line.debit)
-            _logger.info(line.credit)
             if line.debit >= sum_credits_updated:
-                _logger.info("### Se asigno una linea de debito ###")
                 debit_line = line
                 break
+        _logger.info("Valor de debit line %s",debit_line)
         if debit_line:
             _logger.info("DEBIT LINE")
             _logger.info(debit_line.debit)
