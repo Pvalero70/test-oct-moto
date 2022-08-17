@@ -187,6 +187,7 @@ class PosSession(models.Model):
             _logger.info(line.debit)
             _logger.info(line.credit)
             if line.debit >= sum_credits_updated:
+                _logger.info("### Se asigno una linea de debito ###")
                 debit_line = line
                 break
         if debit_line:
