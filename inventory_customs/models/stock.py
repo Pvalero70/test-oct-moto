@@ -277,19 +277,19 @@ class StockProductionLotTt(models.Model):
         self.hide_snf_fields = self.env.company.restrict_inv_sn_flow
     hide_snf_fields = fields.Boolean('Ocultar campos tt', compute="_hide_snf", store=False)
 
-    @api.constrains('tt_number_motor', 'tt_inventory_number')
-    def _check_motor_inventory_unique_numbers(self):
-        if self.env.company.restrict_inv_sn_flow:
-            return False
-        for reg in self:
-            if reg.tt_number_motor:
-                other_reg_motor = self.env['stock.production.lot'].search([('tt_number_motor', '=', reg.tt_number_motor), ('id', '!=', reg.id)])
-                if other_reg_motor:
-                    raise UserError("El número de motor debe ser único")
-            if reg.tt_inventory_number:
-                other_reg_inventory = self.env['stock.production.lot'].search([('tt_inventory_number', '=', reg.tt_inventory_number), ('id', '!=', reg.id)])
-                if other_reg_inventory:
-                    raise UserError("El número de inventario debe ser único")
+    # @api.constrains('tt_number_motor', 'tt_inventory_number')
+    # def _check_motor_inventory_unique_numbers(self):
+    #     if self.env.company.restrict_inv_sn_flow:
+    #         return False
+    #     for reg in self:
+    #         if reg.tt_number_motor:
+    #             other_reg_motor = self.env['stock.production.lot'].search([('tt_number_motor', '=', reg.tt_number_motor), ('id', '!=', reg.id)])
+    #             if other_reg_motor:
+    #                 raise UserError("El número de motor debe ser único")
+    #         if reg.tt_inventory_number:
+    #             other_reg_inventory = self.env['stock.production.lot'].search([('tt_inventory_number', '=', reg.tt_inventory_number), ('id', '!=', reg.id)])
+    #             if other_reg_inventory:
+    #                 raise UserError("El número de inventario debe ser único")
 
 
 class StockQuantTti(models.Model):
