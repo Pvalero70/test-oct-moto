@@ -5,7 +5,7 @@ from odoo.tools.misc import clean_context, OrderedSet
 from odoo.tools.float_utils import float_compare, float_is_zero, float_round
 import logging
 from odoo.osv import expression
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 import re
 _log = logging.getLogger("___name: %s" % __name__)
 CUSTOM_NUMBERS_PATTERN = re.compile(r'[0-9]{2}  [0-9]{2}  [0-9]{4}  [0-9]{7}')
