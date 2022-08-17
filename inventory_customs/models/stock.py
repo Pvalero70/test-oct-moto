@@ -282,14 +282,14 @@ class StockProductionLotTt(models.Model):
         if self.env.company.restrict_inv_sn_flow:
             return False
         for reg in self:
-            if not reg.tt_number_motor and not reg.tt_inventory_number:
-                continue
-            other_reg_motor = self.env['stock.production.lot'].search([('tt_number_motor', '=', reg.tt_number_motor), ('id', '!=', reg.id)])
-            if other_reg_motor:
-                raise UserError("El número de motor debe ser único")
-            other_reg_inventory = self.env['stock.production.lot'].search([('tt_inventory_number', '=', reg.tt_inventory_number), ('id', '!=', reg.id)])
-            if other_reg_inventory:
-                raise UserError("El número de inventario debe ser único")
+            if reg.tt_number_motor:
+                other_reg_motor = self.env['stock.production.lot'].search([('tt_number_motor', '=', reg.tt_number_motor), ('id', '!=', reg.id)])
+                if other_reg_motor:
+                    raise UserError("El número de motor debe ser único")
+            if reg.tt_inventory_number:
+                other_reg_inventory = self.env['stock.production.lot'].search([('tt_inventory_number', '=', reg.tt_inventory_number), ('id', '!=', reg.id)])
+                if other_reg_inventory:
+                    raise UserError("El número de inventario debe ser único")
 
 
 class StockQuantTti(models.Model):
