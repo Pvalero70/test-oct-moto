@@ -45,7 +45,7 @@ class RepairMechanic(models.Model):
     is_lot_repair = fields.Boolean(string="El lote es para una reparacion", compute='_get_lot_repair', store=True)
 
     @api.depends('is_lot_repair')
-    def _get_company_partner(self):
+    def _get_lot_repair(self):
         for rec in self:
             for pick in rec.picking_ids:
                 if rec.lot_id:
