@@ -42,6 +42,20 @@ class ProductProductRepair(models.Model):
 class RepairMechanic(models.Model):
     _inherit = 'repair.order'
 
+    is_lot_repair = fields.Boolean(string="El lote es para una reparacion", compute='_get_lot_repair', store=True)
+
+    @api.depends('is_lot_repair')
+    def _get_company_partner(self):
+        for rec in self:
+            for pick in rec.picking_ids:
+                if rec.lot_id:
+                    _logger.info("Asignamos lote reparacion a %s",rec.name)
+                    pick.lot_id_product = rec.lot_id
+                    rec.is_lot_repair = True
+                else:
+                    rec.is_lot_repair = False
+
+
     @api.onchange('partner_id')
     def _products_order(self):
         _logger.info("En onchange partner")
@@ -87,6 +101,7 @@ class StockPickingInherit(models.Model):
     def button_validate(self):
         if self.lot_id_product:
             #Si existe este campo es que proviene de una reparacion
+            _logger.info("### Reparacion proviene de moto = true")
             self.lot_id_product.is_repair_moto_action = True
 
         res = super(StockPickingInherit, self).button_validate()
@@ -108,6 +123,7 @@ class StockQuantInherit(models.Model):
                 if quant.lot_id.product_id:
                     product = quant.lot_id.product_id
                     categoria = product.categ_id
+                    _logger.info("### ES UNA REPARACION DE MOTO %s", quant.lot_id.is_repair_moto_action)
                     if quant.lot_id.is_repair_moto_action:
                         if categoria.name == 'Motos':
                             return
