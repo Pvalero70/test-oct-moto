@@ -42,18 +42,27 @@ class ProductProductRepair(models.Model):
 class RepairMechanic(models.Model):
     _inherit = 'repair.order'
 
-    is_lot_repair = fields.Boolean(string="El lote es para una reparacion", compute='_get_lot_repair', store=True)
+    is_lote_repair = fields.Boolean(string="El lote es para una reparacion", compute='_get_lot_repair', store=True)
 
-    @api.depends('is_lot_repair')
+    @api.depends('is_lote_repair')
     def _get_lot_repair(self):
         for rec in self:
             for pick in rec.picking_ids:
                 if rec.lot_id:
                     _logger.info("Asignamos lote reparacion a %s",rec.name)
-                    pick.lot_id_product = rec.lot_id
-                    rec.is_lot_repair = True
+                    _logger.info(pick.name)
+                    pick.write({'lot_id_product' : rec.lot_id})
+                    rec.is_lote_repair = True
                 else:
-                    rec.is_lot_repair = False
+                    rec.is_lote_repair = False
+            for pick in rec.picking_sale_ids:
+                if rec.lot_id:
+                    _logger.info("Asignamos lote reparacion a %s", rec.name)
+                    _logger.info(pick.name)
+                    pick.write({'lot_id_product': rec.lot_id})
+                    rec.is_lote_repair = True
+                else:
+                    rec.is_lote_repair = False
 
 
     @api.onchange('partner_id')
@@ -89,6 +98,9 @@ class RepairMechanic(models.Model):
         res = super(RepairMechanic, self).action_incoming()
         for pick in self.picking_ids:
             pick.lot_id_product = self.lot_id
+
+        for pick in self.picking_sale_ids:
+            pick.lot_id_product = self.lot_id
         return res
 
 
@@ -103,6 +115,7 @@ class StockPickingInherit(models.Model):
             #Si existe este campo es que proviene de una reparacion
             _logger.info("### Reparacion proviene de moto = true")
             self.lot_id_product.is_repair_moto_action = True
+        else:
 
         res = super(StockPickingInherit, self).button_validate()
 
