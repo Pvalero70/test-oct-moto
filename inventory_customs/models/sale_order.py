@@ -20,7 +20,7 @@ class SaleOrderLinePev(models.Model):
     _inherit = "sale.order.line"
 
     lot_domain_ids = fields.Many2many('stock.production.lot', string="Dominio lot_id", compute="_compute_lot_id_domain", store=False)
-    lot_id = fields.Many2one('stock.production.lot', string="#Serie", tracking=True)
+    lot_id = fields.Many2one('stock.production.lot', string="#Serie")
     original_price_unit = fields.Float(string="Precio unitario original")
     original_name_line = fields.Char(string="Nombre de linea original")
 
