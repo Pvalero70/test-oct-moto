@@ -175,11 +175,17 @@ class PosSession(models.Model):
                         _logger.info(new_credit)                       
                         update_lines.append((1, line.id, {"credit" : new_credit}))
                     procesed_lines.append(line.id)
-        
+        _logger.info("Sum credits updated")
         _logger.info(sum_credits_updated)
         
         debit_line = None
         for line in debit_lines:
+            _logger.info("#### en logs debit_line ###")
+            _logger.info(line.move_id.name)
+            _logger.info(line.account_id.name)
+            _logger.info(line.name)
+            _logger.info(line.debit)
+            _logger.info(line.credit)
             if line.debit >= sum_credits_updated:
                 debit_line = line
                 break
