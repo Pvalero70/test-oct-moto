@@ -12,11 +12,11 @@
                     <field name="state" widget="statusbar" statusbar_visible="to_pay,paid"/>
                 </header>
                 <sheet>
-                    <h2>Comision de vendedor</h2>
+                    <h2><field name="name" force_save="1"/></h2>
                     <group>
                         <group>
-                            <field name="seller_id" atts="{'invisible':[('mechanic_id','!=', False)]}"/>
-                            <field name="mechanic_id" atts="{'invisible':[('seller_id','!=', False)]}"/>
+                            <field name="seller_id"/>
+                            <field name="mechanic_id"/>
                             <field name="company_id"/>
                         </group>
                         <group>
@@ -58,13 +58,14 @@
         <field name="priority">1</field>
         <field name="arch" type="xml">
             <tree string="Comisiones de ejecutivos de ventas">
-                <field name="seller_id"/>
-                <field name="mechanic_id"/>
+                <field name="seller_id" optional="hide"/>
+                <field name="mechanic_id" optional="hide"/>
+                <field name="name" force_save="1"/>
                 <field name="amount_total"/>
                 <field name="current_month"/>
                 <field name="state"/>
-                <field name="company_id"/>
-                <field name="commission_quantity_lines"/>
+                <field name="company_id" optional="hide"/>
+                <field name="commission_quantity_lines" optional="hide"/>
             </tree>
         </field>
     </record>

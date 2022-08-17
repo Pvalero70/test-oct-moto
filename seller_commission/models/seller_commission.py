@@ -6,6 +6,21 @@ import logging
 
 _log = logging.getLogger("__--__-->> Seller Commission:: ")
 
+NUM_MONTHS = {
+    "1": 'Enero',
+    "2": "Febrero",
+    "3": "Marzo",
+    "4": "Abril",
+    "5": "Mayo",
+    "6": "Junio",
+    "7": "Julio",
+    "8": "Agosto",
+    "9": "Septiembre",
+    "10": "Octubre",
+    "11": "Noviembre",
+    "12": "Diciembre"
+}
+
 
 class SellerCommission(models.Model):
     _name = "seller.commission"
@@ -23,7 +38,7 @@ class SellerCommission(models.Model):
     Por lo anterior, Se debe establecer un constrain en las reglas para que cuando una categoría sea establecida con un método de calculo,
     no pueda ser establecida otra regla con la misma categoría pero con diferente método; es decir: una categoría siempre tendrá un mismo método. 
     """
-
+    name = fields.Char(string="Nombre", compute="compute_name", store=True)
     seller_id = fields.Many2one('res.partner', string="Vendedor", check_company=True)
     mechanic_id = fields.Many2one('repair.mechanic', string="Mecánico")
     company_id = fields.Many2one('res.company', string="Compañía")
@@ -38,7 +53,6 @@ class SellerCommission(models.Model):
         ('paid', "Pagada")], tracking=True, string="Estado")
     payment_date = fields.Datetime(string="Fecha de pago", tracking=True)
     current_month = fields.Selection([
-        ("0", ""),
         ("1", 'Enero'),
         ("2", "Febrero"),
         ("3", "Marzo"),
@@ -60,7 +74,23 @@ class SellerCommission(models.Model):
         for com in coms: 
             if not com.company_id:
                 com.company_id = self.env.company.id
+            if not com.name:
+                com.compute_name()
         return coms
+
+    def compute_name(self):
+        for reg in self:
+            if reg.seller_id:
+                reg.name = "%s - %s" % (reg.seller_id.name, NUM_MONTHS[reg.current_month])
+            else:
+                mechanic_name = "%s" % reg.mechanic_id.first_name
+                if reg.mechanic_id.second_name:
+                    mechanic_name = mechanic_name+" %s" % reg.mechanic_id.second_name
+                if reg.mechanic_id.first_ap:
+                    mechanic_name = mechanic_name + " %s" % reg.mechanic_id.first_ap
+                if reg.mechanic_id.second_ap:
+                    mechanic_name = mechanic_name + " %s" % reg.mechanic_id.second_ap
+                reg.name = "%s - %s" % (mechanic_name, NUM_MONTHS[reg.current_month])
 
     def calc_lines(self):
         """
