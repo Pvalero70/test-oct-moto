@@ -115,7 +115,6 @@ class StockPickingInherit(models.Model):
             #Si existe este campo es que proviene de una reparacion
             _logger.info("### Reparacion proviene de moto = true")
             self.lot_id_product.is_repair_moto_action = True
-        else:
 
         res = super(StockPickingInherit, self).button_validate()
 
