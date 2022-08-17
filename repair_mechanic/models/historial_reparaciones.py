@@ -42,9 +42,9 @@ class ProductProductRepair(models.Model):
 class RepairMechanic(models.Model):
     _inherit = 'repair.order'
 
-    is_lote_repair = fields.Boolean(string="El lote es para una reparacion", compute='_get_lot_repair', store=True)
+    is_lot_repair = fields.Boolean(string="El lote es para una reparacion", compute='_get_lot_repair', store=True)
 
-    @api.depends('is_lote_repair')
+    @api.depends('is_lot_repair')
     def _get_lot_repair(self):
         for rec in self:
             for pick in rec.picking_ids:
@@ -52,17 +52,17 @@ class RepairMechanic(models.Model):
                     _logger.info("Asignamos lote reparacion a %s",rec.name)
                     _logger.info(pick.name)
                     pick.write({'lot_id_product' : rec.lot_id})
-                    rec.is_lote_repair = True
+                    rec.is_lot_repair = True
                 else:
-                    rec.is_lote_repair = False
+                    rec.is_lot_repair = False
             for pick in rec.picking_sale_ids:
                 if rec.lot_id:
                     _logger.info("Asignamos lote reparacion a %s", rec.name)
                     _logger.info(pick.name)
                     pick.write({'lot_id_product': rec.lot_id})
-                    rec.is_lote_repair = True
+                    rec.is_lot_repair = True
                 else:
-                    rec.is_lote_repair = False
+                    rec.is_lot_repair = False
 
 
     @api.onchange('partner_id')
