@@ -135,8 +135,8 @@ class CommWizardReport(models.TransientModel):
 
             _log.info("PRELINAS:: %s " % mc_prelines_applied)
             for mcpl in mc_prelines_applied:
-
-                sheet.write(row_pl, 0, "aaaaaaaaa")
+                rol = self.env['repair.fee'].browse(mcpl.rec_id)
+                sheet.write(row_pl, 0, rol.repair_id.name)
                 sheet.write(row_pl, 1, "bbbbbbb")
                 sheet.write(row_pl, 2, "cccccccccc")
                 sheet.write(row_pl, 3, "dddddddddddd")
