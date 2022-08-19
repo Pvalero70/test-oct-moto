@@ -15,8 +15,7 @@ class StockPickingReturn(models.Model):
     permiso_devolucion = fields.Boolean(string="Permiso devolucion", compute="_compute_devolucion_permiso", store=False)
     es_devolucion = fields.Boolean(string="Es una devolucion", compute="_compute_es_devolucion", store=False)
 
-
-    @api.onchange('picking_type_id')
+    @api.depends('permiso_devolucion')
     def _compute_devolucion_permiso(self):
         grupo_devolucion = self.env.user.has_group('credit_note_restrict.aprobe_devolucion_group')
 
@@ -31,7 +30,7 @@ class StockPickingReturn(models.Model):
             self.permiso_devolucion = True
 
 
-    @api.onchange('picking_type_id')
+    @api.depends('es_devolucion')
     def _compute_es_devolucion(self):
         if self.picking_type_id and (self.picking_type_id.sequence_code == 'DEV' or self.picking_type_id.name =='Devoluciones'):
             self.es_devolucion = True
