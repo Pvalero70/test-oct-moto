@@ -31,7 +31,7 @@ class RepairOrderInherit(models.Model):
                 continue
             else:
                 self.is_ready_to_pos = False
-                _log.info("Ha cambiado una fee_line to false %s , disponible pos %s ", self.name, fee.is_ready_to_pos)
+                _log.info("Ha cambiado una fee_line to false %s , disponible pos %s ", self.name, self.is_ready_to_pos)
                 return
 
         self.is_ready_to_pos = True
