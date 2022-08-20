@@ -23,7 +23,7 @@ class RepairOrderInherit(models.Model):
             rec._compute_fees_lines_ok()
             _log.info("COMPUTAMOS %s , disponible pos %s", rec.name, rec.is_ready_to_pos)
 
-    @api.depends('fees_lines', 'fees_lines.sale_ok', 'fees_lines.available_in_pos')
+    @api.depends('fees_lines', 'fees_lines.product_id', 'fees_lines.product_id.sale_ok','fees_lines.product_id.available_in_pos')
     def _compute_fees_lines_ok(self):
         _log.info("Ha cambiado una fee_line %s , disponible pos %s %s", self.name)
         for fee in self.fees_lines:
