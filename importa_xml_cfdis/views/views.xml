@@ -7,7 +7,9 @@
       <field name="inherit_id" ref="purchase.purchase_order_form"/>        
       <field name="arch" type="xml">
           <field name="company_id" position="after">
-            <field name="import_xml_cfdi"/>
+            <field name="file_xml" filename="file_name"/>     
+            <field name="file_name" invisible="1"/>
+            <field name="import_xml_cfdi" readonly="1"/>
           </field>
       </field>
   </record>
@@ -48,8 +50,17 @@
         <form string="Importacion de Cfdis">
             
           <header>
-            <button name="leer_archivo" type="object" string="Leer Archivo" 
-              class="oe_highlight" states='draft'/>
+             <!-- <button name="leer_archivo" type="object" string="Leer Archivo" 
+              class="oe_highlight"/> -->
+            <!--<button name="leer_description" type="object" string="Leer Descripcion TT" 
+              class="oe_highlight"/> -->
+
+            <!-- <button name="leer_description_solomoto" type="object" string="Leer Descripcion SOLO" 
+              class="oe_highlight"/> -->
+            
+            <!--<button name="leer_description_jurgen" type="object" string="Leer Descripcion Jurgen" 
+              class="oe_highlight"/> -->
+
             <field name="state" widget="statusbar"/>
           </header>
           <sheet>
@@ -83,11 +94,15 @@
                     <field name="cfdi_product_description"/>
                     <field name="cfdi_product_qty"/>
                     <field name="cfdi_product_price"/>
-                    <field name="cfdi_product_discount"/>
-                    <field name="cfdi_product_tax_code"/>
-                    <field name="cfdi_product_tax_amount"/>
                     <field name="cfdi_product_amount"/>
-                    <field name="cfdi_product_parte_sku"/>
+                    <!-- <field name="cfdi_product_discount"/> -->
+                    <!-- <field name="cfdi_product_tax_code"/> -->
+                    <!-- <field name="cfdi_product_tax_amount"/> -->
+                    <field name="cfdi_product_clave_prod"/>
+                    <field name="cfdi_product_chasis"/>
+                    <field name="cfdi_product_numero"/>
+                    <field name="cfdi_product_clave_color"/>
+                    <field name="cfdi_product_nombre_color"/>
                   </tree>
                 </field>
               </page>

@@ -83,12 +83,12 @@ class PmgImportaCfdiLine(models.Model):
 		clave_color = ''
 		adenda_clave_color = comprobante.getElementsByTagName('ade:CVECOLOREXT')
 		if adenda_clave_color:
-			clave_color = self.getNodeText(adenda_clave_color)
+			clave_color = self.getNodeText(adenda_clave_color[0])
 
 		color = ''
 		adenda_color = comprobante.getElementsByTagName('ade:DESCCOLOREXT')
 		if adenda_color:
-			color = self.getNodeText(adenda_color)
+			color = self.getNodeText(adenda_color[0])
 
 		adenda_data = {
 			'adenda_chasis' : chasis,
@@ -184,7 +184,7 @@ class PmgImportaCfdiLine(models.Model):
 					"cfdi_product_tax_base" : concepto.get("impuesto", {}).get('tax_base'),
 					"cfdi_product_tax_rate" : concepto.get("impuesto", {}).get('tax_rate'),
 					"cfdi_product_tax_amount" : concepto.get("impuesto", {}).get('tax_amount'),
-					"cfdi_product_parte_sku" : concepto.get("parte", {}).get('parte_sku'),
+					# "cfdi_product_parte_sku" : concepto.get("parte", {}).get('parte_sku'),
 					"cfdi_product_data" : json.dumps(concepto)
 
 				}
@@ -232,11 +232,156 @@ class PmgImportaCfdiLine(models.Model):
 					if not rec.file_name:
 						rec.file_name = 'Importacion XML {}'.format(rec.name or datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
 
+	def leer_description(self):
+
+		for rec in self:
+			for product in rec.cfdi_product_ids:
+				_logger.info("## PRODUCT DATA ##")
+				_logger.info(product.cfdi_product_description)
+				sku = product.cfdi_product_sku
+				descr = product.cfdi_product_description
+				descr_words = descr.split(" ")
+				_logger.info(descr_words)
+
+				lista_busqueda = ['NIV', 'MOTOR', 'COLOR']
+				not_found = False
+				for word in lista_busqueda:
+					if word not in descr_words:
+						_logger.info('Not Found')
+						not_found = True
+						break
+
+				if not_found:
+					continue
+				data = {}
+				for word in lista_busqueda:
+					index = descr_words.index(word)
+					value = descr_words[index+1]
+					data[word] = value
+					_logger.info(f'{data[word]}')
+
+				product.write({
+					"cfdi_product_clave_prod" : sku,
+					"cfdi_product_chasis" : data.get('NIV', ''),
+					"cfdi_product_numero" : data.get('MOTOR', ''),
+					"cfdi_product_clave_color" : data.get('COLOR', ''),
+					"cfdi_product_nombre_color" : data.get('COLOR', ''),
+				})
+
+	def leer_description_solomoto(self):
+
+		for rec in self:
+			for product in rec.cfdi_product_ids:
+				_logger.info("## PRODUCT DATA ##")
+				_logger.info(product.cfdi_product_description)
+				descr = product.cfdi_product_description
+
+				descr_list = descr.split(" ")
+
+				descr_data = []
+				if descr_list:
+					descr_data = [el.strip() for el in descr_list if el]
+					_logger.info(descr_data)
+
+				if len(descr_data) == 3:
+					
+					# _logger.info("Len: 3")
+					# if len(descr_data[-1]) == 11 and len(descr_data[-2]) == 4:
+					_logger.info("Coincidencia..")
+					numero_motor = descr_data[-1]
+					_logger.info(f'Motor: {numero_motor}')
+					sku = descr_data[-2]
+					_logger.info(f'Sku: {sku}')
+					numero_serie = product.cfdi_product_sku
+					_logger.info(f'Serie: {numero_serie}')
+
+					product.write({
+						"cfdi_product_clave_prod" : sku,
+						"cfdi_product_chasis" : numero_serie,
+						"cfdi_product_numero" : numero_motor,
+						
+					})
+
+				# if len(descr) < 11:
+				# 	continue
+
+				# numero_motor = descr[-11:]
+				# _logger.info(numero_motor)
+
+
+				# numero_serie = product.cfdi_product_sku
+				# _logger.info(numero_serie)
+				
+				
+
+	def leer_description_jurgen(self):
+
+		for rec in self:
+			
+			adenda = rec.cfdi_adenda
+
+			numero_serie = adenda.adenda_chasis
+			_logger.info(numero_serie)
+
+			numero_motor = adenda.adenda_numero
+			_logger.info(numero_motor)
+
+			clave_color = adenda.adenda_clave_color
+			_logger.info(clave_color)
+
+			nombre_color = adenda.adenda_nombre_color
+			_logger.info(nombre_color)
+
+			for product in rec.cfdi_product_ids:
+				
+				sku = product.cfdi_product_sku
+				
+				product.write({
+					"cfdi_product_chasis" : numero_serie,
+					"cfdi_product_numero" : numero_motor,
+					"cfdi_product_clave_color" : clave_color,
+					"cfdi_product_nombre_color" : nombre_color,
+					"cfdi_product_clave_prod" : sku,
+				})
+					
 	def leer_archivo(self):
 		for rec in self:
 			if rec.file_xml:
 				self._leer_xml()
-			rec.state = 'ready'		
+
+				if rec.cfdi_emisor_rfc == "KME931015PC0":
+					self.leer_description()
+
+				elif rec.cfdi_emisor_rfc == "BME940711FR5":
+					self.leer_description_jurgen()
+
+				elif rec.cfdi_emisor_rfc == "YMM9105032FA":
+					self.leer_description_solomoto()
+
+			rec.state = 'ready'	
+
+	# @api.onchange('file_name')
+	# def _onchange_file_name(self):
+	# 	_logger.info("### ON CHANGE ###")
+	# 	_logger.info("### ON CHANGE ###")
+	# 	_logger.info("### ON CHANGE ###")
+	# 	_logger.info("### ON CHANGE ###")
+	# 	_logger.info("### ON CHANGE ###")
+	# 	if self.file_xml:
+	# 		self.leer_archivo()
+
+	# @api.model
+	# def create(self, vals):
+	# 	res = super(PmgImportaCfdiLine, self).create(vals)
+	# 	if res.file_xml:
+	# 		self.leer_archivo()
+	# 	return res
+
+	# def write(self, vals):
+	# 	res = super(PmgImportaCfdiLine, self).write(vals)
+	# 	if self.file_xml:
+	# 		self.leer_archivo()
+	# 	return res
 
 class PmgImportaCfdiAdenda(models.Model):
 	_name = 'pmg.importa.cfdi.line.adenda'
@@ -257,7 +402,7 @@ class PmgImportaCfdiLineProduct(models.Model):
 	line_id = fields.Many2one("pmg.importa.cfdi.line", "CFDI Line")
 	cfdi_product_data = fields.Text("CFDI Product Data")
 	cfdi_product_id = fields.Many2one('product.product', 'Producto')
-	cfdi_product_sku = fields.Char('SKU Proveedor')
+	cfdi_product_sku = fields.Char('No Identificacion')
 	cfdi_product_description = fields.Char('Description')
 	cfdi_product_qty = fields.Char('Quantity')
 	cfdi_product_price = fields.Char('Price')
@@ -267,4 +412,9 @@ class PmgImportaCfdiLineProduct(models.Model):
 	cfdi_product_tax_base = fields.Char('Base')
 	cfdi_product_tax_rate = fields.Char('Rate')
 	cfdi_product_tax_amount = fields.Char('Tax Amount')
-	cfdi_product_parte_sku = fields.Char('Parte Sku')
+	# cfdi_product_parte_sku = fields.Char('Parte Sku')
+	cfdi_product_clave_prod = fields.Char('Clave Producto')
+	cfdi_product_chasis = fields.Char('Numero Serie')
+	cfdi_product_numero = fields.Char('Numero Motor')
+	cfdi_product_clave_color = fields.Char('Clave Color')
+	cfdi_product_nombre_color = fields.Char('Color')

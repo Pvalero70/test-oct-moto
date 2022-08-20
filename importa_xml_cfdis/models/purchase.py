@@ -11,4 +11,51 @@ class Purchase(models.Model):
 
     _inherit = "purchase.order"
 
-    import_xml_cfdi = fields.Many2one("pmg.importa.cfdi.line", string="Cfdi")
+    import_xml_cfdi = fields.Many2one("pmg.importa.cfdi.line", string="Cfdi Data")
+    file_xml = fields.Binary(string="Cfdi")
+    file_name = fields.Char('Nombre archivo', default='cfdi_proveedor.xml')
+
+    # @api.onchange('file_xml')
+    # def _onchange_file_xml(self):
+    #     _logger.info("##############")
+    #     _logger.info("##############")
+    #     _logger.info("##############")
+    #     _logger.info("##############")
+    #     if self.file_xml:
+    #         cfdi = self.env['pmg.importa.cfdi.line'].create({
+    #             "file_xml" : self.file_xml
+    #         })
+
+    #         if cfdi:
+    #             _logger.info("### CREATED ####")
+    #             _logger.info("### CREATED ####")
+    #             _logger.info("### CREATED ####")
+
+    #             cfdi.leer_archivo()
+
+    def procesa_xml(self, cfdi_line):
+        if cfdi_line:
+            cfdi_line.leer_archivo()
+
+    def write(self, vals):
+        res = super(Purchase, self).write(vals)
+
+        if not self.file_xml and self.import_xml_cfdi:
+            self.import_xml_cfdi.unlink()
+
+        if self.file_xml and vals.get('file_xml'):
+            
+            if self.import_xml_cfdi:
+                self.import_xml_cfdi.unlink()
+                    
+            cfdi_id = self.env['pmg.importa.cfdi.line'].create({
+                "file_xml" : self.file_xml
+            })
+            if cfdi_id:
+                _logger.info("####")
+                _logger.info("####")
+                _logger.info(cfdi_id)
+                self.procesa_xml(cfdi_id)
+                self.write({"import_xml_cfdi" : cfdi_id})
+
+        return res
