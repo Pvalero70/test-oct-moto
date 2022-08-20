@@ -20,21 +20,17 @@ class RepairOrderInherit(models.Model):
     def _computed_is_ready(self):
         for rec in self:
             rec.compute_fees_lines_ok()
-            _log.info("COMPUTAMOS %s , disponible pos %s", rec.name, rec.is_ready_to_pos)
 
     @api.depends('fees_lines', 'fees_lines.product_id', 'fees_lines.product_id.sale_ok','fees_lines.product_id.available_in_pos')
     def compute_fees_lines_ok(self):
-        _log.info("Ha cambiado una fee_line %s , disponible pos", self.name)
         for fee in self.fees_lines:
             if fee.product_id and fee.product_id.sale_ok and fee.product_id.available_in_pos:
                 continue
             else:
                 self.write({'is_ready_to_pos':False})
-                _log.info("Ha cambiado una fee_line to false %s , disponible pos %s ", self.name, self.is_ready_to_pos)
                 return
 
         self.write({'is_ready_to_pos' : True})
-        _log.info("Ha cambiado una fee_line to true %s , disponible pos %s ", self.name, self.is_ready_to_pos)
 
     def _compute_tpv_count(self):
          for order in self:
