@@ -155,13 +155,13 @@ class PosSession(models.Model):
 
                 if monto_payment_pos > 0 and pago_pos_close.amount >= monto_payment_pos:
                     pago_pos_close.action_draft()
-                    # _logger.info("## Se cambia a borrador ##")
-                    # _logger.info(pago_pos_close.amount)
+                    _logger.info("## Se cambia a borrador ##")
+                    _logger.info(pago_pos_close.amount)
                     pago_pos_close.amount = pago_pos_close.amount - monto_payment_pos
-                    # _logger.info("## Se actualiza monto ##")
-                    # _logger.info(pago_pos_close.amount)
+                    _logger.info("## Se actualiza monto ##")
+                    _logger.info(pago_pos_close.amount)
                     pago_pos_close.action_post()
-                    # _logger.info("## Se vuelve a confirmar ##")
+                    _logger.info("## Se vuelve a confirmar ##")
 
         lines = self.env['account.move.line']
         # all_related_moves = self._get_related_account_moves()
@@ -238,21 +238,75 @@ class PosSession(models.Model):
                         _logger.info(new_credit)                       
                         update_lines.append((1, line.id, {"credit" : new_credit}))
                     procesed_lines.append(line.id)
-        
+        _logger.info("Sum credits updated")
         _logger.info(sum_credits_updated)
-        
-        debit_line = None
+
+        lines_debit_data = []
         for line in debit_lines:
-            if line.debit >= sum_credits_updated:
-                debit_line = line
-                break
-        if debit_line:
-            _logger.info("DEBIT LINE")
-            _logger.info(debit_line.debit)
-            _logger.info(sum_credits_updated)
-            new_debit = debit_line.debit - sum_credits_updated
-            _logger.info(new_debit)                
-            update_lines.append((1, debit_line.id, {"debit" : new_debit}))
+            lines_debit_data.append({
+                "id" : line.id,
+                "amount" : line.debit                    
+            })
+
+        sort_payment_data = []
+        for payment in payment_partner_list:
+            sort_payment_data.append({
+                "id" : payment.id,
+                "amount" : payment.amount
+            })
+
+        procesed_lines_ids = []
+        pending_payments = []
+        for payment in sort_payment_data:
+            payment_amount = payment["amount"]
+            payment_found = False
+            for line in lines_debit_data:
+                if line["amount"] == payment_amount:
+                    new_debit = line["amount"] - payment_amount
+                    line["amount"] = new_debit
+                    # update_lines.append((1, debit_line.id, {"debit" : new_debit}))
+                    procesed_lines_ids.append(line["id"])
+                    payment_found = True
+                    break
+            if not payment_found:
+                pending_payments.append(payment)
+
+        if pending_payments:
+
+            pending_payments = sorted(pending_payments, key=lambda d: d['amount'], reverse=True) 
+
+            for payment in pending_payments:
+                payment_amount = payment["amount"]
+
+                for line in lines_debit_data:
+                    if line["id"] in procesed_lines_ids:
+                        continue
+
+                    if line["amount"] >= payment_amount:                    
+                        new_debit = line["amount"] - payment_amount
+                        line["amount"] = new_debit                    
+                        break
+
+        for line in lines_debit_data:
+            update_lines.append((1, line["id"], {"debit" : line["amount"]}))
+
+
+
+
+        
+        # debit_line = None
+        # for line in debit_lines:
+        #     if line.debit >= sum_credits_updated:
+        #         debit_line = line
+        #         break
+        # _logger.info("Valor de debit line %s",debit_line)
+        # if debit_line:
+        #     _logger.info("DEBIT LINE")
+        #     _logger.info(debit_line.debit)
+        #     _logger.info(sum_credits_updated)
+        #     new_debit = debit_line.debit - sum_credits_updated
+        #     _logger.info(new_debit)                
+        #     update_lines.append((1, debit_line.id, {"debit" : new_debit}))
         # else:
         #     _logger.info("ELSE")
         #     debit_pending = sum_credits_updated
@@ -267,7 +321,7 @@ class PosSession(models.Model):
         #             update_lines.append((1, line.id, {"debit" : new_debit}))
 
         if update_lines and session_move:
-            _logger.info("Se intenta actualizar lineas.")
+            _logger.info("Se intenta actualizar lineas")
             _logger.info(update_lines)
             try:
                 session_move.write({"line_ids" : update_lines})
@@ -288,3 +342,12 @@ class PosSession(models.Model):
                     session_move.button_cancel()
                 else:
                     session_move.action_post()
+                # Descomentar para borrar el asiento
+                # for line in debit_move_id.line_ids:
+                #     if line.debit == 0 and line.credit == 0:
+                #         line.unlink()
+                # if not debit_move_id.line_ids:
+                #     _logger.info("Se elimina move porque no tiene lineas")
+                #     debit_move_id.unlink()
+                # else:
+                #     debit_move_id.action_post()
