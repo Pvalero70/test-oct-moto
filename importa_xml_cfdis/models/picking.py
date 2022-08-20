@@ -52,7 +52,9 @@ class StockPicking(models.Model):
                                 "lot_id" : lote.id,
                                 "tt_motor_number" :  res.cfdi_product_numero,
                                 "tt_color" : res.cfdi_product_nombre_color,
-                                "product_uom_id" : 1
+                                "product_uom_id" : 1,
+                                "location_id" : self.location_id.id,
+                                "company_id" : self.company_id.id
                             })]
                         
                     else:
