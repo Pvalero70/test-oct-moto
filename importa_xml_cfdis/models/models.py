@@ -378,7 +378,7 @@ class PmgImportaCfdiLine(models.Model):
 						if res:
 							_logger.info(res.id)
 							_logger.info(res.product_id.id)
-							_logger.info(res.product_templ_id.id)
+							_logger.info(res.product_tmpl_id.id)
 							line.write({'cfdi_product_id' : res.product_id.id, 'cfdi_product_state' : 'mapped'})
 						else:
 							line.write({'cfdi_product_state' : 'error'})
