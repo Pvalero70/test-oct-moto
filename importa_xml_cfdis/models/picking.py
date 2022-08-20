@@ -9,6 +9,8 @@ _logger = logging.getLogger(__name__)
 
 class StockPicking(models.Model):
 
+    _inherit = 'stock.picking'
+
     def button_validate(self):
         self.validar_xml_purchase()
         return
