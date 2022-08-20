@@ -367,6 +367,18 @@ class PmgImportaCfdiLine(models.Model):
 				if partner:
 					rec.partner_id = partner.id
 
+					lista_proveedores = self.env['product.supplierinfo']
+
+					for line in rec.cfdi_product_ids:
+
+						product_sku = line.cfdi_product_clave_prod
+
+						res = lista_proveedores.search([('partner_id', '=', partner.id), ('product_code', '=', product_sku)], limit=1)
+
+						if res:
+							line.write({'cfdi_product_id' : res.id, 'cfdi_product_state' : 'mapped'})
+						else:
+							line.write({'cfdi_product_state' : 'error'})
 
 class PmgImportaCfdiAdenda(models.Model):
 	_name = 'pmg.importa.cfdi.line.adenda'
@@ -403,3 +415,8 @@ class PmgImportaCfdiLineProduct(models.Model):
 	cfdi_product_numero = fields.Char('Numero Motor')
 	cfdi_product_clave_color = fields.Char('Clave Color')
 	cfdi_product_nombre_color = fields.Char('Color')
+	cfdi_product_state = fields.Selection([
+		('pending', 'Pendiente'),
+		('mapped', 'Mapeado'),
+		('error', 'No encontrado')
+	], string='Estatus', default='pending')

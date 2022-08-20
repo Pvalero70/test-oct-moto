@@ -91,7 +91,7 @@
             </group>
             <notebook>
               <page string="Conceptos">
-                <field name="cfdi_product_ids">
+                <field name="cfdi_product_ids" editable="bottom">
                   <tree>
                     <field name="cfdi_product_id"/>
                     <field name="cfdi_product_sku"/>
@@ -107,6 +107,7 @@
                     <field name="cfdi_product_numero"/>
                     <field name="cfdi_product_clave_color"/>
                     <field name="cfdi_product_nombre_color"/>
+                    <field name="cfdi_product_state"/>
                   </tree>
                 </field>
               </page>
