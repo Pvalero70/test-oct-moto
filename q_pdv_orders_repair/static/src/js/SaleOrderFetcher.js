@@ -65,7 +65,7 @@ odoo.define('q_pdv_orders_repair.SaleOrderFetcher', function (require) {
             return await this.rpc({
                 model: 'repair.order',
                 method: 'search_read',
-                args: [[['state', '=', '2binvoiced'],['location_id', '=', location_src]], ['name', 'partner_id', 'amount_total', 'schedule_date', 'state', 'user_id'], offset, limit],
+                args: [[['state', '=', '2binvoiced'],['location_id', '=', location_src],['is_ready_to_pos', '=', true]], ['name', 'partner_id', 'amount_total', 'schedule_date', 'state', 'user_id'], offset, limit],
             });
         },
 

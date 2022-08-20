@@ -18,6 +18,7 @@ class ProductProductInherit(models.Model):
         res = super(ProductProductInherit, self).write(values)
         if 'sale_ok' in values or 'available_in_pos' in values:
             repair_orders = self.env['repair.order'].search([('state', '=', '2binvoiced')])
+            _log.info("ORDENES A SER FACTURADAS %S",repair_orders)
             for repair in repair_orders:
                 repair.compute_fees_lines_ok()
 
