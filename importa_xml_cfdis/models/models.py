@@ -376,7 +376,7 @@ class PmgImportaCfdiLine(models.Model):
 						res = lista_proveedores.search([('name', '=', partner.id), ('product_code', '=', product_sku)], limit=1)
 
 						if res:
-							line.write({'cfdi_product_id' : res.id, 'cfdi_product_state' : 'mapped'})
+							line.write({'cfdi_product_id' : res.product_id.id, 'cfdi_product_state' : 'mapped'})
 						else:
 							line.write({'cfdi_product_state' : 'error'})
 
