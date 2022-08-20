@@ -379,7 +379,11 @@ class PmgImportaCfdiLine(models.Model):
 							_logger.info(res.id)
 							_logger.info(res.product_id.id)
 							_logger.info(res.product_tmpl_id.id)
-							line.write({'cfdi_product_id' : res.product_id.id, 'cfdi_product_state' : 'mapped'})
+							prod = res.product_id
+							tmpl = res.product_tmpl_id
+							if not prod:
+								prod = self.env['product.product'].search([('product_tmpl_id', '=', tmpl.id)], limit=1)
+							line.write({'cfdi_product_id' : prod.id, 'cfdi_product_state' : 'mapped'})
 						else:
 							line.write({'cfdi_product_state' : 'error'})
 
