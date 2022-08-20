@@ -29,11 +29,11 @@ class RepairOrderInherit(models.Model):
             if fee.product_id and fee.product_id.sale_ok and fee.product_id.available_in_pos:
                 continue
             else:
-                self.is_ready_to_pos = False
+                self.write({'is_ready_to_pos':False})
                 _log.info("Ha cambiado una fee_line to false %s , disponible pos %s ", self.name, self.is_ready_to_pos)
                 return
 
-        self.is_ready_to_pos = True
+        self.write({'is_ready_to_pos' : True})
         _log.info("Ha cambiado una fee_line to true %s , disponible pos %s ", self.name, self.is_ready_to_pos)
 
     def _compute_tpv_count(self):
