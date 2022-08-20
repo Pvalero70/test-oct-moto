@@ -15,24 +15,6 @@ class Purchase(models.Model):
     file_xml = fields.Binary(string="Cfdi")
     file_name = fields.Char('Nombre archivo', default='cfdi_proveedor.xml')
 
-    # @api.onchange('file_xml')
-    # def _onchange_file_xml(self):
-    #     _logger.info("##############")
-    #     _logger.info("##############")
-    #     _logger.info("##############")
-    #     _logger.info("##############")
-    #     if self.file_xml:
-    #         cfdi = self.env['pmg.importa.cfdi.line'].create({
-    #             "file_xml" : self.file_xml
-    #         })
-
-    #         if cfdi:
-    #             _logger.info("### CREATED ####")
-    #             _logger.info("### CREATED ####")
-    #             _logger.info("### CREATED ####")
-
-    #             cfdi.leer_archivo()
-
     def procesa_xml(self, cfdi_line):
         if cfdi_line:
             cfdi_line.leer_archivo()

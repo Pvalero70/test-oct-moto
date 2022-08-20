@@ -252,7 +252,9 @@ class PmgImportaCfdiLine(models.Model):
 						break
 
 				if not_found:
+					product.write({"cfdi_product_clave_prod" : sku})
 					continue
+
 				data = {}
 				for word in lista_busqueda:
 					index = descr_words.index(word)
@@ -301,18 +303,6 @@ class PmgImportaCfdiLine(models.Model):
 						"cfdi_product_numero" : numero_motor,
 						
 					})
-
-				# if len(descr) < 11:
-				# 	continue
-
-				# numero_motor = descr[-11:]
-				# _logger.info(numero_motor)
-
-
-				# numero_serie = product.cfdi_product_sku
-				# _logger.info(numero_serie)
-				
-				
 
 	def leer_description_jurgen(self):
 
