@@ -27,6 +27,7 @@ class PmgImportaCfdiLine(models.Model):
 	cfdi_emisor_rfc = fields.Char('Emisor RFC')
 	
 	partner_id = fields.Many2one('res.partner', 'Proveedor')
+	purchase_id = fields.Many2one('purchase.order', 'Orden Compra')
 
 	cfdi_serie = fields.Char('Serie')
 	cfdi_folio = fields.Char('Folio')
@@ -352,7 +353,7 @@ class PmgImportaCfdiLine(models.Model):
 					self.leer_description_solomoto()
 
 				self.mapear_proveedor()
-				
+
 			rec.state = 'ready'
 
 	def mapear_proveedor(self):

@@ -86,7 +86,7 @@
                 <field name="cfdi_moneda"/>
                 <field name="cfdi_subtotal"/>
                 <field name="cfdi_total"/>
-                <field name="cfdi_adenda"/>
+                <!-- <field name="cfdi_adenda"/> -->
               </group>
             </group>
             <notebook>
@@ -115,6 +115,7 @@
                   <field name="cfdi_errors"/>
                   <field name="cfdi_data" groups="base.group_no_one"/>
                   <field name="cfdi_adenda"/>
+                  <field name="purchase_id"/>
                 </group>
               </page>
             </notebook>
