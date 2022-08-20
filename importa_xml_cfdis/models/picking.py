@@ -48,11 +48,11 @@ class StockPicking(models.Model):
                         })
 
                         if lote:
-                            line.move_line_nosuggest_ids = (0, 0, {
+                            line.move_line_nosuggest_ids = [(0, 0, {
                                 "lot_id" : lote.id,
                                 "tt_motor_number" :  res.cfdi_product_numero,
                                 "tt_color" : res.cfdi_product_nombre_color
-                            })
+                            })]
                         
                     else:
 
