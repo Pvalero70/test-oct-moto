@@ -38,6 +38,6 @@ class Purchase(models.Model):
                 _logger.info("####")
                 _logger.info(cfdi_id)
                 self.procesa_xml(cfdi_id)
-                self.write({"import_xml_cfdi" : cfdi_id, "purchase_id" : res.id})
+                self.write({"import_xml_cfdi" : cfdi_id, "purchase_id" : self.id})
 
         return res
