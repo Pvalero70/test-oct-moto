@@ -22,6 +22,7 @@ class StockPicking(models.Model):
             errors = []
             xml_compra = self.purchase_id.import_xml_cfdi
             xml_products = self.env['pmg.importa.cfdi.line.product']
+            lotes = self.env['stock.production.lot']
 
             for line in self.move_ids_without_package:
                 prod = line.product_id
@@ -51,6 +52,13 @@ class StockPicking(models.Model):
                             }
                         })
                         continue
+                lote = lotes.search([('name', '=', res.cfdi_product_chasis)])
+                if lote:
+                    line.move_line_nosuggest_ids = (0, 0, {
+                        "lot_id" : lote.id,
+                        "tt_motor_number" :  res.cfdi_product_numero,
+                        "tt_color" : res.cfdi_product_nombre_color
+                    })
 
             if errors:
                 raise ValidationError(f"No se pudieron validar los datos del CFDI: {errors}")
