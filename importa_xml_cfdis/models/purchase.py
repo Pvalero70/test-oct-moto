@@ -31,13 +31,14 @@ class Purchase(models.Model):
                 self.import_xml_cfdi.unlink()
                     
             cfdi_id = self.env['pmg.importa.cfdi.line'].create({
-                "file_xml" : self.file_xml
+                "file_xml" : self.file_xml,
+                "purchase_id" : self.id
             })
             if cfdi_id:
                 _logger.info("####")
                 _logger.info("####")
                 _logger.info(cfdi_id)
                 self.procesa_xml(cfdi_id)
-                self.write({"import_xml_cfdi" : cfdi_id, "purchase_id" : self.id})
+                self.write({"import_xml_cfdi" : cfdi_id})
 
         return res
