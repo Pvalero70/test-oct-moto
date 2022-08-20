@@ -15,7 +15,7 @@ class RepairOrderInherit(models.Model):
 
     tpv_count = fields.Integer(string='Pos Orders', compute='_compute_tpv_count', copy=False)
     tpv_ids = fields.Many2many('pos.order', compute='_compute_tpv_ids', string='Pos Orders', copy=False)
-    is_ready_to_pos = fields.Boolean(string="Esta todo correcto para pasarla al pos",compute="_computed_is_ready",store=True)
+    is_ready_to_pos = fields.Boolean(string="Esta todo correcto para pasarla al pos",compute="_computed_is_ready",store=True,readonly=False)
 
     def _computed_is_ready(self):
         for rec in self:
