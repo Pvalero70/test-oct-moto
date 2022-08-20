@@ -373,7 +373,7 @@ class PmgImportaCfdiLine(models.Model):
 
 						product_sku = line.cfdi_product_clave_prod
 
-						res = lista_proveedores.search([('partner_id', '=', partner.id), ('product_code', '=', product_sku)], limit=1)
+						res = lista_proveedores.search([('name', '=', partner.id), ('product_code', '=', product_sku)], limit=1)
 
 						if res:
 							line.write({'cfdi_product_id' : res.id, 'cfdi_product_state' : 'mapped'})
