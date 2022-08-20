@@ -61,6 +61,9 @@
             <!--<button name="leer_description_jurgen" type="object" string="Leer Descripcion Jurgen" 
               class="oe_highlight"/> -->
 
+            <button name="mapear_proveedor" type="object" string="Buscar Proveedor" 
+              class="oe_highlight"/>
+
             <field name="state" widget="statusbar"/>
           </header>
           <sheet>
@@ -73,6 +76,7 @@
             <group states="ready">
               <group>
                 <field name="cfdi_emisor_rfc"/>
+                <field name="partner_id"/>
                 <field name="cfdi_uuid"/>
                 <field name="cfdi_serie"/>
                 <field name="cfdi_folio"/>

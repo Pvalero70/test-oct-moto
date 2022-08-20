@@ -25,6 +25,9 @@ class PmgImportaCfdiLine(models.Model):
 	cfdi_fecha = fields.Char('Fecha')
 	cfdi_emisor = fields.Char('Emisor')
 	cfdi_emisor_rfc = fields.Char('Emisor RFC')
+	
+	partner_id = fields.Many2one('res.partner', 'Proveedor')
+
 	cfdi_serie = fields.Char('Serie')
 	cfdi_folio = fields.Char('Folio')
 	cfdi_fecha = fields.Char('Fecha')
@@ -348,30 +351,21 @@ class PmgImportaCfdiLine(models.Model):
 				elif rec.cfdi_emisor_rfc == "YMM9105032FA":
 					self.leer_description_solomoto()
 
-			rec.state = 'ready'	
+				self.mapear_proveedor()
+				
+			rec.state = 'ready'
 
-	# @api.onchange('file_name')
-	# def _onchange_file_name(self):
-	# 	_logger.info("### ON CHANGE ###")
-	# 	_logger.info("### ON CHANGE ###")
-	# 	_logger.info("### ON CHANGE ###")
-	# 	_logger.info("### ON CHANGE ###")
-	# 	_logger.info("### ON CHANGE ###")
-	# 	if self.file_xml:
-	# 		self.leer_archivo()
+	def mapear_proveedor(self):
 
-	# @api.model
-	# def create(self, vals):
-	# 	res = super(PmgImportaCfdiLine, self).create(vals)
-	# 	if res.file_xml:
-	# 		self.leer_archivo()
-	# 	return res
+		for rec in self:
 
-	# def write(self, vals):
-	# 	res = super(PmgImportaCfdiLine, self).write(vals)
-	# 	if self.file_xml:
-	# 		self.leer_archivo()
-	# 	return res
+			if rec.cfdi_emisor_rfc:
+				rfc_proveedor = rec.cfdi_emisor_rfc
+				partner = self.env['res.partner'].search([('vat', '=', rfc_proveedor)], limit=1)
+
+				if partner:
+					rec.partner_id = partner.id
+
 
 class PmgImportaCfdiAdenda(models.Model):
 	_name = 'pmg.importa.cfdi.line.adenda'
