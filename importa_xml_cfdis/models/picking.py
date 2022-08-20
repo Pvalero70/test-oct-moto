@@ -28,37 +28,45 @@ class StockPicking(models.Model):
                 prod = line.product_id
                 res = xml_products.search([('line_id', '=', xml_compra.id), ('cfdi_product_id', '=', prod.id)], limit=1)
 
-                if not res:
-                    errors.append({
-                        "error" : "El producto no se encontro en el XML",
-                        "producto" : {
-                            "id" : prod.id,
-                            "sku" : prod.default_code
-                        }
-                    })
-                    continue
+                # if not res:
+                #     errors.append({
+                #         "error" : "El producto no se encontro en el XML",
+                #         "producto" : {
+                #             "id" : prod.id,
+                #             "sku" : prod.default_code
+                #         }
+                #     })
+                #     continue
 
                 if res:
-                    xml_quantity = res.cfdi_product_qty
-                    if int(line.quantity_done) != int(xml_quantity):
-                        errors.append({
-                            "error" : "La cantidad no es igual",
-                            "producto" : {
-                                "id" : prod.id,
-                                "sku" : prod.default_code,
-                                "supplier" : res.cfdi_product_clave_prod,
-                                "xml_qty" :  xml_quantity,
-                                "picking_qty" : line.quantity_done
-                            }
-                        })
-                        continue
-                lote = lotes.search([('name', '=', res.cfdi_product_chasis)])
-                if lote:
-                    line.move_line_nosuggest_ids = (0, 0, {
-                        "lot_id" : lote.id,
-                        "tt_motor_number" :  res.cfdi_product_numero,
-                        "tt_color" : res.cfdi_product_nombre_color
-                    })
+                    if res.cfdi_product_chasis:
+
+                        lote = lotes.create([('name', '=', res.cfdi_product_chasis)])
+                        
+                        if lote:
+                            line.move_line_nosuggest_ids = (0, 0, {
+                                "lot_id" : lote.id,
+                                "tt_motor_number" :  res.cfdi_product_numero,
+                                "tt_color" : res.cfdi_product_nombre_color
+                            })
+                        
+                    else:
+
+                        xml_quantity = res.cfdi_product_qty
+                        if int(line.product_uom_qty) != int(xml_quantity):
+                            errors.append({
+                                "error" : "La cantidad no es igual",
+                                "producto" : {
+                                    "id" : prod.id,
+                                    "sku" : prod.default_code,
+                                    "supplier" : res.cfdi_product_clave_prod,
+                                    "xml_qty" :  xml_quantity,
+                                    "picking_qty" : line.product_uom_qty
+                                }
+                            })
+                            continue
+
+                
 
             if errors:
                 raise ValidationError(f"No se pudieron validar los datos del CFDI: {errors}")
