@@ -45,9 +45,11 @@ class StockPicking(models.Model):
                         _logger.info("Intenta crear lote y numero de serie")
 
                         lote = lotes.create({
-                            'name' : res.cfdi_product_chasis,
-                            'product_id' : prod.id,
-                            'company_id' : self.company_id.id
+                            "name" : res.cfdi_product_chasis,
+                            "product_id" : prod.id,
+                            "company_id" : self.company_id.id,
+                            "tt_motor_number" : res.cfdi_product_numero,
+                            "tt_color" : res.cfdi_product_nombre_color
                         })
                         _logger.info("Lote creado..")
                         _logger.info(lote)
