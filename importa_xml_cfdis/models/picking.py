@@ -25,7 +25,7 @@ class StockPicking(models.Model):
             lotes = self.env['stock.production.lot']
             move_line = self.env['stock.move.line']
 
-            for line in self.move_ids_without_package:
+            for line in self.move_line_ids:
                 prod = line.product_id
                 res = xml_products.search([('line_id', '=', xml_compra.id), ('cfdi_product_id', '=', prod.id)], limit=1)
 
@@ -58,6 +58,7 @@ class StockPicking(models.Model):
 
                             res_line = move_line.create({
                                 "lot_id" : lote.id,
+                                "lot_name" : lote.name,
                                 "tt_motor_number" : res.cfdi_product_numero,
                                 "tt_color" : res.cfdi_product_nombre_color,
                                 "product_id" : prod.id,
