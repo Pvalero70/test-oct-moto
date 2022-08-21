@@ -12,8 +12,8 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     def button_validate(self):
-        res = super(StockPicking, self).button_validate()
         self.validar_xml_purchase()
+        res = super(StockPicking, self).button_validate()
         return res
 
     def validar_xml_purchase(self):
