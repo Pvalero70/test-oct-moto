@@ -48,7 +48,7 @@ class StockPicking(models.Model):
                             "name" : res.cfdi_product_chasis,
                             "product_id" : prod.id,
                             "company_id" : self.company_id.id,
-                            "tt_motor_number" : res.cfdi_product_numero,
+                            "tt_number_motor" : res.cfdi_product_numero,
                             "tt_color" : res.cfdi_product_nombre_color
                         })
                         _logger.info("Lote creado..")
