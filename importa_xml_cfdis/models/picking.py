@@ -40,13 +40,20 @@ class StockPicking(models.Model):
                 if res:
                     if res.cfdi_product_chasis:
 
+                        _logger.info("Intenta crear lote y numero de serie")
+
                         lote = lotes.create({
                             'name' : res.cfdi_product_chasis,
                             'product_id' : prod.id,
                             'company_id' : self.company_id.id
                         })
+                        _logger.info("Lote creado..")
+                        _logger.info(lote)
 
                         if lote:
+
+                            _logger.info("Intenta crear linea salida..")
+
                             line.move_line_nosuggest_ids = [(0, 0, {
                                 "lot_id" : lote.id,
                                 "tt_motor_number" : res.cfdi_product_numero,
@@ -74,8 +81,6 @@ class StockPicking(models.Model):
                                 }
                             })
                             continue
-
-                
 
             if errors:
                 raise ValidationError(f"No se pudieron validar los datos del CFDI: {errors}")
