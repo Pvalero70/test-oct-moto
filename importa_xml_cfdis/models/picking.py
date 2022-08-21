@@ -64,7 +64,8 @@ class StockPicking(models.Model):
                                 "location_id" : self.location_id.id,
                                 "location_dest_id" : self.location_id.id,
                                 "company_id" : self.company_id.id,
-                                "qty_done" : 1
+                                "qty_done" : 1,
+                                "move_id" : line.id
                             })]
 
                             _logger.info("Created...")
