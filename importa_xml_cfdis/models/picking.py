@@ -23,6 +23,7 @@ class StockPicking(models.Model):
             xml_compra = self.purchase_id.import_xml_cfdi
             xml_products = self.env['pmg.importa.cfdi.line.product']
             lotes = self.env['stock.production.lot']
+            move_line = self.env['stock.move.line']
 
             for line in self.move_ids_without_package:
                 prod = line.product_id
@@ -55,7 +56,7 @@ class StockPicking(models.Model):
 
                             _logger.info("Intenta crear linea salida..")
 
-                            line.move_line_nosuggest_ids = [(0, 0, {
+                            res_line = move_line.create({
                                 "lot_id" : lote.id,
                                 "tt_motor_number" : res.cfdi_product_numero,
                                 "tt_color" : res.cfdi_product_nombre_color,
@@ -66,9 +67,24 @@ class StockPicking(models.Model):
                                 "company_id" : self.company_id.id,
                                 "qty_done" : 1,
                                 "move_id" : line.id
-                            })]
+                            })
+
+
+                            # line.move_line_nosuggest_ids = [(0, 0, {
+                            #     "lot_id" : lote.id,
+                            #     "tt_motor_number" : res.cfdi_product_numero,
+                            #     "tt_color" : res.cfdi_product_nombre_color,
+                            #     "product_id" : prod.id,
+                            #     "product_uom_id" : 1,
+                            #     "location_id" : self.location_id.id,
+                            #     "location_dest_id" : self.location_id.id,
+                            #     "company_id" : self.company_id.id,
+                            #     "qty_done" : 1,
+                            #     "move_id" : line.id
+                            # })]
 
                             _logger.info("Created...")
+                            _logger.info(res_line)
                        
                     else:
 
