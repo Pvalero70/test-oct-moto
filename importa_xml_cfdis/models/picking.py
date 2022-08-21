@@ -23,9 +23,9 @@ class StockPicking(models.Model):
             xml_compra = self.purchase_id.import_xml_cfdi
             xml_products = self.env['pmg.importa.cfdi.line.product']
             lotes = self.env['stock.production.lot']
-            move_line = self.env['stock.move.line']
+            move_line_id = self.env['stock.move.line']
 
-            for line in self.move_line_ids:
+            for line in self.move_lines:
                 prod = line.product_id
                 res = xml_products.search([('line_id', '=', xml_compra.id), ('cfdi_product_id', '=', prod.id)], limit=1)
 
@@ -56,7 +56,22 @@ class StockPicking(models.Model):
 
                             _logger.info("Intenta crear linea salida..")
 
-                            res_line = move_line.create({
+                            # res_line = move_line_id.create({
+                            #     "lot_id" : lote.id,
+                            #     "tt_motor_number" : res.cfdi_product_numero,
+                            #     "tt_color" : res.cfdi_product_nombre_color,
+                            #     "product_id" : prod.id,
+                            #     "product_uom_id" : 1,
+                            #     "location_id" : self.location_id.id,
+                            #     "location_dest_id" : self.location_id.id,
+                            #     "company_id" : self.company_id.id,
+                            #     "qty_done" : 1,
+                            #     "move_id" : line.id,
+                            #     "picking_id" : self.id                                
+                            # })
+
+
+                            self.move_line_ids = [(0, 0, {
                                 "lot_id" : lote.id,
                                 "lot_name" : lote.name,
                                 "tt_motor_number" : res.cfdi_product_numero,
@@ -67,25 +82,12 @@ class StockPicking(models.Model):
                                 "location_dest_id" : self.location_id.id,
                                 "company_id" : self.company_id.id,
                                 "qty_done" : 1,
-                                "move_id" : line.id
-                            })
-
-
-                            # line.move_line_nosuggest_ids = [(0, 0, {
-                            #     "lot_id" : lote.id,
-                            #     "tt_motor_number" : res.cfdi_product_numero,
-                            #     "tt_color" : res.cfdi_product_nombre_color,
-                            #     "product_id" : prod.id,
-                            #     "product_uom_id" : 1,
-                            #     "location_id" : self.location_id.id,
-                            #     "location_dest_id" : self.location_id.id,
-                            #     "company_id" : self.company_id.id,
-                            #     "qty_done" : 1,
-                            #     "move_id" : line.id
-                            # })]
+                                "move_id" : line.id,
+                                "picking_id" : self.id
+                            })]
 
                             _logger.info("Created...")
-                            _logger.info(res_line)
+                            # _logger.info(res_line)
                        
                     else:
 
