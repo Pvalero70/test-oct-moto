@@ -13,9 +13,9 @@ class StockPicking(models.Model):
 
     def button_validate(self):
         self.validar_xml_purchase()
-        return
-        # res = super(StockPicking, self).button_validate()
-        # return res
+        # return
+        res = super(StockPicking, self).button_validate()
+        return res
 
     def validar_xml_purchase(self):
         if self.purchase_id.import_xml_cfdi:
@@ -66,6 +66,10 @@ class StockPicking(models.Model):
                                 "company_id" : self.company_id.id,
                                 "qty_done" : 1
                             })]
+
+                            _logger.info("Created...")
+
+                            line.save()
                         
                     else:
 
