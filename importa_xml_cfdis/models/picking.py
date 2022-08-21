@@ -12,10 +12,9 @@ class StockPicking(models.Model):
     _inherit = 'stock.picking'
 
     def button_validate(self):
+        res = super(StockPicking, self).button_validate()
         self.validar_xml_purchase()
-        return
-        # res = super(StockPicking, self).button_validate()
-        # return res
+        return res
 
     def validar_xml_purchase(self):
         if self.purchase_id.import_xml_cfdi:
@@ -50,13 +49,14 @@ class StockPicking(models.Model):
                         if lote:
                             line.move_line_nosuggest_ids = [(0, 0, {
                                 "lot_id" : lote.id,
-                                "tt_motor_number" :  res.cfdi_product_numero,
+                                "tt_motor_number" : res.cfdi_product_numero,
                                 "tt_color" : res.cfdi_product_nombre_color,
                                 "product_id" : prod.id,
                                 "product_uom_id" : 1,
                                 "location_id" : self.location_id.id,
                                 "location_dest_id" : self.location_id.id,
-                                "company_id" : self.company_id.id
+                                "company_id" : self.company_id.id,
+                                "qty_done" : 1
                             })]
                         
                     else:
