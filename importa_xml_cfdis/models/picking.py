@@ -41,7 +41,7 @@ class StockPicking(models.Model):
                     if res.cfdi_product_chasis:
 
                         lote = lotes.create({
-                            'name' : "1234XXas",
+                            'name' : res.cfdi_product_chasis,
                             'product_id' : prod.id,
                             'company_id' : self.company_id.id
                         })
