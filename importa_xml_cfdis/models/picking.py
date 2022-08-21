@@ -68,9 +68,7 @@ class StockPicking(models.Model):
                             })]
 
                             _logger.info("Created...")
-
-                            line.save()
-                        
+                       
                     else:
 
                         xml_quantity = res.cfdi_product_qty
