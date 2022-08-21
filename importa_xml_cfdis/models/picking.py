@@ -42,7 +42,7 @@ class StockPicking(models.Model):
                     if res.cfdi_product_chasis:
 
                         lote = lotes.create({
-                            'name' : res.cfdi_product_chasis,
+                            'name' : "1234XXas",
                             'product_id' : prod.id,
                             'company_id' : self.company_id.id
                         })
@@ -52,6 +52,7 @@ class StockPicking(models.Model):
                                 "lot_id" : lote.id,
                                 "tt_motor_number" :  res.cfdi_product_numero,
                                 "tt_color" : res.cfdi_product_nombre_color,
+                                "product_id" : prod.id,
                                 "product_uom_id" : 1,
                                 "location_id" : self.location_id.id,
                                 "location_dest_id" : self.location_id.id,
