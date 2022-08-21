@@ -23,21 +23,21 @@ class StockPicking(models.Model):
             xml_compra = self.purchase_id.import_xml_cfdi
             xml_products = self.env['pmg.importa.cfdi.line.product']
             lotes = self.env['stock.production.lot']
-            move_line_id = self.env['stock.move.line']
+            # move_line_id = self.env['stock.move.line']
 
             for line in self.move_lines:
                 prod = line.product_id
                 res = xml_products.search([('line_id', '=', xml_compra.id), ('cfdi_product_id', '=', prod.id)], limit=1)
 
-                # if not res:
-                #     errors.append({
-                #         "error" : "El producto no se encontro en el XML",
-                #         "producto" : {
-                #             "id" : prod.id,
-                #             "sku" : prod.default_code
-                #         }
-                #     })
-                #     continue
+                if not res:
+                    errors.append({
+                        "error" : "El producto no se encontro en el XML",
+                        "producto" : {
+                            "id" : prod.id,
+                            "sku" : prod.default_code
+                        }
+                    })
+                    continue
 
                 if res:
                     if res.cfdi_product_chasis:
