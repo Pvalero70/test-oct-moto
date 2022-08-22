@@ -153,6 +153,7 @@ class CommWizardReport(models.TransientModel):
                 sheet.write(row_pl, 5, rol.repair_id.product_id.name)
                 sheet.write(row_pl, 6, rol.name)
                 sheet.write(row_pl, 7, rol.product_uom_qty)
+                sheet.write(row_pl, 8, rol.price_unit)
                 sheet.write(row_pl, 9, mcpl.amount) # Subtotal
                 sheet.write(row_pl,10, mcpl.commission_line_id.comm_rule.name) # Regla de comision
                 sheet.write(row_pl, 11, clamount)
