@@ -113,17 +113,18 @@ class CommWizardReport(models.TransientModel):
             sheet.set_column(2, 2, 15)
             sheet.set_column(3, 5, 12)
             sheet.set_column(6, 8, 12)
-            sheet.write(0, 0, 'Orden', encabezados)
-            sheet.write(0, 1, 'Fecha', encabezados)
-            sheet.write(0, 2, 'T', encabezados)
-            sheet.write(0, 3, 'Orden', encabezados)
-            sheet.write(0, 4, 'Modelo', encabezados)
-            sheet.write(0, 5, 'Servicio', encabezados)
-            sheet.write(0, 6, 'Cantidad', encabezados)
-            sheet.write(0, 7, 'P. Unitario', encabezados)
-            sheet.write(0, 8, 'Subtotal', encabezados)
-            sheet.write(0, 9, 'Regla comisión', encabezados)
-            sheet.write(0, 10, 'Comisión', encabezados)
+            sheet.write(0, 0, 'Orden reparación', encabezados)
+            sheet.write(0, 1, 'Fecha orden', encabezados)
+            sheet.write(0, 2, 'Estado factura', encabezados)
+            sheet.write(0, 3, 'Fecha factura', encabezados)
+            sheet.write(0, 4, 'Venta tpv', encabezados)
+            sheet.write(0, 5, 'Modelo', encabezados)
+            sheet.write(0, 6, 'Servicio', encabezados)
+            sheet.write(0, 7, 'Cantidad', encabezados)
+            sheet.write(0, 8, 'P. Unitario', encabezados)
+            sheet.write(0, 9, 'Subtotal', encabezados)
+            sheet.write(0, 10, 'Regla comisión', encabezados)
+            sheet.write(0, 11, 'Comisión', encabezados)
             total_comision = 0
 
             # Comisiones de mecánico.
@@ -133,21 +134,30 @@ class CommWizardReport(models.TransientModel):
             # Buscar las lineas relacionadas (rec_id) y en el ciclo abajo
             # las filtramos.
 
+            clamount_total = 0
             _log.info("PRELINAS:: %s " % mc_prelines_applied)
             for mcpl in mc_prelines_applied:
                 rol = self.env['repair.fee'].browse(mcpl.rec_id)
+                # Calculo de la linea con la regla exacta. 
+                if mcpl.commission_line_id.comm_rule.calc_method == "fixed":
+                    clamount = rol.product_uom_qty * mcpl.commission_line_id.comm_rule.amount_factor
+                else:
+                    factor = mcpl.commission_line_id.comm_rule.amount_factor/100
+                    clamount = mcpl.amount*factor
+                clamount_total += clamount
                 sheet.write(row_pl, 0, rol.repair_id.name)
-                sheet.write(row_pl, 1, "bbbbbbb")
-                sheet.write(row_pl, 2, "cccccccccc")
-                sheet.write(row_pl, 3, "dddddddddddd")
-                sheet.write(row_pl, 4, "eeeeeeee")
-                sheet.write(row_pl, 5, "dfff")
-                sheet.write(row_pl, 6, 'sss')
-                sheet.write(row_pl, 7, 'sss')
-                sheet.write(row_pl, 8, mcpl.amount) # Subtotal
-                sheet.write(row_pl, 9, mcpl.commission_line_id.comm_rule.name) # Regla de comision
-                sheet.write(row_pl, 10, 'sss')
+                sheet.write(row_pl, 1, rol.repair_id.create_date)
+                sheet.write(row_pl, 2, mcpl.invoice_id.state)
+                sheet.write(row_pl, 3, mcpl.invoice_id.invoice_date)
+                sheet.write(row_pl, 4, rol.repair_id.tpv_ids[0].name)
+                sheet.write(row_pl, 5, rol.repair_id.product_id.name)
+                sheet.write(row_pl, 6, rol.name)
+                sheet.write(row_pl, 7, rol.product_uom_qty)
+                sheet.write(row_pl, 9, mcpl.amount) # Subtotal
+                sheet.write(row_pl,10, mcpl.commission_line_id.comm_rule.name) # Regla de comision
+                sheet.write(row_pl, 11, clamount)
                 row_pl += 1
+            _log.info("Suma comision total::: %s " % clamount_total)
 
         workbook.close()
         fp.seek(0)
