@@ -42,9 +42,27 @@ class ProductProductRepair(models.Model):
 class RepairMechanic(models.Model):
     _inherit = 'repair.order'
 
+    is_lote_repair = fields.Boolean(string="El lote es para una reparacion", compute='_get_lot_repair', store=True)
+
+    @api.depends('is_lote_repair')
+    def _get_lot_repair(self):
+        for rec in self:
+            for pick in rec.picking_ids:
+                if rec.lot_id:
+                    pick.write({'lot_id_product' : rec.lot_id})
+                    rec.is_lote_repair = True
+                else:
+                    rec.is_lote_repair = False
+            for pick in rec.picking_sale_ids:
+                if rec.lot_id:
+                    pick.write({'lot_id_product': rec.lot_id})
+                    rec.is_lote_repair = True
+                else:
+                    rec.is_lote_repair = False
+
+
     @api.onchange('partner_id')
     def _products_order(self):
-        _logger.info("En onchange partner")
         products = self.env['product.product'].search([('type', 'in', ['product', 'consu']),('company_id', 'in', [self.env.company.id,'',None,False])])
         ordenes_ventas = self.env['pos.order'].search([('partner_id','=',self.partner_id.id),('state','in',['done','invoiced','paid'])])
         productos_ventas = [product for orden in ordenes_ventas for line in orden.lines for product in line.product_id ]
@@ -75,6 +93,9 @@ class RepairMechanic(models.Model):
         res = super(RepairMechanic, self).action_incoming()
         for pick in self.picking_ids:
             pick.lot_id_product = self.lot_id
+
+        for pick in self.picking_sale_ids:
+            pick.lot_id_product = self.lot_id
         return res
 
 
@@ -86,7 +107,7 @@ class StockPickingInherit(models.Model):
 
     def button_validate(self):
         if self.lot_id_product:
-            #Si existe este campo es que proviene de una reparacion
+
             self.lot_id_product.is_repair_moto_action = True
 
         res = super(StockPickingInherit, self).button_validate()
