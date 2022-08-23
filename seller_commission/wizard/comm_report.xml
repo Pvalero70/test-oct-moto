@@ -8,12 +8,12 @@
                 <form string="Change Product Qty">
                     <group>
                         <group>
-                            <field name="month_start"/>
-                            <field name="month_final"/>
-                            <field name="year"/>
+                            <field name="month_start" string="Mes inicialk"/>
+                            <field name="month_final" string="Mes final"/>
+                            <field name="year" string="Año"/>
                         </group>
                         <group>
-                            <field name="ambit"/>
+                            <field name="ambit" string="Tipo"/>
                             <field name="include_paid_comms"/>
                         </group>
 

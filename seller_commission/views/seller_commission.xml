@@ -31,6 +31,7 @@
                                 <field name="invoice_id"/>
                                 <field name="commission_line_id"/>
                                 <field name="rec_id" invisible="1"/>
+                                <field name="is_repair_sale" invisible="1"/>
                             </tree>
                         </field>
                         <field name="line_ids" string="Calculo">

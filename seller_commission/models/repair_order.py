@@ -50,7 +50,8 @@ class RepairOrderSc(models.Model):
                 'categ_id': line_categ.id,
                 'invoice_id': invoice.id,
                 'quantity': line.product_uom_qty,
-                'rec_id': line.id
+                'rec_id': line.id,
+                'is_repair_sale': True
             }
             _log.info(" SELLER INFO PRELINEA A CREAR ::: %s " % preline)
             prelines.append((0, 0, preline))

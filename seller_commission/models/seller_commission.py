@@ -110,6 +110,18 @@ class SellerCommission(models.Model):
                 plines_pquantity = sum(pli.mapped('quantity'))
                 _log.info("PLINES AMOUNT ::: %s " % plines_amount)
 
+                """
+                Bronca, si pueden aplicar diferentes reglas para los mecánicos, y las define el costo unitario
+                del servicio. ej. para un servicio de 250 -> 60, 350 -> 70.  Quizá lo mejor sería hacer un segundo método (calc_lines_mechanics)
+                para poder separar los procesos: 
+                definir la regla desde la preeline y las lineas sean agrupaciones dadas por la regla utilizada. 
+                
+                Entonces al momento de realizar la prelinea se escoja directamente la regla. 
+                Hacer otro método evitará dañar lo que ya se tiene para las motos, refacciones y accesorios. 
+                
+                Por lo tanto también tendrían que ponerse dos botones y ocultarse en base a la comisión: (mecánico o vendedor). 
+                """
+
                 # Revisamos si tienes una linea previa para esa categoría; si la hay hacemos un update del amount después de
                 # sumarle el amount_base y reeconsiderar una nueva regla.
                 com_line = reg.line_ids.filtered(lambda li: li.categ_id.id == categ.id)
@@ -159,6 +171,20 @@ class SellerCommission(models.Model):
                         pl.commission_line_id = com_line.id
             reg.amount_total = sum(reg.line_ids.mapped('amount'))
 
+    def calc_lines_mechanic(self):
+        """
+        Método que crea las lineas de comision para los mecánicos, agrupando las lineas por
+        la regla aplicada, ya que la regla se respeta desde la preelinea.
+
+        Este método es llamado si los mecánicos tienen para la categoría servicio el método fijo (fixed).
+        :return:
+        """
+        # Filtramos únicamente las comisines de mecánicos.
+        for reg in self.filtered(lambda r: r.mechanic_id is not False):
+            # Las agrupaciones de las comisiones cambian para los mecánicos, se abstraen por regla de comision.
+            # Por lo que la iteración será por regla
+            prelines = reg.preline_ids.filtered(lambda pl: not pl.commission_line_id and pl.categ_id).mapped('categ_id')
+
 
 class SellerCommissionLine(models.Model):
     _name = "seller.commission.line"
@@ -199,6 +225,7 @@ class SellerCommissionPreline(models.Model):
     commission_line_id = fields.Many2one('seller.commission.line', string="linea de comisión", help="Linea de la comisión en la que se sumó. Una linea por factura.")
     quantity = fields.Float(string="Cantidad de productos")
     rec_id = fields.Integer(string="Id registro linea origen")
+    is_repair_sale = fields.Boolean(string=" Venta en reparación", default=False)
 
 
 class SellerCommissionRule(models.Model):
