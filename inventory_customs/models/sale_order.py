@@ -56,7 +56,7 @@ class SaleOrderLinePev(models.Model):
             self.original_price_unit = self.price_unit
         if not self.original_name_line:
             self.original_name_line = self.name
-        self.name = "%s \n%s" % (self.original_name_line, self.lot_id.tt_free_optional)
+        self.name = "%s \n%s" % (self.original_name_line, self.lot_id.tt_free_optional or "")
         # self.write({
         #     'price_unit': self.original_price_unit + self.lot_id.tt_adc_costs
         # })
