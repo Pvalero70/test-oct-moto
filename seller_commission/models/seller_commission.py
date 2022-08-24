@@ -182,8 +182,57 @@ class SellerCommission(models.Model):
         # Filtramos únicamente las comisines de mecánicos.
         for reg in self.filtered(lambda r: r.mechanic_id is not False):
             # Las agrupaciones de las comisiones cambian para los mecánicos, se abstraen por regla de comision.
-            # Por lo que la iteración será por regla
-            prelines = reg.preline_ids.filtered(lambda pl: not pl.commission_line_id and pl.categ_id).mapped('categ_id')
+            # Por lo que la iteración será por
+            pl_orecord_ids = reg.preline_ids.filtered(lambda pl: not pl.commission_line_id and pl.categ_id).mapped('rec_id')
+            _log.info(" Id originales de registros: %s " % pl_orecord_ids)
+            o_record_ids = self.env['repair.fee'].search([('id', 'in', pl_orecord_ids)])
+
+            # Agrupamos por precios unitarios:
+            unit_prices = o_record_ids.mapped('price_unit')
+            # Buscamos todas las reglas (después será necesario filtrarlas por compañía)
+            all_rule_ids = self.env['seller.commission.rule'].search([])
+            for pu in unit_prices:
+                _log.info("Precio unitario: %s" % pu)
+
+                # Filtramos los servicios de RO de pu precio unitario.
+                pu_original_recs = o_record_ids.filtered(lambda ore: ore.price_unit == pu)
+                or_categ_id = pu_original_recs.mapped('product_id').mapped("categ_id")
+                _log.info("CATEGORIA :: %s %s" % (or_categ_id.name, or_categ_id))
+
+                # Seleccionamos la regla que vamos a usar para este grupo.
+                pu_rule_id = all_rule_ids.filtered(lambda x: or_categ_id.id in x.product_categ_ids.ids and pu == x.amount_start)
+                if not pu_rule_id:
+                    continue
+                pu_rule_id = pu_rule_id[0]
+                _log.info(" REGLA SELECCIONADA::: %s " % pu_rule_id.name)
+                # Calculamos el total de comision de la linea.
+                line_amount = pu_rule_id.amount_factor * sum(pu_original_recs.mapped('product_uom_qty'))
+
+                # Buscamos en el registro, si existe ya una linea de comisión para ese PRECIO UNITARIO.
+                com_line = reg.line_ids.filtered(lambda li: li.amount_base == pu)
+                if com_line:
+                    com_line.write({
+                        'amount': com_line.amount + line_amount,
+                        'amount_base': pu,
+                        'comm_rule': pu_rule_id.id,
+                        'commission_date': fields.Datetime.now()
+                    })
+                    self.env.cr.commit()
+                else:
+                    com_line = self.env['seller.commission.line'].create({
+                        'monthly_commission_id': reg.id,
+                        'amount': line_amount,
+                        'amount_base': pu,
+                        'comm_rule': pu_rule_id.id,
+                        'commission_date': fields.Datetime.now(),
+                        'categ_id': or_categ_id.id
+                    })
+                # Buscamos las prelineas que tienen esos asignado rec_id en pu_original_recs
+                # y a esas le asignamos la linea que acabamos de crear.
+                pli = reg.preline_ids.filtered(lambda x: x.rec_id in pu_original_recs.ids)
+                for pl in pli:
+                    pl.commission_line_id = com_line.id
+            reg.amount_total = sum(reg.line_ids.mapped('amount'))
 
 
 class SellerCommissionLine(models.Model):
