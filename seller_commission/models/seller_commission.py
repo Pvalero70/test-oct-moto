@@ -110,18 +110,6 @@ class SellerCommission(models.Model):
                 plines_pquantity = sum(pli.mapped('quantity'))
                 _log.info("PLINES AMOUNT ::: %s " % plines_amount)
 
-                """
-                Bronca, si pueden aplicar diferentes reglas para los mecánicos, y las define el costo unitario
-                del servicio. ej. para un servicio de 250 -> 60, 350 -> 70.  Quizá lo mejor sería hacer un segundo método (calc_lines_mechanics)
-                para poder separar los procesos: 
-                definir la regla desde la preeline y las lineas sean agrupaciones dadas por la regla utilizada. 
-                
-                Entonces al momento de realizar la prelinea se escoja directamente la regla. 
-                Hacer otro método evitará dañar lo que ya se tiene para las motos, refacciones y accesorios. 
-                
-                Por lo tanto también tendrían que ponerse dos botones y ocultarse en base a la comisión: (mecánico o vendedor). 
-                """
-
                 # Revisamos si tienes una linea previa para esa categoría; si la hay hacemos un update del amount después de
                 # sumarle el amount_base y reeconsiderar una nueva regla.
                 com_line = reg.line_ids.filtered(lambda li: li.categ_id.id == categ.id)
@@ -250,7 +238,7 @@ class SellerCommissionLine(models.Model):
     # seller_id = fields.Many2one('res.partner', related="monthly_commission_id.seller_id")
     # mechanic_id = fields.Many2one('repair.mechanic', related="monthly_commission_id.mechanic_id")
     amount = fields.Float(string="Total de comisión", help="Total a pagar por ésta comisión en determinada categoría de producto.")
-    amount_base = fields.Float(string="Monto base ", help="El monto base del cual se calculará la comisión. ")
+    amount_base = fields.Float(string="Monto base ", help="El monto base que define que regla será utilizada")
     commission_date = fields.Datetime(string="Hora de comisión")
     comm_rule = fields.Many2one('seller.commission.rule', string="Regla de calculo")
     categ_id = fields.Many2one('product.category', string="Categoria de producto")

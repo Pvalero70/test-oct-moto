@@ -127,6 +127,7 @@ class RepairOrderSc(models.Model):
                 })
                 _log.info(" COMISION creada :: %s " % commission_id)
             commission_id.preline_ids = prelines
+            # Revisa que el método de calculo de la categoría correspondiente sea fixed (para servicios)
             commission_id.calc_lines_mechanic()
             return commission_id
         else:

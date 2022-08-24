@@ -119,13 +119,13 @@ class CommWizardReport(models.TransientModel):
         mechanic_ids = comm_ids.mapped('mechanic_id')
         workbook = xlsxwriter.Workbook(fp, {'in_memory': True})
         encabezados = workbook.add_format(
-            {'bold': 'True',
+            {'bold': True,
              'font_size': 10,
              'bg_color': '#B7F9B0',
              'center_across': True
              })
         datas = workbook.add_format(
-            {'bold': 'False',
+            {'bold': False,
              'font_size': 10,
              'bg_color': 'white',
              'center_across': True
