@@ -8,7 +8,7 @@
                 <form string="Change Product Qty">
                     <group>
                         <group>
-                            <field name="month_start" string="Mes inicialk"/>
+                            <field name="month_start" string="Mes inicial"/>
                             <field name="month_final" string="Mes final"/>
                             <field name="year" string="Año"/>
                         </group>

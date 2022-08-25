@@ -10,7 +10,7 @@ try:
     from odoo.tools.misc import xlsxwriter
 except ImportError:
     import xlsxwriter
-
+DATE_FORMAT = "%Y-%m-%d"
 _log = logging.getLogger("__--__-->> Report Commission:: ")
 
 NUM_MONTHS = {
@@ -116,8 +116,16 @@ class CommWizardReport(models.TransientModel):
         if not self.include_paid_comms:
             domain.append(('state', '=', "to_pay"))
         comm_ids = self.env['seller.commission'].search(domain)
+        if not comm_ids:
+            raise UserError("No se encontraron comisiones con los datos especificados.")
         mechanic_ids = comm_ids.mapped('mechanic_id')
         workbook = xlsxwriter.Workbook(fp, {'in_memory': True})
+        title = workbook.add_format(
+            {'bold': True,
+             'font_size': 18,
+             'bg_color': 'white',
+             'center_across': True
+             })
         encabezados = workbook.add_format(
             {'bold': True,
              'font_size': 10,
@@ -130,14 +138,23 @@ class CommWizardReport(models.TransientModel):
              'bg_color': 'white',
              'center_across': True
              })
+        datas2 = workbook.add_format(
+            {'bold': False,
+             'font_size': 10,
+             'bg_color': 'yellow',
+             'center_across': True
+             })
         _log.info(" MECANICOS .... :: :%s " % mechanic_ids)
+        all_mechanic_totals = []
         for mechanic in mechanic_ids:
             sheet = workbook.add_worksheet('%s' % mechanic.display_name)
             vertical_offset_table = 3
-            sheet.set_column(0, 12, 20)
+            sheet.set_column(0, 5, 20)
+            sheet.set_column(6, 6, 30)
+            sheet.set_column(7, 12, 20)
 
-            sheet.merge_range(1, 5, 1, 8, "EMPRESA")
-            sheet.write(1, 1, 'Orden reparación')
+            sheet.merge_range(1, 5, 1, 8, self.env.company.name, title)
+            sheet.write(1, 1, fields.Date().today().strftime(DATE_FORMAT))
 
             sheet.write(vertical_offset_table, 0, 'Orden reparación', encabezados)
             sheet.write(vertical_offset_table, 1, 'Fecha orden', encabezados)
@@ -151,7 +168,6 @@ class CommWizardReport(models.TransientModel):
             sheet.write(vertical_offset_table, 9, 'Subtotal', encabezados)
             sheet.write(vertical_offset_table, 10, 'Regla comisión', encabezados)
             sheet.write(vertical_offset_table, 11, 'Comisión', encabezados)
-            total_comision = 0
 
             # Comisiones de mecánico.
             mechanic_coms = comm_ids.filtered(lambda co: co.mechanic_id and co.mechanic_id.id == mechanic.id)
@@ -160,9 +176,13 @@ class CommWizardReport(models.TransientModel):
             # Buscar las lineas relacionadas (rec_id) y en el ciclo abajo
             # las filtramos.
 
+            # Sumatorias.
             clamount_total = 0
-            _log.info("PRELINAS:: %s " % mc_prelines_applied)
+            qty_services_total = 0
+            sum_comms_factor = 0
 
+            _log.info("PRELINAS:: %s " % mc_prelines_applied)
+            last_table_row = 0
             for mcpl in mc_prelines_applied:
                 rol = self.env['repair.fee'].browse(mcpl.rec_id)
                 # Calculo de la linea con la regla exacta. 
@@ -171,13 +191,14 @@ class CommWizardReport(models.TransientModel):
                 else:
                     factor = mcpl.commission_line_id.comm_rule.amount_factor/100
                     clamount = mcpl.amount*factor
-                clamount_total += clamount
+
+                # Tabla
                 current_row = row_pl + vertical_offset_table
                 sheet.write(current_row, 0, rol.repair_id.name, datas)
-                sheet.write(current_row, 1, rol.repair_id.create_date.strftime("%Y-%m-%d"), datas)
+                sheet.write(current_row, 1, rol.repair_id.create_date.strftime(DATE_FORMAT), datas)
                 # sheet.write(current_row, 1, rol.repair_id.create_date.strftime("%Y-%m-%dT%H:%M:%S"))
                 sheet.write(current_row, 2, mcpl.invoice_id.state, datas)
-                sheet.write(current_row, 3, mcpl.invoice_id.invoice_date.strftime("%Y-%m-%d"), datas)
+                sheet.write(current_row, 3, mcpl.invoice_id.invoice_date.strftime(DATE_FORMAT), datas)
                 sheet.write(current_row, 4, rol.repair_id.tpv_ids[0].name, datas)
                 sheet.write(current_row, 5, rol.repair_id.product_id.name, datas)
                 sheet.write(current_row, 6, rol.name, datas)
@@ -187,7 +208,51 @@ class CommWizardReport(models.TransientModel):
                 sheet.write(current_row, 10, mcpl.commission_line_id.comm_rule.name, datas) # Regla de comision
                 sheet.write(current_row, 11, clamount, datas)
                 row_pl += 1
+                last_table_row = current_row
+
+                # Sumatorias
+                qty_services_total += rol.product_uom_qty
+                sum_comms_factor += mcpl.commission_line_id.comm_rule.amount_factor
+                clamount_total += clamount
+
+            totals_dic = {
+                'name': mechanic.display_name,
+                'service_qty': qty_services_total,
+                'amount_total': clamount_total
+            }
+            all_mechanic_totals.append(totals_dic)
+
             _log.info("Suma comision total::: %s " % clamount_total)
+            last_table_row += 2
+            sheet.write(last_table_row, 6, 'TOTALES', encabezados)
+            sheet.write(last_table_row, 7, qty_services_total, datas2)
+            sheet.write(last_table_row, 10, sum_comms_factor, datas2)
+            sheet.write(last_table_row, 11, clamount_total, datas2)
+
+        sheet_totals = workbook.add_worksheet("TOTALES")
+        total_voffset = 0
+        count = 1
+        sheet_totals.set_column(0, 0, 5)
+        sheet_totals.set_column(1, 1, 25)
+        sheet_totals.set_column(2, 3, 15)
+
+        sheet_totals.write(total_voffset, 1, 'Colaborador', encabezados)
+        sheet_totals.write(total_voffset, 2, 'Horas', encabezados)
+        sheet_totals.write(total_voffset, 3, 'Total a percibir', encabezados)
+        g_total_hours = 0
+        g_total_amount = 0
+
+        for mt in all_mechanic_totals:
+            total_voffset += 1
+            sheet_totals.write(total_voffset, 0, count, datas2)
+            sheet_totals.write(total_voffset, 1, mt['name'], datas)
+            sheet_totals.write(total_voffset, 2, mt['service_qty'], datas)
+            sheet_totals.write(total_voffset, 3, mt['amount_total'], datas)
+            count += 1
+            g_total_amount += mt['amount_total']
+            g_total_hours += mt['service_qty']
+        sheet_totals.write(total_voffset+1, 2, g_total_hours, datas)
+        sheet_totals.write(total_voffset+1, 3, g_total_amount, datas)
 
         workbook.close()
         fp.seek(0)
