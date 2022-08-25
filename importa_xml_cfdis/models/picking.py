@@ -19,7 +19,10 @@ class StockPicking(models.Model):
 
     def button_leer_xml(self):
 
+        _logger.info("ENTRA")
+
         if self.purchase_id.import_xml_cfdi:
+            _logger.info("TIENE CFDI")
             xml_compra = self.purchase_id.import_xml_cfdi
             xml_products = self.env['pmg.importa.cfdi.line.product']
             lotes = self.env['stock.production.lot']
@@ -28,6 +31,7 @@ class StockPicking(models.Model):
                 prod = line.product_id
                 res = xml_products.search([('line_id', '=', xml_compra.id), ('cfdi_product_id', '=', prod.id)], limit=1)
 
+                _logger.info(line.id)
                 if res:
                     if res.cfdi_product_chasis:
 

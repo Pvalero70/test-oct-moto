@@ -94,6 +94,15 @@ class PmgImportaCfdiLine(models.Model):
 		if adenda_color:
 			color = self.getNodeText(adenda_color[0])
 
+		string_opts = []
+		adenda_opcion = comprobante.getElementsByTagName('ade:OPCION')
+		if adenda_opcion:
+			for opcion in adenda_opcion:
+				string_opts.append(self.getNodeText(opcion))
+		
+		_logger.info("##LEYENDO OPCIONES##")
+		_logger.info(string_opts)
+
 		adenda_data = {
 			'adenda_chasis' : chasis,
 			'adenda_numero' : number,
@@ -394,8 +403,7 @@ class PmgImportaCfdiAdenda(models.Model):
 	adenda_numero = fields.Char('Numero')
 	adenda_clave_color = fields.Char('Clave Color')
 	adenda_nombre_color = fields.Char('Color')
-
-
+	adenda_opcionales = fields.Char('Opcionales')
 
 class PmgImportaCfdiLineProduct(models.Model):
 	_name="pmg.importa.cfdi.line.product"
