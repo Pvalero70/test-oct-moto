@@ -120,6 +120,7 @@
                     <field name="cfdi_product_numero"/>
                     <field name="cfdi_product_clave_color"/>
                     <field name="cfdi_product_nombre_color"/>
+                    <field name="cfdi_product_opcionales"/>
                     <field name="cfdi_product_state"/>
                   </tree>
                 </field>

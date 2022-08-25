@@ -100,6 +100,10 @@ class PmgImportaCfdiLine(models.Model):
 			for opcion in adenda_opcion:
 				string_opts.append(self.getNodeText(opcion))
 		
+		ade_opts = ''
+		if string_opts:
+			ade_opts = ",".join(string_opts)
+
 		_logger.info("##LEYENDO OPCIONES##")
 		_logger.info(string_opts)
 
@@ -107,8 +111,10 @@ class PmgImportaCfdiLine(models.Model):
 			'adenda_chasis' : chasis,
 			'adenda_numero' : number,
 			'adenda_clave_color' : clave_color,
-			'adenda_nombre_color' : color
+			'adenda_nombre_color' : color,
+			'adenda_opcionales' : ade_opts
 		}
+
 		data['adenda'] = adenda_data
 		_logger.info("### ADENDA ###")
 		_logger.info(adenda_data)
@@ -217,7 +223,8 @@ class PmgImportaCfdiLine(models.Model):
 					'adenda_chasis' : record.get('adenda', {}).get('adenda_chasis', ''),
 					'adenda_numero' : record.get('adenda', {}).get('adenda_numero', ''),
 					'adenda_clave_color' : record.get('adenda', {}).get('adenda_clave_color', ''),
-					'adenda_nombre_color' : record.get('adenda', {}).get('adenda_nombre_color', '')
+					'adenda_nombre_color' : record.get('adenda', {}).get('adenda_nombre_color', ''),
+					'adenda_opcionales' : record.get('adenda', {}).get('adenda_opcionales', '')
 				})
 			except Exception as e:
 				_logger.exception(e)
@@ -335,6 +342,9 @@ class PmgImportaCfdiLine(models.Model):
 			nombre_color = adenda.adenda_nombre_color
 			_logger.info(nombre_color)
 
+			opcionales = adenda.adenda_opcionales
+			_logger.info(opcionales)
+
 			for product in rec.cfdi_product_ids:
 				
 				sku = product.cfdi_product_sku
@@ -345,6 +355,7 @@ class PmgImportaCfdiLine(models.Model):
 					"cfdi_product_clave_color" : clave_color,
 					"cfdi_product_nombre_color" : nombre_color,
 					"cfdi_product_clave_prod" : sku,
+					"cfdi_product_opcionales" : opcionales
 				})
 					
 	def leer_archivo(self):
@@ -430,6 +441,7 @@ class PmgImportaCfdiLineProduct(models.Model):
 	cfdi_product_numero = fields.Char('Numero Motor')
 	cfdi_product_clave_color = fields.Char('Clave Color')
 	cfdi_product_nombre_color = fields.Char('Color')
+	cfdi_product_opcionales = fields.Char('Opcionales')
 	cfdi_product_state = fields.Selection([
 		('pending', 'Pendiente'),
 		('mapped', 'Mapeado'),
