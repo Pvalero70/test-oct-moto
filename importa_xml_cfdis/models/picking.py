@@ -29,46 +29,50 @@ class StockPicking(models.Model):
 
             for line in self.move_lines:
                 prod = line.product_id
-                res = xml_products.search([('line_id', '=', xml_compra.id), ('cfdi_product_id', '=', prod.id)], limit=1)
+                prods_res = xml_products.search([('line_id', '=', xml_compra.id), ('cfdi_product_id', '=', prod.id)], limit=1)
 
                 _logger.info(line.id)
-                if res:
-                    if res.cfdi_product_chasis:
+                if prods_res:
+                    created_lots = []
+                    for res in prods_res:
+                        if res.cfdi_product_chasis and res.cfdi_product_chasis not in created_lots:
 
-                        _logger.info("Intenta crear lote y numero de serie")
+                            _logger.info("Intenta crear lote y numero de serie")
 
-                        lote = lotes.create({
-                            "name" : res.cfdi_product_chasis,
-                            "product_id" : prod.id,
-                            "company_id" : self.company_id.id,
-                            "tt_number_motor" : res.cfdi_product_numero,
-                            "tt_color" : res.cfdi_product_nombre_color
-                        })
-                        _logger.info("Lote creado..")
-                        _logger.info(lote)
-
-                        if lote:
-
-                            _logger.info("Intenta crear linea salida..")
-
-                            self.move_line_ids = [(0, 0, {
-                                "lot_id" : lote.id,
-                                "lot_name" : lote.name,
-                                "tt_motor_number" : res.cfdi_product_numero,
-                                "tt_color" : res.cfdi_product_nombre_color,
-                                "tt_free_optional" : res.cfdi_product_opcionales,
+                            lote = lotes.create({
+                                "name" : res.cfdi_product_chasis,
                                 "product_id" : prod.id,
-                                "product_uom_id" : 1,
-                                "location_id" : self.location_id.id,
-                                "location_dest_id" : self.location_dest_id.id,
                                 "company_id" : self.company_id.id,
-                                "qty_done" : 1,
-                                "move_id" : line.id,
-                                "picking_id" : self.id
-                            })]
+                                "tt_number_motor" : res.cfdi_product_numero,
+                                "tt_color" : res.cfdi_product_nombre_color
+                            })
+                            _logger.info("Lote creado..")
+                            _logger.info(lote)
 
-                            _logger.info("Created...")
-            
+                            if lote:
+
+                                created_lots.append(res.cfdi_product_chasis)
+
+                                _logger.info("Intenta crear linea salida..")
+
+                                self.move_line_ids = [(0, 0, {
+                                    "lot_id" : lote.id,
+                                    "lot_name" : lote.name,
+                                    "tt_motor_number" : res.cfdi_product_numero,
+                                    "tt_color" : res.cfdi_product_nombre_color,
+                                    "tt_free_optional" : res.cfdi_product_opcionales,
+                                    "product_id" : prod.id,
+                                    "product_uom_id" : 1,
+                                    "location_id" : self.location_id.id,
+                                    "location_dest_id" : self.location_dest_id.id,
+                                    "company_id" : self.company_id.id,
+                                    "qty_done" : 1,
+                                    "move_id" : line.id,
+                                    "picking_id" : self.id
+                                })]
+
+                                _logger.info("Created...")
+                
         return
 
     def validar_xml_purchase(self):

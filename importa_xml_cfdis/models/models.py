@@ -102,7 +102,7 @@ class PmgImportaCfdiLine(models.Model):
 		
 		ade_opts = ''
 		if string_opts:
-			ade_opts = ",".join(string_opts)
+			ade_opts = ", ".join(string_opts)
 
 		_logger.info("##LEYENDO OPCIONES##")
 		_logger.info(string_opts)
