@@ -5,16 +5,16 @@
             <td name="account_invoice_line_name">
                 <span t-field="line.name" t-options="{'widget': 'text'}"/>
                 <t t-if="o._print_moto_details()">
-                    <br/>
+                    <b>, </b>
 
                    <!-- <li><b>Número de pedimento: </b> <t t-esc="line.l10n_mx_edi_customs_number"/></li>-->
-                    <b>Marca: </b> <t t-esc="line.product_id.brand_id.name"/><br/>
-                    <b>Linea: </b> <t t-esc="line.product_id.categ_id.name"/><br/>
-                    <b>Clave: </b> <t t-esc="line.product_id.default_code"/><br/>
-                    <b>Modelo: </b> <t t-esc="line.product_id.moto_model"/><br/>
-                    <b>Cilindros: </b> <t t-esc="line.product_id.moto_cilindros"/><br/>
-                    <b>Desplazamiento: </b> <t t-esc="line.product_id.moto_despl"/><br/>
-                    <b>Motor: </b> <t t-esc="line.product_id.moto_motor"/><br/>
+                    <b>Marca: </b> <t t-esc="line.product_id.brand_id.name"/><b>, </b>
+                    <b>Linea: </b> <t t-esc="line.product_id.categ_id.name"/><b>, </b>
+                    <b>Clave: </b> <t t-esc="line.product_id.default_code"/><b>, </b>
+                    <b>Modelo: </b> <t t-esc="line.product_id.moto_model"/><b>, </b>
+                    <b>Cilindros: </b> <t t-esc="line.product_id.moto_cilindros"/><b>, </b>
+                    <b>Desplazamiento: </b> <t t-esc="line.product_id.moto_despl"/><b>, </b>
+                    <b>Motor: </b> <t t-esc="line.product_id.moto_motor"/>
 
                 </t>
             </td>
@@ -23,7 +23,7 @@
     <template id="stock_account_report_invoice_document_lotn_tt" inherit_id="stock_account.stock_account_report_invoice_document">
         <xpath expr="//table[@name='invoice_snln_table']" position="replace">
             <t t-if="o._print_moto_details()">
-                <table groups="stock_account.group_lot_on_invoice" class="table table-sm" style="width: 100%;" name="invoice_moto_snln_table">
+                <table groups="stock_account.group_lot_on_invoice" class="table table-sm" style="font-size: 13px;width: 100%;" name="invoice_moto_snln_table">
                     <thead>
                         <tr>
                             <th>Producto</th>
@@ -54,7 +54,7 @@
                 </table>
             </t>
             <t t-else="">
-                <table groups="stock_account.group_lot_on_invoice" class="table table-sm" style="width: 50%;" name="invoice_snln_table">
+                <table groups="stock_account.group_lot_on_invoice" class="table table-sm" style="font-size: 13px;width: 50%;" name="invoice_snln_table">
                     <thead>
                         <tr>
                             <th><span>Product</span></th>

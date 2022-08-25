@@ -21,7 +21,6 @@ class PosOrderInherit(models.Model):
 
     @api.model
     def _order_fields(self, ui_order):
-        _log.info("QUADIT INHERIT 22222222222222")
         if 'ref_repair' in ui_order:
             process_line = partial(self.env['pos.order.line']._order_line_fields_repair, session_id=ui_order['pos_session_id'])
         else:
@@ -106,7 +105,7 @@ class PosOrderInherit(models.Model):
                 orders_ids = self.env['repair.order'].search([('id','=', order.ref_repair)]).ids
                 order.repair_ids = orders_ids
             else:
-                order.repair_ids = 0
+                order.repair_ids = False
     
     def action_repair_view(self):
         for order in self:

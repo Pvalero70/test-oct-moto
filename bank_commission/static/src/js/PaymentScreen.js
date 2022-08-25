@@ -107,38 +107,42 @@ const PaymentScreenBc = (PaymentScreen) =>
                 }
             }
             else{
+                let or_com_all = this.currentOrder.get_orderlines();
+                console.log("1 GET ORDER LINES ::: ");
+                console.log(or_com_all);
+                if(or_com_all.length >= 1){
+                    let or_com = or_com_all[0];
+                    let product_com_id = or_com.product.id;
 
-                let or_com = this.currentOrder.get_orderlines()[0]
-                let product_com_id = or_com.product.id;
-
-
-                let commission_total_amount = 0;
-                let commission_total_amount_taxed = 0;
-                order.paymentlines.filter(e => !e.is_commission).forEach(line =>{
-                    let pm = line.payment_method;
-                    if(pm.bank_commission_amount > 0 && pm.bank_commission_method != false){
-                        if(pm.bank_commission_method == "fixed"){
-                            commission_total_amount_taxed = pm.bank_commission_amount;
+                    let commission_total_amount = 0;
+                    let commission_total_amount_taxed = 0;
+                    console.log("PAYMENT LINES WITHOUT COMMS");
+                    order.paymentlines.filter(e => !e.is_commission).forEach(line =>{
+                        let pm = line.payment_method;
+                        console.log(pm);
+                        if(pm.bank_commission_amount > 0 && pm.bank_commission_method != false){
+                            if(pm.bank_commission_method == "fixed"){
+                                commission_total_amount_taxed = pm.bank_commission_amount;
+                            }
+                            if(pm.bank_commission_method == "percentage"){
+                                commission_total_amount_taxed += (pm.bank_commission_amount/100)*line.amount;
+                            }
                         }
-                        if(pm.bank_commission_method == "percentage"){
-                            commission_total_amount_taxed += (pm.bank_commission_amount/100)*line.amount;
-                        }
-                    }
-                });
-                let comm_paymentline = order.paymentlines.filter(e => e.is_commission == true);
-                this.rpc({
-                    model: "pos.payment",
-                    method: "get_comm_product_tax",
-                    args: [product_com_id]
-                }).then(function (tax_factor_comm){
-                    console.log("Factor de impuestos:: :");
-                    console.log(tax_factor_comm);
-                    or_com.set_unit_price(commission_total_amount_taxed/tax_factor_comm);
-                    comm_paymentline[0].set_amount(commission_total_amount_taxed);
-                });
-
-
-
+                    });
+                    console.log("MONTO COMISION;:: ");
+                    console.log(commission_total_amount_taxed);
+                    let comm_paymentline = order.paymentlines.filter(e => e.is_commission == true);
+                    this.rpc({
+                        model: "pos.payment",
+                        method: "get_comm_product_tax",
+                        args: [product_com_id]
+                    }).then(function (tax_factor_comm){
+                        console.log("Factor de impuestos:: :");
+                        console.log(tax_factor_comm);
+                        or_com.set_unit_price(commission_total_amount_taxed/tax_factor_comm);
+                        comm_paymentline[0].set_amount(commission_total_amount_taxed);
+                    });
+                }
 
             }
 

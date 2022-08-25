@@ -9,6 +9,19 @@ class PosOrderInherit(models.Model):
     _inherit = "repair.fee"
     _description = "Repair fees"
 
+    def _convert_qty(self, sale_line, qty, direction):
+        """Converts the given QTY based on the given SALE_LINE and DIR.
+
+        if DIR='s2p': convert from sale line uom to product uom
+        if DIR='p2s': convert from product uom to sale line uom
+        """
+        product_uom = sale_line.product_id.uom_id
+        sale_line_uom = sale_line.product_uom
+        if direction == 's2p':
+            return sale_line_uom._compute_quantity(qty, product_uom, False)
+        elif direction == 'p2s':
+            return product_uom._compute_quantity(qty, sale_line_uom, False)
+
     def read_converted(self):
         user_admin = self.env.ref('base.user_admin')
         field_names = ["product_id", "name", "price_unit", "product_uom_qty", "tax_id", "price_total"]

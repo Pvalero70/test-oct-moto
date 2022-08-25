@@ -321,7 +321,7 @@ class PosSession(models.Model):
         #             update_lines.append((1, line.id, {"debit" : new_debit}))
 
         if update_lines and session_move:
-            _logger.info("Se intenta actualizar lineas")
+            _logger.info("Se intenta actualizar lineas.")
             _logger.info(update_lines)
             try:
                 session_move.write({"line_ids" : update_lines})
@@ -342,12 +342,3 @@ class PosSession(models.Model):
                     session_move.button_cancel()
                 else:
                     session_move.action_post()
-                # Descomentar para borrar el asiento
-                # for line in debit_move_id.line_ids:
-                #     if line.debit == 0 and line.credit == 0:
-                #         line.unlink()
-                # if not debit_move_id.line_ids:
-                #     _logger.info("Se elimina move porque no tiene lineas")
-                #     debit_move_id.unlink()
-                # else:
-                #     debit_move_id.action_post()

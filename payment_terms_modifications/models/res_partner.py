@@ -15,7 +15,7 @@ class ResPartnerPaymentPerm(models.Model):
     payment_terms_permission = fields.Boolean(string="Readonly para el campo terminos de pago", readonly=False,
                                         compute='get_user_payment_term')
 
-
+    @api.onchange('first_name', 'second_name', 'first_ap', 'second_ap')
     @api.depends('payment_terms_permission')
     def get_user_payment_term(self):
         res_user = self.env.user
@@ -23,3 +23,5 @@ class ResPartnerPaymentPerm(models.Model):
             self.payment_terms_permission = True
         else:
             self.payment_terms_permission = False
+
+

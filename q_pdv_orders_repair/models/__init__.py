@@ -6,3 +6,4 @@ from . import pos_order
 from . import repair_line
 from . import repair_fee
 from . import repair_order
+from . import product

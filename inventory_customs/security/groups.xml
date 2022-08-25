@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="group_edit_free_optionals" model="res.groups">
+        <field name="name">Editar Opcionales libres</field>
+        <field name="category_id" ref="base.module_category_inventory_inventory"/>
+    </record>
+    <record id="group_edit_additional_costs" model="res.groups">
+        <field name="name">Editar costos adicionales</field>
+        <field name="category_id" ref="base.module_category_inventory_inventory"/>
+    </record>
+</odoo>
