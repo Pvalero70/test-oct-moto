@@ -92,7 +92,7 @@ class CommWizardReport(models.TransientModel):
     def mechanic_report(self):
         # Si no especifican un año, se considera el actual.
         if self.year:
-            current_year = self.year
+            current_year = int(self.year)
         else:
             current_year = fields.Date().today().year
         _log.info("AÑO considerado :: %s " % current_year)
@@ -115,7 +115,10 @@ class CommWizardReport(models.TransientModel):
 
         if not self.include_paid_comms:
             domain.append(('state', '=', "to_pay"))
-        comm_ids = self.env['seller.commission'].search(domain)
+        comm_ids_unfiltered = self.env['seller.commission'].search(domain)
+        # _log.info("AÑOS EN LAS COMISIONES ::: %s - > %s " % (comm_ids_unfiltered.mapped("create_date"), comm_ids_unfiltered.mapped("create_date").year))
+        # Si existe el filtro por año; considerarlo:
+        comm_ids = comm_ids_unfiltered.filtered(lambda cy: current_year == cy.create_date.year)
         if not comm_ids:
             raise UserError("No se encontraron comisiones con los datos especificados.")
         mechanic_ids = comm_ids.mapped('mechanic_id')
