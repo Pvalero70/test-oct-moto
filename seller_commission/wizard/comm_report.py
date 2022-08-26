@@ -10,7 +10,7 @@ try:
     from odoo.tools.misc import xlsxwriter
 except ImportError:
     import xlsxwriter
-
+DATE_FORMAT = "%Y-%m-%d"
 _log = logging.getLogger("__--__-->> Report Commission:: ")
 
 NUM_MONTHS = {
@@ -92,7 +92,7 @@ class CommWizardReport(models.TransientModel):
     def mechanic_report(self):
         # Si no especifican un año, se considera el actual.
         if self.year:
-            current_year = self.year
+            current_year = int(self.year)
         else:
             current_year = fields.Date().today().year
         _log.info("AÑO considerado :: %s " % current_year)
@@ -115,29 +115,49 @@ class CommWizardReport(models.TransientModel):
 
         if not self.include_paid_comms:
             domain.append(('state', '=', "to_pay"))
-        comm_ids = self.env['seller.commission'].search(domain)
+        comm_ids_unfiltered = self.env['seller.commission'].search(domain)
+        # _log.info("AÑOS EN LAS COMISIONES ::: %s - > %s " % (comm_ids_unfiltered.mapped("create_date"), comm_ids_unfiltered.mapped("create_date").year))
+        # Si existe el filtro por año; considerarlo:
+        comm_ids = comm_ids_unfiltered.filtered(lambda cy: current_year == cy.create_date.year)
+        if not comm_ids:
+            raise UserError("No se encontraron comisiones con los datos especificados.")
         mechanic_ids = comm_ids.mapped('mechanic_id')
         workbook = xlsxwriter.Workbook(fp, {'in_memory': True})
+        title = workbook.add_format(
+            {'bold': True,
+             'font_size': 18,
+             'bg_color': 'white',
+             'center_across': True
+             })
         encabezados = workbook.add_format(
-            {'bold': 'True',
+            {'bold': True,
              'font_size': 10,
              'bg_color': '#B7F9B0',
              'center_across': True
              })
         datas = workbook.add_format(
-            {'bold': 'False',
+            {'bold': False,
              'font_size': 10,
              'bg_color': 'white',
              'center_across': True
              })
+        datas2 = workbook.add_format(
+            {'bold': False,
+             'font_size': 10,
+             'bg_color': 'yellow',
+             'center_across': True
+             })
         _log.info(" MECANICOS .... :: :%s " % mechanic_ids)
+        all_mechanic_totals = []
         for mechanic in mechanic_ids:
             sheet = workbook.add_worksheet('%s' % mechanic.display_name)
             vertical_offset_table = 3
-            sheet.set_column(0, 12, 20)
+            sheet.set_column(0, 5, 20)
+            sheet.set_column(6, 6, 30)
+            sheet.set_column(7, 12, 20)
 
-            sheet.merge_range(1, 5, 1, 8, "EMPRESA")
-            sheet.write(1, 1, 'Orden reparación')
+            sheet.merge_range(1, 5, 1, 8, self.env.company.name, title)
+            sheet.write(1, 1, fields.Date().today().strftime(DATE_FORMAT))
 
             sheet.write(vertical_offset_table, 0, 'Orden reparación', encabezados)
             sheet.write(vertical_offset_table, 1, 'Fecha orden', encabezados)
@@ -151,7 +171,6 @@ class CommWizardReport(models.TransientModel):
             sheet.write(vertical_offset_table, 9, 'Subtotal', encabezados)
             sheet.write(vertical_offset_table, 10, 'Regla comisión', encabezados)
             sheet.write(vertical_offset_table, 11, 'Comisión', encabezados)
-            total_comision = 0
 
             # Comisiones de mecánico.
             mechanic_coms = comm_ids.filtered(lambda co: co.mechanic_id and co.mechanic_id.id == mechanic.id)
@@ -160,9 +179,13 @@ class CommWizardReport(models.TransientModel):
             # Buscar las lineas relacionadas (rec_id) y en el ciclo abajo
             # las filtramos.
 
+            # Sumatorias.
             clamount_total = 0
-            _log.info("PRELINAS:: %s " % mc_prelines_applied)
+            qty_services_total = 0
+            sum_comms_factor = 0
 
+            _log.info("PRELINAS:: %s " % mc_prelines_applied)
+            last_table_row = 0
             for mcpl in mc_prelines_applied:
                 rol = self.env['repair.fee'].browse(mcpl.rec_id)
                 # Calculo de la linea con la regla exacta. 
@@ -171,13 +194,14 @@ class CommWizardReport(models.TransientModel):
                 else:
                     factor = mcpl.commission_line_id.comm_rule.amount_factor/100
                     clamount = mcpl.amount*factor
-                clamount_total += clamount
+
+                # Tabla
                 current_row = row_pl + vertical_offset_table
                 sheet.write(current_row, 0, rol.repair_id.name, datas)
-                sheet.write(current_row, 1, rol.repair_id.create_date.strftime("%Y-%m-%d"), datas)
+                sheet.write(current_row, 1, rol.repair_id.create_date.strftime(DATE_FORMAT), datas)
                 # sheet.write(current_row, 1, rol.repair_id.create_date.strftime("%Y-%m-%dT%H:%M:%S"))
                 sheet.write(current_row, 2, mcpl.invoice_id.state, datas)
-                sheet.write(current_row, 3, mcpl.invoice_id.invoice_date.strftime("%Y-%m-%d"), datas)
+                sheet.write(current_row, 3, mcpl.invoice_id.invoice_date.strftime(DATE_FORMAT), datas)
                 sheet.write(current_row, 4, rol.repair_id.tpv_ids[0].name, datas)
                 sheet.write(current_row, 5, rol.repair_id.product_id.name, datas)
                 sheet.write(current_row, 6, rol.name, datas)
@@ -187,7 +211,51 @@ class CommWizardReport(models.TransientModel):
                 sheet.write(current_row, 10, mcpl.commission_line_id.comm_rule.name, datas) # Regla de comision
                 sheet.write(current_row, 11, clamount, datas)
                 row_pl += 1
+                last_table_row = current_row
+
+                # Sumatorias
+                qty_services_total += rol.product_uom_qty
+                sum_comms_factor += mcpl.commission_line_id.comm_rule.amount_factor
+                clamount_total += clamount
+
+            totals_dic = {
+                'name': mechanic.display_name,
+                'service_qty': qty_services_total,
+                'amount_total': clamount_total
+            }
+            all_mechanic_totals.append(totals_dic)
+
             _log.info("Suma comision total::: %s " % clamount_total)
+            last_table_row += 2
+            sheet.write(last_table_row, 6, 'TOTALES', encabezados)
+            sheet.write(last_table_row, 7, qty_services_total, datas2)
+            sheet.write(last_table_row, 10, sum_comms_factor, datas2)
+            sheet.write(last_table_row, 11, clamount_total, datas2)
+
+        sheet_totals = workbook.add_worksheet("TOTALES")
+        total_voffset = 0
+        count = 1
+        sheet_totals.set_column(0, 0, 5)
+        sheet_totals.set_column(1, 1, 25)
+        sheet_totals.set_column(2, 3, 15)
+
+        sheet_totals.write(total_voffset, 1, 'Colaborador', encabezados)
+        sheet_totals.write(total_voffset, 2, 'Horas', encabezados)
+        sheet_totals.write(total_voffset, 3, 'Total a percibir', encabezados)
+        g_total_hours = 0
+        g_total_amount = 0
+
+        for mt in all_mechanic_totals:
+            total_voffset += 1
+            sheet_totals.write(total_voffset, 0, count, datas2)
+            sheet_totals.write(total_voffset, 1, mt['name'], datas)
+            sheet_totals.write(total_voffset, 2, mt['service_qty'], datas)
+            sheet_totals.write(total_voffset, 3, mt['amount_total'], datas)
+            count += 1
+            g_total_amount += mt['amount_total']
+            g_total_hours += mt['service_qty']
+        sheet_totals.write(total_voffset+1, 2, g_total_hours, datas)
+        sheet_totals.write(total_voffset+1, 3, g_total_amount, datas)
 
         workbook.close()
         fp.seek(0)
@@ -204,34 +272,125 @@ class CommWizardReport(models.TransientModel):
 
     def motos_report(self):
         _log.info(" GENERANDO REPORTE DE MOTOS.. ")
-        self.file_name = 'Motocicletas %s a %s de %s.xlsx' % (
-        NUM_MONTHS[self.month_start], NUM_MONTHS[self.month_final], self.year)
-        fp = io.BytesIO()
-        workbook = xlsxwriter.Workbook(fp, {'in_memory': True})
-        encabezados = workbook.add_format(
-            {'bold': 'True', 'font_size': 12, 'bg_color': '#B7F9B0', 'center_across': True})
-        sheet = workbook.add_worksheet('Libro 1')
-        sheet.set_column(0, 0, 15)
-        sheet.set_column(1, 1, 45)
-        sheet.set_column(2, 2, 15)
-        sheet.set_column(3, 5, 12)
-        sheet.set_column(6, 8, 12)
-        sheet.write(0, 0, 'Codigo', encabezados)
-        sheet.write(0, 1, 'Descripción', encabezados)
-        sheet.write(0, 2, 'Sucursal', encabezados)
-        sheet.write(0, 3, 'Cantidad Teorica', encabezados)
-        sheet.write(0, 4, 'Precio Unitario', encabezados)
-        sheet.write(0, 5, 'Precio Total', encabezados)
-        sheet.write(0, 6, 'Cantidad Real', encabezados)
-        r = 2
-        sheet.write(r, 0, "aaaaaaaaa")
-        sheet.write(r, 1, "bbbbbbb")
-        sheet.write(r, 2, "cccccccccc")
-        sheet.write(r, 3, "dddddddddddd")
-        sheet.write(r, 4, "eeeeeeee")
-        sheet.write(r, 5, "dfff")
-        sheet.write(r, 6, 'sss')
+        if self.year:
+            current_year = int(self.year)
+        else:
+            current_year = fields.Date().today().year
+        _log.info("AÑO considerado :: %s " % current_year)
 
+        if self.month_final:
+            self.file_name = 'Ventas %s a %s de %s.xlsx' % (NUM_MONTHS[self.month_start], NUM_MONTHS[self.month_final], current_year)
+            fp = io.BytesIO()
+            months = self.create_month_range(self.month_start, self.month_final)
+            domain = [
+                ('current_month', 'in', months)
+            ]
+        else:
+            self.file_name = 'Ventas %s-%s.xlsx' % (NUM_MONTHS[self.month_start], current_year)
+            fp = io.BytesIO()
+            domain = [
+                ('current_month', '=', self.month_start)
+            ]
+
+        if not self.include_paid_comms:
+            domain.append(('state', '=', "to_pay"))
+        comm_ids_unfiltered = self.env['seller.commission'].search(domain)
+        comm_ids = comm_ids_unfiltered.filtered(lambda cy: current_year == cy.create_date.year and cy.seller_id is not False)
+        if not comm_ids:
+            raise UserError("No se encontraron comisiones con los datos especificados.")
+        # Mapeamos los colaboradores que tienen pendientes comisiones desde el módulo de ventas.
+        seller_ids = comm_ids.mapped('seller_id')
+
+        # Formación del reporte.
+        workbook = xlsxwriter.Workbook(fp, {'in_memory': True})
+        title = workbook.add_format(
+            {'bold': True,
+             'font_size': 18,
+             'bg_color': 'white',
+             'center_across': True
+             })
+        encabezados = workbook.add_format(
+            {'bold': True,
+             'font_size': 10,
+             'bg_color': '#B7F9B0',
+             'center_across': True
+             })
+        datas = workbook.add_format(
+            {'bold': False,
+             'font_size': 8,
+             'bg_color': 'white',
+             'center_across': True
+             })
+        datas2 = workbook.add_format(
+            {'bold': False,
+             'font_size': 8,
+             'bg_color': 'yellow',
+             'center_across': True
+             })
+
+        for seller in seller_ids:
+            sheet = workbook.add_worksheet('%s' % seller.display_name)
+            vertical_offset_table = 3
+            sheet.set_column(0, 1, 10)
+            sheet.set_column(2, 2, 5)
+            sheet.set_column(3, 3, 25)
+            sheet.set_column(4, 5, 8)
+            sheet.set_column(6, 6, 25)
+
+            sheet.merge_range(1, 3, 2, 8, self.env.company.name, title)
+            sheet.write(1, 1, fields.Date().today().strftime(DATE_FORMAT))
+
+            sheet.write(vertical_offset_table, 0, 'Factura', encabezados)
+            sheet.write(vertical_offset_table, 1, 'F Fecha', encabezados)
+            sheet.write(vertical_offset_table, 2, '-', encabezados)
+            sheet.write(vertical_offset_table, 3, 'CLiente', encabezados)
+            sheet.write(vertical_offset_table, 4, 'Modelo', encabezados)
+            sheet.write(vertical_offset_table, 5, 'No. Inventario', encabezados)
+            sheet.write(vertical_offset_table, 6, 'Serie', encabezados)
+            sheet.write(vertical_offset_table, 7, 'P. venta', encabezados)
+            sheet.write(vertical_offset_table, 8, 'Costo', encabezados)
+            sheet.write(vertical_offset_table, 9, 'Utilidad', encabezados)
+            sheet.write(vertical_offset_table, 10, 'Comisión', encabezados)
+
+            # Filtro de las comisiones del vendedor y obtención de sus prelineas, las cuales no deben ser ventas hechas desde una reparación.
+            seller_coms = comm_ids.filtered(lambda co: co.seller_id and co.seller_id.id == seller.id)
+            seller_prelines_applied = seller_coms.mapped('preline_ids').filtered(lambda pl: pl.commission_line_id is not False and not pl.is_repair_sale)
+
+            # Acumuladores
+            row_pl = 1
+            seller_commission_total = 0
+            # Iteración de las prelineas.
+            for spa in seller_prelines_applied:
+                order_line = self.env['sale.order.line'].browse(spa.rec_id)
+                if not order_line:
+                    continue
+
+                # Calcular comisión de prelinea.
+                if spa.commission_line_id.comm_rule.calc_method == "fixed":
+                    clamount = order_line.product_uom_qty * spa.commission_line_id.comm_rule.amount_factor
+                else:
+                    factor = spa.commission_line_id.comm_rule.amount_factor/100
+                    clamount = spa.amount*factor
+
+                # Tabla
+                current_row = row_pl + vertical_offset_table
+                sheet.write(current_row, 0, spa.invoice_id.name, datas)
+                sheet.write(current_row, 1, spa.invoice_id.invoice_date.strftime(DATE_FORMAT), datas)
+                sheet.write(current_row, 2, " ", datas)
+                sheet.write(current_row, 3, order_line.order_id.partner_id.name, datas)
+                sheet.write(current_row, 4, order_line.product_id.moto_model, datas)
+                sheet.write(current_row, 5, order_line.lot_id.tt_inventory_number, datas)
+                sheet.write(current_row, 6, order_line.lot_id.name, datas)
+                sheet.write(current_row, 7, order_line.price_subtotal, datas)
+                sheet.write(current_row, 8, order_line.purchase_price, datas)
+                sheet.write(current_row, 9, order_line.margin, datas)
+                sheet.write(current_row, 9, order_line.margin, datas)
+                sheet.write(current_row, 10, clamount, datas)
+                row_pl += 1
+                seller_commission_total += clamount
+
+
+        # Finalizado el reporte se construye el binario.
         workbook.close()
         fp.seek(0)
         self.excel_file = base64.encodestring(fp.getvalue())
@@ -254,10 +413,10 @@ class CommWizardReport(models.TransientModel):
         encabezados = workbook.add_format(
             {'bold': 'True', 'font_size': 12, 'bg_color': '#B7F9B0', 'center_across': True})
         sheet = workbook.add_worksheet('Libro 1')
-        sheet.set_column(0, 0, 15)
-        sheet.set_column(1, 1, 45)
-        sheet.set_column(2, 2, 15)
-        sheet.set_column(3, 5, 12)
+        sheet.set_column(0, 0, 10) # A
+        sheet.set_column(1, 1, 10)
+        sheet.set_column(2, 2, 5) # C
+        sheet.set_column(3, 3, 25)  #
         sheet.set_column(6, 8, 12)
         sheet.write(0, 0, 'Codigo', encabezados)
         sheet.write(0, 1, 'Descripción', encabezados)
