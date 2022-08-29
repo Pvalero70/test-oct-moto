@@ -21,8 +21,8 @@ class StockPicking(models.Model):
 
         _logger.info("ENTRA")
 
-        for move in self.move_lines:
-            move.calc_inv_number()
+        # for move in self.move_lines:
+        #     move.calc_inv_number()
 
         if self.purchase_id.import_xml_cfdi:
             _logger.info("TIENE CFDI")
@@ -34,6 +34,8 @@ class StockPicking(models.Model):
                 prod = line.product_id
                 prods_res = xml_products.search([('line_id', '=', xml_compra.id), ('cfdi_product_id', '=', prod.id)], limit=1)
 
+                line.calc_inv_number()
+                
                 _logger.info(line.id)
                 if prods_res:
                     created_lots = []
