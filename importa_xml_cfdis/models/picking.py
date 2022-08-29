@@ -21,6 +21,8 @@ class StockPicking(models.Model):
 
         _logger.info("ENTRA")
 
+        self.calc_inv_number()
+
         if self.purchase_id.import_xml_cfdi:
             _logger.info("TIENE CFDI")
             xml_compra = self.purchase_id.import_xml_cfdi
