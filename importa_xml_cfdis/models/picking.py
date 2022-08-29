@@ -44,7 +44,8 @@ class StockPicking(models.Model):
                                 "product_id" : prod.id,
                                 "company_id" : self.company_id.id,
                                 "tt_number_motor" : res.cfdi_product_numero,
-                                "tt_color" : res.cfdi_product_nombre_color
+                                "tt_color" : res.cfdi_product_nombre_color,
+                                "tt_free_optional" : res.cfdi_product_opcionales
                             })
                             _logger.info("Lote creado..")
                             _logger.info(lote)
