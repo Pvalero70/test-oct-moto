@@ -90,7 +90,7 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
                       console.log("product_to_add_in_pos ####");
                       console.log(product_to_add_in_pos);
 
-                      if (product_to_add_in_pos.length){
+                      if ( typeof(product_to_add_in_pos) == 'undefined'){
                           const { confirmed } = await this.showPopup('ConfirmPopup', {
                               title: this.env._t('Products not available in POS'),
                               body:
@@ -101,7 +101,7 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
                               cancelText: this.env._t('No'),
                           });
                           if (confirmed){
-                              await this.env.pos._addProducts(product_to_add_in_pos);
+                              await this.env.pos._addProducts(sale_order.product_id[0]);
                           }
                       }
       
