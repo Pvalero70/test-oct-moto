@@ -105,7 +105,8 @@ class RepairMechanic(models.Model):
         res = super(RepairMechanic, self).action_repair_end()
 
         # Ponemos en False para que el codigo ya no afecte a otras recepciones de motos y sigan las validaciones normales de odoo
-        self.lot_id_product.is_repair_moto_action = False
+        if self.lot_id:
+            self.lot_id.is_repair_moto_action = False
 
         return res
 
