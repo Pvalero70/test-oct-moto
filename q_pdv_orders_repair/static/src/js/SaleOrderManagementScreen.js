@@ -78,10 +78,18 @@ odoo.define('q_pdv_orders_repair.SaleOrderManagementScreen', function (require) 
                     }
 
                     currentPOSOrder.set_repair(sale_order.id)
-      
-                    if (selectedOption){
+                     if (selectedOption){
                       let lines = sale_order.order_line;
                       let product_to_add_in_pos = this.env.pos.db.get_product_by_id(sale_order.product_id[0])
+                      console.log("Producto sale ###");
+
+                      console.log(sale_order);
+                      console.log(sale_order.product_id);
+                      console.log(sale_order.product_id[0]);
+
+                      console.log("product_to_add_in_pos ####");
+                      console.log(product_to_add_in_pos);
+
                       if (product_to_add_in_pos.length){
                           const { confirmed } = await this.showPopup('ConfirmPopup', {
                               title: this.env._t('Products not available in POS'),
