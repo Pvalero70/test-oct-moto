@@ -461,67 +461,47 @@ class CommWizardReport(models.TransientModel):
              'bg_color': 'yellow',
              'center_across': True
              })
+        sheet = workbook.add_worksheet('%s' % "Refacciones & accesorios")
 
+        vertical_offset_table = 3
+        sheet.set_column(0, 1, 10)
+        sheet.set_column(2, 2, 5)
+        sheet.set_column(3, 3, 25)
+        sheet.set_column(4, 5, 8)
+        sheet.set_column(6, 6, 25)
+
+        sheet.merge_range(1, 3, 2, 8, self.env.company.name, title)
+        sheet.write(1, 1, fields.Date().today().strftime(DATE_FORMAT))
+
+        sheet.write(vertical_offset_table, 0, '', encabezados)
+        sheet.write(vertical_offset_table, 1, 'Nombre', encabezados)
+        sheet.write(vertical_offset_table, 2, 'Facturas', encabezados)
+        sheet.write(vertical_offset_table, 3, 'Piezas', encabezados)
+        sheet.write(vertical_offset_table, 4, 'Importe', encabezados)
+        sheet.write(vertical_offset_table, 5, '', encabezados)
+        sheet.write(vertical_offset_table, 6, '', encabezados)
+        sheet.write(vertical_offset_table, 7, 'Total vendido', encabezados)
+        sheet.write(vertical_offset_table, 8, '% comisión', encabezados)
+        sheet.write(vertical_offset_table, 9, 'Comisión total', encabezados)
+        
+        # Acumuladores
+        row_pl = 1
+        seller_commission_total = 0
+        
         for seller in seller_ids:
-            sheet = workbook.add_worksheet('%s' % seller.display_name)
-            vertical_offset_table = 3
-            sheet.set_column(0, 1, 10)
-            sheet.set_column(2, 2, 5)
-            sheet.set_column(3, 3, 25)
-            sheet.set_column(4, 5, 8)
-            sheet.set_column(6, 6, 25)
-
-            sheet.merge_range(1, 3, 2, 8, self.env.company.name, title)
-            sheet.write(1, 1, fields.Date().today().strftime(DATE_FORMAT))
-
-            sheet.write(vertical_offset_table, 0, 'Factura', encabezados)
-            sheet.write(vertical_offset_table, 1, 'F Fecha', encabezados)
-            sheet.write(vertical_offset_table, 2, '-', encabezados)
-            sheet.write(vertical_offset_table, 3, 'CLiente', encabezados)
-            sheet.write(vertical_offset_table, 4, 'Modelo', encabezados)
-            sheet.write(vertical_offset_table, 5, 'No. Inventario', encabezados)
-            sheet.write(vertical_offset_table, 6, 'Serie', encabezados)
-            sheet.write(vertical_offset_table, 7, 'P. venta', encabezados)
-            sheet.write(vertical_offset_table, 8, 'Costo', encabezados)
-            sheet.write(vertical_offset_table, 9, 'Utilidad', encabezados)
-            sheet.write(vertical_offset_table, 10, 'Comisión', encabezados)
-
-            # Filtro de las comisiones del vendedor y obtención de sus prelineas, las cuales no deben ser ventas hechas desde una reparación.
+            
             seller_coms = comm_ids.filtered(lambda co: co.seller_id and co.seller_id.id == seller.id)
             seller_prelines_applied = seller_coms.mapped('preline_ids').filtered(lambda pl: pl.commission_line_id is not False and not pl.is_repair_sale)
 
-            # Acumuladores
-            row_pl = 1
-            seller_commission_total = 0
+            
             # Iteración de las prelineas.
-            for spa in seller_prelines_applied:
-                order_line = self.env['sale.order.line'].browse(spa.rec_id)
-                if not order_line:
-                    continue
-
-                # Calcular comisión de prelinea.
-                if spa.commission_line_id.comm_rule.calc_method == "fixed":
-                    clamount = order_line.product_uom_qty * spa.commission_line_id.comm_rule.amount_factor
-                else:
-                    factor = spa.commission_line_id.comm_rule.amount_factor/100
-                    clamount = spa.amount*factor
-
-                # Tabla
-                current_row = row_pl + vertical_offset_table
-                sheet.write(current_row, 0, spa.invoice_id.name, datas)
-                sheet.write(current_row, 1, spa.invoice_id.invoice_date.strftime(DATE_FORMAT), datas)
-                sheet.write(current_row, 2, " ", datas)
-                sheet.write(current_row, 3, order_line.order_id.partner_id.name, datas)
-                sheet.write(current_row, 4, order_line.product_id.moto_model, datas)
-                sheet.write(current_row, 5, order_line.lot_id.tt_inventory_number, datas)
-                sheet.write(current_row, 6, order_line.lot_id.name, datas)
-                sheet.write(current_row, 7, order_line.price_subtotal, datas)
-                sheet.write(current_row, 8, order_line.purchase_price, datas)
-                sheet.write(current_row, 9, order_line.margin, datas)
-                sheet.write(current_row, 9, order_line.margin, datas)
-                sheet.write(current_row, 10, clamount, datas)
-                row_pl += 1
-                seller_commission_total += clamount
+            
+            # Tabla
+            current_row = row_pl + vertical_offset_table
+            sheet.write(current_row, 0, spa.invoice_id.name, datas)
+        
+            row_pl += 1
+            seller_commission_total += clamount
 
 
         # Finalizado el reporte se construye el binario.
