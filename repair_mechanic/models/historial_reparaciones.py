@@ -124,7 +124,8 @@ class StockPickingInherit(models.Model):
         res = super(StockPickingInherit, self).button_validate()
 
         # Ponemos en False para que el codigo ya no afecte a otras recepciones de motos y sigan las validaciones normales de odoo
-        self.lot_id_product.is_repair_moto_action = False
+        if self.lot_id_product:
+            self.lot_id_product.is_repair_moto_action = False
 
         return res
 
