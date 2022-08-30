@@ -98,6 +98,16 @@ class RepairMechanic(models.Model):
             pick.lot_id_product = self.lot_id
         return res
 
+    def action_repair_end(self):
+        if self.lot_id:
+            self.lot_id.is_repair_moto_action = True
+
+        res = super(RepairMechanic, self).action_repair_end()
+
+        # Ponemos en False para que el codigo ya no afecte a otras recepciones de motos y sigan las validaciones normales de odoo
+        self.lot_id_product.is_repair_moto_action = False
+
+        return res
 
 
 class StockPickingInherit(models.Model):
