@@ -480,8 +480,8 @@ class CommWizardReport(models.TransientModel):
         sheet.write(vertical_offset_table, 4, 'Importe', encabezados)
         sheet.write(vertical_offset_table, 5, '', encabezados)
         sheet.write(vertical_offset_table, 6, '', encabezados)
-        sheet.write(vertical_offset_table, 7, 'Total vendido', encabezados)
-        sheet.write(vertical_offset_table, 8, '% comisión', encabezados)
+        sheet.write(vertical_offset_table, 7, '', encabezados)
+        sheet.write(vertical_offset_table, 8, 'comisión', encabezados)
         sheet.write(vertical_offset_table, 9, 'Comisión total', encabezados)
         
         # Acumuladores
@@ -490,18 +490,25 @@ class CommWizardReport(models.TransientModel):
         
         for seller in seller_ids:
             
+            current_row = row_pl + vertical_offset_table
             seller_coms = comm_ids.filtered(lambda co: co.seller_id and co.seller_id.id == seller.id)
             seller_prelines_applied = seller_coms.mapped('preline_ids').filtered(lambda pl: pl.commission_line_id is not False and not pl.is_repair_sale)
+            seller_inv_qty = len(seller_prelines_applied.mapped('invoice_id') or [])
 
-            
-            # Iteración de las prelineas.
-            
+            # Lineas de venta del vendedor. 
+            original_selling_lines = self.env['repair.line'].search([('id', 'in', seller_prelines_applied.mapped('rec_id'))])
+            product_qty_sold = sum(original_selling_lines.mapped('product_uom_qty'))
+            amount_sold = sum(original_selling_lines.mapped('price_subtotal'))
+
             # Tabla
-            current_row = row_pl + vertical_offset_table
-            sheet.write(current_row, 0, spa.invoice_id.name, datas)
-        
+            sheet.write(current_row, 1, seller.name, datas)
+            sheet.write(current_row, 2, seller_inv_qty, datas)
+            sheet.write(current_row, 3, product_qty_sold, datas)
+            sheet.write(current_row, 4, amount_sold, datas)
+
+            sheet.write(current_row, " ", amount_sold, datas)
+      
             row_pl += 1
-            seller_commission_total += clamount
 
 
         # Finalizado el reporte se construye el binario.

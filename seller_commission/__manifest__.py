@@ -14,6 +14,7 @@
         "security/ir.model.access.csv",
         "views/seller_commission.xml",
         "views/invoice.xml",
+        "views/partner.xml",
         "wizard/comm_report.xml"
     ],
     'assets': {

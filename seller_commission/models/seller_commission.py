@@ -116,8 +116,15 @@ class SellerCommission(models.Model):
 
                 if com_line:
                     plines_amount = plines_amount + com_line.amount_base
+                # Forzamos la regla si: el vendedor tiene una establecida y las prelineas vienen de una venta de reparaciones; además tendrán
+                # que cumplir con la categoría establecida (producto-regla), o categoría padre. 
+               
 
-                rule_id = rules.filtered(lambda ru: (categ.id in ru.product_categ_ids.ids) and (plines_amount >= ru.amount_start))
+                if reg.seller_id.forze_commission_rule_id and (categ.id in eg.seller_id.forze_commission_rule_id.product_categ_ids.ids):
+                    rule_id = reg.seller_id.forze_commission_rule_id
+                else:                 
+                    rule_id = rules.filtered(lambda ru: (categ.id in ru.product_categ_ids.ids) and (plines_amount >= ru.amount_start))
+                
                 _log.info(" CATEGORIAS ESPERADA DE LINEA::: %s   " % rule_id)
                 if rule_id:
                     rule_id = rule_id.sorted('amount_start', reverse=True)[0]

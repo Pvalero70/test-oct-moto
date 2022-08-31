@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_forze_comm_rule_res_partner_form_inherited" model="ir.ui.view">
+        <field name="name">view_forze_comm_rule_res_partner_form_inherited</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="forze_commission_rule_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
