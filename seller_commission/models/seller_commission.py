@@ -120,7 +120,7 @@ class SellerCommission(models.Model):
                 # que cumplir con la categoría establecida (producto-regla), o categoría padre. 
                
 
-                if reg.seller_id.forze_commission_rule_id and (categ.id in eg.seller_id.forze_commission_rule_id.product_categ_ids.ids):
+                if reg.seller_id.forze_commission_rule_id and (categ.id in reg.seller_id.forze_commission_rule_id.product_categ_ids.ids):
                     rule_id = reg.seller_id.forze_commission_rule_id
                 else:                 
                     rule_id = rules.filtered(lambda ru: (categ.id in ru.product_categ_ids.ids) and (plines_amount >= ru.amount_start))

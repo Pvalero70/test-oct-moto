@@ -18,4 +18,14 @@
         <field name="name">Administrador de comisiones</field>
         <field name="category_id" ref="seller_commissions_groups_category"/>
     </record>
+
+    <record id="group_seller_commission_edit_forze_sule" model="res.groups">
+        <field name="name">Forzar reglas comisione</field>
+        <field name="category_id" ref="seller_commissions_groups_category"/>
+    </record>
+
+    <record id="group_seller_commission_reports" model="res.groups">
+        <field name="name">Reportes de comisiones</field>
+        <field name="category_id" ref="seller_commissions_groups_category"/>
+    </record>
 </odoo>

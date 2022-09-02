@@ -429,11 +429,14 @@ class CommWizardReport(models.TransientModel):
         if not self.include_paid_comms:
             domain.append(('state', '=', "to_pay"))
         comm_ids_unfiltered = self.env['seller.commission'].search(domain)
+        _log.info("COMM ids sin filtro:: %s " % comm_ids_unfiltered)
         comm_ids = comm_ids_unfiltered.filtered(lambda cy: current_year == cy.create_date.year and cy.seller_id is not False)
+        _log.info(" COMMS FILTRADAS :: %s " % comm_ids)
         if not comm_ids:
             raise UserError("No se encontraron comisiones con los datos especificados.")
         # Mapeamos los colaboradores que tienen pendientes comisiones desde el módulo de ventas.
         seller_ids = comm_ids.mapped('seller_id')
+        _log.info("VENDEDORES::: %s" % seller_ids)
 
         # Formación del reporte.
         workbook = xlsxwriter.Workbook(fp, {'in_memory': True})
@@ -464,11 +467,10 @@ class CommWizardReport(models.TransientModel):
         sheet = workbook.add_worksheet('%s' % "Refacciones & accesorios")
 
         vertical_offset_table = 3
-        sheet.set_column(0, 1, 10)
-        sheet.set_column(2, 2, 5)
-        sheet.set_column(3, 3, 25)
-        sheet.set_column(4, 5, 8)
-        sheet.set_column(6, 6, 25)
+        sheet.set_column(0, 3, 10)
+        sheet.set_column(4, 5, 2)
+        sheet.set_column(6, 9, 10)
+
 
         sheet.merge_range(1, 3, 2, 8, self.env.company.name, title)
         sheet.write(1, 1, fields.Date().today().strftime(DATE_FORMAT))
@@ -489,24 +491,43 @@ class CommWizardReport(models.TransientModel):
         seller_commission_total = 0
         
         for seller in seller_ids:
+            # Si el vendedor de refacciones y accesorios no tiene una regla, entonces no contará para este reporte.
+            if not seller.forze_commission_rule_id:
+                continue
             
             current_row = row_pl + vertical_offset_table
             seller_coms = comm_ids.filtered(lambda co: co.seller_id and co.seller_id.id == seller.id)
-            seller_prelines_applied = seller_coms.mapped('preline_ids').filtered(lambda pl: pl.commission_line_id is not False and not pl.is_repair_sale)
+            seller_prelines_applied = seller_coms.mapped('preline_ids').filtered(lambda pl: pl.commission_line_id is not False and pl.categ_id.id in seller.forze_commission_rule_id.product_categ_ids.ids)
             seller_inv_qty = len(seller_prelines_applied.mapped('invoice_id') or [])
+            comms_lines = seller_prelines_applied.mapped('commission_line_id')
 
-            # Lineas de venta del vendedor. 
-            original_selling_lines = self.env['repair.line'].search([('id', 'in', seller_prelines_applied.mapped('rec_id'))])
-            product_qty_sold = sum(original_selling_lines.mapped('product_uom_qty'))
-            amount_sold = sum(original_selling_lines.mapped('price_subtotal'))
+            # Lineas de venta del vendedor.
+            # Es necesario distinguir las lineas que vienen de repair o sale.
+            product_qty_sold = 0
+            amount_sold = 0
+
+            prelines_repair = seller_prelines_applied.filtered(lambda l: l.is_repair_sale is True)
+            if prelines_repair:
+                ori_repair_lines = self.env['repair.line'].search([('id', 'in', prelines_repair.mapped('rec_id'))])
+                product_qty_sold += sum(ori_repair_lines.mapped('product_uom_qty'))
+                amount_sold += sum(ori_repair_lines.mapped('price_subtotal'))
+
+            prelines_sale = seller_prelines_applied.filtered(lambda l: l.is_repair_sale is False)
+            if prelines_sale:
+                ori_sale_lines = self.env['sale.order.line'].search([('id', 'in', prelines_sale.mapped('rec_id'))])
+                product_qty_sold += sum(ori_sale_lines.mapped('product_uom_qty'))
+                amount_sold += sum(ori_sale_lines.mapped('price_subtotal'))
+
+            # Totales de comision (suma de lineas de comisión relacionadas a las prelineas)
+            commission_total = 0
 
             # Tabla
             sheet.write(current_row, 1, seller.name, datas)
             sheet.write(current_row, 2, seller_inv_qty, datas)
             sheet.write(current_row, 3, product_qty_sold, datas)
-            sheet.write(current_row, 4, amount_sold, datas)
+            sheet.write(current_row, 4, round(amount_sold, 2), datas)
 
-            sheet.write(current_row, " ", amount_sold, datas)
+            sheet.write(current_row, 9, commission_total, datas)
       
             row_pl += 1
 
