@@ -2,6 +2,7 @@
 
 from odoo import api, models, fields, _
 import logging
+import json
 
 _log = logging.getLogger("--__--__-->>> Account Move:: ")
 
@@ -31,6 +32,7 @@ class AccountMoveSc(models.Model):
         res = super(AccountMoveSc, self)._compute_amount()
         for move in self:
             if move.amount_residual == 0 and move.move_type == "out_invoice" and move.payment_state == "in_payment" and not move.has_seller_commission:
+                 # Revisar que la factura no tenga una nota de crédito.
                 self.create_seller_preline_commission(move)
         return res
 
@@ -48,7 +50,17 @@ class AccountMoveSc(models.Model):
         pos_order = self.env['pos.order'].search([('account_move', '=', invoice_id.id)])
         _log.info(" POS ORDER DE FACTURA::: %s " % pos_order)
 
-        # Revisar que la factura no tenga una nota de crédito.
+        inv_payments = json.loads(invoice_id.invoice_payments_widget).get('content', [])
+        theres_out_refound = False
+        _log.info("inv payments::: %s " % inv_payments) 
+        for ip in inv_payments:
+            ip_move = self.env['account.move'].browse(int(ip['move_id']))
+            _log.info(" NOTA DE CREDITO :: %s " % ip_move)
+            if ip_move.move_type in ['out_refund', 'in_refund']:
+                theres_out_refound = True
+        if theres_out_refound:
+            _log.info(" FACTURA IGNORADA ... . ")
+            return False
 
         if pos_order:
             
