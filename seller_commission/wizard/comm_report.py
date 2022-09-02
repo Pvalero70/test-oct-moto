@@ -467,8 +467,8 @@ class CommWizardReport(models.TransientModel):
         sheet = workbook.add_worksheet('%s' % "Refacciones & accesorios")
 
         vertical_offset_table = 3
-        sheet.set_column(0, 3, 10)
-        sheet.set_column(4, 5, 2)
+        sheet.set_column(0, 4, 10)
+        sheet.set_column(5, 5, 2)
         sheet.set_column(6, 9, 10)
 
 
@@ -498,6 +498,7 @@ class CommWizardReport(models.TransientModel):
             current_row = row_pl + vertical_offset_table
             seller_coms = comm_ids.filtered(lambda co: co.seller_id and co.seller_id.id == seller.id)
             seller_prelines_applied = seller_coms.mapped('preline_ids').filtered(lambda pl: pl.commission_line_id is not False and pl.categ_id.id in seller.forze_commission_rule_id.product_categ_ids.ids)
+            
             seller_inv_qty = len(seller_prelines_applied.mapped('invoice_id') or [])
             comms_lines = seller_prelines_applied.mapped('commission_line_id')
 
@@ -505,7 +506,7 @@ class CommWizardReport(models.TransientModel):
             # Es necesario distinguir las lineas que vienen de repair o sale.
             product_qty_sold = 0
             amount_sold = 0
-
+            _log.info(" PRELINEAS RELACIONADAS AL VENDEDOR::: %s " % seller_prelines_applied)
             prelines_repair = seller_prelines_applied.filtered(lambda l: l.is_repair_sale is True)
             if prelines_repair:
                 ori_repair_lines = self.env['repair.line'].search([('id', 'in', prelines_repair.mapped('rec_id'))])
@@ -519,7 +520,7 @@ class CommWizardReport(models.TransientModel):
                 amount_sold += sum(ori_sale_lines.mapped('price_subtotal'))
 
             # Totales de comision (suma de lineas de comisión relacionadas a las prelineas)
-            commission_total = 0
+            commission_total = sum(comms_lines.mapped('amount'))
 
             # Tabla
             sheet.write(current_row, 1, seller.name, datas)
