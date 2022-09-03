@@ -10,7 +10,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 class SaleOrderLine(models.Model):
-    _inherit = 'sale.order.line'
+	_inherit = 'sale.order.line'
 
 	@api.depends('move_ids', 'move_ids.stock_valuation_layer_ids', 'order_id.picking_ids.state')
 	def _compute_purchase_price(self):
