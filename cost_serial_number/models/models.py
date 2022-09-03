@@ -29,7 +29,7 @@ class SaleOrderLine(models.Model):
 					move = move_line.move_id
 					if move.purchase_line_id:
 						_logger.info("Se obtuvo el precio unitario de la compra")
-						price_unit = move.purchase_line_id
+						price_unit = move.purchase_line_id.price_unit
 						line.purchase_price = price_unit
 						return
 
