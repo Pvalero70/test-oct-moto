@@ -12,6 +12,11 @@ _logger = logging.getLogger(__name__)
 class SaleOrderLine(models.Model):
 	_inherit = 'sale.order.line'
 
+	@api.onchnge("lot_id")
+	def _onchange_lot_id(self):
+		_logger.info("## CAMBIA LOTE ##")
+		self._compute_purchase_price()
+
 	@api.depends('move_ids', 'move_ids.stock_valuation_layer_ids', 'order_id.picking_ids.state')
 	def _compute_purchase_price(self):
 		_logger.info("### OVERRIDE PURCHASE PRICE ###")
