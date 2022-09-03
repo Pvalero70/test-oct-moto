@@ -19,7 +19,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['sales', 'purchase', 'stock', 'purchase_stock', 'inventory_customs'],
+    'depends': ['sale_stock_margin'],
 
     # always loaded
     'data': [
