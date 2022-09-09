@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- POS ORDER -->
     <record id="view_pos_session_form_custom_inherit" model="ir.ui.view">
         <field name="name">view_pos_session_form_custom_inherit</field>
         <field name="model">pos.session</field>
@@ -13,4 +12,4 @@
         </field>
     </record>
 
-</odoo>
+</odoo> -->
