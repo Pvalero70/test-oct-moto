@@ -45,12 +45,20 @@ class StockMove(models.Model):
 				valued_quantity += valued_move_line.product_uom_id._compute_quantity(valued_move_line.qty_done, move.product_id.uom_id)
 				product_serial_cost = self._get_cost_serial_number(valued_move_line.product_id, valued_move_line.lot_id.id)
 				product_id = valued_move_line.product_id.id
-				serial_costs[product_id] = {
-					"cost" : product_serial_cost,
-					"lot_id" : valued_move_line.lot_id.id,
-					"serial_number" : valued_move_line.lot_id.name,
-					"product_id" : valued_move_line.product_id.id
-				}
+				if serial_costs.get(product_id):
+					serial_costs[product_id].append({
+						"cost" : product_serial_cost,
+						"lot_id" : valued_move_line.lot_id.id,
+						"serial_number" : valued_move_line.lot_id.name,
+						"product_id" : valued_move_line.product_id.id
+					})
+				else:
+					serial_costs[product_id] = [{
+						"cost" : product_serial_cost,
+						"lot_id" : valued_move_line.lot_id.id,
+						"serial_number" : valued_move_line.lot_id.name,
+						"product_id" : valued_move_line.product_id.id
+					}]
 
 			if float_is_zero(forced_quantity or valued_quantity, precision_rounding=move.product_id.uom_id.rounding):
 				continue
@@ -60,17 +68,22 @@ class StockMove(models.Model):
 				svl_vals['description'] = 'Correction of %s (modification of past move)' % move.picking_id.name or move.name
 			svl_vals['description'] += svl_vals.pop('rounding_adjustment', '')
 			svl_vals_list.append(svl_vals)
-
+		
+		processed_serial_numbers = []
 		if serial_costs and svl_vals_list:
-			index = 0
 			for el in svl_vals_list:
 				product_id = el.get('product_id')
 				if product_id and serial_costs.get(product_id):
-					serial = serial_costs.get(product_id)				
-					costo = serial.get("cost")
-					if costo:
-						el["unit_cost"] = costo
-						el["value"] = -1 * costo
+					seriales = serial_costs.get(product_id)
+					for serial in seriales:	
+						serial_number = serial.get("serial_number")
+						if serial_number in processed_serial_numbers:
+							continue			
+						costo = serial.get("cost")
+						if costo:
+							el["unit_cost"] = costo
+							el["value"] = -1 * costo
+						processed_serial_numbers.append(serial_number)
 
 		return self.env['stock.valuation.layer'].sudo().create(svl_vals_list)
 
