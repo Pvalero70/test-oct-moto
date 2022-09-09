@@ -53,9 +53,9 @@ class SaleOrderLine(models.Model):
 		_logger.info("### OVERRIDE PURCHASE PRICE ###")
 		for line in self:			
 			if line.lot_id:
-				move_line = self.env['stock.move.line'].search([('lot_id', '=', line.lot_id.id)])					
-				if move_line:
-					for line in move_line:
+				move_lines = self.env['stock.move.line'].search([('lot_id', '=', line.lot_id.id)])					
+				if move_lines:
+					for move_line in move_lines:
 						_logger.info("Se obtuvo la linea del movimiento")
 						move = move_line.move_id
 						if move.purchase_line_id:
