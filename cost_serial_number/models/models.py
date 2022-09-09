@@ -13,6 +13,18 @@ _logger = logging.getLogger(__name__)
 class StockMove(models.Model):
 	_inherit = 'stock.move'
 
+	def _get_cost_serial_number(self, product, lot_id):
+		move_lines = self.env['stock.move.line'].search([('lot_id', '=', lot_id)])					
+		if move_lines:
+			for move_line in move_lines:
+				_logger.info("Se obtuvo la linea del movimiento")
+				move = move_line.move_id
+				if move.purchase_line_id:
+					_logger.info("Se obtuvo el precio unitario de la compra")
+					price_unit = move.purchase_line_id.price_unit
+					return float(price_unit)
+		return
+
 	def _create_out_svl(self, forced_quantity=None):
 		"""Create a `stock.valuation.layer` from `self`.
 
@@ -21,15 +33,24 @@ class StockMove(models.Model):
 		"""
 		_logger.info("## Override create out svl module ##")
 		svl_vals_list = []
+		serial_costs = []
 		for move in self:
 			move = move.with_company(move.company_id)
 			valued_move_lines = move._get_out_move_lines()
-			valued_quantity = 0
+			valued_quantity = 0			
 			for valued_move_line in valued_move_lines:
 				_logger.info("## valued move line")
 				_logger.info(valued_move_line)
 				_logger.info(valued_move_line.lot_id)
 				valued_quantity += valued_move_line.product_uom_id._compute_quantity(valued_move_line.qty_done, move.product_id.uom_id)
+				product_serial_cost = self._get_cost_serial_number(valued_move_line.product_id, valued_move_line.lot_id.id)
+				serial_costs.append({
+					"cost" : product_serial_cost,
+					"lot_id" : valued_move_line.lot_id.id,
+					"serial_number" : valued_move_line.lot_id.name,
+					"product_id" : valued_move_line.product_id.id
+				})
+
 			if float_is_zero(forced_quantity or valued_quantity, precision_rounding=move.product_id.uom_id.rounding):
 				continue
 			svl_vals = move.product_id._prepare_out_svl_vals(forced_quantity or valued_quantity, move.company_id)
@@ -38,6 +59,16 @@ class StockMove(models.Model):
 				svl_vals['description'] = 'Correction of %s (modification of past move)' % move.picking_id.name or move.name
 			svl_vals['description'] += svl_vals.pop('rounding_adjustment', '')
 			svl_vals_list.append(svl_vals)
+
+		if serial_costs and svl_vals_list:
+			index = 0
+			for el in svl_vals_list:
+				if len(serial_costs) >= index + 1:
+					costo = serial_costs[index].get("cost")
+					if costo:
+						el["unit_cost"] = costo
+						el["value"] = -1 * costo
+
 		return self.env['stock.valuation.layer'].sudo().create(svl_vals_list)
 
 class SaleOrderLine(models.Model):
