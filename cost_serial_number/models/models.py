@@ -33,7 +33,7 @@ class StockMove(models.Model):
 		"""
 		_logger.info("## Override create out svl module ##")
 		svl_vals_list = []
-		serial_costs = []
+		serial_costs = {}
 		for move in self:
 			move = move.with_company(move.company_id)
 			valued_move_lines = move._get_out_move_lines()
@@ -44,12 +44,13 @@ class StockMove(models.Model):
 				_logger.info(valued_move_line.lot_id)
 				valued_quantity += valued_move_line.product_uom_id._compute_quantity(valued_move_line.qty_done, move.product_id.uom_id)
 				product_serial_cost = self._get_cost_serial_number(valued_move_line.product_id, valued_move_line.lot_id.id)
-				serial_costs.append({
+				product_id = valued_move_line.product_id.id
+				serial_costs[product_id] = {
 					"cost" : product_serial_cost,
 					"lot_id" : valued_move_line.lot_id.id,
 					"serial_number" : valued_move_line.lot_id.name,
 					"product_id" : valued_move_line.product_id.id
-				})
+				}
 
 			if float_is_zero(forced_quantity or valued_quantity, precision_rounding=move.product_id.uom_id.rounding):
 				continue
@@ -63,8 +64,10 @@ class StockMove(models.Model):
 		if serial_costs and svl_vals_list:
 			index = 0
 			for el in svl_vals_list:
-				if len(serial_costs) >= index + 1:
-					costo = serial_costs[index].get("cost")
+				product_id = el.get('product_id')
+				if product_id and serial_costs.get(product_id):
+					serial = serial_costs.get(product_id)				
+					costo = serial.get("cost")
 					if costo:
 						el["unit_cost"] = costo
 						el["value"] = -1 * costo
