@@ -4,6 +4,11 @@ import logging
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, UserError, Warning
 from lxml import etree
+# -*- coding: utf-8 -*-
+import logging
+
+from datetime import datetime, time
+
 
 ### notas de credito en contabilidad
 _logger = logging.getLogger(__name__)
@@ -24,6 +29,16 @@ class ResUserInheritDiscount(models.Model):
 
 class AccountMoveInherit(models.Model):
     _inherit = 'account.move'
+
+    @api.model
+    def _def_date(self):
+        inv_type = self._context.get('default_move_type')
+        if inv_type == 'out_invoice':
+            return datetime.today()
+
+    invoice_date = fields.Date(string='Invoice/Bill Date', readonly=False, index=True, copy=False,
+                                default=_def_date,
+                                states={'draft': [('readonly', False)]})
 
     @api.model
     def fields_view_get(self, view_id=None, view_type='form', toolbar=False, submenu=False):

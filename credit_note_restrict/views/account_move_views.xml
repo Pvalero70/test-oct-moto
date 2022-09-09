@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <record id="account.action_move_out_invoice_type" model="ir.actions.act_window">
-        <field name="context">{'default_move_type': 'out_invoice','default_invoice_date': current_date}</field>
+        <field name="context">{'default_move_type': 'out_invoice'}</field>
     </record>
 
 </odoo>
