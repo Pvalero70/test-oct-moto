@@ -66,6 +66,9 @@ class StockMove(models.Model):
 						"product_id" : valued_move_line.product_id.id
 					}]
 
+				_logger.info("### SERIAL COST ###")
+				_logger.info(serial_costs)
+
 			if float_is_zero(forced_quantity or valued_quantity, precision_rounding=move.product_id.uom_id.rounding):
 				continue
 			svl_vals = move.product_id._prepare_out_svl_vals(forced_quantity or valued_quantity, move.company_id)
@@ -77,20 +80,35 @@ class StockMove(models.Model):
 		
 		processed_serial_numbers = []
 		if serial_costs and svl_vals_list:
+			_logger.info("##Lista##")
+			_logger.info(svl_vals_list)
 			for el in svl_vals_list:
+				_logger.info("## FOR ##")
 				product_id = el.get('product_id')
+				_logger.info(product_id)
 				if product_id and serial_costs.get(product_id):
+					_logger.info("##Existe..#")
 					seriales = serial_costs.get(product_id)
+					_logger.info("## Seriales ##")
+					_logger.info(seriales)
 					for serial in seriales:	
 						serial_number = serial.get("serial_number")
+						_logger.info(f"Serial number: {serial_number}")
 						if serial_number in processed_serial_numbers:
-							continue			
+							_logger.info(processed_serial_numbers)
+							_logger.info("#Continue")
+							continue	
+						_logger.info("#No se ha procesado")		
 						costo = serial.get("cost")
+						_logger.info(el)
 						if costo:
+							_logger.info("Actualiza costo")
 							el["unit_cost"] = costo
 							el["value"] = -1 * costo
+							_logger.info(el)
 						processed_serial_numbers.append(serial_number)
-
+		_logger.info("## Resultado: ##")
+		_logger.info(svl_vals_list)
 		return self.env['stock.valuation.layer'].sudo().create(svl_vals_list)
 
 class SaleOrderLine(models.Model):
