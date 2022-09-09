@@ -14,7 +14,7 @@ class StockValuationLayer(models.Model):
 	_inherit = 'stock.valuation.layer'
 
 	unit_cost = fields.Monetary('Unit Value', readonly=False)
-    value = fields.Monetary('Total Value', readonly=False)
+	value = fields.Monetary('Total Value', readonly=False)
 
 class StockMove(models.Model):
 	_inherit = 'stock.move'
