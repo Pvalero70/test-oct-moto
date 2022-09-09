@@ -99,6 +99,7 @@ class StockMove(models.Model):
 							_logger.info("#Continue")
 							continue	
 						_logger.info("#No se ha procesado")		
+						processed_serial_numbers.append(serial_number)
 						costo = serial.get("cost")
 						_logger.info(el)
 						if costo:
@@ -106,7 +107,8 @@ class StockMove(models.Model):
 							el["unit_cost"] = costo
 							el["value"] = -1 * costo
 							_logger.info(el)
-						processed_serial_numbers.append(serial_number)
+						break
+					
 		_logger.info("## Resultado: ##")
 		_logger.info(svl_vals_list)
 		return self.env['stock.valuation.layer'].sudo().create(svl_vals_list)
