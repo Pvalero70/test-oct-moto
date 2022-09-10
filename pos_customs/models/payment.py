@@ -49,17 +49,26 @@ class AccountPayment(models.Model):
         forma_pago = pos_method.payment_method_c
 
         metodos = self.env['account.payment.method.line'].search([('payment_type', '=', 'inbound')], limit=1)
+
+        payment_data = {
+            "partner_id" : customer.get('id'),
+            "date" : datetime.now().strftime("%Y-%m-%d"),
+            "journal_id" : journal.id,
+            "payment_method_line_id" : metodos.id,                
+            "amount" : amount,
+            "pos_session_id" : pos_session_id,
+            "payment_type" : "inbound",
+            "ref" : invoice.get('name')
+        }
+
+        if forma_pago:
+            payment_data.update({"l10n_mx_edi_payment_method_id" : forma_pago.id})
+
+        _log.info("Payment data")
+        _log.info(payment_data)
+
         try:
-            payment_id = self.create({
-                "partner_id" : customer.get('id'),
-                "date" : datetime.now().strftime("%Y-%m-%d"),
-                "journal_id" : journal.id,
-                "payment_method_line_id" : metodos.id,                
-                "amount" : amount,
-                "pos_session_id" : pos_session_id,
-                "payment_type" : "inbound",
-                "ref" : invoice.get('name')
-            })
+            payment_id = self.create(payment_data)
         except Exception as e:
             _log.error(e)
         else:
@@ -75,8 +84,8 @@ class AccountPayment(models.Model):
 
             if payment_id:
 
-                if forma_pago:
-                    payment_id.write({"l10n_mx_edi_payment_method_id" : forma_pago.id})
+                # if forma_pago:
+                #     payment_id.write({"l10n_mx_edi_payment_method_id" : forma_pago.id})
 
                 payment_id.action_post()
                 invoice_id = invoice.get('id')
