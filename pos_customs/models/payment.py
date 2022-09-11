@@ -48,8 +48,15 @@ class AccountPayment(models.Model):
         journal = pos_method.journal_id
         forma_pago = pos_method.payment_method_c
 
-        metodos = self.env['account.payment.method.line'].search([('payment_type', '=', 'inbound')], limit=1)
-        account_id = (metodos.payment_account_id.id or journal.company_id.account_journal_payment_debit_account_id.id)
+        metodos = journal.inbound_payment_method_line_ids
+        account_id = None
+        for metodo in metodos:
+            if metodo.payment_type == 'inbound':
+                account_id = metodo.payment_account_id.id
+                break
+
+        # metodos = self.env['account.payment.method.line'].search([('payment_type', '=', 'inbound')], limit=1)
+        # account_id = (metodos.payment_account_id.id or journal.company_id.account_journal_payment_debit_account_id.id)
 
         _log.info("##Account Id###")
         _log.info(account_id)
@@ -58,7 +65,7 @@ class AccountPayment(models.Model):
             "partner_id" : customer.get('id'),
             "date" : datetime.now().strftime("%Y-%m-%d"),
             "journal_id" : journal.id,
-            "payment_method_line_id" : metodos.id,
+            "payment_method_line_id" : metodo.id,
             "outstanding_account_id" : account_id,
             "amount" : amount,
             "pos_session_id" : pos_session_id,
