@@ -49,12 +49,17 @@ class AccountPayment(models.Model):
         forma_pago = pos_method.payment_method_c
 
         metodos = self.env['account.payment.method.line'].search([('payment_type', '=', 'inbound')], limit=1)
+        account_id = (metodos.payment_account_id.id or journal.company_id.account_journal_payment_debit_account_id.id)
+
+        _log.info("##Account Id###")
+        _log.info(account_id)
 
         payment_data = {
             "partner_id" : customer.get('id'),
             "date" : datetime.now().strftime("%Y-%m-%d"),
             "journal_id" : journal.id,
-            "payment_method_line_id" : metodos.id,                
+            "payment_method_line_id" : metodos.id,
+            "outstanding_account_id" : account_id,
             "amount" : amount,
             "pos_session_id" : pos_session_id,
             "payment_type" : "inbound",
