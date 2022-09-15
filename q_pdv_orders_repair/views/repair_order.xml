@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_repair_order_form_pos_inherit" model="ir.ui.view">
+            <field name="name">repair.order.form.pos.inherit</field>
+            <field name="model">repair.order</field>
+            <field name="inherit_id" ref="repair.view_repair_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                    <button type="object" name="action_pos_view" class="oe_stat_button" icon="fa-shopping-basket" attrs="{'invisible':[('tpv_count','=', 0)]}">
+                        <field name="tpv_count" widget="statinfo" string="Transferred to TPV"/>
+                    </button>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

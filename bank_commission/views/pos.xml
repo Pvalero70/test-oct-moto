@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_pos_payemnt_method_commission_bank_form" model="ir.ui.view">
+        <field name="name">view.pos.payemnt.method.commission.bank.form</field>
+        <field name="model">pos.payment.method</field>
+        <field name="inherit_id" ref="point_of_sale.pos_payment_method_view_form"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="bank_commission_method"/>
+                <div>
+                    <b>Ayuda: </b> El monto fijo representa una constante cada uso de tarjeta.
+                </div>
+                <field name="bank_commission_amount"
+                    attrs="{
+                    'invisible': [('bank_commission_method', '==', False)],
+                    'required':[('bank_commission_method', '!=', False)]}"/>
+                <field name="bank_commission_product_id"
+                    attrs="{
+                    'invisible': [('bank_commission_method', '==', False)],
+                    'required':[('bank_commission_method', '!=', False)]}"/>
+                <div>
+                    <b>Ayuda: </b> Si no se encuentra un diario para la ubicación(pdv) - categoría del producto, éste diario será asignado por defauult.
+                </div>
+                <field name="bc_journal_id"
+                    attrs="{
+                    'invisible': [('bank_commission_method', '==', False)],
+                    'required':[('bank_commission_method', '!=', False)]}"/>
+                <field name="product_cate_commission_ids"
+                       widget="many2many_tags"
+                    attrs="{
+                    'invisible': [('bank_commission_method', '==', False)],
+                    'required':[('bank_commission_method', '!=', False)]}"/>
+            </field>
+        </field>
+    </record>
+</odoo>

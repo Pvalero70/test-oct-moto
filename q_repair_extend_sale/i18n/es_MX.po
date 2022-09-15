@@ -1,0 +1,100 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* q_repair_extend_sale
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0+e-20220317\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-05-10 18:20+0000\n"
+"PO-Revision-Date: 2022-05-10 13:24-0500\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_MX\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#. module: q_repair_extend_sale
+#: model:ir.model.fields.selection,name:q_repair_extend_sale.selection__repair_order__invoice_method__after_repair
+msgid "After Repair"
+msgstr "Después de la reparación"
+
+#. module: q_repair_extend_sale
+#: model:ir.model.fields.selection,name:q_repair_extend_sale.selection__repair_order__invoice_method__b4repair
+msgid "Before Repair"
+msgstr "Antes de la reparación"
+
+#. module: q_repair_extend_sale
+#: model_terms:ir.ui.view,arch_db:q_repair_extend_sale.view_repair_order_form_inherit_sale
+msgid "Delivery"
+msgstr "Entrega"
+
+#. module: q_repair_extend_sale
+#: model:ir.model.fields,field_description:q_repair_extend_sale.field_repair_order__delivery_count
+msgid "Delivery Orders"
+msgstr "Órdenes de entrega"
+
+#. module: q_repair_extend_sale
+#: model:ir.model.fields,field_description:q_repair_extend_sale.field_repair_order__invoice_method
+msgid "Invoice Method"
+msgstr "Método de facturación"
+
+#. module: q_repair_extend_sale
+#: model:ir.model.fields,field_description:q_repair_extend_sale.field_repair_order__location_id
+msgid "Location"
+msgstr "Ubicación"
+
+#. module: q_repair_extend_sale
+#: model:ir.model.fields.selection,name:q_repair_extend_sale.selection__repair_order__invoice_method__none
+msgid "No Invoice"
+msgstr "Sin factura"
+
+#. module: q_repair_extend_sale
+#: model:ir.model.fields,field_description:q_repair_extend_sale.field_repair_order__picking_sale_confirm
+msgid "Picking sale confirm"
+msgstr "Confirmación de entrega"
+
+#. module: q_repair_extend_sale
+#: model:ir.model.fields,field_description:q_repair_extend_sale.field_repair_order__picking_sale_ids
+msgid "Receptions"
+msgstr "Recepciones"
+
+#. module: q_repair_extend_sale
+#: model:ir.model,name:q_repair_extend_sale.model_repair_line
+msgid "Repair Line (parts)"
+msgstr "Línea de reparación (piezas)"
+
+#. module: q_repair_extend_sale
+#: model:ir.model,name:q_repair_extend_sale.model_repair_order
+msgid "Repair Order"
+msgstr "Orden de reparación"
+
+#. module: q_repair_extend_sale
+#: model:ir.model.fields,help:q_repair_extend_sale.field_repair_order__invoice_method
+msgid ""
+"Selecting 'Before Repair' or 'After Repair' will allow you to generate "
+"invoice before or after the repair is done respectively. 'No invoice' means "
+"you don't want to generate invoice for this repair order."
+msgstr ""
+"Si selecciona \"Antes de la reparación\" o \"Después de la reparación\", "
+"podrá generar una factura antes o después de que se realice la reparación, "
+"respectivamente. 'Sin factura' significa que no desea generar una factura "
+"para esta orden de reparación."
+
+#. module: q_repair_extend_sale
+#: model_terms:ir.ui.view,arch_db:q_repair_extend_sale.view_repair_order_form_inherit_sale
+msgid "Send product"
+msgstr "Enviar productos"
+
+#. module: q_repair_extend_sale
+#: model:ir.model.fields,field_description:q_repair_extend_sale.field_repair_line__location_id
+msgid "Source Location"
+msgstr "Ubicación de origen"
+
+#. module: q_repair_extend_sale
+#: model:ir.model.fields,help:q_repair_extend_sale.field_repair_order__location_id
+msgid "This is the location where the product to repair is located."
+msgstr "Esta es la ubicación donde se encuentra el producto a reparar."

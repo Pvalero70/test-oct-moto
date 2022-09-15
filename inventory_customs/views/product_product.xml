@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_product_product_c_form" model="ir.ui.view">
+        <field name="name">view.product_product.c.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <field name="detailed_type" position="after">
+                <field name="product_inv_categ" string="Categoria INV"/>
+            </field>
+            <field name="categ_id" position="after">
+                <field name="brand_id" string="Marca"
+                       options="{'no_open': False, 'no_create': True}"
+                       attrs="{'invisible':[('product_inv_categ', 'not in', ['moto', 'refaccion','accesorio'])]}"/>
+            </field>
+            <page name="inventory" position="after">
+                <page string="Moto Specs" name="Motorcycle" attrs="{'invisible':[('product_inv_categ', 'not in', ['moto'])]}">
+                    <group>
+                        <group>
+                            <field name="moto_model"/>
+                            <field name="moto_cilindros"/>
+                            <field name="moto_despl"/>
+                            <field name="moto_motor"/>
+                        </group>
+                    </group>
+                </page>
+            </page>
+        </field>
+    </record>
+</odoo>

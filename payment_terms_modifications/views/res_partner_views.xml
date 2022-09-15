@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="res_partner_paymenttemrn_readonly_form" model="ir.ui.view">
+        <field name="name">res.partner.paymenttemrn.readonly.form</field>
+        <field name="model">res.partner</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="account.view_partner_property_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='property_payment_term_id']" position="before">
+                <field name="payment_terms_permission" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='property_payment_term_id']" position="attributes">
+                <attribute name="attrs">{'readonly':[('payment_terms_permission', '=', False)]}
+                </attribute>
+            </xpath>
+
+
+
+        </field>
+    </record>
+
+
+
+
+</odoo>

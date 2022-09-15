@@ -1,0 +1,30 @@
+<?xml version="1.0" ?>
+<odoo>
+
+
+    <record id="category_repair" model="ir.module.category">
+        <field name="name">Modulo Reparaciones</field>
+        <field name="description">Configuracion acerca del modulo reparaciones</field>
+        <field name="sequence">7</field>
+    </record>
+
+    <record id="admin_repair_mechanic_group" model="res.groups">
+        <field name="category_id" ref="category_repair"/>
+        <field name="name">Administrador de Mecanicos</field>
+    </record>
+
+    <record id="user_reparaciones_group" model="res.groups">
+        <field name="category_id" ref="category_repair"/>
+        <field name="name">Acceso reparaciones</field>
+    </record>
+
+
+    <record id="repair.menu_repair_order" model="ir.ui.menu">
+        <field name="groups_id" eval="[(5,0),(4, ref('user_reparaciones_group'))]"/>
+    </record>
+
+
+
+</odoo>
+
+

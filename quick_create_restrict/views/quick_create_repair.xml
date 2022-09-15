@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="repair_order_inherit_quickcreate_form" model="ir.ui.view">
+        <field name="name">repair.order.quickcreate.form</field>
+        <field name="model">repair.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//group[1]/group/field[@name='product_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+            <xpath expr="//group[1]/group/div/field[@name='product_uom']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+            <xpath expr="//group[1]/group/field[@name='partner_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+            <xpath expr="//group[1]/group/field[@name='user_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='operations']/tree/field[@name='product_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_create': True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='operations']/tree/field[@name='product_uom']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_create': True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='operations']/tree/field[@name='tax_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_create': True}</attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='fees_lines']/tree/field[@name='product_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_create': True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='fees_lines']/tree/field[@name='product_uom']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_create': True}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='fees_lines']/tree/field[@name='tax_id']" position="attributes">
+                <attribute name="options">{'no_quick_create':True,'no_create_edit':True,'no_create': True}</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+
+</odoo>

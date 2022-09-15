@@ -1,0 +1,18 @@
+<odoo>
+  <data>
+
+  <!-- <record model="ir.actions.act_window" id="pmg_importa_cfdi_action_window">
+      <field name="name">Carga de Cfdis</field>
+      <field name="res_model">pmg.importa.cfdi.line</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain"></field>
+    </record> -->
+
+    <!-- <menuitem id="menu_pmg_importa_cfdi"
+      name="Carga de Cfdis"
+      action="pmg_importa_cfdi_action_window"
+      parent="purchase.menu_procurement_management"
+      sequence="10"/> -->
+   
+  </data>
+</odoo>

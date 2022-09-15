@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+    <record id="sale_order_priceunit_form" model="ir.ui.view">
+        <field name="name">sale.order.priceunit.form</field>
+        <field name="model">sale.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+
+
+        </field>
+    </record>
+
+    <record id="account_move_priceunit_form" model="ir.ui.view">
+        <field name="name">account.move.priceunit.form</field>
+        <field name="model">account.move</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+
+
+            <xpath expr="//field[@name='invoice_line_ids']/tree/field[@name='price_unit']" position="attributes">
+                <attribute name="attrs">{'readonly':[('parent.move_type','=','out_invoice')]}</attribute>
+
+            </xpath>
+
+
+        </field>
+    </record>
+
+
+    <record id="repair_order_priceunit_form" model="ir.ui.view">
+        <field name="name">repair.order.priceunit.form</field>
+        <field name="model">repair.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='operations']/tree/field[@name='price_unit']" position="attributes">
+                <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
+
+            </xpath>
+
+            <xpath expr="//field[@name='fees_lines']/tree/field[@name='price_unit']" position="attributes">
+                <attribute name="readonly">1</attribute>
+                <attribute name="force_save">1</attribute>
+
+            </xpath>
+
+
+        </field>
+    </record>
+
+    <record id="product_template_discount_price_form" model="ir.ui.view">
+        <field name="name">product.template.inherit.price.form</field>
+        <field name="model">product.template</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='list_price']" position="after">
+                <field name="list_price_permited" invisible="1"/>
+                <field name="standard_price_permited" invisible="1"/>
+
+            </xpath>
+
+            <xpath expr="//field[@name='list_price']" position="attributes">
+                <attribute name="attrs">{'readonly':[('list_price_permited', '=', False)]}
+                </attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+                <attribute name="attrs">{'readonly':[('standard_price_permited', '=', False)]}
+                </attribute>
+            </xpath>
+
+
+        </field>
+    </record>
+
+     <record id="product_product_discount_price_form" model="ir.ui.view">
+        <field name="name">product.product.inherit.price.form</field>
+        <field name="model">product.product</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='lst_price']" position="after">
+                <field name="list_price_permited" invisible="1"/>
+                <field name="standard_price_permited" invisible="1"/>
+
+            </xpath>
+
+            <xpath expr="//field[@name='lst_price']" position="attributes">
+                <attribute name="attrs">{'readonly':[('list_price_permited', '=', False)]}
+                </attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='list_price']" position="attributes">
+                <attribute name="attrs">{'readonly':[('list_price_permited', '=', False)]}
+                </attribute>
+            </xpath>
+
+            <xpath expr="//field[@name='standard_price']" position="attributes">
+                <attribute name="attrs">{'readonly':[('standard_price_permited', '=', False)]}
+                </attribute>
+            </xpath>
+
+
+
+        </field>
+
+    </record>
+
+    <record id="product_supplierinfo_discount_price_form" model="ir.ui.view">
+        <field name="name">product.supplierinfo.inherit.price.form</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='price']" position="before">
+                <field name="price_compra_proveedor" invisible="1"/>
+
+            </xpath>
+
+            <xpath expr="//field[@name='price']" position="attributes">
+                <attribute name="attrs">{'readonly':[('price_compra_proveedor', '=', False)]}
+                </attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_supplierinfo_discount_price2_form" model="ir.ui.view">
+        <field name="name">product.supplierinfo.inherit.price2.form</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="purchase.product_supplierinfo_tree_view2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='price']" position="before">
+                <field name="price_compra_proveedor" invisible="1"/>
+
+            </xpath>
+
+            <xpath expr="//field[@name='price']" position="attributes">
+                <attribute name="attrs">{'readonly':[('price_compra_proveedor', '=', False)]}
+                </attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_template_saledesc_form" model="ir.ui.view">
+        <field name="name">product.template.saledesc.form</field>
+        <field name="model">product.template</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='description_sale']" position="after">
+                <field name="sale_description_permission" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='description_sale']" position="attributes">
+                <attribute name="attrs">{'readonly':[('sale_description_permission', '=', False)]}
+                </attribute>
+            </xpath>
+
+
+        </field>
+    </record>
+
+
+    <record id="product_template_attribute_value_variantprice_form" model="ir.ui.view">
+        <field name="name">product.template.attribute.value.variantprice.form</field>
+        <field name="model">product.template.attribute.value</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="product.product_template_attribute_value_view_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='price_extra']" position="after">
+                <field name="price_permission" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='price_extra']" position="attributes">
+                <attribute name="attrs">{'readonly':[('price_permission', '=', False)]}
+                </attribute>
+            </xpath>
+
+
+        </field>
+    </record>
+
+
+
+</odoo>

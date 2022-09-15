@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data>
+
+		<record id="view_res_partner_form_inherit" model="ir.ui.view">
+			<field name="name">res.partner.form.inherit.credit.form</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="base.view_partner_form"/>
+			<field name="arch" type="xml">
+				<field name="bank_ids" position="after">
+					<field name="active_credit_limit" readonly="1"  force_save="1"/>
+					<field name="credit_limit" readonly="1"
+						   attrs="{'invisible':[('active_credit_limit', '=', False)]}"
+						   force_save="1" />
+				</field>
+			</field>
+		</record>
+
+		<!-- NO Read only for specific group -->
+		<record id="view_res_partner_readonly_form_inherit" model="ir.ui.view">
+			<field name="name">res.partner.readonly.form.inherit.credit.form</field>
+			<field name="model">res.partner</field>
+			<field name="inherit_id" ref="view_res_partner_form_inherit"/>
+			<field name="groups_id" eval="[(6,0,[ref('customer_credit_limit.group_change_customer_credit_limit')])]" />
+			<field name="arch" type="xml">
+				<xpath expr="//field[@name='credit_limit']" position="attributes">
+					<attribute name="readonly">0</attribute>
+				</xpath>
+				<xpath expr="//field[@name='active_credit_limit']" position="attributes">
+					<attribute name="readonly">0</attribute>
+				</xpath>
+			</field>
+		</record>
+
+	</data>
+</odoo>

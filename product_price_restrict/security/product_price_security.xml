@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<odoo>
+
+     <record id="product_price_restrict_category" model="ir.module.category">
+            <field name="name">Restricciones precios productos </field>
+        <field name="description">Restricciones en productos</field>
+        <field name="sequence">7</field>
+    </record>
+
+    <record id="product_sale_price_group" model="res.groups">
+        <field name="category_id" ref="product_price_restrict_category"/>
+        <field name="name">Precio de venta en productos</field>
+    </record>
+
+    <record id="product_price_group" model="res.groups">
+        <field name="category_id" ref="product_price_restrict_category"/>
+        <field name="name">Coste en productos</field>
+    </record>
+
+    <record id="product_price_proveedores_group" model="res.groups">
+        <field name="category_id" ref="product_price_restrict_category"/>
+        <field name="name">Precio compra proveedores</field>
+    </record>
+
+    <record id="descripcion_ventas_group" model="res.groups">
+        <field name="category_id" ref="product_price_restrict_category"/>
+        <field name="name">Descripcion de venta</field>
+    </record>
+    <record id="price_extra_variant_group" model="res.groups">
+        <field name="category_id" ref="product_price_restrict_category"/>
+        <field name="name">Precio extra variantes</field>
+    </record>
+
+
+
+</odoo>

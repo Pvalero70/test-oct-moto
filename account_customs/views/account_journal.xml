@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_account_journal_pos_customs_form" model="ir.ui.view">
+        <field name="name">view.account.journal.pos_customs.form</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.view_account_journal_form"/>
+        <field name="arch" type="xml">
+            <group name="group_alias_edit" position="after">
+                <group name="group_journal_id_edit" string="Secuencias automáticas (TPV)" attrs="{'invisible': [('type', 'not in',  ('sale'))]}">
+
+                    <label string="Categorias de productos" for="c_product_category_ids"/>
+                    <div class="oe_inline" name="c_product_categories" style="display: inline;">
+                        <field name="c_product_category_ids" options="{'no_create': True}" widget="many2many_tags"/>
+                    </div>
+
+                    <label string="Localizacion" for="c_location_id"/>
+                    <div class="oe_inline" name="c_location">
+                        <field name="c_location_id" options="{'no_create': True}"/>
+                    </div>
+                </group>
+            </group>
+        </field>
+    </record>
+</odoo>

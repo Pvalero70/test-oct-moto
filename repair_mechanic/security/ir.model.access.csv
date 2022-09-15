@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_repair_mechanic,Administrador Mecanicos,model_repair_mechanic,admin_repair_mechanic_group,1,1,1,1
+access_read_mechanic,ver Mecanicos,model_repair_mechanic,user_reparaciones_group,1,0,0,0
+

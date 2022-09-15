@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="sale_order_inherit_button_form" model="ir.ui.view">
+        <field name="name">sale.order.inherit.button.form</field>
+        <field name="model">sale.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//button[@data-hotkey='q'][1]" position="before">
+                <field name="create_invoice_permited" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//button[@data-hotkey='q'][1]" position="attributes">
+                <attribute name="attrs">{'invisible': ['|',('invoice_status', '!=', 'to invoice'),('create_invoice_permited','=',False)]}
+
+                </attribute>
+            </xpath>
+
+            <xpath expr="//button[@data-hotkey='q'][2]" position="attributes">
+                <attribute name="attrs">{'invisible': ['|','|',('invoice_status', '!=', 'no'), ('state', '!=', 'sale'),('create_invoice_permited','=',False)]}
+
+                </attribute>
+            </xpath>
+
+
+
+        </field>
+    </record>
+</odoo>

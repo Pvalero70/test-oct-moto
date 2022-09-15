@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_users_form" model="ir.ui.view">
+        <field name="name">res.users.form.inherit.pos.user.restrict</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='access_rights']/group" position="after">
+                <group string="Puntos de venta" groups="point_of_sale.group_pos_user">
+
+                    <field
+                        name="pos_config_ids"
+                        widget="many2many_tags"
+                        options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True,}"
+                    />
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

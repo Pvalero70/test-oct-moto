@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="purchase_order_discount_form" model="ir.ui.view">
+        <field name="name">purchase.order.inherit.discount.form</field>
+        <field name="model">purchase.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="after">
+                <field name="discount_permited" invisible="1"/>
+                <field name="price_unit_permited" invisible="1"/>
+                <field name="discount" string="Desc %" attrs="{'readonly':[('discount_permited', '=', False)]}"/>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="attributes">
+               <attribute name="attrs">{'readonly': [('price_unit_permited','=',False)]}
+
+                </attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+
+
+
+
+</odoo>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_stock_move_line_op_c_tree" model="ir.ui.view">
+        <field name="name">view.stock.move.line.opc_tree</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="stock.view_stock_move_line_operation_tree"/>
+        <field name="arch" type="xml">
+            <field name="lot_id" position="after">
+                <field name="tt_inventory_number_seq" invisible="1"/>
+                <field name="tt_motor_number" attrs="{'column_invisible': [('parent.tt_with_moto', '=', False)], 'required': [('parent.tt_with_moto', '!=', False)]}"/>
+                <field name="tt_color" attrs="{'column_invisible': [('parent.tt_with_moto', '=', False)], 'required': [('parent.tt_with_moto', '!=', False)]}"/>
+                <field name="tt_inventory_number" attrs="{'column_invisible': [('parent.tt_with_moto', '=', False)]}"/>
+            </field>
+            <field name="product_uom_id" position="after">
+                <field name="tt_company_currency_id" invisible="1"/>
+                <field name="tt_free_optional" attrs="{'column_invisible': [('parent.tt_with_moto', '=', False)]}"/>
+                <field name="tt_adc_costs" attrs="{'column_invisible': [('parent.tt_with_moto', '=', False)]}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_stock_move_tt_form" model="ir.ui.view">
+        <field name="name">view.stock.move.tt.form</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_stock_move_operations"/>
+        <field name="arch" type="xml">
+            <field name="product_uom_category_id" position="after">
+                <field name="tt_with_moto" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_production_lot_tt_tree" model="ir.ui.view">
+        <field name="name">view.stock.lot.tt.tree</field>
+        <field name="model">stock.production.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_tree"/>
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="tt_number_motor"/>
+                <field name="tt_color"/>
+                <field name="tt_inventory_number" />
+            </field>
+        </field>
+    </record>
+
+    <record id="view_stock_lot_tt_form" model="ir.ui.view">
+        <field name="name">view.stock.lot.tt.form</field>
+        <field name="model">stock.production.lot</field>
+        <field name="inherit_id" ref="stock.view_production_lot_form"/>
+        <field name="arch" type="xml">
+            <field name="company_id" position="after">
+                <field name="hide_snf_fields" invisible="1"/>
+                <field name="tt_number_motor" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
+                <field name="tt_color" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
+                <field name="tt_inventory_number" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
+                <field name="tt_company_currency_id" invisible="1"/>
+
+                <field name="can_edit_free_optional" invisible="1"/>
+                <field name="can_edit_adc_costs" invisible="1"/>
+                <field name="tt_free_optional" attrs="{'invisible':[('hide_snf_fields', '=', True)], 'readonly':[('can_edit_free_optional', '=', False)]}"/>
+                <field name="tt_adc_costs" attrs="{'invisible':[('hide_snf_fields', '=', True)], 'readonly':[('can_edit_adc_costs', '=', False)]}"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_stock_picking_tt_form" model="ir.ui.view">
+        <field name="name">view.stock.picking.tt.form</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <field name="origin" position="after">
+                <field name="hide_snf_fields" invisible="1"/>
+                <field name="tt_num_pedimento" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
+                <field name="tt_aduana" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
+                <field name="tt_aduana_date_in" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
+                <field name="ic_sale_order" invisible="1"/>
+            </field>
+        </field>
+    </record>
+
+
+    <!--
+    INVENTORY REPORT
+    -->
+    <record id="view_stock_quant_inv_number_etree" model="ir.ui.view">
+        <field name="name">view.stock.quant.inv.number.etree</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.view_stock_quant_tree_editable"/>
+        <field name="arch" type="xml">
+            <field name="lot_id" position="after">
+                <field name="inv_number" groups="stock.group_production_lot"/>
+                <field name="tt_number_motor" groups="stock.group_production_lot"/>
+                <field name="tt_color" groups="stock.group_production_lot"/>
+            </field>
+            <field name="product_id" position="after">
+                <field name="free_adds" groups="stock.group_production_lot"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_stock_quant_inv_number_tree" model="ir.ui.view">
+        <field name="name">view.stock.quant.inv.number.tree</field>
+        <field name="model">stock.quant</field>
+        <field name="inherit_id" ref="stock.view_stock_quant_tree"/>
+        <field name="arch" type="xml">
+            <field name="lot_id" position="after">
+                <field name="inv_number" groups="stock.group_production_lot"/>
+                <field name="tt_number_motor" groups="stock.group_production_lot"/>
+                <field name="tt_color" groups="stock.group_production_lot"/>
+            </field>
+            <field name="product_id" position="after">
+                <field name="free_adds" groups="stock.group_production_lot"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

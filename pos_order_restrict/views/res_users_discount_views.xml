@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Accion Descuentos Vendedores !-->
+    <record id="user_discount_action" model="ir.actions.act_window">
+        <field name="name">Descuentos Vendedor</field>
+        <field name="domain">[('seller_id', '=', uid),('seller_id.company_id', '=', allowed_company_ids[0])]</field>
+        <field name="res_model">res.users.discount</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="user_discount_admin_action" model="ir.actions.act_window">
+        <field name="name">Descuentos Vendedor</field>
+        <field name="domain">[('seller_id.company_id', '=', allowed_company_ids[0])]</field>
+        <field name="res_model">res.users.discount</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="user_discount_form_view" model="ir.ui.view">
+        <field name="name">users.discount.form.view</field>
+        <field name="model">res.users.discount</field>
+        <field name="arch" type="xml">
+            <form string="Descuentos">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="seller_id" required="1" widget='selection'
+                                   domain="[('company_id','=',allowed_company_ids[0])]"/>
+                            <field name="discount_permitted" string="Descuento Maximo Permitido %" required="1"/>
+                            <field name="almacen_id" required="1" widget='selection' domain="[('company_id','=',allowed_company_ids[0])]"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Categorias permitidas">
+                            <field name="category_ids"
+                                   options="{'no_quick_create':True,'no_create_edit':True,'no_open': True,'no_create': True,}"
+                                   required="1">
+                                <tree editable="bottom" required="1">
+                                    <field name="name"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+
+    <record id="user_discount_tree_view" model="ir.ui.view">
+        <field name="name">users.discount.tree.view</field>
+        <field name="model">res.users.discount</field>
+        <field name="arch" type="xml">
+            <tree string="Lista de Descuentos">
+                <field name="seller_id"/>
+                <field name="discount_permitted" string="Descuento Maximo Permitido"/>
+                <field name="almacen_id"/>
+                <field name="category_ids" widget="many2many_tags"/>
+            </tree>
+
+        </field>
+    </record>
+
+    <record id="user_discount_search_view" model="ir.ui.view">
+        <field name="name">users.discount.search.view</field>
+        <field name="model">res.users.discount</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="seller_id" string="Nombre Vendedor"/>
+                <field name="discount_permitted" string="Descuento"/>
+                <field name="almacen_id" string="Almacen"/>
+                <field name="category_ids" string="Categoria"/>
+
+                <group expand="0" string="agrupar por">
+                    <filter name="seller_id" string="Vendedor" context="{'group_by':'seller_id'}"/>
+                    <filter name="almacen_id" string="Almacen" context="{'group_by':'almacen_id'}"/>
+                    <filter name="discount_permitted" string="Descuento" context="{'group_by':'discount_permitted'}"/>
+                </group>
+            </search>
+
+        </field>
+    </record>
+
+    <!-- Menu "Descuento Vendedores" permiso ver propios!-->
+    <menuitem
+            name="Mis Descuentos Ventas"
+            id="user_discount_menu"
+            parent="sale.sale_order_menu"
+            sequence="5"
+            action="user_discount_action"
+            groups="user_discount_view_group"/>
+    />
+
+    <menuitem
+            name="Descuentos Vendedores"
+            id="user_discount_admin_menu"
+            parent="sale.sale_order_menu"
+            sequence="5"
+            action="user_discount_admin_action"
+            groups="user_discount_group,user_discount_admin_group,user_discount_gerente_group"/>
+    />
+
+    <record id="sale_order_inherit_form" model="ir.ui.view">
+        <field name="name">sale.order.inherit.form</field>
+        <field name="model">sale.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+
+                <button name="send_mail_discount" string="Solicitar Descuento Mayor" type="object"
+                        attrs="{'invisible': ['|',('state', 'not in', ['draft']),('need_discount_aprove','=',False)]}"/>
+            </xpath>
+
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="need_discount_aprove" invisible="1"/>
+                <field name="gerente_discount_id" invisible="1"/>
+            </xpath>
+
+            <xpath expr="//field[@name='order_line']/tree/field[@name='discount']" position="attributes">
+                <attribute name="attrs">{'readonly':[('state','=', 'sale')]}</attribute>
+
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale_order_search_aprobe" model="ir.ui.view">
+        <field name="name">sale.order.inherit.search</field>
+        <field name="model">sale.order</field>
+        <field name="type">search</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//filter[@name='my_sale_orders_filter']" position="after">
+                <filter name="to_aprobe_discount" string ="Pendietes por aprobar descuento" domain="[('gerente_discount_id','=',uid),('state','in',['draft','sent'])]"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="res_company_base_discount_form" model="ir.ui.view">
+        <field name="name">res.company.inherit.form</field>
+        <field name="model">res.company</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='favicon']" position="after">
+                <field name="user_base_discount" string ="Descuento permitido maximo usuario base" groups="pos_order_restrict.user_discount_admin_group"/>
+                <field name="user_gerentes_discount" string ="Descuento permitido maximo gerentes" groups="pos_order_restrict.user_discount_admin_group"/>
+                <field name="motos_discount" string ="Descuento permitido maximo en motos" groups="pos_order_restrict.user_discount_admin_group"/>
+            </xpath>
+
+        </field>
+    </record>
+
+
+
+
+
+</odoo>

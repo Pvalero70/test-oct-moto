@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="res_partner_seq_inherit_form" model="ir.ui.view">
+        <field name="name">res.partner.seq.inherit.form</field>
+        <field name="model">res.partner</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='ref']" position="before">
+                <field name="supplier_rank" invisible="1"/>
+                <field name="customer_rank" invisible="1"/>
+                <field name="is_partner_user" invisible="1"/>
+                <field name="is_partner_company_child" invisible="1"/>
+                <field name="is_partner_company" invisible="1"/>
+                <field name="sequencial_code_prov" string="Numero de Proveedor" force_save="1" readonly="1"
+                       attrs="{'invisible': [('supplier_rank','=', 0)]}"/>
+                <field name="sequencial_code_client" string="Numero de Cliente" force_save="1" readonly="1"
+                       attrs="{'invisible': [('customer_rank','=', 0)]}"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="res_partner_seq_view_search" model="ir.ui.view">
+        <field name="name">res.partner.search.seq.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="sequencial_code_prov" string="Numero Proveedor"
+                       filter_domain="[('sequencial_code_prov', 'ilike', self)]"/>
+                <field name="sequencial_code_client" string="Numero Cliente"
+                       filter_domain="[('sequencial_code_client', 'ilike', self)]"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="sale_order_isuser_inherit_form" model="ir.ui.view">
+        <field name="name">sale.order.isuser.inherit.form</field>
+        <field name="model">sale.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="domain">[('is_partner_user','=',False),('is_partner_company','=',False),('is_partner_company_child','=',False)]</attribute>
+
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="purchase_order_isuser_inherit_form" model="ir.ui.view">
+        <field name="name">purchase.order.isuser.inherit.form</field>
+        <field name="model">purchase.order</field>
+        <field name="type">form</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="domain">[('is_partner_user','=',False),('is_partner_company','=',False),('is_partner_company_child','=',False)]</attribute>
+
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>
