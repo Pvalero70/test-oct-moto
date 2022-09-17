@@ -222,15 +222,18 @@ class PosSession(models.Model):
 
             payment_amount = payment.amount
             # credit_pending = payment_amount
+            _logger.info(f"Payment amount: {payment_amount}")
 
             for line in credit_lines:
 
                 if line.id in procesed_lines:
+                    _logger.info("Continue...")
                     continue
                 
                 if line.partner_id.id == payment.partner_id.id:
                    
                     _logger.info("Se actualizan los montos")
+                    _logger.info(f"Line Credit: {line.credit}")
 
                     if line.credit == payment_amount:
                         new_credit = line.credit - payment_amount
@@ -239,8 +242,14 @@ class PosSession(models.Model):
                     #     credit_pending = credit_pending - line.credit
                     #     sum_credits_updated += line.credit
                     #     new_credit = 0
-                        _logger.info(new_credit)                       
+    
+                        _logger.info(f"New Credit: {new_credit}")
+                        _logger.info(f"Sum Credits: {sum_credits_updated}")
+
                         update_lines.append((1, line.id, {"credit" : new_credit}))
+                    else:
+                        _logger.info(f"Else: {line.credit}")
+
                     procesed_lines.append(line.id)
         _logger.info("Sum credits updated")
         _logger.info(sum_credits_updated)
