@@ -247,10 +247,10 @@ class PosSession(models.Model):
                         _logger.info(f"Sum Credits: {sum_credits_updated}")
 
                         update_lines.append((1, line.id, {"credit" : new_credit}))
+                        procesed_lines.append(line.id)
                     else:
                         _logger.info(f"Else: {line.credit}")
 
-                    procesed_lines.append(line.id)
         _logger.info("Sum credits updated")
         _logger.info(sum_credits_updated)
 
