@@ -15,6 +15,7 @@ class StockPickingTt(models.Model):
     _inherit = "stock.picking"
 
     ic_sale_order = fields.Many2one('sale.order', string="InventoryCustom Order")
+    ic_repair_order = fields.Many2one('repair.order', string="Repair order origin")
 
     tt_aduana = fields.Char(string="Aduana")
     tt_aduana_date_in = fields.Date(string="Fecha ingreso")
@@ -205,10 +206,16 @@ class StockMoveTt(models.Model):
         try:
             with self.env.cr.savepoint():
                 if not float_is_zero(taken_quantity, precision_rounding=self.product_id.uom_id.rounding):
-                    if  self.picking_id.ic_sale_order:
+                    if self.picking_id.ic_sale_order:
                         quants = self.env['stock.quant']._update_reserved_quantity(
                             self.product_id, location_id, taken_quantity, lot_id=lot_id,
                             package_id=package_id, owner_id=owner_id, strict=strict, ic_order=self.picking_id.ic_sale_order
+                        )
+                    elif self.picking_id.ic_repair_order:
+                        # _log.debug(" Forzando lot RO 1 ")
+                        quants = self.env['stock.quant']._update_reserved_quantity(
+                            self.product_id, location_id, taken_quantity, lot_id=lot_id,
+                            package_id=package_id, owner_id=owner_id, strict=strict, ic_ro=self.picking_id.ic_repair_order
                         )
                     else:
                         quants = self.env['stock.quant']._update_reserved_quantity(
@@ -277,19 +284,21 @@ class StockProductionLotTt(models.Model):
         self.hide_snf_fields = self.env.company.restrict_inv_sn_flow
     hide_snf_fields = fields.Boolean('Ocultar campos tt', compute="_hide_snf", store=False)
 
-    # @api.constrains('tt_number_motor', 'tt_inventory_number')
-    # def _check_motor_inventory_unique_numbers(self):
-    #     if self.env.company.restrict_inv_sn_flow:
-    #         return False
-    #     for reg in self:
-    #         if reg.tt_number_motor:
-    #             other_reg_motor = self.env['stock.production.lot'].search([('tt_number_motor', '=', reg.tt_number_motor), ('id', '!=', reg.id)])
-    #             if other_reg_motor:
-    #                 raise UserError("El número de motor debe ser único")
-    #         if reg.tt_inventory_number:
-    #             other_reg_inventory = self.env['stock.production.lot'].search([('tt_inventory_number', '=', reg.tt_inventory_number), ('id', '!=', reg.id)])
-    #             if other_reg_inventory:
-    #                 raise UserError("El número de inventario debe ser único")
+
+    # REVISA EL STOCK QUANT...  ese si debe ser diferente. (aún que creo que no sirve de nada...)
+    @api.constrains('tt_number_motor', 'tt_inventory_number')
+    def _check_motor_inventory_unique_numbers(self):
+        if self.env.company.restrict_inv_sn_flow:
+            return False
+        for reg in self:
+            if reg.tt_number_motor:
+                other_reg_motor = self.env['stock.production.lot'].search([('tt_number_motor', '=', reg.tt_number_motor), ('id', '!=', reg.id)])
+                if other_reg_motor:
+                    raise UserError("El número de motor debe ser único")
+            if reg.tt_inventory_number:
+                other_reg_inventory = self.env['stock.production.lot'].search([('tt_inventory_number', '=', reg.tt_inventory_number), ('id', '!=', reg.id)])
+                if other_reg_inventory:
+                    raise UserError("El número de inventario debe ser único")
 
 
 class StockQuantTti(models.Model):
@@ -305,7 +314,7 @@ class StockQuantTti(models.Model):
     #
     # hide_snf_fields = fields.Boolean('Ocultar campos tt', compute="_hide_snf", store=False)
 
-    def _update_reserved_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None, strict=False, ic_order=None):
+    def _update_reserved_quantity(self, product_id, location_id, quantity, lot_id=None, package_id=None, owner_id=None, strict=False, ic_order=None, ic_ro=None):
         """ Increase the reserved quantity, i.e. increase `reserved_quantity` for the set of quants
         sharing the combination of `product_id, location_id` if `strict` is set to False or sharing
         the *exact same characteristics* otherwise. Typically, this method is called when reserving
@@ -344,6 +353,11 @@ class StockQuantTti(models.Model):
             lots = ic_order.order_line.filtered(lambda l: l.lot_id != False).mapped('lot_id')
             if lots:
                 quants = quants.filtered(lambda q: q.lot_id.id in lots.ids)
+        elif ic_ro is not None:
+            # _log.debug(" Forzando lot RO 2")
+            ro_lot_id = ic_ro.lot_id
+            if ro_lot_id:
+                quants = quants.filtered(lambda q: q.lot_id.id == ro_lot_id.id)
         
         for quant in quants:
             if float_compare(quantity, 0, precision_rounding=rounding) > 0:

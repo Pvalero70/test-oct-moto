@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-# Copyright 2022 - QUADIT, SA DE CV(https://www.quadit.mx)
+# Copyright 2022 - QUADIT, SA DE CV(https://www.quadit.mx) <-- Begginers 
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl.html).
 
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+import logging
+_log = logging.getLogger("___name: %s" % __name__)
+
 
 class RepairOrderInherit(models.Model):
     _inherit = 'repair.order'
@@ -50,21 +53,17 @@ class RepairOrderInherit(models.Model):
                     'scheduled_date': record.schedule_date,
                     'origin': record.name,
                     'owner_id': record.partner_id.id,
+                    'ic_repair_order': record.id,
+                    'move_ids_without_package': [(0, 0, {
+                        'name': record.product_id.name,
+                        'product_id': record.product_id.id,
+                        'product_uom_qty': record.product_qty,
+                        'product_uom':record.product_uom.id,
+                        'description_picking': record.product_id.name,
+                        'location_id': location.lot_stock_id.id,
+                        'location_dest_id': self.env.ref('stock.stock_location_customers').id or False,
+                    })]
                 }
             )
-
-            lines_vals =  [(0, 0,{
-                'name': record.product_id.name,
-                'product_id': record.product_id.id,
-                'product_uom_qty': record.product_qty,
-                'product_uom':record.product_uom.id,
-                'description_picking': record.product_id.name,
-                'picking_id': record_stock.id,
-                'location_id': location.lot_stock_id.id,
-                'location_dest_id': self.env.ref('stock.stock_location_customers').id or False,
-                'lot_ids': [record.lot_id.id],
-                })]
-
-            record_stock.sudo().write({'move_ids_without_package': lines_vals})
             record_stock.action_confirm()   
             record.write({'picking_sale_confirm': True})

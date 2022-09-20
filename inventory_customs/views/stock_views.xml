@@ -74,6 +74,7 @@
                 <field name="tt_aduana" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
                 <field name="tt_aduana_date_in" attrs="{'invisible':[('hide_snf_fields', '=', True)]}"/>
                 <field name="ic_sale_order" invisible="1"/>
+                <field name="ic_repair_order" invisible="1"/>
             </field>
         </field>
     </record>
