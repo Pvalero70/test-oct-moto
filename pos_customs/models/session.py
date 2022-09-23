@@ -78,9 +78,7 @@ class PosSession(models.Model):
                     "total" : inv.amount_total,
                     "residual" : inv.amount_residual,
                 })
-        return invoice_list
-
-
+        return invoice_list            
 
     def _validate_session(self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None):
         
