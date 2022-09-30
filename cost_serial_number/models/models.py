@@ -136,6 +136,6 @@ class SaleOrderLine(models.Model):
 							price_unit = move.purchase_line_id.price_unit
 							line.purchase_price = price_unit
 							return
-
-			line.purchase_price = 50
+			else:
+				return super(SaleOrderLine, self)._compute_purchase_price()
 
